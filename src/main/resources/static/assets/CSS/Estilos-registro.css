@@ -1,0 +1,105 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-color: #000000;
+}
+
+.blur-container {
+    background: #6ab0ba;
+    border-radius: 50px;
+    padding: 12px;
+    width: 400px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+    text-align: center;
+    color: #000000;
+    margin: 3px 0 8px 0;
+    font-size: 35px;
+}
+
+.form-group {
+    margin-bottom: 6px;
+}
+
+.form-group label {
+    font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+    display: block;
+    margin-bottom: 2px;
+    color: #000000;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 6px 6px;
+    border: none;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.767);
+    font-size: 0.7rem;
+    box-sizing: border-box;
+}
+
+.login-text {
+    font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+    text-align: center;
+    margin-top: 8px;
+    font-size: 1rem;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.login-text a {
+    color: rgba(0, 0, 0, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-text a:hover {
+    text-decoration: underline;
+}
+
+.btn-register {
+    font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: normal;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background: #f1ceca;
+    color: rgb(0, 0, 0);
+    margin-top: 6px;
+}
+
+.btn-register:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+}

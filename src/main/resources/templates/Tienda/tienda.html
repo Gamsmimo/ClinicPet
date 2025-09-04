@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetShop - Tienda para Mascotas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="CSS/Estilos-Tienda.css">
+    <link rel="icon" href="IMG/logo.png" type="image/png">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- Logo y nombre -->
+            <div class="brand-section">
+                <div class="logo">
+                    <img src="IMG/logo.png" alt="logo" class="logo">
+                </div>
+                <a href="Home.html"><span class="brand-name">CLINIC PET</span></a>
+            </div>
+
+            <!-- Buscador -->
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Buscar en la página...">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+            <div class="d-flex align-items-center">
+
+                <!-- Botones principales -->
+                <div class="botones-finales">
+                    <div class="nav-buttons">
+                        <button class="nav-button">
+                            <i class="fas fa-dog"></i> Adopciones
+                        </button>
+                        <button class="nav-button">
+                            <i class="fas fa-ambulance"></i> Emergencias
+                        </button>
+
+                        <!-- Botón Calendario -->
+                        <div class="position-relative">
+                            <button class="btn-calendar" id="calendarButton">
+                                <i class="far fa-calendar-alt"></i>
+                            </button>
+
+                            <!-- Popup del Calendario -->
+                            <div class="calendar-popup" id="calendarPopup">
+                                <div class="calendar-header">
+                                    <h6 class="calendar-title mb-0" id="currentMonthYear">Junio 2023</h6>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-secondary" id="prevMonth"><i
+                                                class="fas fa-chevron-left"></i></button>
+                                        <button class="btn btn-sm btn-outline-secondary" id="nextMonth"><i
+                                                class="fas fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="calendar-grid mb-2">
+                                    <div class="calendar-day-header">Dom</div>
+                                    <div class="calendar-day-header">Lun</div>
+                                    <div class="calendar-day-header">Mar</div>
+                                    <div class="calendar-day-header">Mié</div>
+                                    <div class="calendar-day-header">Jue</div>
+                                    <div class="calendar-day-header">Vie</div>
+                                    <div class="calendar-day-header">Sáb</div>
+                                </div>
+
+                                <div class="calendar-grid" id="calendarDays"></div>
+
+                                <div class="d-flex justify-content-between mt-3">
+                                    <button class="btn btn-sm btn-outline-primary" id="todayBtn">Hoy</button>
+                                    <button class="btn btn-sm btn-agendar text-white" id="agendarCitaBtn">
+                                        <i class="fab fa-whatsapp me-1"></i> Agendar Cita
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menú Hamburguesa -->
+                <div class="hamburger-menu">
+                    <button class="hamburger-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="menu-content">
+                        <div class="menu-item">
+                            <i class="fas fa-globe"></i>
+                            <span>Idioma</span>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-item">
+                            <i class="fas fa-clinic-medical"></i>
+                            <span>Servicios</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-star"></i>
+                            <span>Calificaciones</span>
+                        </div>
+                        <div class="menu-item">
+                            <i class="fas fa-users"></i>
+                            <span>Acerca de Nosotros</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="inicio"></section>
+        <section id="slider">
+        <div class="slider-box">
+            <ul>
+                <li>
+                    <img src="img/perroscarrusel.jpg" alt="imagen 1">
+
+                </li>
+                <li>
+                    <img src="img/perrocollar copy.jpg" alt="imagen 2">
+                </li>
+                <li>
+                    <img src="img/perrovestido.jpg" alt="imagen 3">
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <main>
+        <div class="products-container">
+            <div>
+                <div class="cart-count">0</div>
+                <h1 class="titulotienda">Todo para tu mascota</h1>
+                <p class="subtitulotienda">Encuentra los mejores alimentos, accesorios y medicamentos para consentir a
+                    tu mejor amigo</p>
+            </div>
+
+            <h2 class="section-title"><i class="fas fa-bone"></i> Alimentos para Mascotas</h2>
+            <div class="products-grid" id="foodProducts">
+                <!-- Alimentos generados por JS -->
+            </div>
+            <h2 class="section-title"><i class="fas fa-tshirt"></i> Accesorios</h2>
+            <div class="products-grid" id="accessoryProducts">
+                <!-- Accesorios generados por JS -->
+            </div>
+            <h2 class="section-title"><i class="fas fa-pills"></i> Medicamentos</h2>
+            <div class="products-grid" id="medicineProducts">
+                <!-- Medicamentos generados por JS -->
+            </div>
+        </div>
+        <div class="cart-container">
+            <h2><i class="fas fa-shopping-cart"></i> Carrito de Compras</h2>
+            <div class="cart-items" id="cartItems">
+                <!-- Elementos del carrito generados por JS -->
+                <div class="empty-cart-message">Tu carrito está vacío</div>
+            </div>
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal:</span>
+                    <span class="summary-value" id="subtotal">$0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Descuento (10%):</span>
+                    <span class="summary-value discount" id="discount">$0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span class="summary-label">Total:</span>
+                    <span class="summary-value" id="total">$0.00</span>
+                </div>
+
+            </div>
+            <button class="checkout-btn">Proceder al Pago</button>
+            <div class="payment-title">Métodos de pago:</div>
+            <div class="payment-options">
+                <div class="payment-option">
+                    <button>
+                        <div class="payment-icon">💳</div>
+                        <div class="metodos">Tarjeta</div>
+                </div></button>
+                <div class="payment-option selected">
+                    <button>
+                        <div class="payment-icon">📱</div>
+                        <div class="metodos">PayPal</div>
+                </div></button>
+                <div class="payment-option">
+                    <button>
+                        <div class="payment-icon">🏦</div>
+                        <div class="metodos">Transferencia</div>
+                </div></button>
+            </div>
+
+        </div>
+    </main>
+    <a href="#inicio" class="btn btn-inicio">
+        <i class="fa-solid fa-up-long"></i>
+
+    </a>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">
+                <img src="img/logofotter.png" alt="logo">
+            </div>
+            <div class="footer-brand">CLINIC PET</div>
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <p class="footer-lema">"Simplifica tu trabajo, mejora su salud"</p>
+                    <p>Nuestra plataforma digital está diseñada para <br> optimizar la gestión clínica, conectando a
+                        <br>
+                        veterinarios y
+                        propietarios de mascotas a través <br> de un sistema eficiente, seguro y personalizado.
+                    </p>
+                    <div class="social-links mt-4">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+                    <h5 class="footer-title">Contacto</h5>
+                    <div class="footer-links">
+                        <a href="#"><i class="fas fa-map-marker-alt me-2"></i> Duitama, Boyacá</a>
+                        <a href="tel: 01 8000 45 78 90"><i class="fas fa-phone me-2"></i> 018000 45 78 90</a>
+                        <a href="mailto:info@clinicpet.com"><i class="fas fa-envelope me-2"></i> info@clinicpet.com</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 CLINIC PET. Todos los derechos reservados. Desarrollado en Duitama, Boyacá</p>
+            </div>
+        </div>
+    </footer>
+
+
+</body>
+
+
+<script src="JS/JS-Tienda.js"></script>
+
+</html>
