@@ -1,5 +1,5 @@
 package com.clinicpet.demo.model;
 
-public class Urgencia {
+public class Emergencia {
 
 }
