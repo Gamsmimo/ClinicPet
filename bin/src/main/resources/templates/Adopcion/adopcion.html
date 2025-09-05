@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>CLINIC PET</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fredoka:wght@300..700&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Fredoka:wght@300..700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="CSS/Estilos-Adopciones.css">
+  <link rel="icon" href="IMG/logo.png" type="image/png">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <!-- Logo y nombre -->
+      <div class="brand-section">
+        <div class="logo">
+          <img src="img/logo.png" alt="logo" class="logo">
+        </div>
+        <a href="Home.html" style="text-decoration: none; color: blue;"><span class="brand-name">CLINIC PET</span></a>
+
+      </div>
+
+      <!-- Buscador -->
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Buscar en la página...">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+
+      <div class="d-flex align-items-center">
+
+        <!-- Botones principales -->
+        <div class="botones-finales">
+          <div class="nav-buttons">
+            <button class="nav-button">
+              <a href="Tienda.html" style=" text-decoration: none; color: #000000">
+                <i class="fa-solid fa-cart-shopping"></i> Pet Shop</a>
+            </button>
+            <button class="nav-button">
+              <i class="fas fa-ambulance"></i> Emergencias
+            </button>
+
+            <!-- Botón Calendario -->
+            <div class="position-relative">
+              <button class="btn-calendar" id="calendarButton">
+                <i class="far fa-calendar-alt"></i>
+              </button>
+
+              <!-- Popup del Calendario -->
+              <div class="calendar-popup" id="calendarPopup">
+                <div class="calendar-header">
+                  <h6 class="calendar-title mb-0" id="currentMonthYear">Junio 2023</h6>
+                  <div>
+                    <button class="btn btn-sm btn-outline-secondary" id="prevMonth"><i
+                        class="fas fa-chevron-left"></i></button>
+                    <button class="btn btn-sm btn-outline-secondary" id="nextMonth"><i
+                        class="fas fa-chevron-right"></i></button>
+                  </div>
+                </div>
+
+                <div class="calendar-grid mb-2">
+                  <div class="calendar-day-header">Dom</div>
+                  <div class="calendar-day-header">Lun</div>
+                  <div class="calendar-day-header">Mar</div>
+                  <div class="calendar-day-header">Mié</div>
+                  <div class="calendar-day-header">Jue</div>
+                  <div class="calendar-day-header">Vie</div>
+                  <div class="calendar-day-header">Sáb</div>
+                </div>
+
+                <div class="calendar-grid" id="calendarDays"></div>
+
+                <div class="d-flex justify-content-between mt-3">
+                  <button class="btn btn-sm btn-outline-primary" id="todayBtn">Hoy</button>
+                  <button class="btn btn-sm btn-agendar text-white" id="agendarCitaBtn">
+                    <i class="fab fa-whatsapp me-1"></i> Agendar Cita
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Menú Hamburguesa -->
+        <div class="hamburger-menu">
+          <button class="hamburger-btn">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="menu-content">
+            <div class="menu-item">
+              <i class="fas fa-globe"></i>
+              <span>Idioma</span>
+            </div>
+            <div class="menu-divider"></div>
+            <div class="menu-item">
+              <a href="Usuario.html" style="text-decoration: none; color: #000000;">
+                <i class="fas fa-user"></i>
+                <span>Mi Perfil</span></a>
+            </div>
+            <div class="menu-item">
+              <a href="serviciosUsuario.html" style="text-decoration: none; color: #000000;">
+                <i class="fas fa-clinic-medical"></i>
+                <span>Servicios</span></a>
+            </div>
+            <div class="menu-item">
+              <a href="Calificaciones.html" style="text-decoration: none; color: #000000;">
+                <i class="fas fa-star"></i>
+                <span>Calificaciones</span></a>
+            </div>
+            <div class="menu-item">
+              <i class="fas fa-users"></i>
+              <span>Acerca de Nosotros</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  </nav>
+
+  <!---Contenido-->
+  <main>
+    <section id="inicio" class="hero">
+      <div class="contenedor">
+        <h2 class="Titulo">Encuentra a tu compañero perfecto</h2>
+        <p>Miles de mascotas buscan un hogar amoroso. ¡Ayúdalas a encontrarlo!</p>
+        <div class="botones">
+          <a href="#adoptar" class="boton boton-primario">Quiero Adoptar</a>
+          <a href="#dar-en-adopcion" class="boton boton-secundario">Dar en Adopción</a>
+          <button id="Consejos" class="boton-consejos" onclick="abrirModal()">Consejos a la hora de
+            adoptar</button>
+
+          <!-- Modal de Consejos -->
+          <div id="modalConsejos" class="modal">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2> Consejos para Adoptar una Mascota</h2>
+                <span class="close" onclick="cerrarModal()">&times;</span>
+              </div>
+              <div class="modal-body">
+                <div class="consejo">
+                  <h3>🏠 Prepara tu hogar</h3>
+                  <p>Asegúrate de que tu casa sea segura para tu nueva mascota. Retira objetos
+                    peligrosos, prepara un espacio cómodo y ten los suministros básicos como comida,
+                    agua, cama y juguetes.</p>
+                </div>
+                <div class="consejo">
+                  <h3>💰 Considera los gastos</h3>
+                  <p>Adoptar una mascota implica gastos continuos: comida, veterinario, vacunas,
+                    medicamentos, accesorios y posibles emergencias médicas. Asegúrate de poder
+                    cubrir estos costos.</p>
+                </div>
+                <div class="consejo">
+                  <h3>⏰ Dedica tiempo suficiente</h3>
+                  <p>Las mascotas necesitan atención diaria, ejercicio, juegos y cariño. Evalúa si tu
+                    estilo de vida te permite dedicar el tiempo necesario para cuidar adecuadamente
+                    a tu mascota.</p>
+                </div>
+                <div class="consejo">
+                  <h3>🔍 Investiga la raza</h3>
+                  <p>Cada raza tiene características específicas en cuanto a tamaño, temperamento,
+                    necesidades de ejercicio y cuidados. Elige una mascota que se adapte a tu estilo
+                    de vida.</p>
+                </div>
+                <div class="consejo">
+                  <h3>👨‍⚕️ Busca un veterinario</h3>
+                  <p>Localiza una clínica veterinaria cerca de tu hogar antes de adoptar. Programa una
+                    cita inicial para un chequeo general y establece un plan de cuidados
+                    preventivos.</p>
+                </div>
+                <div class="consejo">
+                  <h3>❤️ Ten paciencia</h3>
+                  <p>Tu nueva mascota necesitará tiempo para adaptarse a su nuevo hogar. Sé paciente
+                    durante el período de adaptación y bríndale mucho amor y comprensión.</p>
+                </div>
+                <div class="consejo">
+                  <h3>📋 Compromiso a largo plazo</h3>
+                  <p>Adoptar una mascota es un compromiso de por vida. Los perros pueden vivir 12-15
+                    años y los gatos hasta 20 años. Asegúrate de estar preparado para este
+                    compromiso.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--Mascotas-->
+    <section id="adoptar" class="seccion mascotas">
+      <div class="contenedor">
+        <h2 class="titulo-seccion">Mascotas en Adopción</h2>
+        <div class="filtros">
+          <select id="tipo-mascota" class="selector">
+            <option value="todos">Todos</option>
+            <option value="perro">Perros</option>
+            <option value="gato">Gatos</option>
+          </select>
+          <select id="tamanio-mascota" class="selector">
+            <option value="todos">Todos los tamaños</option>
+            <option value="pequeno">Pequeño</option>
+            <option value="mediano">Mediano</option>
+            <option value="grande">Grande</option>
+          </select>
+          <button id="filtrar" class="boton boton-primario">Filtrar</button>
+        </div>
+        <div class="lista-mascotas" id="lista-mascotas">
+          <!-- Las mascotas se cargarán aquí con JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <section id="dar-en-adopcion" class="seccion formulario-adopcion">
+      <div class="contenedor">
+        <h2 class="titulo-seccion">Dar una Mascota en Adopción</h2>
+        <form id="formulario-mascota" class="formulario">
+          <div class="grupo-formulario">
+            <label for="nombre">Nombre de la mascota:</label>
+            <input type="text" id="nombre" required>
+          </div>
+          <div class="grupo-formulario">
+            <label for="tipo">Tipo de mascota:</label>
+            <select id="tipo" required>
+              <option value="">Seleccione...</option>
+              <option value="perro">Perro</option>
+              <option value="gato">Gato</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="grupo-formulario">
+            <label for="raza">Raza (opcional):</label>
+            <input type="text" id="raza">
+          </div>
+          <div class="grupo-formulario">
+            <label for="edad">Edad (años):</label>
+            <input type="number" id="edad" min="0" max="30">
+          </div>
+          <div class="grupo-formulario">
+            <label for="tamanio">Tamaño:</label>
+            <select id="tamanio" required>
+              <option value="">Seleccione...</option>
+              <option value="pequeno">Pequeño</option>
+              <option value="mediano">Mediano</option>
+              <option value="grande">Grande</option>
+            </select>
+          </div>
+          <div class="grupo-formulario">
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" rows="4" required></textarea>
+          </div>
+          <div class="grupo-formulario">
+            <label for="foto">Foto (URL):</label>
+            <input type="url" id="foto" placeholder="https://ejemplo.com/foto.jpg">
+          </div>
+          <div class="grupo-formulario">
+            <label for="contacto">Contacto:</label>
+            <input type="text" id="contacto" required placeholder="Teléfono o email">
+          </div>
+          <button type="submit" class="boton boton-publicar">Publicar Mascota</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-logo">
+        <img src="IMG/logofotter.png" alt="logo">
+      </div>
+      <div class="footer-brand">CLINIC PET</div>
+      <div class="row">
+        <div class="col-lg-4 mb-5 mb-lg-0">
+          <p class="footer-lema">"Simplifica tu trabajo, mejora su salud"</p>
+          <p>Nuestra plataforma digital está diseñada para <br> optimizar la gestión clínica, conectando a
+            <br>
+            veterinarios y
+            propietarios de mascotas a través <br> de un sistema eficiente, seguro y personalizado.
+          </p>
+          <div class="social-links mt-4">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+          <h5 class="footer-title">Contacto</h5>
+          <div class="footer-links">
+            <a href="#"><i class="fas fa-map-marker-alt me-2"></i> Duitama, Boyacá</a>
+            <a href="tel: 01 8000 45 78 90"><i class="fas fa-phone me-2"></i> 018000 45 78 90</a>
+            <a href="mailto:info@clinicpet.com"><i class="fas fa-envelope me-2"></i>
+              info@clinicpet.com</a>
+          </div>
+        </div>
+
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 CLINIC PET. Todos los derechos reservados. Desarrollado en Duitama, Boyacá</p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+<!-- Footer -->
+
+<script src="JS/JS-Adopciones.js"></script>
+
+</html>
