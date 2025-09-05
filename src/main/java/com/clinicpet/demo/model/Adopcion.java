@@ -8,8 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "adopcion")
 public class Adopcion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +36,7 @@ public class Adopcion {
 			Veterinaria veterinaria) {
 		super();
 		this.id = id;
-		FechaSolicitud = fechaSolicitud;
+		this.FechaSolicitud = fechaSolicitud;
 		this.estado = estado;
 		this.usuarioAdoptante = usuarioAdoptante;
 		this.veterinaria = veterinaria;

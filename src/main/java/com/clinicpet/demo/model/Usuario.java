@@ -22,7 +22,7 @@ public class Usuario {
 	private String apellido;
 
 	@ManyToOne
-	@JoinColumn(name = "rol_id") // Esto debe coincidir con el mappedBy en Rol
+	@JoinColumn(name = "rol_id") 
 	private Rol rol;
 
 	// constructor vacío
