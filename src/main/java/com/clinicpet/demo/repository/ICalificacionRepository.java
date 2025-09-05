@@ -1,5 +1,5 @@
 package com.clinicpet.demo.repository;
 
-public interface IHistoriaClinica {
+public interface ICalificacionRepository {
 
 }

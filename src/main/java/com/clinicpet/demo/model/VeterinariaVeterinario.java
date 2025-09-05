@@ -17,7 +17,7 @@ public class VeterinariaVeterinario {
 
 	@ManyToOne
 	@JoinColumn(name = "idVeterinaria")
-	private Veterinaria veterianria;
+	private Veterinaria veterinaria;
 
 	@ManyToOne
 	@JoinColumn(name = "idUsuarioVeterinario")
@@ -27,10 +27,10 @@ public class VeterinariaVeterinario {
 
 	}
 
-	public VeterinariaVeterinario(Integer id, Veterinaria veterianria, Usuario veterinario) {
+	public VeterinariaVeterinario(Integer id, Veterinaria veterinaria, Usuario veterinario) {
 		super();
 		this.id = id;
-		this.veterianria = veterianria;
+		this.veterinaria = veterinaria;
 		this.veterinario = veterinario;
 	}
 
@@ -42,12 +42,12 @@ public class VeterinariaVeterinario {
 		this.id = id;
 	}
 
-	public Veterinaria getVeterianria() {
-		return veterianria;
+	public Veterinaria getVeterinaria() {
+		return veterinaria;
 	}
 
-	public void setVeterianria(Veterinaria veterianria) {
-		this.veterianria = veterianria;
+	public void setVeterinaria(Veterinaria veterinaria) {
+		this.veterinaria = veterinaria;
 	}
 
 	public Usuario getVeterinario() {
