@@ -9,15 +9,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Mascota")
+@Table(name = "mascota")
 public class Mascota {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idMascota;
-	@ManyToOne
-	@JoinColumn(name = "idUsuario")
-	private Usuario usuario; // dueño actual
 	private String nombre;
 	private String especie;
 	private String raza;
@@ -28,7 +25,12 @@ public class Mascota {
 	private String estado; // disponible, adoptada, en proceso
 	private String foto;
 
+	@ManyToOne
+	@JoinColumn(name = "idUsuario")
+	private Usuario usuario; // dueño actual
+
 	// constructor vacio
+
 	public Mascota() {
 	}
 
