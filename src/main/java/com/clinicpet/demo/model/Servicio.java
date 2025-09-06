@@ -17,15 +17,14 @@ import jakarta.persistence.Table;
 public class Servicio {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idServicio;
+	private Integer id;
+	private String nombre;
+	private String descripcion;
+	private Double precioBase;
 
 	@ManyToOne
 	@JoinColumn(name = "rol_id")
 	private Veterinaria veterinaria;
-
-	private String nombre;
-	private String descripcion;
-	private Double precioBase;
 
 	@OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL)
 	private List<Cita> citas;
@@ -37,32 +36,24 @@ public class Servicio {
 
 	}
 
-	public Servicio(Integer idServicio, Veterinaria veterinaria, String nombre, String descripcion, Double precioBase,
+	public Servicio(Integer id, String nombre, String descripcion, Double precioBase, Veterinaria veterinaria,
 			List<Cita> citas, List<Calificacion> calificaciones) {
 		super();
-		this.idServicio = idServicio;
-		this.veterinaria = veterinaria;
+		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precioBase = precioBase;
+		this.veterinaria = veterinaria;
 		this.citas = citas;
 		this.calificaciones = calificaciones;
 	}
 
-	public Integer getIdServicio() {
-		return idServicio;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setIdServicio(Integer idServicio) {
-		this.idServicio = idServicio;
-	}
-
-	public Veterinaria getVeterinaria() {
-		return veterinaria;
-	}
-
-	public void setVeterinaria(Veterinaria veterinaria) {
-		this.veterinaria = veterinaria;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getNombre() {
@@ -89,6 +80,14 @@ public class Servicio {
 		this.precioBase = precioBase;
 	}
 
+	public Veterinaria getVeterinaria() {
+		return veterinaria;
+	}
+
+	public void setVeterinaria(Veterinaria veterinaria) {
+		this.veterinaria = veterinaria;
+	}
+
 	public List<Cita> getCitas() {
 		return citas;
 	}
@@ -107,8 +106,8 @@ public class Servicio {
 
 	@Override
 	public String toString() {
-		return "Servicio [idServicio=" + idServicio + ", nombre=" + nombre + ", descripcion=" + descripcion
-				+ ", precioBase=" + precioBase + "]";
+		return "Servicio [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", precioBase="
+				+ precioBase + "]";
 	}
 
 }

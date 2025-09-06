@@ -1,6 +1,6 @@
 package com.clinicpet.demo.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +16,7 @@ public class Adopcion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private LocalDate FechaSolicitud;
+	private Date fechaSolicitud;
 	private String estado;
 
 	@ManyToOne
@@ -27,19 +27,24 @@ public class Adopcion {
 	@JoinColumn(name = "idVeterinaria", nullable = false)
 	private Veterinaria veterinaria;
 
+	@ManyToOne
+	@JoinColumn(name = "idMascota")
+	private Mascota mascota;
+
 	// constructos vacio
 	public Adopcion() {
 	}
 
 	// constructor con campos
-	public Adopcion(Integer id, LocalDate fechaSolicitud, String estado, Usuario usuarioAdoptante,
-			Veterinaria veterinaria) {
+	public Adopcion(Integer id, Date fechaSolicitud, String estado, Usuario usuarioAdoptante, Veterinaria veterinaria,
+			Mascota mascota) {
 		super();
 		this.id = id;
-		this.FechaSolicitud = fechaSolicitud;
+		this.fechaSolicitud = fechaSolicitud;
 		this.estado = estado;
 		this.usuarioAdoptante = usuarioAdoptante;
 		this.veterinaria = veterinaria;
+		this.mascota = mascota;
 	}
 
 	public Integer getId() {
@@ -50,12 +55,12 @@ public class Adopcion {
 		this.id = id;
 	}
 
-	public LocalDate getFechaSolicitud() {
-		return FechaSolicitud;
+	public Date getFechaSolicitud() {
+		return fechaSolicitud;
 	}
 
-	public void setFechaSolicitud(LocalDate fechaSolicitud) {
-		FechaSolicitud = fechaSolicitud;
+	public void setFechaSolicitud(Date fechaSolicitud) {
+		this.fechaSolicitud = fechaSolicitud;
 	}
 
 	public String getEstado() {
@@ -82,9 +87,17 @@ public class Adopcion {
 		this.veterinaria = veterinaria;
 	}
 
+	public Mascota getMascota() {
+		return mascota;
+	}
+
+	public void setMascota(Mascota mascota) {
+		this.mascota = mascota;
+	}
+
 	@Override
 	public String toString() {
-		return "Adopcion [id=" + id + ", FechaSolicitud=" + FechaSolicitud + ", estado=" + estado + "]";
+		return "Adopcion [id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", estado=" + estado + "]";
 	}
 
 }

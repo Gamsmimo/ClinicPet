@@ -1,7 +1,9 @@
 package com.clinicpet.demo.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,9 +26,9 @@ public class PerfilUsuario {
 	@OneToOne
 	private Usuario usuario;
 
-	// Relación con Mascotas
-	@OneToMany(mappedBy = "usuario")
-	private List<Mascota> mascota;
+	// Relación con Mascota (1 perfil -> N mascotas)
+	@OneToMany(mappedBy = "perfilusuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Mascota> mascota = new ArrayList<>();
 
 	// constructor vacio
 	public PerfilUsuario() {

@@ -1,6 +1,6 @@
 package com.clinicpet.demo.model;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -21,7 +22,10 @@ public class Venta {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idVentas;
+	private Integer id;
+	private Double subtotal;
+	private Double total;
+
 	@ManyToOne
 	@JoinColumn(name = "idUsuario")
 	private Usuario usuario;
@@ -29,23 +33,20 @@ public class Venta {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fecha;
 
-	private Double subtotal;
-	private Double total;
-
 	@OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
 	private List<DetalleVenta> detallesVenta;
 
-	@OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "venta", cascade = CascadeType.ALL)
 	private Pago pago;
 
 	public Venta() {
 
 	}
 
-	public Venta(Integer idVentas, Usuario usuario, Date fecha, Double subtotal, Double total,
+	public Venta(Integer id, Usuario usuario, Date fecha, Double subtotal, Double total,
 			List<DetalleVenta> detallesVenta, Pago pago) {
 		super();
-		this.idVentas = idVentas;
+		this.id = id;
 		this.usuario = usuario;
 		this.fecha = fecha;
 		this.subtotal = subtotal;
@@ -54,12 +55,12 @@ public class Venta {
 		this.pago = pago;
 	}
 
-	public Integer getIdVentas() {
-		return idVentas;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setIdVentas(Integer idVentas) {
-		this.idVentas = idVentas;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public Usuario getUsuario() {
@@ -112,8 +113,8 @@ public class Venta {
 
 	@Override
 	public String toString() {
-		return "Venta [idVentas=" + idVentas + ", usuario=" + usuario + ", fecha=" + fecha + ", subtotal=" + subtotal
-				+ ", total=" + total + "]";
+		return "Venta [id=" + id + ", usuario=" + usuario + ", fecha=" + fecha + ", subtotal=" + subtotal + ", total="
+				+ total + "]";
 	}
 
 }

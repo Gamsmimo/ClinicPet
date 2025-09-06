@@ -14,7 +14,7 @@ public class Mascota {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idMascota;
+	private Integer id;
 	private String nombre;
 	private String especie;
 	private String raza;
@@ -25,9 +25,10 @@ public class Mascota {
 	private String estado; // disponible, adoptada, en proceso
 	private String foto;
 
+	// Relación con PerfilUsuario (N mascotas -> 1 perfil)
 	@ManyToOne
-	@JoinColumn(name = "idUsuario")
-	private Usuario usuario; // dueño actual
+	@JoinColumn(name = "idPerfilUsuario", nullable = false) // FK en la tabla mascota
+	private PerfilUsuario perfilusuario; // dueño actual
 
 	// constructor vacio
 
@@ -35,10 +36,10 @@ public class Mascota {
 	}
 
 	// constructor con campos
-	public Mascota(Integer idMascota, String nombre, String especie, String raza, Integer edad, String genero,
-			String tamaño, String descripcion, String estado, String foto, Usuario usuario) {
+	public Mascota(Integer id, String nombre, String especie, String raza, Integer edad, String genero, String tamaño,
+			String descripcion, String estado, String foto, PerfilUsuario perfilusuario) {
 		super();
-		this.idMascota = idMascota;
+		this.id = id;
 		this.nombre = nombre;
 		this.especie = especie;
 		this.raza = raza;
@@ -48,15 +49,15 @@ public class Mascota {
 		this.descripcion = descripcion;
 		this.estado = estado;
 		this.foto = foto;
-		this.usuario = usuario;
+		this.perfilusuario = perfilusuario;
 	}
 
-	public Integer getIdMascota() {
-		return idMascota;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setIdMascota(Integer idMascota) {
-		this.idMascota = idMascota;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getNombre() {
@@ -131,19 +132,19 @@ public class Mascota {
 		this.foto = foto;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
+	public PerfilUsuario getPerfilusuario() {
+		return perfilusuario;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setPerfilusuario(PerfilUsuario perfilusuario) {
+		this.perfilusuario = perfilusuario;
 	}
 
 	@Override
 	public String toString() {
-		return "Mascota [idMascota=" + idMascota + ", nombre=" + nombre + ", especie=" + especie + ", raza=" + raza
-				+ ", edad=" + edad + ", genero=" + genero + ", tamaño=" + tamaño + ", descripcion=" + descripcion
-				+ ", estado=" + estado + ", foto=" + foto + "]";
+		return "Mascota [id=" + id + ", nombre=" + nombre + ", especie=" + especie + ", raza=" + raza + ", edad=" + edad
+				+ ", genero=" + genero + ", tamaño=" + tamaño + ", descripcion=" + descripcion + ", estado=" + estado
+				+ ", foto=" + foto + "]";
 	}
 
 }

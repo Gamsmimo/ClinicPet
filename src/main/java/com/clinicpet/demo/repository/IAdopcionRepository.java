@@ -1,6 +1,6 @@
 package com.clinicpet.demo.repository;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,14 +15,14 @@ public interface IAdopcionRepository extends JpaRepository<Adopcion, Integer> {
 	List<Adopcion> findByEstado(String estado);
 
 	// busacr por id de la mascota
-	List<Adopcion> finByMascotaId(Integer mascotaId);
+	List<Adopcion> findByMascota_Id(Integer mascotaId);
 
 	// buscar por usuario adoptante
-	List<Adopcion> findByAdoptanteId(Integer usuarioId);
+	List<Adopcion> findByUsuarioAdoptante_Id(Integer usuarioAdoptante);
 
 	// buscar por veterinaria
-	List<Adopcion> finfByVeterinariaId(Integer veterinariaId);
+	List<Adopcion> findByVeterinaria_Id(Integer veterinariaId);
 
 	// buscar por fecha de solicitud
-	List<Adopcion> finfByFechaSolicitud(LocalDate FechaSolicitud);
+	List<Adopcion> findByFechaSolicitud(Date fechaSolicitud);
 }

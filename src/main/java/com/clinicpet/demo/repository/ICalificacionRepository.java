@@ -12,13 +12,13 @@ import com.clinicpet.demo.model.Calificacion;
 public interface ICalificacionRepository extends JpaRepository<Calificacion, Integer> {
 
 //buscar por usuario que califica 	
-	List<Calificacion> findByUsuario(Integer ussuarioId);
+	List<Calificacion> findByUsuario_Id(Integer ussuarioId);
 
 	// buscar por calificación a veterinarios
-	List<Calificacion> findByVeterinario(Integer veterinarioId);
+	List<Calificacion> findByVeterinario_Id(Integer veterinarioId);
 
 	// buscar por servicio calificado
-	List<Calificacion> findByServicioId(Integer ServicioId);
+	List<Calificacion> findByServicio_Id(Integer ServicioId);
 
 	// buscar por fecha
 	List<Calificacion> findByFecha(LocalDate fecha);

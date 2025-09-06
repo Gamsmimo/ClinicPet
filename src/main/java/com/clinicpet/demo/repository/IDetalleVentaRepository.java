@@ -11,7 +11,7 @@ import com.clinicpet.demo.model.DetalleVenta;
 public interface IDetalleVentaRepository extends JpaRepository<DetalleVenta, Integer> {
 
 	// buscar los detalles de una venta especifica
-	List<DetalleVenta> finfByVentaId(Integer ventaId);
+	List<DetalleVenta> findByVentaId(Integer ventaId);
 
 	// buscar los detalles de un producto esecifico
 	List<DetalleVenta> findByProductoId(Integer productoId);

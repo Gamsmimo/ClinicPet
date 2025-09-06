@@ -12,7 +12,7 @@ import com.clinicpet.demo.model.Cita;
 public interface ICitaRepository extends JpaRepository<Cita, Integer> {
 
 	// buscar todas las citas de un usuario
-	List<Cita> finfByUsuarioId(Integer usuarioId);
+	List<Cita> findByUsuarioId(Integer usuarioId);
 
 	// buscar las citas de un veterinario
 	List<Cita> findByVeterinarioId(Integer veterinarioId);

@@ -14,7 +14,7 @@ public interface ICarritoRepository extends JpaRepository<Carrito, Integer> {
 	List<Carrito> findByUsuarioId(Integer usuaruioId);
 
 	// buscar carritos de un usuario por su estado
-	List<Carrito> finfByUsuarioIdAndEstado(Integer usuarioId, String estado);
+	List<Carrito> findByUsuarioIdAndEstado(Integer usuarioId, String estado);
 
 	// buscar todos los carritos por estado
 	List<Carrito> findByEstado(String estado);

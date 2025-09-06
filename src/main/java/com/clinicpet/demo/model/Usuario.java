@@ -22,7 +22,7 @@ public class Usuario {
 	private String apellido;
 
 	@ManyToOne
-	@JoinColumn(name = "rol_id") 
+	@JoinColumn(name = "rol_id")
 	private Rol rol;
 
 	// constructor vacío

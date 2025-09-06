@@ -11,7 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table (name ="producto")
+@Table(name = "producto")
 public class Producto {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +21,6 @@ public class Producto {
 	private Double precio;
 	private Integer stock;
 
-	@ManyToMany(mappedBy = "producto")
-	private List<Carrito> carrito;
-
 	@OneToMany(mappedBy = "producto")
 	private List<DetalleVenta> detalle;
 
@@ -32,15 +29,14 @@ public class Producto {
 	}
 	// constructor con campos
 
-	public Producto(Integer id, String nombre, String descripcion, Double precio, Integer stock, List<Carrito> carrito,
-			List<DetalleVenta> detalle) {
+	public Producto(Integer id, String nombre, String descripcion, Double precio, Integer stock,
+			List<CarritoProducto> carritoproducto, List<DetalleVenta> detalle) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precio = precio;
 		this.stock = stock;
-		this.carrito = carrito;
 		this.detalle = detalle;
 	}
 
@@ -84,20 +80,18 @@ public class Producto {
 		this.stock = stock;
 	}
 
-	public List<Carrito> getCarrito() {
-		return carrito;
-	}
-
-	public void setCarrito(List<Carrito> carrito) {
-		this.carrito = carrito;
-	}
-
 	public List<DetalleVenta> getDetalle() {
 		return detalle;
 	}
 
 	public void setDetalle(List<DetalleVenta> detalle) {
 		this.detalle = detalle;
+	}
+
+	@Override
+	public String toString() {
+		return "Producto [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", precio=" + precio
+				+ ", stock=" + stock + "]";
 	}
 
 }

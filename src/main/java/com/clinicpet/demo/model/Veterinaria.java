@@ -1,7 +1,9 @@
 package com.clinicpet.demo.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +16,7 @@ import jakarta.persistence.Table;
 public class Veterinaria {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer idVeterinaria;
+	private Integer id;
 	private String nombre;
 	private String direccion;
 	private String telefono;
@@ -34,8 +36,8 @@ public class Veterinaria {
 	@OneToMany(mappedBy = "veterinaria")
 	private List<HistoriaClinica> historiasClinicas;
 
-	@OneToMany(mappedBy = "veterinaria")
-	private List<Emergencia> emergencias;
+	@OneToMany(mappedBy = "veterinaria", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Emergencia> emergencias = new ArrayList<>();
 
 	@OneToMany(mappedBy = "veterinaria")
 	private List<VeterinariaVeterinario> veterinarios;
@@ -44,12 +46,12 @@ public class Veterinaria {
 
 	}
 
-	public Veterinaria(Integer idVeterinaria, String nombre, String direccion, String telefono, String correo,
-			String horario, String descripcion, List<Adopcion> adopciones, List<Servicio> servicios,
-			List<Inventario> inventarios, List<HistoriaClinica> historiasClinicas, List<Emergencia> emergencias,
+	public Veterinaria(Integer id, String nombre, String direccion, String telefono, String correo, String horario,
+			String descripcion, List<Adopcion> adopciones, List<Servicio> servicios, List<Inventario> inventarios,
+			List<HistoriaClinica> historiasClinicas, List<Emergencia> emergencias,
 			List<VeterinariaVeterinario> veterinarios) {
 		super();
-		this.idVeterinaria = idVeterinaria;
+		this.id = id;
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.telefono = telefono;
@@ -64,12 +66,12 @@ public class Veterinaria {
 		this.veterinarios = veterinarios;
 	}
 
-	public Integer getIdVeterinaria() {
-		return idVeterinaria;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setIdVeterinaria(Integer idVeterinaria) {
-		this.idVeterinaria = idVeterinaria;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getNombre() {
@@ -170,9 +172,8 @@ public class Veterinaria {
 
 	@Override
 	public String toString() {
-		return "Veterinaria [idVeterinaria=" + idVeterinaria + ", nombre=" + nombre + ", direccion=" + direccion
-				+ ", telefono=" + telefono + ", correo=" + correo + ", horario=" + horario + ", descripcion="
-				+ descripcion + "]";
+		return "Veterinaria [id=" + id + ", nombre=" + nombre + ", direccion=" + direccion + ", telefono=" + telefono
+				+ ", correo=" + correo + ", horario=" + horario + ", descripcion=" + descripcion + "]";
 	}
 
 }

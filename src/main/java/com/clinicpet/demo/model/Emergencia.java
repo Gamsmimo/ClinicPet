@@ -29,6 +29,10 @@ public class Emergencia {
 	@JoinColumn(name = "idVeterinario", nullable = false)
 	private Usuario veterinario;
 
+	@ManyToOne
+	@JoinColumn(name = "idVeterinaria", nullable = false)
+	private Veterinaria veterinaria;
+
 	// constructor sin campos
 	public Emergencia() {
 

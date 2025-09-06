@@ -1,6 +1,6 @@
 package com.clinicpet.demo.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +11,7 @@ public class ReporteMaltrato {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private Date fecha;
+	private LocalDate fecha;
 	private String descripcion;
 	private String estado; // pendiente, en revisión, resuelto
 
@@ -28,7 +28,7 @@ public class ReporteMaltrato {
 	}
 
 //constructor con campos 
-	public ReporteMaltrato(Integer id, Date fecha, String descripcion, String estado, Usuario usuario,
+	public ReporteMaltrato(Integer id, LocalDate fecha, String descripcion, String estado, Usuario usuario,
 			Mascota mascota) {
 		super();
 		this.id = id;
@@ -47,11 +47,11 @@ public class ReporteMaltrato {
 		this.id = id;
 	}
 
-	public Date getFecha() {
+	public LocalDate getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
+	public void setFecha(LocalDate fecha) {
 		this.fecha = fecha;
 	}
 
