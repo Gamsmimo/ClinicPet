@@ -1,29 +1,29 @@
 package com.clinicpet.demo.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.clinicpet.demo.model.Inventario;
 
-@Repository
 public interface IInventarioRepository extends JpaRepository<Inventario, Integer> {
+	
+	// Buscar inventario por id de veterinaria
+    List<Inventario> findByVeterinaria_Id(Integer veterinariaId);
 
-	List<Inventario> findByVeterinaria_VeterinariaId(Integer veterinariaId);
+    // Buscar inventario de un producto en todas las veterinarias
+    List<Inventario> findByProducto_Id(Integer productoId);
 
-	// Buscar inventario de un producto en todas las veterinarias.
-	List<Inventario> findByProducto_ProductoId(Integer productoId);
+    // Buscar inventario de un producto en una veterinaria específica
+    List<Inventario> findByVeterinaria_IdAndProducto_Id(Integer veterinariaId, Integer productoId);
 
-	// Buscar inventario de un producto en una vatyerinaria especifica (unico por
-	// resriccion)
-	Optional<Inventario> findByVeterinaria_VterinariaIdAndProducto_ProductoId(Integer veterinariaId);
+    // Buscar inventarios con cantidad menor a cierto valor
+    List<Inventario> findByCantidadDisponibleLessThan(Integer cantidadDisponible);
 
-	// Buscar inventarios con una cantidad menor que un valor.
-	List<Inventario> findByCantidadDisponibleLessThan(Integer cantidadDisponible);
-
-	// Buscar inventarios con una cantidad mayor o igual a cierto valor.
-	List<Inventario> findByCantidadDisponibleGreaterThanEqual(Integer cantidadDisponible);
+    // Buscar inventarios con cantidad mayor o igual a cierto valor
+    List<Inventario> findByCantidadDisponibleGreaterThanEqual(Integer cantidadDisponible);
 
 }
+
+
+

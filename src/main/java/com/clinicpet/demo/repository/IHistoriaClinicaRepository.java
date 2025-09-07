@@ -10,18 +10,20 @@ import com.clinicpet.demo.model.HistoriaClinica;
 
 @Repository
 public interface IHistoriaClinicaRepository extends JpaRepository<HistoriaClinica, Integer> {
+	
+    List<HistoriaClinica> findByMascota_Id(Integer mascotaId);
 
-	List<HistoriaClinica> findByMascota_MascotaId(Integer mascotaId);
+    List<HistoriaClinica> findByVeterinario_Id(Integer veterinarioId);
 
-	List<HistoriaClinica> findByVeterinario_UsuarioId(Integer veterinarioId);
+    List<HistoriaClinica> findByUsuario_Id(Integer usuarioId);
 
-	List<HistoriaClinica> findByUsuario_UsuarioId(Integer usuarioId);
+    // Buscar historias clínicas en una veterinaria específica
+    List<HistoriaClinica> findByVeterinaria_Id(Integer veterinariaId);
 
-	// Buscar historias clinicas en una veterinaria especifica
-	List<HistoriaClinica> findByVeterinaria_VeterinariaId(Integer veterinariaId);
-
-	// Buscar historias clinicas de mascotas en un rango de fechas.
-	List<HistoriaClinica> findByMascota_MascotaIdAndFevhaBetween(Integer mascotaId, LocalDateTime inicio,
-			LocalDateTime fin);
-
+    // Buscar historias clínicas de mascotas en un rango de fechas
+    List<HistoriaClinica> findByMascota_IdAndFechaBetween(Integer mascotaId, LocalDateTime inicio, LocalDateTime fin);
 }
+
+	
+
+
