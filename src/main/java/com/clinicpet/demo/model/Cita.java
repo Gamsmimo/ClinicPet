@@ -25,7 +25,7 @@ public class Cita {
 
 	@ManyToOne
 	@JoinColumn(name = "idVeterinario", nullable = false)
-	private Usuario veterinario;
+	private PerfilVeterinario veterinario;
 
 	@ManyToOne
 	@JoinColumn(name = "idServicio", nullable = false)
@@ -35,8 +35,7 @@ public class Cita {
 	public Cita() {
 	}
 
-	// constructor con campos
-	public Cita(Integer id, String motivo, LocalDateTime fechaHora, Usuario usuario, Usuario veterinario,
+	public Cita(Integer id, String motivo, LocalDateTime fechaHora, Usuario usuario, PerfilVeterinario veterinario,
 			Servicio servicio) {
 		super();
 		this.id = id;
@@ -79,11 +78,11 @@ public class Cita {
 		this.usuario = usuario;
 	}
 
-	public Usuario getVeterinario() {
+	public PerfilVeterinario getVeterinario() {
 		return veterinario;
 	}
 
-	public void setVeterinario(Usuario veterinario) {
+	public void setVeterinario(PerfilVeterinario veterinario) {
 		this.veterinario = veterinario;
 	}
 

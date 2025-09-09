@@ -2,11 +2,15 @@ package com.clinicpet.demo.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "reportemaltrato")
 public class ReporteMaltrato {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

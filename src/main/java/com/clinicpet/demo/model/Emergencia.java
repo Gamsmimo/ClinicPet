@@ -27,7 +27,7 @@ public class Emergencia {
 
 	@ManyToOne
 	@JoinColumn(name = "idVeterinario", nullable = false)
-	private Usuario veterinario;
+	private PerfilVeterinario veterinario;
 
 	@ManyToOne
 	@JoinColumn(name = "idVeterinaria", nullable = false)
@@ -38,9 +38,8 @@ public class Emergencia {
 
 	}
 
-	// constructor con campos
 	public Emergencia(Integer id, String tipo, LocalDateTime fechayhora, String descripcion, Mascota mascota,
-			Usuario veterinario) {
+			PerfilVeterinario veterinario, Veterinaria veterinaria) {
 		super();
 		this.id = id;
 		this.tipo = tipo;
@@ -48,9 +47,9 @@ public class Emergencia {
 		this.descripcion = descripcion;
 		this.mascota = mascota;
 		this.veterinario = veterinario;
+		this.veterinaria = veterinaria;
 	}
 
-	// getters & setters
 	public Integer getId() {
 		return id;
 	}
@@ -91,12 +90,20 @@ public class Emergencia {
 		this.mascota = mascota;
 	}
 
-	public Usuario getVeterinario() {
+	public PerfilVeterinario getVeterinario() {
 		return veterinario;
 	}
 
-	public void setVeterinario(Usuario veterinario) {
+	public void setVeterinario(PerfilVeterinario veterinario) {
 		this.veterinario = veterinario;
+	}
+
+	public Veterinaria getVeterinaria() {
+		return veterinaria;
+	}
+
+	public void setVeterinaria(Veterinaria veterinaria) {
+		this.veterinaria = veterinaria;
 	}
 
 	// to string
