@@ -1,6 +1,7 @@
 package com.clinicpet.demo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,6 @@ public interface IDetalleVentaRepository extends JpaRepository<DetalleVenta, Int
 	List<DetalleVenta> findByProductoId(Integer productoId);
 
 	// buscar detalles de un producto dentro de una venta especifica
-	List<DetalleVenta> findByVentaIdAndProductoId(Integer ventaId, Integer productoid);
+	Optional<DetalleVenta> findByVentaIdAndProductoId(Integer ventaId, Integer productoid);
 
 }
