@@ -6,22 +6,26 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.clinicpet.demo.model.Evento;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @Repository
 public interface IEventoRepository extends JpaRepository<Evento, Integer> {
+	
+	//Buscar todos los eventos de una veterinaria
+	List<Evento> findByVeterinaria_Id(Integer veterinariaId);
 
 	// Busca evento por titulo ignorando mayusculas/minusculas.
 	List<Evento> findByTituloContainingIgnoreCase(String titulo);
 
-	List<Evento> findByFecha(LocalDateTime fecha);
-
 	// Buscar entre 2 fechas.
-	List<Evento> findByFechaBetween(LocalDateTime inicio, LocalDateTime fin);
+	List<Evento> findByFechainicioBetween(LocalDate inicio, LocalDate fin);
 
-	// Buscar proximos eventos.
-	List<Evento> findByFechaAfter(LocalDateTime fecha);
+	// Buscar eventos en una fecha especifica.
+	List<Evento> findByFechainicio(LocalDate fechainicio);
 
-	// Buscar eventos pasados.
-	List<Evento> findByFechaBefore(LocalDateTime fecha);
+	List<Evento> findByFechafin(LocalDate fechafin);
+	
+	//Buscar eventos activos (que no han terminado aun).
+	List<Evento> findByFechafinAfter(LocalDate fechaActual);
 }

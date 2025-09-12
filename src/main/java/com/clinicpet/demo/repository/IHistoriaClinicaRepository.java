@@ -1,6 +1,6 @@
 package com.clinicpet.demo.repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,7 +21,7 @@ public interface IHistoriaClinicaRepository extends JpaRepository<HistoriaClinic
     List<HistoriaClinica> findByVeterinaria_Id(Integer veterinariaId);
 
     // Buscar historias clínicas de mascotas en un rango de fechas
-    List<HistoriaClinica> findByMascota_IdAndFechaBetween(Integer mascotaId, LocalDateTime inicio, LocalDateTime fin);
+    List<HistoriaClinica> findByMascota_IdAndFechaBetween(Integer mascotaId, LocalDate inicio, LocalDate fin);
 }
 
 	

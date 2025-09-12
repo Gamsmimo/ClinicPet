@@ -1,11 +1,13 @@
 package com.clinicpet.demo.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,8 +19,13 @@ public class Evento {
 	private Integer id;
 	private String titulo;
 	private String descripcion;
-	private LocalDateTime fecha;
+	private LocalDate fechainicio;
+	private LocalDate fechafin;
 	private String imagen;
+
+	@ManyToOne
+	@JoinColumn(name = "idveterinaria", nullable = false)
+	private Veterinaria veterinaria;
 
 	// constructor vacio
 	public Evento() {
@@ -26,13 +33,16 @@ public class Evento {
 	}
 
 	// constructor con campos
-	public Evento(Integer id, String titulo, String descripcion, LocalDateTime fecha, String imagen) {
+	public Evento(Integer id, String titulo, String descripcion, LocalDate fechainicio, LocalDate fechafin,
+			String imagen, Veterinaria veterinaria) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
 		this.descripcion = descripcion;
-		this.fecha = fecha;
+		this.fechainicio = fechainicio;
+		this.fechafin = fechafin;
 		this.imagen = imagen;
+		this.veterinaria = veterinaria;
 	}
 
 	// getters & setters
@@ -60,12 +70,20 @@ public class Evento {
 		this.descripcion = descripcion;
 	}
 
-	public LocalDateTime getFecha() {
-		return fecha;
+	public LocalDate getFechainicio() {
+		return fechainicio;
 	}
 
-	public void setFecha(LocalDateTime fecha) {
-		this.fecha = fecha;
+	public void setFechainicio(LocalDate fechainicio) {
+		this.fechainicio = fechainicio;
+	}
+
+	public LocalDate getFechafin() {
+		return fechafin;
+	}
+
+	public void setFechafin(LocalDate fechafin) {
+		this.fechafin = fechafin;
 	}
 
 	public String getImagen() {
@@ -76,11 +94,19 @@ public class Evento {
 		this.imagen = imagen;
 	}
 
+	public Veterinaria getVeterinaria() {
+		return veterinaria;
+	}
+
+	public void setVeterinaria(Veterinaria veterinaria) {
+		this.veterinaria = veterinaria;
+	}
+
 	// to string
 	@Override
 	public String toString() {
-		return "Evento [id=" + id + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fecha=" + fecha
-				+ ", imagen=" + imagen + "]";
+		return "Evento [id=" + id + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fechainicio="
+				+ fechainicio + ", fechafin=" + fechafin + ", imagen=" + imagen + ", veterinaria=" + veterinaria + "]";
 	}
 
 }
