@@ -5,29 +5,34 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IPerfilVeterinarioService {
+
 	PerfilVeterinario crearPerfilVeterinario(PerfilVeterinario perfilVeterinario);
 
 	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorId(Integer id);
 
-	List<PerfilVeterinario> obtenerTodosLosPerfilesVeterinario();
+	PerfilVeterinario obtenerPerfilVeterinarioPorUsuarioId(Integer usuarioId);
+
+	PerfilVeterinario obtenerPerfilVeterinarioPorUsername(String username);
+
+	List<PerfilVeterinario> obtenerTodosLosPerfilesVeterinarios();
+
+	List<PerfilVeterinario> obtenerVeterinariosPorEspecialidad(String especialidad);
+
+	PerfilVeterinario obtenerVeterinarioPorRut(String rut);
+
+	List<PerfilVeterinario> obtenerVeterinariosPorTelefono(String telefono);
+
+	List<PerfilVeterinario> obtenerVeterinariosDisponibles();
 
 	PerfilVeterinario actualizarPerfilVeterinario(Integer id, PerfilVeterinario perfilVeterinario);
 
 	void eliminarPerfilVeterinario(Integer id);
 
-	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorUsuarioId(Integer usuarioId);
-
-	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorUsername(String username);
-
-	List<PerfilVeterinario> obtenerPerfilesVeterinarioPorEspecialidad(String especialidad);
-
-	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorRut(String rut);
-
-	List<PerfilVeterinario> obtenerPerfilesVeterinarioPorTelefono(String telefono);
-
-	List<PerfilVeterinario> obtenerVeterinariosDisponibles();
-
 	boolean existePerfilVeterinarioPorUsuarioId(Integer usuarioId);
 
-	boolean existePerfilVeterinarioPorRut(String rut);
+	boolean existePerfilVeterinarioPorId(Integer id);
+
+	boolean existeVeterinarioPorRut(String rut);
+
+	long contarCitasPorVeterinario(Integer veterinarioId);
 }

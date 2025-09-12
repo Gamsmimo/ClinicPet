@@ -5,25 +5,30 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IPerfilUsuarioService {
+
 	PerfilUsuario crearPerfilUsuario(PerfilUsuario perfilUsuario);
 
 	Optional<PerfilUsuario> obtenerPerfilUsuarioPorId(Integer id);
 
-	List<PerfilUsuario> obtenerTodosLosPerfilesUsuario();
+	PerfilUsuario obtenerPerfilUsuarioPorUsuarioId(Integer usuarioId);
+
+	PerfilUsuario obtenerPerfilUsuarioPorUsername(String username);
+
+	List<PerfilUsuario> obtenerTodosLosPerfilesUsuarios();
+
+	List<PerfilUsuario> obtenerPerfilesPorDireccion(String direccion);
+
+	List<PerfilUsuario> obtenerPerfilesPorTelefono(String telefono);
+
+	List<PerfilUsuario> obtenerPerfilesConMascotas();
 
 	PerfilUsuario actualizarPerfilUsuario(Integer id, PerfilUsuario perfilUsuario);
 
 	void eliminarPerfilUsuario(Integer id);
 
-	Optional<PerfilUsuario> obtenerPerfilUsuarioPorUsuarioId(Integer usuarioId);
-
-	Optional<PerfilUsuario> obtenerPerfilUsuarioPorUsername(String username);
-
-	List<PerfilUsuario> obtenerPerfilesUsuarioPorDireccion(String direccion);
-
-	List<PerfilUsuario> obtenerPerfilesUsuarioPorTelefono(String telefono);
-
-	List<PerfilUsuario> obtenerPerfilesUsuarioConMascotas();
-
 	boolean existePerfilUsuarioPorUsuarioId(Integer usuarioId);
+
+	boolean existePerfilUsuarioPorId(Integer id);
+
+	long contarMascotasPorPerfil(Integer perfilId);
 }

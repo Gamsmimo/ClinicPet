@@ -5,13 +5,24 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IPerfilAdministradorService {
-    PerfilAdministrador crearPerfilAdministrador(PerfilAdministrador perfilAdministrador);
-    Optional<PerfilAdministrador> obtenerPerfilAdministradorPorId(Integer id);
-    List<PerfilAdministrador> obtenerTodosLosPerfilesAdministrador();
-    PerfilAdministrador actualizarPerfilAdministrador(Integer id, PerfilAdministrador perfilAdministrador);
-    void eliminarPerfilAdministrador(Integer id);
-    Optional<PerfilAdministrador> obtenerPerfilAdministradorPorUsuarioId(Integer usuarioId);
-    Optional<PerfilAdministrador> obtenerPerfilAdministradorPorUsername(String username);
-    boolean existePerfilAdministradorPorUsuarioId(Integer usuarioId);
-    List<PerfilAdministrador> obtenerPerfilesAdministradorPorPermisos(String permiso);
-    }
+
+	PerfilAdministrador crearPerfilAdministrador(PerfilAdministrador perfilAdmin);
+
+	Optional<PerfilAdministrador> obtenerPerfilAdministradorPorId(Integer id);
+
+	PerfilAdministrador obtenerPerfilAdministradorPorUsuarioId(Integer usuarioId);
+
+	PerfilAdministrador obtenerPerfilAdministradorPorUsername(String username);
+
+	List<PerfilAdministrador> obtenerTodosLosPerfilesAdministradores();
+
+	List<PerfilAdministrador> obtenerPerfilesPorPermisos(String permiso);
+
+	PerfilAdministrador actualizarPerfilAdministrador(Integer id, PerfilAdministrador perfilAdmin);
+
+	void eliminarPerfilAdministrador(Integer id);
+
+	boolean existePerfilAdministradorPorUsuarioId(Integer usuarioId);
+
+	boolean existePerfilAdministradorPorId(Integer id);
+}

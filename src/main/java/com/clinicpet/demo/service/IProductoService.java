@@ -5,35 +5,38 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProductoService {
+
 	Producto crearProducto(Producto producto);
 
 	Optional<Producto> obtenerProductoPorId(Integer id);
 
 	List<Producto> obtenerTodosLosProductos();
 
-	Producto actualizarProducto(Integer id, Producto producto);
+	List<Producto> buscarProductosPorNombre(String nombre);
 
-	void eliminarProducto(Integer id);
+	List<Producto> buscarProductosPorDescripcion(String descripcion);
 
-	List<Producto> obtenerProductosPorNombre(String nombre);
+	List<Producto> buscarProductosPorRangoPrecio(Double precioMin, Double precioMax);
 
-	List<Producto> obtenerProductosPorDescripcion(String descripcion);
-
-	List<Producto> obtenerProductosPorRangoPrecio(Double precioMin, Double precioMax);
-
-	List<Producto> obtenerProductosConStockDisponible(Integer stockMinimo);
+	List<Producto> obtenerProductosConStockDisponible();
 
 	List<Producto> obtenerProductosConStockBajo(Integer stockMaximo);
 
-	List<Producto> obtenerProductosPorPrecioMayorIgual(Double precioMin);
-
-	List<Producto> obtenerProductosPorPrecioMenorIgual(Double precioMax);
-
 	List<Producto> obtenerProductosMasVendidos();
 
-	List<Producto> obtenerProductosEnStockOrdenadosPorNombre(Integer stock);
+	List<Producto> buscarProductosPorTexto(String texto);
+
+	Producto actualizarProducto(Integer id, Producto producto);
+
+	Producto actualizarStockProducto(Integer id, Integer nuevoStock);
+
+	void eliminarProducto(Integer id);
+
+	boolean existeProductoPorId(Integer id);
 
 	boolean existeProductoPorNombre(String nombre);
 
-	List<Producto> buscarProductosPorTexto(String texto);
+	long contarTotalProductos();
+
+	long contarProductosSinStock();
 }
