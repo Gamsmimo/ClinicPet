@@ -1,7 +1,6 @@
 package com.clinicpet.demo.service;
 
 import java.time.LocalDateTime;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,7 +143,7 @@ public class NotificacionServiceImplement implements INotificacionService {
 		return guardarNotificacion(notificacion);
 	}
 
-	// Método privado para validaciones
+	// Método para validaciones
 	private void validarNotificacion(Notificacion notificacion) {
 		if (notificacion.getMensaje() == null || notificacion.getMensaje().trim().isEmpty()) {
 			throw new IllegalArgumentException("El mensaje de la notificación es obligatorio");
@@ -158,28 +157,25 @@ public class NotificacionServiceImplement implements INotificacionService {
 			throw new IllegalArgumentException("El usuario es obligatorio");
 		}
 
-		// Validar tipos de notificación permitidos (puedes personalizar esta lista)
+		// Validar tipos de notificación permitidos.
 		List<String> tiposPermitidos = List.of("sistema", "recordatorio", "alerta", "promocion", "general");
 		if (!tiposPermitidos.contains(notificacion.getTipo().toLowerCase())) {
 			throw new IllegalArgumentException("Tipo de notificación no válido: " + notificacion.getTipo());
 		}
 
 		// Validar estados permitidos
-		List<String> estadosPermitidos = List.of("leída", "no leída", "archivada");
+		List<String> estadosPermitidos = List.of("Leída", "No leída", "Archivada");
 		if (notificacion.getEstado() != null && !estadosPermitidos.contains(notificacion.getEstado().toLowerCase())) {
 			throw new IllegalArgumentException("Estado de notificación no válido: " + notificacion.getEstado());
 		}
 	}
 
-	// Métodos adicionales útiles
+	//Notificaciones pendientes por leer de un usuario (mostrar contador de notificaciones no leidas)
 	public List<Notificacion> obtenerNotificacionesNoLeidasPorUsuario(Integer usuarioId) {
 		return obtenerNotificacionesPorUsuarioYEstado(usuarioId, "no leída");
 	}
 
-	public List<Notificacion> obtenerNotificacionesLeidasPorUsuario(Integer usuarioId) {
-		return obtenerNotificacionesPorUsuarioYEstado(usuarioId, "leída");
-	}
-
+	//obtiene las "n" notificaciones mas recientes de un usuario evitando la sobrecarga al usuario con demasiadas notificaciones viejas.
 	public List<Notificacion> obtenerUltimasNotificaciones(Integer usuarioId, int limite) {
 		List<Notificacion> todas = obtenerNotificacionesRecientesPorUsuario(usuarioId);
 		return todas.stream().limit(limite).toList();

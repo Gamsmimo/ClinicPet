@@ -8,21 +8,31 @@ import com.clinicpet.demo.model.Emergencia;
 
 public interface IEmergenciaService {
 
-	public List<Emergencia> findAll();
+// Guardar/actualizar una emergencia
+	public Emergencia guardarEmergencia(Emergencia emergencia);
 
-	public Optional<Emergencia> findById(Integer id);
+// Obtener todas las emergencias
+	public List<Emergencia> obtenerTodasLasEmergencias();
 
-	public Emergencia save(Emergencia emergencia);
+// Obtener una emergencia por ID
+	public Optional<Emergencia> obtenerEmergenciaPorId(Integer id);
 
-	public void deleteById(Integer id);
+// Eliminar una emergencia por ID
+	public void eliminarEmergencia(Integer id);
 
-	public List<Emergencia> findByTipo(String tipo);
+	public List<Emergencia> obtenerEmergenciasPorTipo(String tipo);
 
-	public List<Emergencia> findByMascotaId(Integer mascotaId);
+	public List<Emergencia> obtenerEmergenciasPorMascota(Integer mascotaId);
 
-	public List<Emergencia> findByVeterinarioId(Integer veterinarioId);
+	public List<Emergencia> obtenerEmergenciasPorVeterinario(Integer veterinarioId);
 
-	public List<Emergencia> findByMascotaIdAndFechaHoraBetween(Integer mascotaId, LocalDateTime inicio,
+	public List<Emergencia> obtenerEmergenciasPorMascotaYRangoFechas(Integer mascotaId, LocalDateTime inicio,
 			LocalDateTime fin);
 
+// Métodos adicionales para gestión de emergencias
+	public List<Emergencia> obtenerEmergenciasRecientes();
+
+	public List<Emergencia> obtenerEmergenciasDeHoy();
+
+	public List<Emergencia> obtenerEmergenciasPorRangoFechas(LocalDateTime inicio, LocalDateTime fin);
 }

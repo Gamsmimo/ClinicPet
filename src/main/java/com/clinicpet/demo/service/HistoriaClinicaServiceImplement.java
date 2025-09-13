@@ -129,8 +129,7 @@ public class HistoriaClinicaServiceImplement implements IHistoriaClinicaService 
 		return obtenerTodasLasHistoriasClinicas().stream().filter(hc -> hc.getFecha().equals(hoy)).toList();
 	}
 
-	// metodo para tener el historial de la mascota ordenado,para ver la evolucion
-	// de la salud de la mascota.
+	// metodo para tener el historial de la mascota ordenado,para ver la evolucion de la salud de la mascota.
 	public List<HistoriaClinica> obtenerHistorialCompletoMascota(Integer mascotaId) {
 		List<HistoriaClinica> historiales = obtenerHistoriasPorMascota(mascotaId);
 		// Ordenar de más reciente a más antiguo
