@@ -3,6 +3,7 @@ package com.clinicpet.demo.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.clinicpet.demo.model.Usuario;
 
 @Repository
-public interface IUsuarioRepository {
+public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 	Optional<Usuario> findByUsername(String username);
 
 	Optional<Usuario> findByEmail(String email);
@@ -28,7 +29,7 @@ public interface IUsuarioRepository {
 
 	boolean existsByUsername(String username);
 
-	boolean existByEmail(String email);
+	boolean existsByEmail(String email);
 
 	Optional<Usuario> findByUsernameOrEmail(String username, String email);
 
