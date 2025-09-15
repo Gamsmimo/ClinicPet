@@ -1,6 +1,5 @@
 package com.clinicpet.demo.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,54 +16,46 @@ public class AdopcionServiceImplement implements IAdopcionService {
 	private IAdopcionRepository adopcionRepository;
 
 	// CRUD
-
-	// guardar las adopciones
+	@Override
 	public Adopcion guardarAdopcion(Adopcion adopcion) {
 		return adopcionRepository.save(adopcion);
 	}
 
-	// listar las adopciones
+	@Override
 	public List<Adopcion> listarAdopciones() {
 		return adopcionRepository.findAll();
 	}
 
-	// buscar las adopciones por id
-	public Optional<Adopcion> buscarPorId(Integer id) {
+	@Override
+	public Optional<Adopcion> buscarAdopcionById(Integer id) {
 		return adopcionRepository.findById(id);
 	}
 
-	// Eliminar adopción por id
+	@Override
 	public void eliminarAdopcion(Integer id) {
 		adopcionRepository.deleteById(id);
+
 	}
 
-	// METODOS PERSONALIZADOS JEJEJEJ
-	// buscar adopción por estado
+	// METODOS PERSONALIZADOS
 	@Override
-	public List<Adopcion> buscarPorEstado(String estado) {
+	public List<Adopcion> buscarAdopcionesByEstado(String estado) {
 		return adopcionRepository.findByEstado(estado);
 	}
 
-	// buscar por mascota
 	@Override
-	public List<Adopcion> buscarPorMascota(Integer mascotaId) {
-		return adopcionRepository.findByMascota_Id(mascotaId);
-	}
-
-//buscar por usuario adoptante 
-	@Override
-	public List<Adopcion> buscarPorUsuarioAdoptante(Integer usuarioAdoptante) {
-		return adopcionRepository.findByUsuarioAdoptante_Id(usuarioAdoptante);
+	public List<Adopcion> buscarAdopcionesByVeterinaria(Integer idVeterinaria) {
+		return adopcionRepository.findByVeterinariaId(idVeterinaria);
 	}
 
 	@Override
-	public List<Adopcion> buscarPorVeterinaria(Integer veterinariaId) {
-		return adopcionRepository.findByVeterinaria_Id(veterinariaId);
+	public List<Adopcion> buscarAdopcionesByUsuarioAdoptante(Integer idUsuario) {
+		return adopcionRepository.findByUsuarioAdoptanteId(idUsuario);
 	}
 
-	// buscar por fecha de solicitud
 	@Override
-	public List<Adopcion> buscarPorFechaSolicitud(Date fechaSolicitud) {
-		return adopcionRepository.findByFechaSolicitud(fechaSolicitud);
+	public Optional<Adopcion> buscarAdopcionesByMascota(Integer idMascota) {
+		return adopcionRepository.findByMascotaId(idMascota);
 	}
+
 }

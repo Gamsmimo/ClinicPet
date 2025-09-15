@@ -3,11 +3,8 @@ package com.clinicpet.demo.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-
 import com.clinicpet.demo.model.Mascota;
 
-@Service
 public interface IMascotaService {
 
 	// CRUD
@@ -17,7 +14,7 @@ public interface IMascotaService {
 
 	Optional<Mascota> buscarMascotaPorId(Integer id);
 
-	void eliminalMascota(Integer id);
+	void eliminarMascota(Integer id);
 
 	// METODOS PERSONALIZADOS
 
@@ -25,7 +22,7 @@ public interface IMascotaService {
 	List<Mascota> buscarPorUsuario(Integer usuarioId);
 
 	// Buscar por estado
-	List<Mascota> buscarPorUsuario(String estado);
+	List<Mascota> buscarPorEstado(String estado);
 
 	// Buscar por especie
 	List<Mascota> buscarPorEspecie(String especie);

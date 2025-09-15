@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.clinicpet.demo.model.Mascota;
 import com.clinicpet.demo.repository.IMascotaRepository;
 
+@Service
 public class MascotaServiceImplement implements IMascotaService {
 	@Autowired
 	private IMascotaRepository mascotaRepository;
@@ -28,7 +30,7 @@ public class MascotaServiceImplement implements IMascotaService {
 	}
 
 	@Override
-	public void eliminalMascota(Integer id) {
+	public void eliminarMascota(Integer id) {
 		mascotaRepository.deleteById(id);
 	}
 
@@ -38,13 +40,13 @@ public class MascotaServiceImplement implements IMascotaService {
 	}
 
 	@Override
-	public List<Mascota> buscarPorUsuario(String estado) {
-		return mascotaRepository.findByEspecie(estado);
+	public List<Mascota> buscarPorEstado(String estado) {
+		return mascotaRepository.findByEstado(estado);
 	}
 
 	@Override
 	public List<Mascota> buscarPorEspecie(String especie) {
-		return mascotaRepository.findByEstado(especie);
+		return mascotaRepository.findByEspecie(especie);
 	}
 
 }
