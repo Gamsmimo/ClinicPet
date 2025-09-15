@@ -1,6 +1,12 @@
 package com.clinicpet.demo.repository;
 
+<<<<<<< HEAD
 import com.clinicpet.demo.model.Veterinaria;
+=======
+import java.util.List;
+import java.util.Optional;
+
+>>>>>>> ed553c6f23c553d689bf55f45f333bb286a87500
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +17,10 @@ import java.util.Optional;
 
 @Repository
 public interface IVeterinariaRepository extends JpaRepository<Veterinaria, Integer> {
+<<<<<<< HEAD
 
+=======
+>>>>>>> ed553c6f23c553d689bf55f45f333bb286a87500
 	Optional<Veterinaria> findByNombre(String nombre);
 
 	List<Veterinaria> findByNombreContainingIgnoreCase(String nombre);
