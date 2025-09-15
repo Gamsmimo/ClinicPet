@@ -2,7 +2,9 @@ package com.clinicpet.demo.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -215,6 +217,20 @@ public class PagoServiceImplement implements IPagoService {
 		LocalDateTime finDia = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
 
 		return obtenerPagosPorRangoFechas(inicioDia, finDia);
+	}
+
+	// metodos para reportes
+	public double calcularIngresosTotales() {
+		return obtenerPagosAprobados().stream().mapToDouble(pago -> pago.getVenta().getTotal()).sum();
+	}
+
+	public double calcularIngresosDelMes() {
+		return obtenerPagosDelMes().stream().filter(pago -> "aprobado".equals(pago.getEstado()))
+				.mapToDouble(pago -> pago.getVenta().getTotal()).sum();
+	}
+
+	public Map<String, Long> obtenerEstadisticasMetodosPago() {
+		return obtenerPagosAprobados().stream().collect(Collectors.groupingBy(Pago::getMetodo, Collectors.counting()));
 	}
 
 	// busqueda avanzada con multiples filtros combinados

@@ -45,79 +45,10 @@ public class EventoServiceImplement implements IEventoService {
 	}
 
 	@Override
-	public List<Evento> obtenerEventosPorVeterinaria(Integer veterinariaId) {
-		// TODO Auto-generated method stub
-		return eventoRepository.findByVeterinaria_Id(veterinariaId);
-	}
-
-	@Override
-	public List<Evento> buscarEventosPorTitulo(String titulo) {
-		// TODO Auto-generated method stub
-		return eventoRepository.findByTituloContainingIgnoreCase(titulo);
-	}
-
-	@Override
-	public List<Evento> obtenerEventosEntreFechas(LocalDate inicio, LocalDate fin) {
-		// TODO Auto-generated method stub
-		return eventoRepository.findByFechainicioBetween(inicio, fin);
-	}
-
-	@Override
-	public List<Evento> obtenerEventosPorFechaInicio(LocalDate fechaInicio) {
-		// TODO Auto-generated method stub
-		return eventoRepository.findByFechainicio(fechaInicio);
-	}
-
-	@Override
-	public List<Evento> obtenerEventosPorFechaFin(LocalDate fechaFin) {
-		// TODO Auto-generated method stub
-		return eventoRepository.findByFechafin(fechaFin);
-	}
-
-	@Override
-	public List<Evento> obtenerEventosActivos(LocalDate fechaActual) {
-		// TODO Auto-generated method stub
-		return eventoRepository.findByFechafinAfter(fechaActual);
-	}
-
-	@Override
-	public List<Evento> obtenerEventosActivosHoy() {
-		// TODO Auto-generated method stub
-		LocalDate hoy = LocalDate.now();
-		return obtenerTodosLosEventos().stream()
-				.filter(evento -> !hoy.isBefore(evento.getFechainicio()) && !hoy.isAfter(evento.getFechafin()))
-				.toList();
-	}
-
-	@Override
-	public List<Evento> obtenerProximosEventos() {
-		// TODO Auto-generated method stub
-		LocalDate hoy = LocalDate.now();
-		return obtenerTodosLosEventos().stream().filter(evento -> evento.getFechainicio().isAfter(hoy)).toList();
-	}
-
-	@Override
 	public List<Evento> obtenerEventosVigentes() {
 		// TODO Auto-generated method stub
 		LocalDate hoy = LocalDate.now();
-		return obtenerTodosLosEventos().stream().filter(evento -> !evento.getFechafin().isBefore(hoy)).toList();
-	}
-
-	@Override
-	public List<Evento> obtenerEventosExpirados() {
-		// TODO Auto-generated method stub
-		LocalDate hoy = LocalDate.now();
-
-		return obtenerTodosLosEventos().stream().filter(evento -> evento.getFechafin().isBefore(hoy)).toList();
-	}
-
-	@Override
-	public List<Evento> obtenerEventosPorVeterinariaYVigentes(Integer veterinariaId) {
-		// TODO Auto-generated method stub
-		LocalDate hoy = LocalDate.now();
-		List<Evento> eventosVeterinaria = obtenerEventosPorVeterinaria(veterinariaId);
-
-		return eventosVeterinaria.stream().filter(evento -> !evento.getFechafin().isBefore(hoy)).toList();
+		return eventoRepository.findByFechafinAfter(hoy);
 	}
 
 	// Método para validaciones
@@ -158,10 +89,4 @@ public class EventoServiceImplement implements IEventoService {
 		}
 	}
 
-	public List<Evento> buscarEventosPorVeterinariaYTitulo(Integer veterinariaId, String titulo) {
-		List<Evento> eventosVeterinaria = obtenerEventosPorVeterinaria(veterinariaId);
-
-		return eventosVeterinaria.stream()
-				.filter(evento -> evento.getTitulo().toLowerCase().contains(titulo.toLowerCase())).toList();
-	}
 }
