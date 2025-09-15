@@ -1,45 +1,46 @@
 package com.clinicpet.demo.repository;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.clinicpet.demo.model.Veterinaria;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.clinicpet.demo.model.Veterinaria;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface IVeterinariaRepository {
+public interface IVeterinariaRepository extends JpaRepository<Veterinaria, Integer> {
+
 	Optional<Veterinaria> findByNombre(String nombre);
 
 	List<Veterinaria> findByNombreContainingIgnoreCase(String nombre);
 
 	List<Veterinaria> findByDireccionContainingIgnoreCase(String direccion);
 
-	Optional<Veterinaria> finByCorreo(String correo);
+	Optional<Veterinaria> findByCorreo(String correo);
 
-	Optional<Veterinaria> finByTelefono(String telefono);
+	Optional<Veterinaria> findByTelefono(String telefono);
 
-	boolean existByNombre(String nombre);
+	boolean existsByNombre(String nombre);
 
-	boolean existByCorreo(String correo);
+	boolean existsByCorreo(String correo);
 
-	boolean existByTelefono(String telefono);
+	boolean existsByTelefono(String telefono);
 
 	@Query("SELECT v FROM Veterinaria v WHERE LOWER(v.direccion) LIKE LOWER(CONCAT('%',:ciudad, '%'))")
 	List<Veterinaria> findByCiudad(@Param("ciudad") String ciudad);
 
-	@Query("SELECT COUNT(v) FROM Veterinaria v ")
-	long countTotalVeterinarias();
+	// Este método ya viene por defecto con JpaRepository, puedes eliminarlo
+	// long countTotalVeterinarias();
 
-	@Query("SELECT DISTINCT v FROM Veterinaria v JOIN v.serivicios s WHERE LOWER(s.nombre) LIKE LOWER(CONCAT('%', :servicio, '%'))")
+	// Corrige el nombre del campo "servicios" (debe coincidir con tu entidad)
+	@Query("SELECT DISTINCT v FROM Veterinaria v JOIN v.servicios s WHERE LOWER(s.nombre) LIKE LOWER(CONCAT('%', :servicio, '%'))")
 	List<Veterinaria> findByServicioNombre(@Param("servicio") String servicio);
 
 	List<Veterinaria> findByHorarioContaining(String horario);
 
-	List<Veterinaria> findAllByOrdenByNombreAsc();
+	List<Veterinaria> findAllByOrderByNombreAsc();
 
 	List<Veterinaria> findByDescripcionContainingIgnoreCase(String descripcion);
-
 }

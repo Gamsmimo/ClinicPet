@@ -1,17 +1,17 @@
 package com.clinicpet.demo.repository;
 
-import java.util.Date;
-import java.util.List;
-
+import com.clinicpet.demo.model.Usuario;
+import com.clinicpet.demo.model.Venta;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.clinicpet.demo.model.Usuario;
-import com.clinicpet.demo.model.Venta;
+import java.util.Date;
+import java.util.List;
 
 @Repository
-public interface IVentaRepository {
+public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 
 	List<Venta> findByUsuario(Usuario usuario);
 
@@ -27,17 +27,17 @@ public interface IVentaRepository {
 
 	List<Venta> findByTotalLessThan(Double total);
 
-	List<Venta> findByTotalBetwwen(Double minTotal, Double maxTotal);
+	List<Venta> findByTotalBetween(Double minTotal, Double maxTotal); // Corregido
 
 	long countByUsuario(Usuario usuario);
 
 	@Query("SELECT SUM(v.total) FROM Venta v WHERE v.usuario.id = :usuarioId")
 	Double sumTotalByUsuarioId(@Param("usuarioId") Integer usuarioId);
 
-	@Query("SELECT SUM (v.total) FROM Venta v WHERE v.fecha BETWEEN :fechaInicio AND :fechaFin")
+	@Query("SELECT SUM(v.total) FROM Venta v WHERE v.fecha BETWEEN :fechaInicio AND :fechaFin")
 	Double sumTotalByFechaBetween(@Param("fechaInicio") Date fechaInicio, @Param("fechaFin") Date fechaFin);
 
-	@Query("SELECT v FROM Venta v JOING FETCH v.detallesventa WHERE v.id = :ventaId")
+	@Query("SELECT v FROM Venta v JOIN FETCH v.detallesVenta WHERE v.id = :ventaId") // Corregido
 	Venta findVentaWithDetalles(@Param("ventaId") Integer ventaId);
 
 	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.pago WHERE v.id = :ventaId")
@@ -50,12 +50,11 @@ public interface IVentaRepository {
 
 	List<Venta> findBySubtotalGreaterThan(Double subtotal);
 
-	boolean existByUsuarioAndFecha(Usuario usuario, Date fecha);
+	boolean existsByUsuarioAndFecha(Usuario usuario, Date fecha); // Corregido
 
 	@Query("SELECT DATE(v.fecha), SUM(v.total) FROM Venta v WHERE v.fecha BETWEEN :start AND :end GROUP BY DATE(v.fecha)")
-	List<Object[]> getDAilySales(@Param("start") Date start, @Param("end") Date end);
+	List<Object[]> getDailySales(@Param("start") Date start, @Param("end") Date end); // Corregido
 
-	@Query("SELECT v FROM VENTA v LEFT JOIN FETCH v.detallesVenta LEFT JOIN FETCH v.pagp WHERE v.id = :ventaID")
+	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta LEFT JOIN FETCH v.pago WHERE v.id = :ventaId") // Corregido
 	Venta findVentaCompleta(@Param("ventaId") Integer ventaId);
-
 }
