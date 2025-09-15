@@ -1,5 +1,8 @@
 package com.clinicpet.demo.repository;
 
+import com.clinicpet.demo.model.Usuario;
+import com.clinicpet.demo.model.Venta;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,8 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.clinicpet.demo.model.Usuario;
-import com.clinicpet.demo.model.Venta;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface IVentaRepository extends JpaRepository<Venta, Integer> {
@@ -29,19 +32,21 @@ public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 
 	List<Venta> findByTotalLessThan(Double total);
 
-	List<Venta> findByTotalBetween(Double minTotal, Double maxTotal);
+	List<Venta> findByTotalBetween(Double minTotal, Double maxTotal); // Corregido
 
 	long countByUsuario(Usuario usuario);
 
 	@Query("SELECT SUM(v.total) FROM Venta v WHERE v.usuario.id = :usuarioId")
 	Double sumTotalByUsuarioId(@Param("usuarioId") Integer usuarioId);
 
-	@Query("SELECT SUM (v.total) FROM Venta v WHERE v.fecha BETWEEN :fechaInicio AND :fechaFin")
+	@Query("SELECT SUM(v.total) FROM Venta v WHERE v.fecha BETWEEN :fechaInicio AND :fechaFin")
 	Double sumTotalByFechaBetween(@Param("fechaInicio") Date fechaInicio, @Param("fechaFin") Date fechaFin);
 
-    @Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detalles WHERE v.id = :id")
-    Optional<Venta> findByIdWithDetalles(@Param("id") Integer id);
+	@Query("SELECT v FROM Venta v JOIN FETCH v.detallesVenta WHERE v.id = :ventaId") // Corregido
+	Venta findVentaWithDetalles(@Param("ventaId") Integer ventaId);
 
+	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detalles WHERE v.id = :id")
+	Optional<Venta> findByIdWithDetalles(@Param("id") Integer id);
 
 	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.pago WHERE v.id = :ventaId")
 	Venta findVentaWithPago(@Param("ventaId") Integer ventaId);
@@ -53,12 +58,11 @@ public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 
 	List<Venta> findBySubtotalGreaterThan(Double subtotal);
 
-	boolean existsByUsuarioAndFecha(Usuario usuario, Date fecha);
+	boolean existsByUsuarioAndFecha(Usuario usuario, Date fecha); // Corregido
 
 	@Query("SELECT DATE(v.fecha), SUM(v.total) FROM Venta v WHERE v.fecha BETWEEN :start AND :end GROUP BY DATE(v.fecha)")
-	List<Object[]> getDAilySales(@Param("start") Date start, @Param("end") Date end);
+	List<Object[]> getDailySales(@Param("start") Date start, @Param("end") Date end); // Corregido
 
-	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detalles WHERE v.id = :id")
-	Optional<Venta> findVentaCompleta(@Param("id") Integer id);
-
+	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta LEFT JOIN FETCH v.pago WHERE v.id = :ventaId") // Corregido
+	Venta findVentaCompleta(@Param("ventaId") Integer ventaId);
 }
