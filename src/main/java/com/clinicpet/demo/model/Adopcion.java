@@ -13,40 +13,52 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "adopcion")
 public class Adopcion {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+
 	private Date fechaSolicitud;
+
 	private String estado;
 
+	private String descripcion;
+
+	private String imagen; // Si es null "default.jpg"
+
+	private String contacto;
+
+	// Relaciones
 	@ManyToOne
-	@JoinColumn(name = "idUsuarioAdoptante", nullable = false)
-	private Usuario usuarioAdoptante;
+	@JoinColumn(name = "idUsuarioAdoptante")
+	private PerfilUsuario usuarioAdoptante;
 
 	@ManyToOne
 	@JoinColumn(name = "idVeterinaria", nullable = false)
 	private Veterinaria veterinaria;
 
 	@ManyToOne
-	@JoinColumn(name = "idMascota")
+	@JoinColumn(name = "idMascota", nullable = false)
 	private Mascota mascota;
 
-	// constructos vacio
+	// Constructores
 	public Adopcion() {
 	}
 
-	// constructor con campos
-	public Adopcion(Integer id, Date fechaSolicitud, String estado, Usuario usuarioAdoptante, Veterinaria veterinaria,
-			Mascota mascota) {
-		super();
+	public Adopcion(Integer id, Date fechaSolicitud, String estado, String descripcion, String imagen, String contacto,
+			PerfilUsuario usuarioAdoptante, Veterinaria veterinaria, Mascota mascota) {
 		this.id = id;
 		this.fechaSolicitud = fechaSolicitud;
 		this.estado = estado;
+		this.descripcion = descripcion;
+		this.imagen = imagen;
+		this.contacto = contacto;
 		this.usuarioAdoptante = usuarioAdoptante;
 		this.veterinaria = veterinaria;
 		this.mascota = mascota;
 	}
 
+	// Getters y Setters
 	public Integer getId() {
 		return id;
 	}
@@ -71,11 +83,35 @@ public class Adopcion {
 		this.estado = estado;
 	}
 
-	public Usuario getUsuarioAdoptante() {
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public String getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+
+	public String getContacto() {
+		return contacto;
+	}
+
+	public void setContacto(String contacto) {
+		this.contacto = contacto;
+	}
+
+	public PerfilUsuario getUsuarioAdoptante() {
 		return usuarioAdoptante;
 	}
 
-	public void setUsuarioAdoptante(Usuario usuarioAdoptante) {
+	public void setUsuarioAdoptante(PerfilUsuario usuarioAdoptante) {
 		this.usuarioAdoptante = usuarioAdoptante;
 	}
 
@@ -97,7 +133,10 @@ public class Adopcion {
 
 	@Override
 	public String toString() {
-		return "Adopcion [id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", estado=" + estado + "]";
+		return "Adopcion [id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", estado=" + estado + ", descripcion="
+				+ descripcion + ", imagen=" + imagen + ", contacto=" + contacto + ", usuarioAdoptante="
+				+ (usuarioAdoptante != null ? usuarioAdoptante.getId() : null) + ", veterinaria="
+				+ (veterinaria != null ? veterinaria.getId() : null) + ", mascota="
+				+ (mascota != null ? mascota.getId() : null) + "]";
 	}
-
 }

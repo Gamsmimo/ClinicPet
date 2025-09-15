@@ -10,6 +10,8 @@ public interface IPerfilVeterinarioService {
 
 	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorId(Integer id);
 
+	List<PerfilVeterinario> obtenerTodosLosPerfilesVeterinario();
+
 	PerfilVeterinario obtenerPerfilVeterinarioPorUsuarioId(Integer usuarioId);
 
 	PerfilVeterinario obtenerPerfilVeterinarioPorUsername(String username);
@@ -27,12 +29,4 @@ public interface IPerfilVeterinarioService {
 	PerfilVeterinario actualizarPerfilVeterinario(Integer id, PerfilVeterinario perfilVeterinario);
 
 	void eliminarPerfilVeterinario(Integer id);
-
-	boolean existePerfilVeterinarioPorUsuarioId(Integer usuarioId);
-
-	boolean existePerfilVeterinarioPorId(Integer id);
-
-	boolean existeVeterinarioPorRut(String rut);
-
-	long contarCitasPorVeterinario(Integer veterinarioId);
 }

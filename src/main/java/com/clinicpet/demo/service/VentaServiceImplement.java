@@ -124,7 +124,7 @@ public class VentaServiceImplement implements IVentaService {
 	@Override
 	@Transactional(readOnly = true)
 	public Venta findVentaWithDetalles(Integer ventaId) {
-		return ventaRepository.findVentaWithDetalles(ventaId);
+		return ventaRepository.findVentaWithDetallesVenta(ventaId);
 	}
 
 	@Override

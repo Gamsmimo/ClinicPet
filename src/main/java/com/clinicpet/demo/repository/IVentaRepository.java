@@ -12,8 +12,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> e50a455a14e72c42a9d3c649b2f7d9f6ad1817ab
 @Repository
 public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 
@@ -42,10 +45,10 @@ public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 	Double sumTotalByFechaBetween(@Param("fechaInicio") Date fechaInicio, @Param("fechaFin") Date fechaFin);
 
 	@Query("SELECT v FROM Venta v JOIN FETCH v.detallesVenta WHERE v.id = :ventaId") // Corregido
-	Venta findVentaWithDetalles(@Param("ventaId") Integer ventaId);
+	Venta findVentaWithDetallesVenta(@Param("ventaId") Integer ventaId);
 
-	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detalles WHERE v.id = :id")
-	Optional<Venta> findByIdWithDetalles(@Param("id") Integer id);
+	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta WHERE v.id = :id")
+	Optional<Venta> findByIdWithDetallesVenta(@Param("id") Integer id);
 
 	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.pago WHERE v.id = :ventaId")
 	Venta findVentaWithPago(@Param("ventaId") Integer ventaId);

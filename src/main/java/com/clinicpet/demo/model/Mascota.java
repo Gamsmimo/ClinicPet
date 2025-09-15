@@ -25,7 +25,7 @@ public class Mascota {
 	private String estado; // disponible, adoptada, en proceso
 	private String foto;
 
-	// Relación con PerfilUsuario (N mascotas -> 1 perfil)
+	// Relación con PerfilUsuario
 	@ManyToOne
 	@JoinColumn(name = "idPerfilUsuario", nullable = false) // FK en la tabla mascota
 	private PerfilUsuario perfilusuario; // dueño actual
