@@ -18,13 +18,11 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 
 	@Override
 	@Transactional
-
 	public PerfilVeterinario crearPerfilVeterinario(PerfilVeterinario perfilVeterinario) {
 		return perfilVeterinarioRepository.save(perfilVeterinario);
 	}
 
 	@Override
-
 	@Transactional(readOnly = true)
 	public Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorId(Integer id) {
 		return perfilVeterinarioRepository.findById(id);
@@ -48,33 +46,32 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 		return perfilVeterinarioRepository.findAll();
 	}
 
+	@Override
+	public PerfilVeterinario actualizarPerfilVeterinario(Integer id, PerfilVeterinario perfilVeterinario) {
+		if (perfilVeterinarioRepository.existsById(id)) {
+			perfilVeterinario.setId(id);
+			return perfilVeterinarioRepository.save(perfilVeterinario);
+		}
+		return null;
+	}
+
 	@Transactional(readOnly = true)
 	public List<PerfilVeterinario> obtenerVeterinariosPorEspecialidad(String especialidad) {
-
 		return perfilVeterinarioRepository.findByEspecialidad(especialidad);
 	}
 
 	@Override
-
 	public Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorRut(String rut) {
 		return Optional.ofNullable(perfilVeterinarioRepository.findByRut(rut));
 	}
 
 	@Transactional(readOnly = true)
-	public PerfilVeterinario obtenerVeterinarioPorRut(String rut) {
-		return perfilVeterinarioRepository.findByRut(rut);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public List<PerfilVeterinario> obtenerVeterinariosPorTelefono(String telefono) {
-
 		return perfilVeterinarioRepository.findByTelefono(telefono);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-
 	public List<PerfilVeterinario> obtenerVeterinariosDisponibles() {
 		return perfilVeterinarioRepository.findVeterinariosDisponibles();
 	}
@@ -88,4 +85,15 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 	public List<PerfilVeterinario> obtenerTodosLosPerfilesVeterinario() {
 		return perfilVeterinarioRepository.findAll();
 	}
+
+	@Override
+	public PerfilVeterinario obtenerVeterinarioPorRut(String rut) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void eliminarPerfilVeterinario(Integer id) {
+	}
+
 }

@@ -42,6 +42,12 @@ public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 	@Query("SELECT v FROM Venta v JOIN FETCH v.detallesVenta WHERE v.id = :ventaId")
 	Venta findVentaWithDetalles(@Param("ventaId") Integer ventaId);
 
+	@Query("SELECT v FROM Venta v JOIN FETCH v.detallesVenta WHERE v.id = :ventaId") // Corregido
+	Venta findVentaWithDetallesVenta(@Param("ventaId") Integer ventaId);
+
+	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta WHERE v.id = :id")
+	Optional<Venta> findByIdWithDetallesVenta(@Param("id") Integer id);
+
 	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.pago WHERE v.id = :ventaId")
 	Venta findVentaWithPago(@Param("ventaId") Integer ventaId);
 

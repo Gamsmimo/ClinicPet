@@ -27,4 +27,8 @@ public interface IPerfilVeterinarioService {
 	List<PerfilVeterinario> obtenerVeterinariosDisponibles();
 
 	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorRut(String rut);
+
+	PerfilVeterinario actualizarPerfilVeterinario(Integer id, PerfilVeterinario perfilVeterinario);
+
+	void eliminarPerfilVeterinario(Integer id);
 }
