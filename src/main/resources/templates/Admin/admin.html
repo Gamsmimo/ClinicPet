@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ClinicPet | Panel de Administración</title>
+	<link rel="stylesheet" th:href="@{/assets/CSS/estilos.css}">
+</head>
+
+<body>
+	<div class="app">
+		<aside>
+			<div class="brand">
+				<div class="logo" aria-hidden>
+					<!-- simple paw svg -->
+					<img th:src="@{/assets/IMG/logo.png}" alt="ClinicPet Logo" style="width:40px;height:auto;">
+				</div>
+				<h1>ClinicPet · Admin</h1>
+			</div>
+			<nav id="nav">
+				<button class="nav-btn active" data-target="dashboard">📊 Dashboard</button>
+				<button class="nav-btn" data-target="perfil">👤 Perfil</button>
+				<button class="nav-btn" data-target="usuarios">👥 Gestión de usuarios</button>
+				<button class="nav-btn" data-target="mascotas">🐾 Mascotas y adopciones</button>
+				<a th:href="@{/admin/gestion-veterinaria}"><button class="nav-btn" data-target="veterinaria">🏥 Gestión
+						veterinaria</button></a>
+				<button class="nav-btn" data-target="comentarios">💬 Moderación de comentarios <span class="tag">previo
+						a publicación</span></button>
+				<button class="nav-btn" data-target="reportes">🚨 Reportes / Maltrato</button>
+				<button class="nav-btn" data-target="respaldo">🗄️ Respaldo</button>
+			</nav>
+			<div class="footer">Nota: El administrador <b>no puede</b> editar historias clínicas ni agendar citas.</div>
+		</aside>
+
+		<!--Buscador-->
+		<section style="display:flex;flex-direction:column">
+			<header class="topbar">
+				<div class="search">
+					<input id="globalSearch" placeholder="Buscar en tablas (usuarios, mascotas, veterinarios…)" />
+					<button class="btn ghost" id="clearSearch">Limpiar</button>
+				</div>
+				<div>
+					<button class="btn ghost" id="themeToggle">
+						<span id="themeIcon">🌙</span> Tema
+					</button>
+				</div>
+			</header>
+
+			<main>
+				<!-- DASHBOARD -->
+				<section id="dashboard" class="view">
+					<div class="kpis">
+						<div class="kpi">
+							<div class="label">Usuarios activos</div>
+							<div class="value" id="kpiUsers">0</div>
+						</div>
+						<div class="kpi">
+							<div class="label">Mascotas registradas</div>
+							<div class="value" id="kpiPets">0</div>
+						</div>
+						<div class="kpi">
+							<div class="label">Adopciones en curso</div>
+							<div class="value" id="kpiAdoptions">0</div>
+						</div>
+						<div class="kpi">
+							<div class="label">Comentarios pendientes</div>
+							<div class="value" id="kpiComments">0</div>
+						</div>
+					</div>
+					<div class="grid cols-2" style="margin-top:12px">
+						<div class="card">
+							<div class="content">
+								<h3>Monitoreo de agenda veterinaria</h3>
+								<p class="notice">Solo lectura. Estadísticas de cumplimiento y cancelaciones por mes.
+								</p>
+								<canvas id="chartAgenda" width="600" height="240"
+									aria-label="Gráfico de línea"></canvas>
+							</div>
+						</div>
+						<div class="card">
+							<div class="content">
+								<h3>Actividades del administrador</h3>
+								<ul>
+									<li>Supervisa el funcionamiento del sistema.</li>
+									<li>Gestiona base de datos de usuarios y servicios.</li>
+									<li>Genera reportes.</li>
+									<li>Asegura el uso correcto de la plataforma.</li>
+									<li>Modera comentarios y gestiona reportes entrantes.</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- PERFIL -->
+				<section id="perfil" class="view" hidden>
+					<div class="grid cols-2">
+						<div class="card">
+							<div class="content" style="display:flex;gap:16px;align-items:center">
+								<div class="avatar" id="avatar">AP</div>
+								<div>
+									<h3 id="adminName">Admin Principal</h3>
+									<div class="notice" id="adminEmail">admin@clinicpet.com</div>
+									<div class="notice" id="adminPhone">+57 300 000 0000</div>
+								</div>
+								<div style="margin-left:auto;display:flex;gap:8px">
+									<button class="btn" id="btnEditProfile">Editar</button>
+									<button class="btn ghost" id="btnChangePhoto">Cambiar foto</button>
+								</div>
+							</div>
+						</div>
+						<div class="card">
+							<div class="content">
+								<h3>Habilidades</h3>
+								<div style="display:flex;flex-wrap:wrap;gap:8px">
+									<span class="chip">Manejo de herramientas digitales</span>
+									<span class="chip">Gestión de información</span>
+									<span class="chip">Administración de usuarios</span>
+									<span class="chip">Control de procesos internos</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="content">
+							<h3>Responsabilidades</h3>
+							<p>Los administradores y/o personal autorizado de ClinicPet tienen una vista especial para
+								gestionar reportes entrantes, y moderan comentarios antes de su publicación para evitar
+								lenguaje inapropiado o spam. Este perfil <b>no</b> edita historias clínicas ni agenda
+								citas.</p>
+						</div>
+					</div>
+				</section>
+
+				<!-- USUARIOS -->
+				<section id="usuarios" class="view" hidden>
+					<div class="card">
+						<div class="content">
+							<h3>Gestión de usuarios</h3>
+							<div class="toolbar">
+								<input id="userSearch" placeholder="Buscar por nombre/correo" />
+								<select id="roleFilter">
+									<option value="">Todos los roles</option>
+									<option value="propietario">Propietario</option>
+									<option value="veterinario">Veterinario</option>
+									<option value="adoptante">Adoptante</option>
+								</select>
+								<select id="statusFilter">
+									<option value="">Todos los estados</option>
+									<option value="activo">Activo</option>
+									<option value="suspendido">Suspendido</option>
+								</select>
+								<button class="btn" id="btnNewUser">Nuevo usuario</button>
+							</div>
+							<table id="tblUsers">
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Correo</th>
+										<th>Rol</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+							<p class="notice">Opcional: Restablecer contraseñas y asignar/modificar roles (si aplica en
+								tu BD).</p>
+						</div>
+					</div>
+				</section>
+
+				<!-- MASCOTAS & ADOPCIONES -->
+				<section id="mascotas" class="view" hidden>
+					<div class="grid cols-2">
+						<div class="card">
+							<div class="content">
+								<h3>Mascotas registradas</h3>
+								<div class="toolbar">
+									<input id="petSearch" placeholder="Buscar por nombre/propietario" />
+								</div>
+								<table id="tblPets">
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>Especie</th>
+											<th>Propietario</th>
+											<th>Edad</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+								<p class="notice">Solo visualización. El administrador no modifica historias clínicas.
+								</p>
+							</div>
+						</div>
+						<div class="card">
+							<div class="content">
+								<h3>Publicaciones de adopción (aprobación)</h3>
+								<table id="tblAdoptions">
+									<thead>
+										<tr>
+											<th>Mascota</th>
+											<th>Interesado</th>
+											<th>Estado</th>
+											<th>Acciones</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+								<h3 style="margin-top:14px">Seguimiento de procesos</h3>
+								<table id="tblAdoptTracking">
+									<thead>
+										<tr>
+											<th>Mascota</th>
+											<th>Etapa</th>
+											<th>Última actualización</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- GESTIÓN VETERINARIA -->
+				<section id="veterinaria" class="view" hidden>
+					<div class="grid cols-2">
+						<div class="card">
+							<div class="content">
+								<h3>Clínicas y veterinarios activos</h3>
+								<table id="tblVets">
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>Tipo</th>
+											<th>Estado</th>
+											<th>Acciones</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+						<div class="card">
+							<div class="content">
+								<h3>Solicitudes de registro</h3>
+								<table id="tblVetRequests">
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>Tipo</th>
+											<th>Acciones</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+								<h3 style="margin-top:12px">Calificaciones y comentarios a validar</h3>
+								<table id="tblRatings">
+									<thead>
+										<tr>
+											<th>Autor</th>
+											<th>Destino</th>
+											<th>Calificación</th>
+											<th>Comentario</th>
+											<th>Acciones</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="content">
+							<h3>Estadísticas de agenda (solo lectura)</h3>
+							<div id="agendaStats" class="grid cols-3"></div>
+						</div>
+					</div>
+				</section>
+
+				<!-- MODERACIÓN DE COMENTARIOS -->
+				<section id="comentarios" class="view" hidden>
+					<div class="card">
+						<div class="content">
+							<h3>Bandeja de moderación</h3>
+							<p class="notice">Los comentarios con lenguaje inapropiado o posibles <i>spam</i> son
+								marcados automáticamente.</p>
+							<table id="tblModeration">
+								<thead>
+									<tr>
+										<th>Autor</th>
+										<th>Comentario</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</section>
+
+				<section id="reportes" class="view" hidden>
+					<div class="card">
+						<div class="content">
+							<h3>Reportes de maltrato animal</h3>
+							<table id="tblReports">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Descripción</th>
+										<th>Estado</th>
+										<th>Autoridad asignada</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</section>
+
+
+				<!-- RESPALDO / EXPORT -->
+				<section id="respaldo" class="view" hidden>
+					<div class="card">
+						<div class="content">
+							<h3>Respaldo de datos de demostración</h3>
+							<div class="toolbar">
+								<button class="btn" id="btnExport">Exportar JSON</button>
+								<label class="btn ghost" for="fileImport" style="cursor:pointer">Importar JSON</label>
+								<input id="fileImport" type="file" accept="application/json" hidden />
+								<button class="btn warn" id="btnResetDemo">Restablecer demo</button>
+							</div>
+							<p class="notice">Esta demo usa <b>localStorage</b>. En producción debes conectar con tu
+								API/BD.</p>
+						</div>
+					</div>
+				</section>
+
+			</main>
+		</section>
+	</div>
+
+	<!-- MODALES -->
+	<dialog id="modalUser">
+		<div class="modal-header"><strong id="modalUserTitle">Nuevo usuario</strong><button class="btn ghost"
+				onclick="closeModal('modalUser')">✕</button></div>
+		<form class="modal-body" id="formUser">
+			<div class="row">
+				<div>
+					<label>Nombre</label>
+					<input name="name" required />
+				</div>
+				<div>
+					<label>Correo</label>
+					<input name="email" type="email" required />
+				</div>
+			</div>
+			<div class="row">
+				<div>
+					<label>Rol (opcional)</label>
+					<select name="role">
+						<option value="propietario">Propietario</option>
+						<option value="veterinario">Veterinario</option>
+						<option value="adoptante">Adoptante</option>
+					</select>
+				</div>
+				<div>
+					<label>Estado</label>
+					<select name="status">
+						<option value="activo">Activo</option>
+						<option value="suspendido">Suspendido</option>
+					</select>
+				</div>
+			</div>
+			<input type="hidden" name="id" />
+			<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+				<button type="button" class="btn ghost" onclick="closeModal('modalUser')">Cancelar</button>
+				<button class="btn" type="submit">Guardar</button>
+			</div>
+		</form>
+	</dialog>
+
+	<dialog id="modalProfile">
+		<div class="modal-header"><strong>Editar perfil</strong><button class="btn ghost"
+				onclick="closeModal('modalProfile')">✕</button></div>
+		<form class="modal-body" id="formProfile">
+			<div class="row">
+				<div>
+					<label>Nombre</label>
+					<input name="name" required />
+				</div>
+				<div>
+					<label>Correo</label>
+					<input name="email" type="email" required />
+				</div>
+			</div>
+			<div class="row">
+				<div>
+					<label>Teléfono</label>
+					<input name="phone" />
+				</div>
+				<div>
+					<label>Iniciales (avatar)</label>
+					<input name="initials" maxlength="3" />
+				</div>
+			</div>
+			<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+				<button type="button" class="btn ghost" onclick="closeModal('modalProfile')">Cancelar</button>
+				<button class="btn" type="submit">Guardar</button>
+			</div>
+		</form>
+	</dialog>
+
+	<script src="scrip.js" defer></script>
+</body>
+
+</html>

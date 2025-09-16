@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ClinicPet | Panel de Administración</title>
+	<link rel="stylesheet" th:href="@{/assets/CSS/estilos.css}">
+</head>
+
+<body>
+	<div class="app">
+		<aside>
+			<div class="brand">
+				<div class="logo" aria-hidden>
+					<!-- simple paw svg -->
+					<a th:href="@{/admin/home}"><img th:src="@{/assets/IMG/logo.png}" alt="ClinicPet Logo"
+							style="width:40px;height:auto;">
+				</div>
+				<h1>ClinicPet · Admin</h1></a>
+			</div>
+			<nav id="nav">
+				<button class="nav-btn active" data-target="dashboard">📊 Dashboard</button>
+				<button class="nav-btn" data-target="perfil">👤 Perfil</button>
+				<button class="nav-btn" data-target="usuarios">👥 Gestión de usuarios</button>
+				<button class="nav-btn" data-target="mascotas">🐾 Mascotas y adopciones</button>
+				<button class="nav-btn" data-target="veterinaria">🏥 Gestión veterinaria</button>
+				<button class="nav-btn" data-target="comentarios">💬 Moderación de comentarios <span class="tag">previo
+						a publicación</span></button>
+				<button class="nav-btn" data-target="reportes">🚨 Reportes / Maltrato</button>
+				<button class="nav-btn" data-target="respaldo">🗄️ Respaldo</button>
+			</nav>
+			<div class="footer">Nota: El administrador <b>no puede</b> editar historias clínicas ni agendar citas.</div>
+		</aside>
+
+		<!--Buscador-->
+		<section style="display:flex;flex-direction:column">
+			<header class="topbar">
+				<div class="search">
+					<input id="globalSearch" placeholder="Buscar en tablas (usuarios, mascotas, veterinarios…)" />
+					<button class="btn ghost" id="clearSearch">Limpiar</button>
+				</div>
+				<div>
+					<button class="btn ghost" id="themeToggle">
+						<span id="themeIcon">🌙</span> Tema
+					</button>
+				</div>
+			</header>
+
+			<main>
+				<!-- GESTIÓN VETERINARIA -->
+				<section id="veterinaria" class="view">
+					<!-- Veterinarias activas -->
+					<div class="card">
+						<div class="content">
+							<h3>Clínicas y veterinarios activos</h3>
+							<table>
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Dirección</th>
+										<th>Teléfono</th>
+										<th>Correo</th>
+										<th>Horario</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="v : ${veterinariasAprobadas}">
+										<td th:text="${v.nombre}"></td>
+										<td th:text="${v.direccion}"></td>
+										<td th:text="${v.telefono}"></td>
+										<td th:text="${v.correo}"></td>
+										<td th:text="${v.horario}"></td>
+										<td>
+											<form th:action="@{'/admin/desactivar/' + ${v.id}}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn warn">Desactivar</button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!-- Veterinarias pendientes -->
+					<div class="card">
+						<div class="content">
+							<h3>Solicitudes de registro (pendientes)</h3>
+							<table>
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Dirección</th>
+										<th>Teléfono</th>
+										<th>Correo</th>
+										<th>Horario</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="v : ${veterinariasPendientes}">
+										<td th:text="${v.nombre}"></td>
+										<td th:text="${v.direccion}"></td>
+										<td th:text="${v.telefono}"></td>
+										<td th:text="${v.correo}"></td>
+										<td th:text="${v.horario}"></td>
+										<td>
+											<form th:action="@{/admin/aprobar/{id}(id=${v.id})}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn success">Aprobar</button>
+											</form>
+											<form th:action="@{/admin/rechazar/{id}(id=${v.id})}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn danger">Rechazar</button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<!-- Veterinarias desactivadas -->
+					<div class="card" style="margin-top:16px">
+						<div class="content">
+							<h3>Clínicas y veterinarios desactivados</h3>
+							<table>
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Dirección</th>
+										<th>Teléfono</th>
+										<th>Correo</th>
+										<th>Horario</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="v : ${veterinariasDesactivadas}">
+										<td th:text="${v.nombre}"></td>
+										<td th:text="${v.direccion}"></td>
+										<td th:text="${v.telefono}"></td>
+										<td th:text="${v.correo}"></td>
+										<td th:text="${v.horario}"></td>
+										<td>
+											<form th:action="@{'/admin/activar/' + ${v.id}}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn success">Activar</button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<h3 style="margin-top:12px">Calificaciones y comentarios a validar</h3>
+					<table id="tblRatings">
+						<thead>
+							<tr>
+								<th>Autor</th>
+								<th>Destino</th>
+								<th>Calificación</th>
+								<th>Comentario</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+	</div>
+	</section>
+
+	<div class="card">
+		<div class="content">
+			<h3>Estadísticas de agenda (solo lectura)</h3>
+			<div id="agendaStats" class="grid cols-3"></div>
+		</div>
+	</div>
+	</section>
+	</main>
+	</div>
+
+	<script src="scrip.js" defer></script>
+</body>
+
+</html>
