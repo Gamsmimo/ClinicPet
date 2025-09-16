@@ -13,7 +13,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(name = "tokerecuperacion")
+@Table(name = "tokenrecuperacion")
 public class TokenRecuperacion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
