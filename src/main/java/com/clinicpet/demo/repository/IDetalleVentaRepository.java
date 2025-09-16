@@ -18,6 +18,6 @@ public interface IDetalleVentaRepository extends JpaRepository<DetalleVenta, Int
 	List<DetalleVenta> findByProductoId(Integer productoId);
 
 	// buscar detalles de un producto dentro de una venta especifica
-	Optional<DetalleVenta> findByVentaIdAndProductoId(Integer ventaId, Integer productoid);
+	Optional<DetalleVenta> findByVentaIdAndProductoId(Integer ventaId, Integer productoId);
 
 }

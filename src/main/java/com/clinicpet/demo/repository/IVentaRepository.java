@@ -12,9 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
-
 @Repository
 public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 
@@ -42,11 +39,8 @@ public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 	@Query("SELECT SUM(v.total) FROM Venta v WHERE v.fecha BETWEEN :fechaInicio AND :fechaFin")
 	Double sumTotalByFechaBetween(@Param("fechaInicio") Date fechaInicio, @Param("fechaFin") Date fechaFin);
 
-	@Query("SELECT v FROM Venta v JOIN FETCH v.detallesVenta WHERE v.id = :ventaId") // Corregido
+	@Query("SELECT v FROM Venta v JOIN FETCH v.detallesVenta WHERE v.id = :ventaId")
 	Venta findVentaWithDetalles(@Param("ventaId") Integer ventaId);
-
-	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detalles WHERE v.id = :id")
-	Optional<Venta> findByIdWithDetalles(@Param("id") Integer id);
 
 	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.pago WHERE v.id = :ventaId")
 	Venta findVentaWithPago(@Param("ventaId") Integer ventaId);
@@ -58,11 +52,11 @@ public interface IVentaRepository extends JpaRepository<Venta, Integer> {
 
 	List<Venta> findBySubtotalGreaterThan(Double subtotal);
 
-	boolean existsByUsuarioAndFecha(Usuario usuario, Date fecha); // Corregido
+	boolean existsByUsuarioAndFecha(Usuario usuario, Date fecha);
 
 	@Query("SELECT DATE(v.fecha), SUM(v.total) FROM Venta v WHERE v.fecha BETWEEN :start AND :end GROUP BY DATE(v.fecha)")
-	List<Object[]> getDailySales(@Param("start") Date start, @Param("end") Date end); // Corregido
+	List<Object[]> getDailySales(@Param("start") Date start, @Param("end") Date end);
 
-	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta LEFT JOIN FETCH v.pago WHERE v.id = :ventaId") // Corregido
+	@Query("SELECT v FROM Venta v LEFT JOIN FETCH v.detallesVenta LEFT JOIN FETCH v.pago WHERE v.id = :ventaId")
 	Venta findVentaCompleta(@Param("ventaId") Integer ventaId);
 }

@@ -17,24 +17,6 @@ public class VeterinariaServiceImplement implements IVeterinariaService {
 	private IVeterinariaRepository veterinariaRepository;
 
 	@Override
-	@Transactional(readOnly = true)
-	public List<Veterinaria> findAll() {
-		return veterinariaRepository.findAll();
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public Optional<Veterinaria> findById(Integer id) {
-		return veterinariaRepository.findById(id);
-	}
-
-	@Override
-	@Transactional
-	public Veterinaria save(Veterinaria veterinaria) {
-		return veterinariaRepository.save(veterinaria);
-	}
-
-	@Override
 	@Transactional
 	public Veterinaria update(Veterinaria veterinaria) {
 		// Verificar que la veterinaria existe antes de actualizar
@@ -162,5 +144,78 @@ public class VeterinariaServiceImplement implements IVeterinariaService {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Veterinaria> listarPendientes() {
+		return veterinariaRepository.findByEstado("PENDIENTE");
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Veterinaria> listarAprobadas() {
+		return veterinariaRepository.findByEstado("APROBADA");
+	}
+
+	@Override
+	@Transactional
+	public Veterinaria aprobarVeterinaria(Integer id) {
+		Veterinaria v = veterinariaRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
+		v.setEstado("Aprobada");
+		return veterinariaRepository.save(v);
+	}
+
+	@Override
+	@Transactional
+	public Veterinaria rechazarVeterinaria(Integer id) {
+		Veterinaria v = veterinariaRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
+		v.setEstado("Rechazada");
+		return veterinariaRepository.save(v);
+	}
+
+	@Override
+	@Transactional
+	public Veterinaria save(Veterinaria veterinaria) {
+		// Cuando se registra, por defecto queda PENDIENTE
+		if (veterinaria.getEstado() == null) {
+			veterinaria.setEstado("Pendiente");
+		}
+		return veterinariaRepository.save(veterinaria);
+	}
+
+	@Override
+	@Transactional
+	public Veterinaria findById(Integer id) {
+		return veterinariaRepository.findById(id).orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Veterinaria> findAll() {
+		return veterinariaRepository.findAll();
+	}
+
+	@Override
+	public List<Veterinaria> listarPorEstado(String estado) {
+		return veterinariaRepository.findByEstado(estado);
+	}
+
+	@Override
+	@Transactional
+	public Veterinaria desactivarVeterinaria(Integer id) {
+		Veterinaria v = veterinariaRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
+		v.setEstado("Inactiva"); // cambiar estado a inactiva
+		return veterinariaRepository.save(v);
+	}
+
+	@Override
+	public Veterinaria activarVeterinaria(Integer id) {
+		Veterinaria v = findById(id);
+		v.setEstado("Aprobada");
+		return veterinariaRepository.save(v);
 	}
 }

@@ -28,7 +28,7 @@ public class VeterinariaController {
 	// GET: Obtener veterinaria por ID
 	@GetMapping("/{id}")
 	public ResponseEntity<Veterinaria> getVeterinariaById(@PathVariable Integer id) {
-		Optional<Veterinaria> veterinaria = veterinariaService.findById(id);
+		Optional<Veterinaria> veterinaria = Optional.of(veterinariaService.findById(id));
 		return veterinaria.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
 				.orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}

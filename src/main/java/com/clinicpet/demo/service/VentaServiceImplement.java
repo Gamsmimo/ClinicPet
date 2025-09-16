@@ -123,12 +123,6 @@ public class VentaServiceImplement implements IVentaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Venta findVentaWithDetalles(Integer ventaId) {
-		return ventaRepository.findVentaWithDetalles(ventaId);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public Venta findVentaWithPago(Integer ventaId) {
 		return ventaRepository.findVentaWithPago(ventaId);
 	}
@@ -243,5 +237,11 @@ public class VentaServiceImplement implements IVentaService {
 
 		Double total = ventaRepository.sumTotalByFechaBetween(inicioDia, finDia);
 		return total != null ? total : 0.0; // Manejar caso null
+	}
+
+	@Override
+	public Venta findVentaWithDetalles(Integer ventaId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

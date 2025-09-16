@@ -10,9 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
 public interface IVeterinariaRepository extends JpaRepository<Veterinaria, Integer> {
 
@@ -31,6 +28,8 @@ public interface IVeterinariaRepository extends JpaRepository<Veterinaria, Integ
 	boolean existsByCorreo(String correo);
 
 	boolean existsByTelefono(String telefono);
+
+	List<Veterinaria> findByEstado(String estado);
 
 	@Query("SELECT v FROM Veterinaria v WHERE LOWER(v.direccion) LIKE LOWER(CONCAT('%',:ciudad, '%'))")
 	List<Veterinaria> findByCiudad(@Param("ciudad") String ciudad);

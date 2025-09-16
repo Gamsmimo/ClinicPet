@@ -9,7 +9,7 @@ public interface IVeterinariaService {
 	// Métodos CRUD básicos
 	List<Veterinaria> findAll();
 
-	Optional<Veterinaria> findById(Integer id);
+	Veterinaria findById(Integer id);
 
 	Veterinaria save(Veterinaria veterinaria);
 
@@ -18,6 +18,20 @@ public interface IVeterinariaService {
 	void deleteById(Integer id);
 
 	// Métodos de búsqueda específicos
+	List<Veterinaria> listarPorEstado(String estado);
+
+	List<Veterinaria> listarPendientes();
+
+	Veterinaria desactivarVeterinaria(Integer id);
+
+	Veterinaria activarVeterinaria(Integer id);
+
+	List<Veterinaria> listarAprobadas();
+
+	Veterinaria aprobarVeterinaria(Integer id);
+
+	Veterinaria rechazarVeterinaria(Integer id);
+
 	Optional<Veterinaria> findByNombre(String nombre);
 
 	List<Veterinaria> findByNombreContainingIgnoreCase(String nombre);
