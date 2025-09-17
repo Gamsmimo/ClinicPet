@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="quantity-btn decrease-quantity" data-id="${item.id}">-</button>
             <span class="quantity-display">${item.quantity}</span>
             <button class="quantity-btn increase-quantity" data-id="${item.id}">+</button>
-            <button class="remove-item" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+            <button class="remove-item" data-id="${item.id }"> <i class="bi bi-trash-fill" style="font-size: 20px;"></i></button>
           </div>
         </div>
       </div>`;

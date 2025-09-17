@@ -384,12 +384,15 @@ body {
     color: #040445;
     font-size: 45px;
     font-family: "baloo 2";
+    text-shadow: 0 0 5px rgba(226, 72, 0, 0.662);
 }
 
 .subtitulotienda {
     text-align: center;
+    color: #000000;
     font-family: "fredoka";
     font-size: 25px;
+    text-shadow: 0 0 4px rrgba(2, 2, 2, 0.662)
 }
 
 main {
@@ -413,9 +416,9 @@ main {
     top: 100px;
     right: 80px;
     width: 400px; /*tamaño carrito*/
-    height: 500px;
+    height: 400px;
     overflow:auto;
-    background: #ffeded;
+    background: #f1f0fffd;
     padding: 15px;
     border-radius: 15px;
     box-shadow: 0 7px 25px rgba(0, 0, 0, 0.2);
@@ -465,16 +468,6 @@ main {
     font-weight: bold;
 }
 
-/* Botón cerrar */
-.close-cart {
-    background: #d63031;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 60px;
-    cursor: pointer;
-    margin-top: 10px;
-}
 
 .products-container {
     flex: 3;
@@ -590,7 +583,7 @@ main {
 }
 
 .add-to-cart {
-    background-color: hsl(184, 30%, 56%);
+    background-color: hsl(197, 97%, 30%);
     color: white;
     border: none;
     padding: 10px 15px;
@@ -603,7 +596,7 @@ main {
 }
 
 .add-to-cart:hover {
-    background-color: #38748e;
+    background-color: #c9471fee;
 }
 
 .add-to-cart i {
@@ -649,7 +642,7 @@ main {
 }
 
 .cart-item-price {
-    color: #4caf50;
+    color: #03b1a8;
     font-weight: 700;
 }
 
@@ -662,7 +655,8 @@ main {
 .quantity-btn {
     width: 30px;
     height: 30px;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
+    margin-right: 5px;
     border: none;
     border-radius: 5px;
     font-size: 1.1rem;
@@ -672,18 +666,15 @@ main {
     justify-content: center;
 }
 
+.remove-item{
+    background-color: #f1f0fffd;
+    margin-left: 10px;
+    color: #db2121;
+    border: none;
+}
 .quantity-display {
     margin: 0 10px;
     font-weight: 600;
-}
-
-.remove-btn {
-    background: none;
-    border: none;
-    color: #f44336;
-    cursor: pointer;
-    margin-left: 15px;
-    font-size: 1.2rem;
 }
 
 .cart-summary {
@@ -707,9 +698,6 @@ main {
     font-weight: 600;
 }
 
-.discount {
-    color: #af4c7a;
-}
 
 .total {
     font-size: 1.4rem;
@@ -722,7 +710,7 @@ main {
 
 .checkout-btn {
     width: 100%;
-    background: #38748e;
+    background: #145977;
     color: white;
     border: none;
     padding: 15px;
@@ -734,25 +722,6 @@ main {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.checkout-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.payment-options {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 30px;
-    margin-left: 30px;
-    margin-right: 30px;
-}
-
-.payment-option {
-    font-size: 20px;
-    color: #666;
-    width: 60px;
-}
 
 /* Carrusel */
 .slider-box {
