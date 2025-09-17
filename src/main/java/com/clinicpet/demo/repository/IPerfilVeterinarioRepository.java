@@ -1,5 +1,7 @@
 package com.clinicpet.demo.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -10,11 +12,13 @@ public interface IPerfilVeterinarioRepository extends JpaRepository<PerfilVeteri
 
 	PerfilVeterinario findByUsuarioId(Integer usuarioId);
 
+	List<PerfilVeterinario> findByEstado(String estado);
+
 	PerfilVeterinario findByUsuarioUsername(String username);
 
 	java.util.List<PerfilVeterinario> findByEspecialidad(String especialidad);
 
-	PerfilVeterinario findByRut(String rut);
+	PerfilVeterinario findBytarjetaProfesional(String tarjetaProfesional);
 
 	java.util.List<PerfilVeterinario> findByTelefono(String telefono);
 
@@ -26,5 +30,5 @@ public interface IPerfilVeterinarioRepository extends JpaRepository<PerfilVeteri
 
 	boolean existsByUsuarioId(Integer usuarioId);
 
-	boolean existsByRut(String rut);
+	boolean existsBytarjetaProfesional(String tarjetaProfesional);
 }

@@ -18,8 +18,9 @@ public class PerfilVeterinario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String especialidad;
-	private String rut; // registro único profesional
+	private String tarjetaProfesional;
 	private String telefono;
+	private String estado;
 
 	// Relación con Usuario
 	@OneToOne
@@ -37,15 +38,17 @@ public class PerfilVeterinario {
 	public PerfilVeterinario() {
 	}
 
-	public PerfilVeterinario(Integer id, String especialidad, String rut, String telefono, Usuario usuario,
-			List<Cita> citas, List<Emergencia> emergencia) {
+	// constructor con campos
+	public PerfilVeterinario(Integer id, String especialidad, String tarjetaProfesional, String telefono, String estado,
+			Usuario usuario, List<Cita> cita, List<Emergencia> emergencia) {
 		super();
 		this.id = id;
 		this.especialidad = especialidad;
-		this.rut = rut;
+		this.tarjetaProfesional = tarjetaProfesional;
 		this.telefono = telefono;
+		this.estado = estado;
 		this.usuario = usuario;
-		this.cita = citas;
+		this.cita = cita;
 		this.emergencia = emergencia;
 	}
 
@@ -65,12 +68,12 @@ public class PerfilVeterinario {
 		this.especialidad = especialidad;
 	}
 
-	public String getRut() {
-		return rut;
+	public String getTarjetaProfesional() {
+		return tarjetaProfesional;
 	}
 
-	public void setRut(String rut) {
-		this.rut = rut;
+	public void setTarjetaProfesional(String tarjetaProfesional) {
+		this.tarjetaProfesional = tarjetaProfesional;
 	}
 
 	public String getTelefono() {
@@ -79,6 +82,14 @@ public class PerfilVeterinario {
 
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
 	}
 
 	public Usuario getUsuario() {
@@ -107,8 +118,8 @@ public class PerfilVeterinario {
 
 	@Override
 	public String toString() {
-		return "PerfilVeterinario [id=" + id + ", especialidad=" + especialidad + ", rut=" + rut + ", telefono="
-				+ telefono + "]";
+		return "PerfilVeterinario [id=" + id + ", especialidad=" + especialidad + ", tarjetaProfesional="
+				+ tarjetaProfesional + ", telefono=" + telefono + ", estado=" + estado + "]";
 	}
 
 }

@@ -14,21 +14,35 @@
 			<div class="brand">
 				<div class="logo" aria-hidden>
 					<!-- simple paw svg -->
-					<img th:src="@{/assets/IMG/logo.png}" alt="ClinicPet Logo" style="width:40px;height:auto;">
+					<a th:href="@{/admin/home}"><img th:src="@{/assets/IMG/logo.png}" alt="ClinicPet Logo"
+							style="width:40px;height:auto;">
 				</div>
 				<h1>ClinicPet · Admin</h1>
 			</div>
 			<nav id="nav">
-				<button class="nav-btn active" data-target="dashboard">📊 Dashboard</button>
-				<button class="nav-btn" data-target="perfil">👤 Perfil</button>
-				<button class="nav-btn" data-target="usuarios">👥 Gestión de usuarios</button>
-				<button class="nav-btn" data-target="mascotas">🐾 Mascotas y adopciones</button>
+				<a th:href="@{/admin/home}"><button class="nav-btn active" data-target="dashboard">📊
+						Dashboard</button></a>
+
+				<a th:href="@{/admin/perfil}"><button class="nav-btn" data-target="perfil">👤 Perfil</button></a>
+
+				<a th:href="@{/admin/gestion-usuario}"><button class="nav-btn" data-target="usuarios">👥 Gestión de
+						usuarios</button></a>
+
+				<a th:href="@{/admin/mascotas-adopciones}"><button class="nav-btn" data-target="mascotas">🐾 Mascotas y
+						adopciones</button></a>
+
 				<a th:href="@{/admin/gestion-veterinaria}"><button class="nav-btn" data-target="veterinaria">🏥 Gestión
 						veterinaria</button></a>
-				<button class="nav-btn" data-target="comentarios">💬 Moderación de comentarios <span class="tag">previo
-						a publicación</span></button>
-				<button class="nav-btn" data-target="reportes">🚨 Reportes / Maltrato</button>
-				<button class="nav-btn" data-target="respaldo">🗄️ Respaldo</button>
+
+				<a th:href="@{/admin/comentarios}"><button class="nav-btn" data-target="comentarios">💬 Moderación de
+						comentarios <span class="tag">previo
+							a publicación</span></button></a>
+
+				<a th:href="@{/admin/reportes-maltrato}"><button class="nav-btn" data-target="reportes">🚨 Reportes
+						/
+						Maltrato</button></a>
+
+				<a th:href="@{/admin/respaldo}"><button class="nav-btn" data-target="respaldo">🗄️ Respaldo</button></a>
 			</nav>
 			<div class="footer">Nota: El administrador <b>no puede</b> editar historias clínicas ni agendar citas.</div>
 		</aside>

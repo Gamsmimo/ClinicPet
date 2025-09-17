@@ -1,14 +1,16 @@
 package com.clinicpet.demo.service;
 
 import com.clinicpet.demo.model.PerfilVeterinario;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface IPerfilVeterinarioService {
+	List<PerfilVeterinario> ListarPorEstado(String estado);
 
 	PerfilVeterinario crearPerfilVeterinario(PerfilVeterinario perfilVeterinario);
 
-	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorId(Integer id);
+	PerfilVeterinario findById(Integer id);
 
 	List<PerfilVeterinario> obtenerTodosLosPerfilesVeterinario();
 
@@ -20,15 +22,25 @@ public interface IPerfilVeterinarioService {
 
 	List<PerfilVeterinario> obtenerVeterinariosPorEspecialidad(String especialidad);
 
-	PerfilVeterinario obtenerVeterinarioPorRut(String rut);
+	PerfilVeterinario obtenerVeterinarioPorTarjetaProfesional(String tarjetaProfesional);
 
 	List<PerfilVeterinario> obtenerVeterinariosPorTelefono(String telefono);
 
 	List<PerfilVeterinario> obtenerVeterinariosDisponibles();
 
-	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorRut(String rut);
-
+	
 	PerfilVeterinario actualizarPerfilVeterinario(Integer id, PerfilVeterinario perfilVeterinario);
 
-	void eliminarPerfilVeterinario(Integer id);
+	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorTargetaProfesional(String tarjetaProfesional);
+
+	void aprobarVeterinario(Integer id);
+
+	PerfilVeterinario desactivarVeterinario(Integer id);
+
+	PerfilVeterinario activarVeterinario(Integer id);
+
+	void rechazarVeterinario(Integer id);
+
+	void editarVeterinario(Integer id);
+
 }

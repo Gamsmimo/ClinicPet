@@ -24,6 +24,7 @@ public class Veterinaria {
 	private String horario;
 	private String descripcion;
 	private String estado;
+	private String rut;
 
 	@OneToMany(mappedBy = "veterinaria")
 	private List<Adopcion> adopciones;
@@ -48,7 +49,7 @@ public class Veterinaria {
 	}
 
 	public Veterinaria(Integer id, String nombre, String direccion, String telefono, String correo, String horario,
-			String descripcion, String estado, List<Adopcion> adopciones, List<Servicio> servicios,
+			String descripcion, String estado, String rut, List<Adopcion> adopciones, List<Servicio> servicios,
 			List<Inventario> inventarios, List<HistoriaClinica> historiasClinicas, List<Emergencia> emergencias,
 			List<VeterinariaVeterinario> veterinarios) {
 		super();
@@ -59,7 +60,8 @@ public class Veterinaria {
 		this.correo = correo;
 		this.horario = horario;
 		this.descripcion = descripcion;
-		this.estado = "pendiente";
+		this.estado = estado;
+		this.rut = rut;
 		this.adopciones = adopciones;
 		this.servicios = servicios;
 		this.inventarios = inventarios;
@@ -132,6 +134,14 @@ public class Veterinaria {
 		this.estado = estado;
 	}
 
+	public String getRut() {
+		return rut;
+	}
+
+	public void setRut(String rut) {
+		this.rut = rut;
+	}
+
 	public List<Adopcion> getAdopciones() {
 		return adopciones;
 	}
@@ -184,7 +194,7 @@ public class Veterinaria {
 	public String toString() {
 		return "Veterinaria [id=" + id + ", nombre=" + nombre + ", direccion=" + direccion + ", telefono=" + telefono
 				+ ", correo=" + correo + ", horario=" + horario + ", descripcion=" + descripcion + ", estado=" + estado
-				+ "]";
+				+ ", rut=" + rut + "]";
 	}
 
 }

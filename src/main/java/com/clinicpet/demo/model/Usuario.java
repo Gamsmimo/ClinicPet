@@ -20,6 +20,7 @@ public class Usuario {
 	private String email;
 	private String nombre;
 	private String apellido;
+	private Integer cedula;
 
 	@ManyToOne
 	@JoinColumn(name = "rol_id")
@@ -30,18 +31,22 @@ public class Usuario {
 	}
 
 	// constructor con campos
+
 	public Usuario(Integer id, String username, String password, String email, String nombre, String apellido,
-			Rol rol) {
+			Integer cedula, Rol rol) {
+		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.email = email;
 		this.nombre = nombre;
 		this.apellido = apellido;
+		this.cedula = cedula;
 		this.rol = rol;
 	}
 
 	// getters y setters
+
 	public Integer getId() {
 		return id;
 	}
@@ -90,6 +95,14 @@ public class Usuario {
 		this.apellido = apellido;
 	}
 
+	public Integer getCedula() {
+		return cedula;
+	}
+
+	public void setCedula(Integer cedula) {
+		this.cedula = cedula;
+	}
+
 	public Rol getRol() {
 		return rol;
 	}
@@ -100,7 +113,7 @@ public class Usuario {
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", username=" + username + ", email=" + email + ", nombre=" + nombre
-				+ ", apellido=" + apellido + "]";
+		return "Usuario [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email
+				+ ", nombre=" + nombre + ", apellido=" + apellido + ", cedula=" + cedula + "]";
 	}
 }

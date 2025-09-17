@@ -23,7 +23,7 @@ public class Servicio {
 	private Double precioBase;
 
 	@ManyToOne
-	@JoinColumn(name = "rol_id")
+	@JoinColumn(name = "idVeterinaria")
 	private Veterinaria veterinaria;
 
 	@OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL)

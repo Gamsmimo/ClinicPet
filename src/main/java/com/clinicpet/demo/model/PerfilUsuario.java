@@ -20,7 +20,6 @@ public class PerfilUsuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String direccion;
-	private String telefono;
 
 	// Relación con Usuario
 	@OneToOne
@@ -39,7 +38,6 @@ public class PerfilUsuario {
 		super();
 		this.id = id;
 		this.direccion = direccion;
-		this.telefono = telefono;
 		this.usuario = usuario;
 		this.mascota = mascota;
 	}
@@ -60,14 +58,6 @@ public class PerfilUsuario {
 		this.direccion = direccion;
 	}
 
-	public String getTelefono() {
-		return telefono;
-	}
-
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
-
 	public Usuario getUsuario() {
 		return usuario;
 	}
@@ -86,7 +76,7 @@ public class PerfilUsuario {
 
 	@Override
 	public String toString() {
-		return "PerfilUsuario [id=" + id + ", direccion=" + direccion + ", telefono=" + telefono + "]";
+		return "PerfilUsuario [id=" + id + ", direccion=" + direccion + "]";
 	}
 
 }
