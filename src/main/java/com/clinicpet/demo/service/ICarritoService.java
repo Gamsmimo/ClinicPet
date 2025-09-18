@@ -4,25 +4,38 @@ import java.util.List;
 import java.util.Optional;
 
 import com.clinicpet.demo.model.Carrito;
+import com.clinicpet.demo.model.Carrito.EstadoCarrito;
 
 public interface ICarritoService {
 
-	// CRUD
+	// Obtener todos los carritos
+	List<Carrito> listarCarritos();
 
-	Carrito guardarCarrito(Carrito carrito);
+	// Obtener carrito por ID
+	Optional<Carrito> obtenerCarritoPorId(Integer id);
 
-	List<Carrito> listarCarritos(Carrito carrito);
+	// Buscar carrito ACTIVO de un usuario
+	Optional<Carrito> obtenerCarritoActivoUsuario(Integer usuarioId);
 
-	Optional<Carrito> buscarPorId(Integer id);
+	// Buscar todos los carritos de un usuario
+	List<Carrito> obtenerCarritosPorUsuario(Integer usuarioId);
 
+	// Buscar carritos por estado
+	List<Carrito> obtenerCarritosPorEstado(EstadoCarrito estado);
+
+	// Crear nuevo carrito
+	Carrito crearCarrito(Carrito carrito);
+
+	// Actualizar carrito existente
+	Carrito actualizarCarrito(Integer id, Carrito carritoActualizado);
+
+	// Eliminar carrito
 	void eliminarCarrito(Integer id);
 
-	// METODOS PERSONALIZADOS
+	// Métodos específicos de negocio
+	Carrito crearCarritoParaUsuario(Integer usuarioId);
 
-	List<Carrito> buscarPorUsuario(Integer usuarioId);
+	Carrito confirmarCarrito(Integer usuarioId);
 
-	List<Carrito> buscarPorUsuarioYEstado(Integer usuarioId, String estado);
-
-	List<Carrito> buscarPorEstado(String estado);
-
+	void cancelarCarrito(Integer usuarioId);
 }
