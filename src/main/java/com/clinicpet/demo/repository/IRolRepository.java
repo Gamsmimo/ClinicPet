@@ -22,20 +22,22 @@ public interface IRolRepository extends JpaRepository<Rol, Integer> {
 
 	Optional<Rol> findByNombreIgnoreCase(String nombre);
 
-	@Query("SELECT r.nombre, COUNT(u) FROM Rol r LEFT JOIN r.usuario u GROUP BY r.id ORDER BY COUNT(u) DESC")
+	List<Rol> findByIdIn(List<Integer> ids);
+
+	// CONSULTAS CORREGIDAS (usa 'usuarios' en lugar de 'usuario'):
+
+	@Query("SELECT r.nombre, COUNT(u) FROM Rol r LEFT JOIN r.usuarios u GROUP BY r.id, r.nombre ORDER BY COUNT(u) DESC")
 	List<Object[]> contarUsuariosPorRol();
 
-	@Query("SELECT r FROM Rol r WHERE SIZE(r.usuario) > :minUsuarios")
+	@Query("SELECT r FROM Rol r WHERE SIZE(r.usuarios) > :minUsuarios")
 	List<Rol> findRolesConMasDeNUsuarios(@Param("minUsuarios") int minUsuarios);
 
-	@Query("SELECT r FROM Rol r LEFT JOIN r.usuario u GROUP BY r.id ORDER BY COUNT(u) DESC")
+	@Query("SELECT r FROM Rol r LEFT JOIN r.usuarios u GROUP BY r.id, r.nombre, r.descripcion ORDER BY COUNT(u) DESC")
 	List<Rol> findRolesOrdenadosPorCantidadUsuarios();
 
-	@Query("SELECT r FROM Rol r WHERE r.usuario IS EMPTY")
+	@Query("SELECT r FROM Rol r WHERE r.usuarios IS EMPTY")
 	List<Rol> findRolesSinUsuarios();
 
-	@Query("SELECT DISTINCT r FROM Rol r JOIN r.usuario u")
+	@Query("SELECT DISTINCT r FROM Rol r JOIN r.usuarios u")
 	List<Rol> findRolesConUsuariosAsignados();
-
-	List<Rol> findByIdIn(List<Integer> ids);
 }

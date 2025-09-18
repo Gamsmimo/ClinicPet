@@ -40,10 +40,12 @@
 				<div class="botones-finales">
 					<div class="nav-buttons">
 						<button class="nav-button btn-registro">
-							<a href="login deep.html"><i class="fas fa-user-plus"></i> Iniciar Sesión</a>
+							<a th:href="@{/usuarios/iniciarsesion}">
+								<i class="fas fa-user-plus"></i> Iniciar Sesión
+							</a>
 						</button>
 						<button class="nav-button">
-							<a th:href="@{/adopciones/usuario}"> <i class="fas fa-dog"></i> Adopciones</a>
+							<a th:href="@{/adopciones/usuario}"><i class="fas fa-dog"></i> Adopciones</a>
 						</button>
 						<button class="nav-button" id="emergencias">
 							<i class="fas fa-ambulance"></i> Emergencias
@@ -98,22 +100,22 @@
 					</button>
 					<div class="menu-content">
 						<div class="menu-item">
-							<a href="/templates/Usuario/usuario.html"> <i class="fas fa-user-plus"></i>
+							<a th:href="@{/templates/Usuario/usuario}"> <i class="fas fa-user-plus"></i>
 								<span>Perfil</span></a>
 						</div>
 						<div class="menu-item">
-							<a href="Reporte.html"> <i class="fas fa-clinic-medical"></i>
+							<a th:href="@{/Reporte.html}"> <i class="fas fa-clinic-medical"></i>
 								<span>Reporte Maltrato</span></a>
 						</div>
 						<div class="menu-item">
-							<a href="Tienda.html"><i class="fas fa-shopping-cart"></i> <span>Pet Shop</span></a>
+							<a th:href="@{/Tienda.html}"><i class="fas fa-shopping-cart"></i> <span>Pet Shop</span></a>
 						</div>
 						<div class="menu-item">
 							<i class="fas fa-star"></i>
 							<a th:href="@{/calificaciones/usuario}"><span>Calificaciones</span></a>
 						</div>
 						<div class="menu-item">
-							<a href="sobrenosotros.html"> <i class="fas fa-users"></i>
+							<a th:href="@{/sobrenosotros.html}"> <i class="fas fa-users"></i>
 								<span>Acerca de Nosotros</span></a>
 						</div>
 					</div>
@@ -173,7 +175,7 @@
 			<div class="container">
 				<h1>CLINIC PET</h1>
 				<p>Porque una mascota no es solo un animal, es un miembro más de la familia</p>
-				<a href="servicios.html" class="btn btn-hero">Conoce Nuestros Servicios</class=></a>
+				<a th:href="@{/servicios.html}" class="btn btn-hero">Conoce Nuestros Servicios</class=></a>
 			</div>
 		</section>
 
@@ -648,7 +650,7 @@
 		<footer class="footer">
 			<div class="container">
 				<div class="footer-logo">
-					<img src="/assets/IMG/logofotter.png" alt="logo">
+					<img src="@{/assets/IMG/logofotter.png}" alt="logo">
 				</div>
 				<div class="footer-brand">CLINIC PET</div>
 				<div class="row">
@@ -687,7 +689,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-		<script src="/assets/JS/Scrips-Home.js"></script>
+		<script th:src="@{/assets/JS/Scrips-Home.js}"></script>
 
 	</body>
 

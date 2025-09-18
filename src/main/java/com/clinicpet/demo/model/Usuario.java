@@ -16,32 +16,39 @@ public class Usuario {
 	private Integer id;
 
 	private String username;
-	private String password;
-	private String email;
 	private String nombre;
-	private String apellido;
+	private String apellidos;
+	private String correo;
+	private String tipoDocumento;
+	private String numDocumento;
+	private String telefono;
+	private String edad;
+	private String contraseña;
 
 	@ManyToOne
 	@JoinColumn(name = "rol_id")
 	private Rol rol;
 
-	// constructor vacío
 	public Usuario() {
+
 	}
 
-	// constructor con campos
-	public Usuario(Integer id, String username, String password, String email, String nombre, String apellido,
-			Rol rol) {
+	public Usuario(Integer id, String username, String nombre, String apellidos, String correo, String tipoDocumento,
+			String numDocumento, String telefono, String edad, String contraseña, Rol rol) {
+		super();
 		this.id = id;
 		this.username = username;
-		this.password = password;
-		this.email = email;
 		this.nombre = nombre;
-		this.apellido = apellido;
+		this.apellidos = apellidos;
+		this.correo = correo;
+		this.tipoDocumento = tipoDocumento;
+		this.numDocumento = numDocumento;
+		this.telefono = telefono;
+		this.edad = edad;
+		this.contraseña = contraseña;
 		this.rol = rol;
 	}
 
-	// getters y setters
 	public Integer getId() {
 		return id;
 	}
@@ -58,22 +65,6 @@ public class Usuario {
 		this.username = username;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getNombre() {
 		return nombre;
 	}
@@ -82,12 +73,60 @@ public class Usuario {
 		this.nombre = nombre;
 	}
 
-	public String getApellido() {
-		return apellido;
+	public String getApellidos() {
+		return apellidos;
 	}
 
-	public void setApellido(String apellido) {
-		this.apellido = apellido;
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
+	}
+
+	public String getCorreo() {
+		return correo;
+	}
+
+	public void setCorreo(String correo) {
+		this.correo = correo;
+	}
+
+	public String getTipoDocumento() {
+		return tipoDocumento;
+	}
+
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
+	}
+
+	public String getNumDocumento() {
+		return numDocumento;
+	}
+
+	public void setNumDocumento(String numDocumento) {
+		this.numDocumento = numDocumento;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+
+	public String getEdad() {
+		return edad;
+	}
+
+	public void setEdad(String edad) {
+		this.edad = edad;
+	}
+
+	public String getContraseña() {
+		return contraseña;
+	}
+
+	public void setContraseña(String contraseña) {
+		this.contraseña = contraseña;
 	}
 
 	public Rol getRol() {
@@ -100,7 +139,9 @@ public class Usuario {
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", username=" + username + ", email=" + email + ", nombre=" + nombre
-				+ ", apellido=" + apellido + "]";
+		return "Usuario [id=" + id + ", username=" + username + ", nombre=" + nombre + ", apellidos=" + apellidos
+				+ ", correo=" + correo + ", tipoDocumento=" + tipoDocumento + ", numDocumento=" + numDocumento
+				+ ", telefono=" + telefono + ", edad=" + edad + ", rol=" + rol + "]";
 	}
+
 }

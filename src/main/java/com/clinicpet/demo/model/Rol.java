@@ -1,40 +1,45 @@
 package com.clinicpet.demo.model;
 
 import java.util.List;
+import java.util.Objects;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "rol")
 public class Rol {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private String nombre;
+
+	@Column(nullable = false, unique = true, length = 50)
+	private String nombre; // Ejemplo: "ADMINISTRADOR", "VETERINARIO", "USUARIO"
+
+	@Column(length = 200)
 	private String descripcion;
 
-	@OneToMany(mappedBy = "rol", cascade = CascadeType.ALL)
-	private List<Usuario> usuario;
+	@OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Usuario> usuarios;
 
-	// constructor vacio
+	// Constructor vacío
 	public Rol() {
-
 	}
 
-//constructor con campos
+	// Constructor con campos (sin lista de usuarios para evitar problemas de
+	// inicialización)
 	public Rol(Integer id, String nombre, String descripcion) {
-		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 	}
 
+	public Rol(String nombre, String descripcion) {
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+	}
+
+	// Getters y setters
 	public Integer getId() {
 		return id;
 	}
@@ -59,9 +64,32 @@ public class Rol {
 		this.descripcion = descripcion;
 	}
 
-	@Override
-	public String toString() {
-		return "Rol [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + "]";
+	public List<Usuario> getUsuarios() {
+		return usuarios;
 	}
 
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	// Métodos útiles
+	@Override
+	public String toString() {
+		return "Rol{" + "id=" + id + ", nombre='" + nombre + '\'' + ", descripcion='" + descripcion + '\'' + '}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Rol))
+			return false;
+		Rol rol = (Rol) o;
+		return Objects.equals(id, rol.id) && Objects.equals(nombre, rol.nombre);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, nombre);
+	}
 }

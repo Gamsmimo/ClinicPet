@@ -1,36 +1,31 @@
 package com.clinicpet.demo.repository;
 
+import com.clinicpet.demo.model.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
-import com.clinicpet.demo.model.Usuario;
-
 @Repository
 public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
+
+	// Solo mantén los métodos que coincidan con los campos de tu entidad
 	Optional<Usuario> findByUsername(String username);
 
-	Optional<Usuario> findByEmail(String email);
+	Optional<Usuario> findByCorreo(String correo);
 
-	Optional<Usuario> findByNombre(String nombre);
+	Optional<Usuario> findByNumDocumento(String numDocumento);
 
-	Optional<Usuario> findByApellido(String apellido);
+	List<Usuario> findByNombreContainingOrApellidosContaining(String nombre, String apellidos);
 
-	Optional<Usuario> findByNombreAndApellido(String nombre, String apellido);
-
-	Optional<Usuario> findByrolId(Integer rolId);
-
-	@Query("SELECT u FROM Usuario u WHERE LOWER(u.nombre) LIKE LOWER(CONCAT('%', :texto, '%')) OR LOWER(u.apellido) LIKE LOWER(CONCAT('%', :texto, '%'))")
-	List<Usuario> buscarPorNombreOApellido(@Param("texto") String texto);
-
+	// Métodos de existencia
 	boolean existsByUsername(String username);
 
-	boolean existsByEmail(String email);
+	boolean existsByCorreo(String correo);
 
-	Optional<Usuario> findByUsernameOrEmail(String username, String email);
+	boolean existsByNumDocumento(String numDocumento);
 
+	// Si necesitas buscar por rol, agrega este método
+	List<Usuario> findByRolId(Integer rolId);
 }
