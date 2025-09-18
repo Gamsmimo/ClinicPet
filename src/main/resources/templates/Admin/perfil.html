@@ -140,7 +140,7 @@
 							<input type="text" name="cedula" th:value="${admin.cedula}">
 
 							<button type="submit">Guardar cambios</button>
-							<button type="submit">Cancelar</button>
+							<button type="button" id="btnCancelEdit">Cancelar</button>
 						</form>
 					</div>
 				</div>
@@ -150,7 +150,7 @@
 						<form th:action="@{/admin/perfil/actualizar-foto}" method="post" enctype="multipart/form-data">
 							<input type="file" name="foto">
 							<button type="submit">Subir foto</button>
-							<button type="submit">Cancelar</button>
+							<button type="button" id="cancelFoto">Cancelar</button>
 						</form>
 					</div>
 				</div>
