@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ClinicPet | Panel de Administración</title>
+	<link rel="stylesheet" th:href="@{/assets/CSS/estilos.css}">
+</head>
+
+<body>
+	<div class="app">
+		<aside>
+			<div class="brand">
+				<div class="logo" aria-hidden>
+					<!-- simple paw svg -->
+					<a th:href="@{/admin/home}"><img th:src="@{/assets/IMG/logo.png}" alt="ClinicPet Logo"
+							style="width:40px;height:auto;">
+				</div>
+				<h1>ClinicPet · Admin</h1></a>
+			</div>
+			<nav id="nav">
+				<a th:href="@{/admin/home}"><button class="nav-btn active" data-target="dashboard">📊
+						Dashboard</button></a>
+
+				<a th:href="@{/admin/perfil}"><button class="nav-btn" data-target="perfil">👤 Perfil</button></a>
+
+				<a th:href="@{/admin/gestion-usuario}"><button class="nav-btn" data-target="usuarios">👥 Gestión de
+						usuarios</button></a>
+
+				<a th:href="@{/admin/mascotas-adopciones}"><button class="nav-btn" data-target="mascotas">🐾 Mascotas y
+						adopciones</button></a>
+
+				<a th:href="@{/admin/gestion-veterinaria}"><button class="nav-btn" data-target="veterinaria">🏥 Gestión
+						veterinaria</button></a>
+
+				<a th:href="@{/admin/comentarios}"><button class="nav-btn" data-target="comentarios">💬 Moderación de
+						comentarios <span class="tag">previo
+							a publicación</span></button></a>
+
+				<a th:href="@{/admin/reportes-maltrato}"><button class="nav-btn" data-target="reportes">🚨 Reportes
+						/
+						Maltrato</button></a>
+
+				<a th:href="@{/admin/respaldo}"><button class="nav-btn" data-target="respaldo">🗄️ Respaldo</button></a>
+			</nav>
+			<div class="footer">Nota: El administrador <b>no puede</b> editar historias clínicas ni agendar citas.</div>
+		</aside>
+
+		<!--Buscador-->
+		<section style="display:flex;flex-direction:column">
+			<header class="topbar">
+				<div class="search">
+					<input id="globalSearch" placeholder="Buscar en tablas (usuarios, mascotas, veterinarios…)" />
+					<button class="btn ghost" id="clearSearch">Limpiar</button>
+				</div>
+				<div>
+					<button class="btn ghost" id="themeToggle">
+						<span id="themeIcon">🌙</span> Tema
+					</button>
+				</div>
+			</header>
+
+			<main>
+				<H1>CLINICAS VETERINARIAS</H1>
+				<!-- GESTIÓN VETERINARIA -->
+				<section id="veterinaria" class="view">
+					<!-- Veterinarias activas -->
+					<div class="card">
+						<div class="content">
+							<h3>Veterinarias activas</h3>
+							<table>
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Dirección</th>
+										<th>Teléfono</th>
+										<th>Correo</th>
+										<th>Horario</th>
+										<th>Rut</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="v : ${veterinariasAprobadas}">
+										<td th:text="${v.nombre}"></td>
+										<td th:text="${v.direccion}"></td>
+										<td th:text="${v.telefono}"></td>
+										<td th:text="${v.correo}"></td>
+										<td th:text="${v.horario}"></td>
+										<td th:text="${v.rut}"></td>
+										<td>
+											<form th:action="@{'/admin/desactivar/' + ${v.id}}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn warn">Desactivar</button>
+											</form>
+											<form th:action="@{'/admin/editar/' + ${v.id}}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn warn">Editar</button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!-- Veterinarias pendientes -->
+					<div class="card" style="margin-top:16px">
+						<div class="content">
+							<h3>Solicitudes de registro (pendientes)</h3>
+							<table>
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Dirección</th>
+										<th>Teléfono</th>
+										<th>Correo</th>
+										<th>Horario</th>
+										<th>Rut</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="v : ${veterinariasPendientes}">
+										<td th:text="${v.nombre}"></td>
+										<td th:text="${v.direccion}"></td>
+										<td th:text="${v.telefono}"></td>
+										<td th:text="${v.correo}"></td>
+										<td th:text="${v.horario}"></td>
+										<td th:text="${v.rut}"></td>
+										<td>
+											<form th:action="@{/admin/aprobar/{id}(id=${v.id})}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn success">Aprobar</button>
+											</form>
+											<form th:action="@{/admin/rechazar/{id}(id=${v.id})}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn danger">Rechazar</button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<!-- Veterinarias desactivadas -->
+					<div class="card" style="margin-top:16px">
+						<div class="content">
+							<h3>Veterinarias desactivadas</h3>
+							<table>
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Dirección</th>
+										<th>Teléfono</th>
+										<th>Correo</th>
+										<th>Horario</th>
+										<th>Rut</th>
+										<th>Acciones</th>
+
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="v : ${veterinariasDesactivadas}">
+										<td th:text="${v.nombre}"></td>
+										<td th:text="${v.direccion}"></td>
+										<td th:text="${v.telefono}"></td>
+										<td th:text="${v.correo}"></td>
+										<td th:text="${v.horario}"></td>
+										<td th:text="${v.rut}"></td>
+										<td>
+											<form th:action="@{'/admin/activar/' + ${v.id}}" method="post"
+												style="display:inline">
+												<button type="submit" class="btn success">Activar</button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!------VETERINARIOS-->
+
+					<H1>VETERINARIOS</H1>
+					<section id="veterinario" class="view">
+						<!-- Veterinarios activos -->
+						<div class="card" style="margin-top:16px">
+							<div class="content">
+								<h3>Veterinarios activos</h3>
+								<table>
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>Apellido</th>
+											<th>Cédula</th>
+											<th>Email</th>
+											<!--------<th>Password</th>--->
+											<th>Username</th>
+											<th>Especialidad</th>
+											<th>Tarjeta profesional</th>
+											<th>Teléfono</th>
+											<th>Acciones</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="veterinario : ${veterinariosAprobados}">
+											<td th:text="${veterinario.usuario.nombre}"></td>
+											<td th:text="${veterinario.usuario.apellido}"></td>
+											<td th:text="${veterinario.usuario.cedula}"></td>
+											<td th:text="${veterinario.usuario.email}"></td>
+											<!------<td th:text="${v.password}"></td>----->
+											<td th:text="${veterinario.usuario.username}"></td>
+											<td th:text="${veterinario.especialidad}"></td>
+											<td th:text="${veterinario.tarjetaProfesional}"></td>
+											<td th:text="${veterinario.telefono}"></td>
+											<td>
+												<form
+													th:action="@{/admin/desactivarVeterinario/{id}(id=${veterinario.id})}"
+													method="post" style="display:inline">
+													<button type="submit" class="btn warn">Desactivar</button>
+												</form>
+												<form th:action="@{'/admin/editarVeterinario/' + ${veterinario.id}}"
+													method="post" style="display:inline">
+													<button type="submit" class="btn warn">Editar</button>
+												</form>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- Veterinarios pendientes -->
+						<div class="card" style="margin-top:16px">
+							<div class="content">
+								<h3>Solicitudes de registro (pendientes)</h3>
+								<table>
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>Apellido</th>
+											<th>Cédula</th>
+											<th>Email</th>
+											<!--------<th>Password</th>--->
+											<th>Username</th>
+											<th>Especialidad</th>
+											<th>Tarjeta profesional</th>
+											<th>Teléfono</th>
+											<th>Acciones</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="veterinario : ${veterinariosPendientes}">
+											<td th:text="${veterinario.usuario.nombre}"></td>
+											<td th:text="${veterinario.usuario.apellido}"></td>
+											<td th:text="${veterinario.usuario.cedula}"></td>
+											<td th:text="${veterinario.usuario.email}"></td>
+											<!------<td th:text="${v.password}"></td>----->
+											<td th:text="${veterinario.usuario.username}"></td>
+											<td th:text="${veterinario.especialidad}"></td>
+											<td th:text="${veterinario.tarjetaProfesional}"></td>
+											<td th:text="${veterinario.telefono}"></td>
+											<td>
+												<form
+													th:action="@{/admin/aprobarVeterinario/{id}(id=${veterinario.id})}"
+													method="post" style="display:inline">
+													<button type="submit" class="btn success">Aprobar</button>
+												</form>
+												<form
+													th:action="@{/admin/rechazarVeterinario/{id}(id=${veterinario.id})}"
+													method="post" style="display:inline">
+													<button type="submit" class="btn danger">Rechazar</button>
+												</form>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- Veterinarios desactivados -->
+						<div class="card" style="margin-top:16px">
+							<div class="content">
+								<h3>Veterinarios desactivados</h3>
+								<table>
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>Apellido</th>
+											<th>Cédula</th>
+											<th>Email</th>
+											<!--------<th>Password</th>--->
+											<th>Username</th>
+											<th>Especialidad</th>
+											<th>Tarjeta profesional</th>
+											<th>Teléfono</th>
+											<th>Acciones</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="veterinario : ${veterinariosInactivos}">
+											<td th:text="${veterinario.usuario.nombre}"></td>
+											<td th:text="${veterinario.usuario.apellido}"></td>
+											<td th:text="${veterinario.usuario.cedula}"></td>
+											<td th:text="${veterinario.usuario.email}"></td>
+											<!------<td th:text="${v.password}"></td>----->
+											<td th:text="${veterinario.usuario.username}"></td>
+											<td th:text="${veterinario.especialidad}"></td>
+											<td th:text="${veterinario.tarjetaProfesional}"></td>
+											<td th:text="${veterinario.telefono}"></td>
+											<td>
+												<form th:action="@{'/admin/activarVeterinario/' + ${veterinario.id}}"
+													method="post" style="display:inline">
+													<button type="submit" class="btn success">Activar</button>
+												</form>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-------COMENTARIOS-->
+						<h1 style="margin-top:12px">Calificaciones y comentarios a validar</h1>
+						<table id="tblRatings">
+							<thead>
+								<tr>
+									<th>Autor</th>
+									<th>Destino</th>
+									<th>Calificación</th>
+									<th>Comentario</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+	</div>
+	</section>
+
+	<div class="card">
+		<div class="content">
+			<h3>Estadísticas de agenda (solo lectura)</h3>
+			<div id="agendaStats" class="grid cols-3"></div>
+		</div>
+	</div>
+	</section>
+	</main>
+	</div>
+
+	<script src="scrip.js" defer></script>
+</body>
+
+</html>

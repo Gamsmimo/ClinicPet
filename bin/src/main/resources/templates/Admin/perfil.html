@@ -68,25 +68,12 @@
 					<div class="grid cols-2">
 						<div class="card">
 							<div class="content" style="display:flex;gap:16px;align-items:center">
-								<div class="avatar" id="avatar">
-									<img th:if="${admin.foto != null}"
-										th:src="@{/assets/uploads/{foto}(foto=${admin.foto})}" alt="Foto de perfil"
-										style="width:60px;height:60px;border-radius:50%;object-fit:cover;" />
-									<span th:if="${admin.foto == null}">
-										<span
-											th:text="${#strings.substring(admin.nombres,0,1) + #strings.substring(admin.apellidos,0,1)}">AP</span>
-									</span>
-								</div>
+								<div class="avatar" id="avatar">AP</div>
 								<div>
-									<h3 id="adminName" th:text="${admin.nombres}">Admin Principal</h3>
-									<div class="notice" th:text="${admin.apellidos}">Guerrero</div>
-									<div class="notice" id="adminEmail" th:text="${admin.correo}">admin@clinicpet.com
-									</div>
-									<div class="notice" id="adminPhone" th:text="${admin.telefono}">+57 300 000 0000
-									</div>
-									<div class="notice" th:text="${admin.cedula}">1060506955</div>
+									<h3 id="adminName">Admin Principal</h3>
+									<div class="notice" id="adminEmail">admin@clinicpet.com</div>
+									<div class="notice" id="adminPhone">+57 300 000 0000</div>
 								</div>
-
 								<div style="margin-left:auto;display:flex;gap:8px">
 									<button class="btn" id="btnEditProfile">Editar</button>
 									<button class="btn ghost" id="btnChangePhoto">Cambiar foto</button>
@@ -116,63 +103,7 @@
 					</div>
 				</section>
 
-				<!----Formularios-->
-
-				<!-- Formulario para editar datos -->
-				<div id="formEditar" style="display:none; margin-top:20px;">
-					<div class="card">
-						<form th:action="@{/admin/perfil/actualizar-datos}" method="post">
-							<input type="hidden" name="id" th:value="${admin.id}">
-
-							<label>Nombres:</label>
-							<input type="text" name="nombres" th:value="${admin.nombres}">
-
-							<label>Apellidos:</label>
-							<input type="text" name="apellidos" th:value="${admin.apellidos}">
-
-							<label>Correo:</label>
-							<input type="email" name="correo" th:value="${admin.correo}">
-
-							<label>Teléfono:</label>
-							<input type="text" name="telefono" th:value="${admin.telefono}">
-
-							<label>Cédula:</label>
-							<input type="text" name="cedula" th:value="${admin.cedula}">
-
-							<button type="submit">Guardar cambios</button>
-							<button type="submit">Cancelar</button>
-						</form>
-					</div>
-				</div>
-				<!-- Formulario para cambiar foto -->
-				<div id="formFoto" style="display:none; margin-top:20px;">
-					<div class="card">
-						<form th:action="@{/admin/perfil/actualizar-foto}" method="post" enctype="multipart/form-data">
-							<input type="file" name="foto">
-							<button type="submit">Subir foto</button>
-							<button type="submit">Cancelar</button>
-						</form>
-					</div>
-				</div>
-				<!-------src="scrip.js" defer-->
-				<script>
-					//Abrir formularios
-					document.getElementById("btnEditProfile").addEventListener("click", () => {
-						document.getElementById("formEditar").style.display = "block";
-					});
-
-					document.getElementById("btnChangePhoto").addEventListener("click", () => {
-						document.getElementById("formFoto").style.display = "block";
-					});
-					//Cerrar formularios 
-					document.getElementById("btnCancelEdit").addEventListener("click", () => {
-						document.getElementById("formEditar").style.display = "none";
-					});
-
-					document.getElementById("cancelFoto")?.addEventListener("click", () => {
-						document.getElementById("formFoto").style.display = "none";
-					});
-				</script>
+				<script src="scrip.js" defer></script>
 </body>
 
 </html>

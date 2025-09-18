@@ -11,7 +11,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.clinicpet.demo.model.PerfilAdmin;
 import com.clinicpet.demo.model.PerfilVeterinario;
+import com.clinicpet.demo.service.IPerfilAdminService;
 import com.clinicpet.demo.service.IPerfilVeterinarioService;
 import com.clinicpet.demo.service.IVeterinariaService;
 
@@ -26,6 +31,9 @@ public class AdminController {
 
 	@Autowired
 	private IPerfilVeterinarioService veterinarioService;
+
+	@Autowired
+	private IPerfilAdminService adminService;
 
 //Vista principal del admin
 	@GetMapping("/home")
@@ -102,9 +110,7 @@ public class AdminController {
 	// Aprobar veterinario
 	@PostMapping("/aprobarVeterinario/{id}")
 	public String aprobarVeterinario(@PathVariable Integer id) {
-		LOGGER.info("Iniciando la aprobación para el veterinario con ID: {}", id);
 		veterinarioService.aprobarVeterinario(id);
-		LOGGER.info("Aprobación finalizada para el veterinario con ID: {}", id);
 		return "redirect:/admin/gestion-veterinaria";
 	}
 
@@ -177,7 +183,24 @@ public class AdminController {
 	// PERFIL ADMIN
 	@GetMapping("/perfil")
 	public String perfil(Model model) {
+		PerfilAdmin admin = adminService.obtenerAdminPrincipal().orElse(new PerfilAdmin()); // fallback si no existe
+		model.addAttribute("admin", admin);
 		return "Admin/perfil";
+	}
+
+	// Actualizar datos
+	@PostMapping("/perfil/actualizar-datos")
+	public String actualizarPerfil(@ModelAttribute PerfilAdmin adminActualizado) {// Forzamos que sea siempre id = 1
+		adminActualizado.setId(1);
+		adminService.actualizarAdmin(adminActualizado);
+		return "redirect:/admin/perfil";
+	}
+
+	// Actualizar foto
+	@PostMapping("/perfil/actualizar-foto")
+	public String actualizarFoto(@RequestParam("foto") MultipartFile foto) { // Mandamos directo al id fijo = 1
+		adminService.actualizarFoto(1, foto);
+		return "redirect:/admin/perfil";
 	}
 
 	// REPORTES
