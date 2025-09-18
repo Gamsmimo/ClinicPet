@@ -17,6 +17,7 @@ public class Usuario {
 
 	private String username;
 	private String nombre;
+
 	private String apellidos;
 	private String correo;
 	private String tipoDocumento;
@@ -35,10 +36,12 @@ public class Usuario {
 
 	public Usuario(Integer id, String username, String nombre, String apellidos, String correo, String tipoDocumento,
 			String numDocumento, String telefono, String edad, String contraseña, Rol rol) {
+
 		super();
 		this.id = id;
 		this.username = username;
 		this.nombre = nombre;
+
 		this.apellidos = apellidos;
 		this.correo = correo;
 		this.tipoDocumento = tipoDocumento;
@@ -48,6 +51,8 @@ public class Usuario {
 		this.contraseña = contraseña;
 		this.rol = rol;
 	}
+
+	// getters y setters
 
 	public Integer getId() {
 		return id;
@@ -139,9 +144,11 @@ public class Usuario {
 
 	@Override
 	public String toString() {
+
 		return "Usuario [id=" + id + ", username=" + username + ", nombre=" + nombre + ", apellidos=" + apellidos
 				+ ", correo=" + correo + ", tipoDocumento=" + tipoDocumento + ", numDocumento=" + numDocumento
 				+ ", telefono=" + telefono + ", edad=" + edad + ", rol=" + rol + "]";
+
 	}
 
 }

@@ -53,12 +53,6 @@ public class PerfilUsuarioServiceImplement implements IPerfilUsuarioService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<PerfilUsuario> obtenerPerfilesPorTelefono(String telefono) {
-		return perfilUsuarioRepository.findByTelefono(telefono);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public List<PerfilUsuario> obtenerPerfilesConMascotas() {
 		return perfilUsuarioRepository.findPerfilesConMascotas();
 	}

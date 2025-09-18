@@ -15,6 +15,7 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 
 	@Autowired
 	private IPerfilVeterinarioRepository perfilVeterinarioRepository;
+	private Optional<PerfilVeterinario> PerfilVeterinario;
 
 	@Override
 	@Transactional
@@ -23,9 +24,10 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	public Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorId(Integer id) {
-		return perfilVeterinarioRepository.findById(id);
+	@Transactional
+	public PerfilVeterinario findById(Integer id) {
+		return perfilVeterinarioRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
 	}
 
 	@Transactional(readOnly = true)
@@ -60,11 +62,6 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 		return perfilVeterinarioRepository.findByEspecialidad(especialidad);
 	}
 
-	@Override
-	public Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorRut(String rut) {
-		return Optional.ofNullable(perfilVeterinarioRepository.findByRut(rut));
-	}
-
 	@Transactional(readOnly = true)
 	public List<PerfilVeterinario> obtenerVeterinariosPorTelefono(String telefono) {
 		return perfilVeterinarioRepository.findByTelefono(telefono);
@@ -87,13 +84,57 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 	}
 
 	@Override
-	public PerfilVeterinario obtenerVeterinarioPorRut(String rut) {
+	public PerfilVeterinario obtenerVeterinarioPorTarjetaProfesional(String tarjetaProfesional) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void eliminarPerfilVeterinario(Integer id) {
+	public Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorTargetaProfesional(String tarjetaProfesional) {
+		return Optional.empty();
+	}
+
+	@Override
+	public List<PerfilVeterinario> ListarPorEstado(String estado) {
+		return perfilVeterinarioRepository.findByEstado(estado);
+	}
+
+	@Override
+	@Transactional
+	public PerfilVeterinario desactivarVeterinario(Integer id) {
+		PerfilVeterinario veterinario = perfilVeterinarioRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
+		veterinario.setEstado("Inactiva"); // cambiar estado a inactiva
+		return perfilVeterinarioRepository.save(veterinario);
+	}
+
+	@Override
+	public PerfilVeterinario activarVeterinario(Integer id) {
+		PerfilVeterinario veterinario = findById(id);
+		veterinario.setEstado("Aprobada");
+		return perfilVeterinarioRepository.save(veterinario);
+	}
+
+	@Override
+	@Transactional
+	public void aprobarVeterinario(Integer id) {
+		PerfilVeterinario veterinario = perfilVeterinarioRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
+		veterinario.setEstado("Aprobada"); // cambiar estado
+		perfilVeterinarioRepository.save(veterinario); // guardar en la BD
+	}
+
+	@Override
+	@Transactional
+	public void rechazarVeterinario(Integer id) {
+		PerfilVeterinario veterinario = perfilVeterinarioRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
+		veterinario.setEstado("Rechazada"); // cambiar estado
+		perfilVeterinarioRepository.save(veterinario); // guardar en la BD
+	}
+
+	@Override
+	public void editarVeterinario(Integer id) {
 	}
 
 }

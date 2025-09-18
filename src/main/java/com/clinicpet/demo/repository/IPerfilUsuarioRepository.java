@@ -17,9 +17,6 @@ public interface IPerfilUsuarioRepository extends JpaRepository<PerfilUsuario, I
 	// Buscar perfiles por dirección
 	java.util.List<PerfilUsuario> findByDireccionContaining(String direccion);
 
-	// Buscar perfiles por teléfono
-	java.util.List<PerfilUsuario> findByTelefono(String telefono);
-
 	// Buscar perfiles con mascotas
 	@Query("SELECT pu FROM PerfilUsuario pu WHERE SIZE(pu.mascota) > 0")
 	java.util.List<PerfilUsuario> findPerfilesConMascotas();

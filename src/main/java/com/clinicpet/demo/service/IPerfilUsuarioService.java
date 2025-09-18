@@ -18,8 +18,6 @@ public interface IPerfilUsuarioService {
 
 	List<PerfilUsuario> obtenerPerfilesPorDireccion(String direccion);
 
-	List<PerfilUsuario> obtenerPerfilesPorTelefono(String telefono);
-
 	List<PerfilUsuario> obtenerPerfilesConMascotas();
 
 	PerfilUsuario actualizarPerfilUsuario(Integer id, PerfilUsuario perfilUsuario);

@@ -20,6 +20,7 @@ public class Calificacion {
 	private Integer puntuacion;
 	private String comentario;
 	private LocalDate fecha;
+	private String estado;
 
 	@ManyToOne
 	@JoinColumn(name = "idUsuario", nullable = false)
@@ -37,18 +38,21 @@ public class Calificacion {
 	public Calificacion() {
 	}
 
-	// constructor con campos
-	public Calificacion(Integer id, Integer puntuacion, String comentario, LocalDate fecha, Usuario usuario,
-			Usuario veterinario, Servicio servicio) {
+	//CONSTRUCTOR CON CAMPOS
+
+	public Calificacion(Integer id, Integer puntuacion, String comentario, LocalDate fecha, String estado,
+			Usuario usuario, Usuario veterinario, Servicio servicio) {
 		super();
 		this.id = id;
 		this.puntuacion = puntuacion;
 		this.comentario = comentario;
 		this.fecha = fecha;
+		this.estado = estado;
 		this.usuario = usuario;
 		this.veterinario = veterinario;
 		this.servicio = servicio;
 	}
+//GETTERS Y SETTERS
 
 	public Integer getId() {
 		return id;
@@ -82,6 +86,14 @@ public class Calificacion {
 		this.fecha = fecha;
 	}
 
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
 	public Usuario getUsuario() {
 		return usuario;
 	}
@@ -109,7 +121,7 @@ public class Calificacion {
 	@Override
 	public String toString() {
 		return "Calificacion [id=" + id + ", puntuacion=" + puntuacion + ", comentario=" + comentario + ", fecha="
-				+ fecha + "]";
+				+ fecha + ", estado=" + estado + "]";
 	}
 
 	// metodo para asignar la fecha automaticamente
