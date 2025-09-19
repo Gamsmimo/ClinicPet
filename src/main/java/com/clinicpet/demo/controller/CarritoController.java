@@ -4,95 +4,56 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.clinicpet.demo.model.Carrito;
-import com.clinicpet.demo.model.CarritoProducto;
-
 import com.clinicpet.demo.service.ICarritoService;
-import com.clinicpet.demo.service.ICarritoProductoService;
 
-@Controller
-@RequestMapping("/carrito")
+@RestController
+@RequestMapping("/api/carritos")
+@CrossOrigin(origins = "*")
 public class CarritoController {
 
-    @Autowired
-    private ICarritoService carritoService;
+	@Autowired
+	private ICarritoService carritoService;
 
-    @Autowired
-    private ICarritoProductoService carritoProductoService;
+	@GetMapping
+	public List<Carrito> listarCarritos() {
+		return carritoService.listarCarritos();
+	}
 
-    // Listar todos los carritos
-    @GetMapping("/listar")
-    public String listarCarritos(Model model) {
-        List<Carrito> carritos = carritoService.listarCarritos(null);
-        model.addAttribute("carritos", carritos);
-        return "carrito/listar";
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<Carrito> obtenerCarritoPorId(@PathVariable Integer id) {
+		Optional<Carrito> carrito = carritoService.obtenerCarritoPorId(id);
+		return carrito.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	}
 
-    // Ver detalle del carrito (con productos)
-    @GetMapping("/{id}")
-    public String verCarrito(@PathVariable("id") Integer id, Model model) {
-        Optional<Carrito> carrito = carritoService.buscarPorId(id);
-        if (carrito.isPresent()) {
-            model.addAttribute("carrito", carrito.get());
+	@GetMapping("/usuario/{usuarioId}/activo")
+	public ResponseEntity<Carrito> obtenerCarritoActivoUsuario(@PathVariable Integer usuarioId) {
+		Optional<Carrito> carrito = carritoService.obtenerCarritoActivoUsuario(usuarioId);
+		return carrito.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	}
 
-            // Para el formulario de agregar producto
-            model.addAttribute("carritoProducto", new CarritoProducto());
-            return "carrito/detalle";
-        } else {
-            return "redirect:/carrito/listar";
-        }
-    }
+	@PostMapping("/usuario/{usuarioId}/crear")
+	public Carrito crearCarritoParaUsuario(@PathVariable Integer usuarioId) {
+		return carritoService.crearCarritoParaUsuario(usuarioId);
+	}
 
-    // Crear carrito
-    @GetMapping("/nuevo")
-    public String nuevoCarrito(Model model) {
-        model.addAttribute("carrito", new Carrito());
-        return "carrito/form";
-    }
+	@PostMapping("/usuario/{usuarioId}/confirmar")
+	public Carrito confirmarCarrito(@PathVariable Integer usuarioId) {
+		return carritoService.confirmarCarrito(usuarioId);
+	}
 
-    @PostMapping("/guardar")
-    public String guardarCarrito(@ModelAttribute Carrito carrito) {
-        carritoService.guardarCarrito(carrito);
-        return "redirect:/carrito/listar";
-    }
+	@PostMapping("/usuario/{usuarioId}/cancelar")
+	public ResponseEntity<Void> cancelarCarrito(@PathVariable Integer usuarioId) {
+		carritoService.cancelarCarrito(usuarioId);
+		return ResponseEntity.ok().build();
+	}
 
-    // Eliminar carrito
-    @GetMapping("/eliminar/{id}")
-    public String eliminarCarrito(@PathVariable("id") Integer id) {
-        carritoService.eliminarCarrito(id);
-        return "redirect:/carrito/listar";
-    }
-
-    // -------------------------------
-    // 🔹 PRODUCTOS DEL CARRITO
-    // -------------------------------
-
-    // Agregar producto al carrito
-    @PostMapping("/{carritoId}/agregarProducto")
-    public String agregarProducto(
-            @PathVariable("carritoId") Integer carritoId,
-            @ModelAttribute CarritoProducto carritoProducto) {
-
-        // asociar el carrito al producto antes de guardar
-        Carrito carrito = carritoService.buscarPorId(carritoId).orElse(null);
-        if (carrito != null) {
-            carritoProducto.setCarrito(carrito);
-            carritoProductoService.guardarCarritoPrroducto(carritoProducto);
-        }
-        return "redirect:/carrito/" + carritoId;
-    }
-
-    // Eliminar producto del carrito
-    @GetMapping("/{carritoId}/eliminarProducto/{productoId}")
-    public String eliminarProducto(
-            @PathVariable("carritoId") Integer carritoId,
-            @PathVariable("productoId") Integer productoId) {
-
-        carritoProductoService.eliminarCarritoProducto(productoId);
-        return "redirect:/carrito/" + carritoId;
-    }
 }
