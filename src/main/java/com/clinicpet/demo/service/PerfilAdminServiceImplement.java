@@ -19,7 +19,7 @@ public class PerfilAdminServiceImplement implements IPerfilAdminService {
 	@Autowired
 	private IPerfilAdminRepository adminRepository;
 
-	private final String UPLOAD_DIR = "src/main/resources/static/assets/uploads/"; // carpeta donde se guardarán las
+	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/"; // carpeta donde se guardarán las
 
 	private PerfilAdmin admin;
 	// fotos
@@ -39,39 +39,36 @@ public class PerfilAdminServiceImplement implements IPerfilAdminService {
 		adminRepository.save(admin);
 	}
 
+	// ACTUALIZAR FOTO
 	@Override
 	public void actualizarFoto(Integer id, MultipartFile foto) {
 		if (!foto.isEmpty()) {
 			try {
-				// Carpeta de uploads
-				String uploadDir = "src/main/resources/static/assets/uploads/";
+				String uploadDir = "uploads/"; // carpeta donde se guarda la foto
 
-				// Obtener admin de la DB
-				Optional<PerfilAdmin> optAdmin = obtenerAdminPorId(id);
-				if (optAdmin.isPresent()) {
-					PerfilAdmin admin = optAdmin.get();
+				PerfilAdmin admin = obtenerAdminPorId(id).orElse(null);
+				if (admin != null) {
 
-					// Si ya tiene una foto, eliminarla
-					if (admin.getFoto() != null) {
+					// Borrar foto anterior si existe
+					if (admin.getFoto() != null && !admin.getFoto().isEmpty()) {
 						File archivoAnterior = new File(uploadDir + admin.getFoto());
 						if (archivoAnterior.exists()) {
-							archivoAnterior.delete();
+							boolean borrado = archivoAnterior.delete();
+							if (!borrado) {
+								System.out.println("No se pudo borrar la foto anterior: " + archivoAnterior.getName());
+							}
 						}
 					}
 
-					// Generar un nombre único para la nueva foto
+					// Guardar nueva foto
 					String nombreArchivo = System.currentTimeMillis() + "_" + foto.getOriginalFilename();
-
-					// Guardar físicamente la nueva imagen
 					Path ruta = Paths.get(uploadDir + nombreArchivo);
 					Files.write(ruta, foto.getBytes());
 
-					// Guardar nombre en BD
 					admin.setFoto(nombreArchivo);
 					adminRepository.save(admin);
 				}
-
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

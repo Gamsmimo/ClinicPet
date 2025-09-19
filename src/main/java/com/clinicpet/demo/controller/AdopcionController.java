@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.clinicpet.demo.model.Adopcion;
 import com.clinicpet.demo.model.Mascota;
-import com.clinicpet.demo.model.PerfilUsuario;
+import com.clinicpet.demo.model.Usuario;
 import com.clinicpet.demo.service.IAdopcionService;
 import com.clinicpet.demo.service.IMascotaService;
 
@@ -69,7 +69,7 @@ public class AdopcionController {
 	public String guardarAdopcion(@ModelAttribute("adopcion") Adopcion adopcion, HttpSession session) {
 
 		// obtener el usuario actual
-		PerfilUsuario usuarioActual = (PerfilUsuario) session.getAttribute("usuario");
+		Usuario usuarioActual = (Usuario) session.getAttribute("usuario");
 		if (usuarioActual == null) {
 			return "redirect:/iniciasesion";
 		}
@@ -85,7 +85,7 @@ public class AdopcionController {
 		mascota.setDescripcion(adopcion.getMascota().getDescripcion());
 		mascota.setEstado("Disponible");
 		mascota.setFoto(adopcion.getMascota().getFoto());
-		mascota.setPerfilusuario(usuarioActual); // Aquí se asigna el usuario que publica
+		mascota.setUsuario(usuarioActual); // Aquí se asigna el usuario que publica
 
 		// Guardar la mascota
 		mascota = mascotaService.guardarMascota(mascota);

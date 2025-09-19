@@ -1,12 +1,17 @@
 package com.clinicpet.demo.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
@@ -15,9 +20,7 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	private String username;
-	private String nombre;
-
+	private String nombres;
 	private String apellidos;
 	private String correo;
 	private String tipoDocumento;
@@ -25,23 +28,30 @@ public class Usuario {
 	private String telefono;
 	private String edad;
 	private String contraseña;
+	private boolean activo = true; // para aprobar/desaprobar usuarios
+	private String direccion;
 
+	// Relación con rol
 	@ManyToOne
-	@JoinColumn(name = "rol_id")
+	@JoinColumn(name = "idRol")
 	private Rol rol;
 
+	// Relación con mascotas
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Mascota> mascotas = new ArrayList<>();
+
+	// constructor vacio
 	public Usuario() {
 
 	}
 
-	public Usuario(Integer id, String username, String nombre, String apellidos, String correo, String tipoDocumento,
-			String numDocumento, String telefono, String edad, String contraseña, Rol rol) {
-
+	// constructor con campos
+	public Usuario(Integer id, String nombres, String apellidos, String correo, String tipoDocumento,
+			String numDocumento, String telefono, String edad, String contraseña, boolean activo, String direccion,
+			Rol rol, List<Mascota> mascotas) {
 		super();
 		this.id = id;
-		this.username = username;
-		this.nombre = nombre;
-
+		this.nombres = nombres;
 		this.apellidos = apellidos;
 		this.correo = correo;
 		this.tipoDocumento = tipoDocumento;
@@ -49,7 +59,10 @@ public class Usuario {
 		this.telefono = telefono;
 		this.edad = edad;
 		this.contraseña = contraseña;
+		this.activo = activo;
+		this.direccion = direccion;
 		this.rol = rol;
+		this.mascotas = mascotas;
 	}
 
 	// getters y setters
@@ -62,20 +75,12 @@ public class Usuario {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getNombres() {
+		return nombres;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setNombres(String nombres) {
+		this.nombres = nombres;
 	}
 
 	public String getApellidos() {
@@ -134,6 +139,22 @@ public class Usuario {
 		this.contraseña = contraseña;
 	}
 
+	public boolean isActivo() {
+		return activo;
+	}
+
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
 	public Rol getRol() {
 		return rol;
 	}
@@ -142,13 +163,20 @@ public class Usuario {
 		this.rol = rol;
 	}
 
+	public List<Mascota> getMascotas() {
+		return mascotas;
+	}
+
+	public void setMascotas(List<Mascota> mascotas) {
+		this.mascotas = mascotas;
+	}
+
 	@Override
 	public String toString() {
-
-		return "Usuario [id=" + id + ", username=" + username + ", nombre=" + nombre + ", apellidos=" + apellidos
-				+ ", correo=" + correo + ", tipoDocumento=" + tipoDocumento + ", numDocumento=" + numDocumento
-				+ ", telefono=" + telefono + ", edad=" + edad + ", rol=" + rol + "]";
-
+		return "Usuario [id=" + id + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo
+				+ ", tipoDocumento=" + tipoDocumento + ", numDocumento=" + numDocumento + ", telefono=" + telefono
+				+ ", edad=" + edad + ", contraseña=" + contraseña + ", activo=" + activo + ", direccion=" + direccion
+				+ "]";
 	}
 
 }

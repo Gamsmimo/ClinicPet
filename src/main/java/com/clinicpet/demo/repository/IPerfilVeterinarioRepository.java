@@ -14,13 +14,11 @@ public interface IPerfilVeterinarioRepository extends JpaRepository<PerfilVeteri
 
 	List<PerfilVeterinario> findByEstado(String estado);
 
-	PerfilVeterinario findByUsuarioUsername(String username);
+	PerfilVeterinario findByUsuarioNombres(String nombres);
 
 	java.util.List<PerfilVeterinario> findByEspecialidad(String especialidad);
 
 	PerfilVeterinario findBytarjetaProfesional(String tarjetaProfesional);
-
-	java.util.List<PerfilVeterinario> findByTelefono(String telefono);
 
 	@Query("SELECT pv FROM PerfilVeterinario pv WHERE SIZE(pv.emergencia) = 0")
 	java.util.List<PerfilVeterinario> findVeterinariosDisponibles();

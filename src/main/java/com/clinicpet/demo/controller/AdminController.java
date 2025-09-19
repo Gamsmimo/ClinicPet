@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.clinicpet.demo.model.PerfilAdmin;
 import com.clinicpet.demo.model.PerfilVeterinario;
+import com.clinicpet.demo.model.Veterinaria;
 import com.clinicpet.demo.service.IPerfilAdminService;
 import com.clinicpet.demo.service.IPerfilVeterinarioService;
 import com.clinicpet.demo.service.IVeterinariaService;
@@ -50,6 +51,7 @@ public class AdminController {
 		model.addAttribute("veterinariasPendientes", veterinariaService.listarPorEstado("Pendiente"));
 		model.addAttribute("veterinariasAprobadas", veterinariaService.listarPorEstado("Aprobada"));
 		model.addAttribute("veterinariasDesactivadas", veterinariaService.listarPorEstado("Inactiva"));
+		model.addAttribute("veterinaria", new Veterinaria());
 
 		// VETERINARIOS
 		List<PerfilVeterinario> Aprobada = veterinarioService.ListarPorEstado("Aprobada");
@@ -61,6 +63,14 @@ public class AdminController {
 		model.addAttribute("veterinariosInactivos", Inactiva);
 
 		return "Admin/gestionveterinaria";
+	}
+
+	// Crear nueva veterinaria
+	@PostMapping("/guardarVeterinaria")
+	public String guardarVeterinaria(@ModelAttribute Veterinaria veterinaria) {
+		veterinaria.setEstado("Aprobada"); // Se guarada como aprobada
+		veterinariaService.save(veterinaria);
+		return "redirect:/admin/gestion-veterinaria";
 	}
 
 	// solicitudes de veterinarias para ser aprobadas
@@ -181,6 +191,7 @@ public class AdminController {
 	}
 
 	// PERFIL ADMIN
+	// Entrar al perfil
 	@GetMapping("/perfil")
 	public String perfil(Model model) {
 		PerfilAdmin admin = adminService.obtenerAdminPrincipal().orElse(new PerfilAdmin()); // fallback si no existe
@@ -188,10 +199,19 @@ public class AdminController {
 		return "Admin/perfil";
 	}
 
-	// Actualizar datos
+	// Actualizar datos del perfil
 	@PostMapping("/perfil/actualizar-datos")
-	public String actualizarPerfil(@ModelAttribute PerfilAdmin adminActualizado) {// Forzamos que sea siempre id = 1
+	public String actualizarPerfil(@ModelAttribute PerfilAdmin adminActualizado) {
 		adminActualizado.setId(1);
+
+		// Obtener admin actual de la DB
+		PerfilAdmin adminActual = adminService.obtenerAdminPrincipal().orElse(new PerfilAdmin());
+
+		// Conservar la foto si no se subió nueva
+		if (adminActual.getFoto() != null) {
+			adminActualizado.setFoto(adminActual.getFoto());
+		}
+
 		adminService.actualizarAdmin(adminActualizado);
 		return "redirect:/admin/perfil";
 	}

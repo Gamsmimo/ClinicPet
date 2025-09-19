@@ -19,7 +19,6 @@ public class PerfilVeterinario {
 	private Integer id;
 	private String especialidad;
 	private String tarjetaProfesional;
-	private String telefono;
 	private String estado;
 
 	// Relación con Usuario
@@ -45,7 +44,6 @@ public class PerfilVeterinario {
 		this.id = id;
 		this.especialidad = especialidad;
 		this.tarjetaProfesional = tarjetaProfesional;
-		this.telefono = telefono;
 		this.estado = estado;
 		this.usuario = usuario;
 		this.cita = cita;
@@ -74,14 +72,6 @@ public class PerfilVeterinario {
 
 	public void setTarjetaProfesional(String tarjetaProfesional) {
 		this.tarjetaProfesional = tarjetaProfesional;
-	}
-
-	public String getTelefono() {
-		return telefono;
-	}
-
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
 	}
 
 	public String getEstado() {
@@ -119,7 +109,7 @@ public class PerfilVeterinario {
 	@Override
 	public String toString() {
 		return "PerfilVeterinario [id=" + id + ", especialidad=" + especialidad + ", tarjetaProfesional="
-				+ tarjetaProfesional + ", telefono=" + telefono + ", estado=" + estado + "]";
+				+ tarjetaProfesional + ", estado=" + estado + "]";
 	}
 
 }

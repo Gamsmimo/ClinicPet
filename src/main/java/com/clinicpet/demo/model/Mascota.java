@@ -25,10 +25,10 @@ public class Mascota {
 	private String estado; // disponible, adoptada, en proceso
 	private String foto;
 
-	// Relación con PerfilUsuario
+	// Relación con Usuario
 	@ManyToOne
-	@JoinColumn(name = "idPerfilUsuario", nullable = false) // FK en la tabla mascota
-	private PerfilUsuario perfilusuario; // dueño actual
+	@JoinColumn(name = "idUsuario", nullable = false) // FK en la tabla mascota
+	private Usuario usuario; // dueño actual
 
 	// constructor vacio
 
@@ -37,7 +37,7 @@ public class Mascota {
 
 	// constructor con campos
 	public Mascota(Integer id, String nombre, String especie, String raza, Integer edad, String genero, String tamaño,
-			String descripcion, String estado, String foto, PerfilUsuario perfilusuario) {
+			String descripcion, String estado, String foto, Usuario usuario) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -49,7 +49,7 @@ public class Mascota {
 		this.descripcion = descripcion;
 		this.estado = estado;
 		this.foto = foto;
-		this.perfilusuario = perfilusuario;
+		this.usuario = usuario;
 	}
 
 	public Integer getId() {
@@ -132,12 +132,12 @@ public class Mascota {
 		this.foto = foto;
 	}
 
-	public PerfilUsuario getPerfilusuario() {
-		return perfilusuario;
+	public Usuario getUsuario() {
+		return usuario;
 	}
 
-	public void setPerfilusuario(PerfilUsuario perfilusuario) {
-		this.perfilusuario = perfilusuario;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	@Override

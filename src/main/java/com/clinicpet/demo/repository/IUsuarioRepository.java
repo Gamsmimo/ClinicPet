@@ -10,22 +10,30 @@ import java.util.Optional;
 @Repository
 public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-	// Solo mantén los métodos que coincidan con los campos de tu entidad
-	Optional<Usuario> findByUsername(String username);
+	// Buscar por nombres, correo o documento
+	Optional<Usuario> findByNombres(String nombres);
 
 	Optional<Usuario> findByCorreo(String correo);
 
 	Optional<Usuario> findByNumDocumento(String numDocumento);
 
-	List<Usuario> findByNombreContainingOrApellidosContaining(String nombre, String apellidos);
+	// Buscar por nombre o apellido
+	List<Usuario> findByNombresContainingOrApellidosContaining(String nombres, String apellidos);
 
-	// Métodos de existencia
-	boolean existsByUsername(String username);
+	// Verificar existencia
+	boolean existsByNombres(String nombres);
 
 	boolean existsByCorreo(String correo);
 
 	boolean existsByNumDocumento(String numDocumento);
 
-	// Si necesitas buscar por rol, agrega este método
+	// Buscar por rol
 	List<Usuario> findByRolId(Integer rolId);
+
+	// Buscar por dirección
+	List<Usuario> findByDireccionContaining(String direccion);
+
+	// Buscar usuarios que tengan al menos 1 mascota
+	List<Usuario> findByMascotasIsNotNull();
+
 }

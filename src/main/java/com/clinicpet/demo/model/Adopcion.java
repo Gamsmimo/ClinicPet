@@ -31,7 +31,7 @@ public class Adopcion {
 	// Relaciones
 	@ManyToOne
 	@JoinColumn(name = "idUsuarioAdoptante")
-	private PerfilUsuario usuarioAdoptante;
+	private Usuario usuarioAdoptante;
 
 	@ManyToOne
 	@JoinColumn(name = "idVeterinaria", nullable = false)
@@ -46,7 +46,7 @@ public class Adopcion {
 	}
 
 	public Adopcion(Integer id, Date fechaSolicitud, String estado, String descripcion, String imagen, String contacto,
-			PerfilUsuario usuarioAdoptante, Veterinaria veterinaria, Mascota mascota) {
+			Usuario usuarioAdoptante, Veterinaria veterinaria, Mascota mascota) {
 		this.id = id;
 		this.fechaSolicitud = fechaSolicitud;
 		this.estado = estado;
@@ -107,11 +107,11 @@ public class Adopcion {
 		this.contacto = contacto;
 	}
 
-	public PerfilUsuario getUsuarioAdoptante() {
+	public Usuario getUsuarioAdoptante() {
 		return usuarioAdoptante;
 	}
 
-	public void setUsuarioAdoptante(PerfilUsuario usuarioAdoptante) {
+	public void setUsuarioAdoptante(Usuario usuarioAdoptante) {
 		this.usuarioAdoptante = usuarioAdoptante;
 	}
 

@@ -36,7 +36,7 @@ public class MascotaServiceImplement implements IMascotaService {
 
 	@Override
 	public List<Mascota> buscarPorUsuario(Integer usuarioId) {
-		return mascotaRepository.findByPerfilusuarioId(usuarioId);
+		return mascotaRepository.findByUsuarioId(usuarioId);
 	}
 
 	@Override

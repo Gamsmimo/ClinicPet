@@ -16,7 +16,7 @@ public interface IPerfilVeterinarioService {
 
 	PerfilVeterinario obtenerPerfilVeterinarioPorUsuarioId(Integer usuarioId);
 
-	PerfilVeterinario obtenerPerfilVeterinarioPorUsername(String username);
+	PerfilVeterinario obtenerPerfilVeterinarioPorNombres(String nombres);
 
 	List<PerfilVeterinario> obtenerTodosLosPerfilesVeterinarios();
 
@@ -24,11 +24,8 @@ public interface IPerfilVeterinarioService {
 
 	PerfilVeterinario obtenerVeterinarioPorTarjetaProfesional(String tarjetaProfesional);
 
-	List<PerfilVeterinario> obtenerVeterinariosPorTelefono(String telefono);
-
 	List<PerfilVeterinario> obtenerVeterinariosDisponibles();
 
-	
 	PerfilVeterinario actualizarPerfilVeterinario(Integer id, PerfilVeterinario perfilVeterinario);
 
 	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorTargetaProfesional(String tarjetaProfesional);

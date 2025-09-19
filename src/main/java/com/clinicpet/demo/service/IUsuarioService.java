@@ -1,11 +1,11 @@
 package com.clinicpet.demo.service;
 
 import com.clinicpet.demo.model.Usuario;
-
 import java.util.List;
 import java.util.Optional;
 
 public interface IUsuarioService {
+
 	Usuario crearUsuario(Usuario usuario);
 
 	Usuario actualizarUsuario(Integer id, Usuario usuarioActualizado);
@@ -14,7 +14,7 @@ public interface IUsuarioService {
 
 	Optional<Usuario> buscarUsuarioPorId(Integer id);
 
-	Optional<Usuario> buscarUsuarioPorUsername(String username);
+	Optional<Usuario> buscarUsuarioPorNombres(String nombres);
 
 	Optional<Usuario> buscarUsuarioPorCorreo(String correo);
 
@@ -22,15 +22,25 @@ public interface IUsuarioService {
 
 	List<Usuario> buscarUsuariosPorRol(Integer rolId);
 
-	List<Usuario> buscarUsuariosPorNombreOApellido(String nombre, String apellidos);
-
-	boolean existeUsername(String username);
+	List<Usuario> buscarUsuariosPorNombresOApellidos(String nombres, String apellidos);
 
 	boolean existeCorreo(String correo);
 
 	boolean existeDocumento(String numDocumento);
 
+	boolean existeNombres(String nombres);
+
+	// NUEVOS MÉTODOS PARA ADMIN
+	Usuario activarUsuario(Integer id);
+
+	Usuario desactivarUsuario(Integer id);
+
+	Usuario cambiarRolUsuario(Integer id, Integer rolId);
+
 	void eliminarUsuario(Integer id);
 
-	boolean validarCredenciales(String username, String contraseña);
+	// LOGGIN
+
+	boolean validarCredenciales(String nombres, String contraseña);
+
 }

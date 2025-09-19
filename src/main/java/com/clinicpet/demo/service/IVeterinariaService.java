@@ -64,4 +64,5 @@ public interface IVeterinariaService {
 	List<Veterinaria> searchByMultipleFields(String keyword);
 
 	boolean validateVeterinariaData(Veterinaria veterinaria);
+
 }

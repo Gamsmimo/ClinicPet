@@ -129,7 +129,8 @@ public class HistoriaClinicaServiceImplement implements IHistoriaClinicaService 
 		return obtenerTodasLasHistoriasClinicas().stream().filter(hc -> hc.getFecha().equals(hoy)).toList();
 	}
 
-	// metodo para tener el historial de la mascota ordenado,para ver la evolucion de la salud de la mascota.
+	// metodo para tener el historial de la mascota ordenado,para ver la evolucion
+	// de la salud de la mascota.
 	public List<HistoriaClinica> obtenerHistorialCompletoMascota(Integer mascotaId) {
 		List<HistoriaClinica> historiales = obtenerHistoriasPorMascota(mascotaId);
 		// Ordenar de más reciente a más antiguo
@@ -137,10 +138,11 @@ public class HistoriaClinicaServiceImplement implements IHistoriaClinicaService 
 		return historiales;
 	}
 
-	// metodo para contar historias por veterinario, para saber que veterinario atiende mas casos (rendimiento del personal).
-	public Map<String, Long> contarHistoriasPorVeterinario() {
+	// metodo para contar historias por veterinario, para saber que veterinario
+	// atiende mas casos (rendimiento del personal).
+	public Map<Object, Long> contarHistoriasPorVeterinario() {
 		return obtenerTodasLasHistoriasClinicas().stream()
-				.collect(Collectors.groupingBy(hc -> hc.getVeterinario().getNombre(), Collectors.counting()));
+				.collect(Collectors.groupingBy(hc -> hc.getVeterinario().getNombres(), Collectors.counting()));
 	}
 
 }

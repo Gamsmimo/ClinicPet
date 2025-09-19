@@ -15,7 +15,6 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 
 	@Autowired
 	private IPerfilVeterinarioRepository perfilVeterinarioRepository;
-	private Optional<PerfilVeterinario> PerfilVeterinario;
 
 	@Override
 	@Transactional
@@ -37,8 +36,8 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 
 	@Override
 	@Transactional(readOnly = true)
-	public PerfilVeterinario obtenerPerfilVeterinarioPorUsername(String username) {
-		return perfilVeterinarioRepository.findByUsuarioUsername(username);
+	public PerfilVeterinario obtenerPerfilVeterinarioPorNombres(String nombres) {
+		return perfilVeterinarioRepository.findByUsuarioNombres(nombres);
 	}
 
 	@Override
@@ -60,11 +59,6 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 	@Transactional(readOnly = true)
 	public List<PerfilVeterinario> obtenerVeterinariosPorEspecialidad(String especialidad) {
 		return perfilVeterinarioRepository.findByEspecialidad(especialidad);
-	}
-
-	@Transactional(readOnly = true)
-	public List<PerfilVeterinario> obtenerVeterinariosPorTelefono(String telefono) {
-		return perfilVeterinarioRepository.findByTelefono(telefono);
 	}
 
 	@Override

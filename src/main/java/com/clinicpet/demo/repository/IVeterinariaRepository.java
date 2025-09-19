@@ -34,10 +34,6 @@ public interface IVeterinariaRepository extends JpaRepository<Veterinaria, Integ
 	@Query("SELECT v FROM Veterinaria v WHERE LOWER(v.direccion) LIKE LOWER(CONCAT('%',:ciudad, '%'))")
 	List<Veterinaria> findByCiudad(@Param("ciudad") String ciudad);
 
-	// Este método ya viene por defecto con JpaRepository, puedes eliminarlo
-	// long countTotalVeterinarias();
-
-	// Corrige el nombre del campo "servicios" (debe coincidir con tu entidad)
 	@Query("SELECT DISTINCT v FROM Veterinaria v JOIN v.servicios s WHERE LOWER(s.nombre) LIKE LOWER(CONCAT('%', :servicio, '%'))")
 	List<Veterinaria> findByServicioNombre(@Param("servicio") String servicio);
 
