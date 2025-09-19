@@ -26,8 +26,8 @@ public class Usuario {
 	private String tipoDocumento;
 	private String numDocumento;
 	private String telefono;
-	private String edad;
-	private String contraseña;
+	private Integer edad;
+	private String password;
 	private boolean activo = true; // para aprobar/desaprobar usuarios
 	private String direccion;
 
@@ -47,7 +47,7 @@ public class Usuario {
 
 	// constructor con campos
 	public Usuario(Integer id, String nombres, String apellidos, String correo, String tipoDocumento,
-			String numDocumento, String telefono, String edad, String contraseña, boolean activo, String direccion,
+			String numDocumento, String telefono, Integer edad, String contraseña, boolean activo, String direccion,
 			Rol rol, List<Mascota> mascotas) {
 		super();
 		this.id = id;
@@ -58,7 +58,7 @@ public class Usuario {
 		this.numDocumento = numDocumento;
 		this.telefono = telefono;
 		this.edad = edad;
-		this.contraseña = contraseña;
+		this.password = contraseña;
 		this.activo = activo;
 		this.direccion = direccion;
 		this.rol = rol;
@@ -123,20 +123,12 @@ public class Usuario {
 		this.telefono = telefono;
 	}
 
-	public String getEdad() {
+	public Integer getEdad() {
 		return edad;
 	}
 
-	public void setEdad(String edad) {
+	public void setEdad(Integer edad) {
 		this.edad = edad;
-	}
-
-	public String getContraseña() {
-		return contraseña;
-	}
-
-	public void setContraseña(String contraseña) {
-		this.contraseña = contraseña;
 	}
 
 	public boolean isActivo() {
@@ -171,11 +163,19 @@ public class Usuario {
 		this.mascotas = mascotas;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Override
 	public String toString() {
 		return "Usuario [id=" + id + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo
 				+ ", tipoDocumento=" + tipoDocumento + ", numDocumento=" + numDocumento + ", telefono=" + telefono
-				+ ", edad=" + edad + ", contraseña=" + contraseña + ", activo=" + activo + ", direccion=" + direccion
+				+ ", edad=" + edad + ", contraseña=" + password + ", activo=" + activo + ", direccion=" + direccion
 				+ "]";
 	}
 

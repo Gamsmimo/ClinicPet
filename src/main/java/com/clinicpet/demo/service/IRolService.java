@@ -1,85 +1,35 @@
 package com.clinicpet.demo.service;
 
 import com.clinicpet.demo.model.Rol;
-import com.clinicpet.demo.repository.IRolRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class IRolService {
+public interface IRolService {
 
-	@Autowired
-	private IRolRepository rolRepository;
+	Rol save(Rol rol);
 
-	// CRUD básico
-	@Transactional
-	public Rol save(Rol rol) {
-		return rolRepository.save(rol);
-	}
+	List<Rol> findAll();
 
-	@Transactional(readOnly = true)
-	public List<Rol> findAll() {
-		return rolRepository.findAll();
-	}
+	Optional<Rol> findById(Integer id);
 
-	@Transactional(readOnly = true)
-	public Optional<Rol> findById(Integer id) {
-		return rolRepository.findById(id);
-	}
+	void deleteById(Integer id);
 
-	@Transactional
-	public void deleteById(Integer id) {
-		rolRepository.deleteById(id);
-	}
+	Optional<Rol> findByNombre(String nombre);
 
-	// Búsquedas personalizadas
-	@Transactional(readOnly = true)
-	public Optional<Rol> findByNombre(String nombre) {
-		return rolRepository.findByNombre(nombre);
-	}
+	List<Rol> findByNombreContaining(String nombre);
 
-	@Transactional(readOnly = true)
-	public List<Rol> findByNombreContaining(String nombre) {
-		return rolRepository.findByNombreContainingIgnoreCase(nombre);
-	}
+	boolean existsByNombre(String nombre);
 
-	@Transactional(readOnly = true)
-	public boolean existsByNombre(String nombre) {
-		return rolRepository.existsByNombre(nombre);
-	}
+	List<Object[]> contarUsuariosPorRol();
 
-	// Consultas personalizadas con JPQL
-	@Transactional(readOnly = true)
-	public List<Object[]> contarUsuariosPorRol() {
-		return rolRepository.contarUsuariosPorRol();
-	}
+	List<Rol> findRolesConMasDeNUsuarios(int minUsuarios);
 
-	@Transactional(readOnly = true)
-	public List<Rol> findRolesConMasDeNUsuarios(int minUsuarios) {
-		return rolRepository.findRolesConMasDeNUsuarios(minUsuarios);
-	}
+	List<Rol> findRolesOrdenadosPorCantidadUsuarios();
 
-	@Transactional(readOnly = true)
-	public List<Rol> findRolesOrdenadosPorCantidadUsuarios() {
-		return rolRepository.findRolesOrdenadosPorCantidadUsuarios();
-	}
+	List<Rol> findRolesSinUsuarios();
 
-	@Transactional(readOnly = true)
-	public List<Rol> findRolesSinUsuarios() {
-		return rolRepository.findRolesSinUsuarios();
-	}
+	List<Rol> findRolesConUsuariosAsignados();
 
-	@Transactional(readOnly = true)
-	public List<Rol> findRolesConUsuariosAsignados() {
-		return rolRepository.findRolesConUsuariosAsignados();
-	}
-
-	@Transactional(readOnly = true)
-	public List<Rol> findRolesByIds(List<Integer> ids) {
-		return rolRepository.findByIdIn(ids);
-	}
+	List<Rol> findRolesByIds(List<Integer> ids);
 }

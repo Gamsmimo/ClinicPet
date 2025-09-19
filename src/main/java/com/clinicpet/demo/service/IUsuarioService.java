@@ -31,16 +31,26 @@ public interface IUsuarioService {
 	boolean existeNombres(String nombres);
 
 	// NUEVOS MÉTODOS PARA ADMIN
+
 	Usuario activarUsuario(Integer id);
 
 	Usuario desactivarUsuario(Integer id);
 
-	Usuario cambiarRolUsuario(Integer id, Integer rolId);
+	Usuario asignarRol(Integer id, Integer rolId);
 
 	void eliminarUsuario(Integer id);
 
-	// LOGGIN
+	// LOGIN
 
-	boolean validarCredenciales(String nombres, String contraseña);
+	/**
+	 * Valida las credenciales de un usuario usando correo y contraseña.
+	 * 
+	 * @param correo   correo electrónico del usuario
+	 * @param password contraseña en texto plano para validar
+	 * @return true si las credenciales son válidas, false en caso contrario
+	 */
+	boolean validarCredencialesPorCorreo(String correo, String password);
+
+	void save(Usuario usuario);
 
 }

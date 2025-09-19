@@ -34,6 +34,6 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 	List<Usuario> findByDireccionContaining(String direccion);
 
 	// Buscar usuarios que tengan al menos 1 mascota
-	List<Usuario> findByMascotasIsNotNull();
+	List<Usuario> findByMascotasIsNotEmpty();
 
 }
