@@ -86,8 +86,8 @@
 							</span>
 
 							<span class="navbar-text logout-text">
-								<a th:href="@{/usuarios/index}" style="text-decoration: none; color: #000000;"> Cerrar Sesión<i
-										class="fas fa-sign-out-alt fa-lg me-1" style="font-size: 30px;"></i></a>
+								<a th:href="@{/usuarios/index}" style="text-decoration: none; color: #000000;"> Cerrar
+									Sesión<i class="fas fa-sign-out-alt fa-lg me-1" style="font-size: 30px;"></i></a>
 							</span>
 
 
@@ -427,14 +427,21 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="add-pet-form">
+					<!-- El action del formulario apunta al nuevo endpoint en UsuarioController -->
+					<form th:action="@{/usuarios/perfilusuario/agregarMascota}" method="post" th:object="${mascota}"
+						enctype="multipart/form-data">
+						<!-- Campo oculto para el ID del usuario.
+	                             En una aplicación real, este ID se obtendría de la sesión del usuario logueado.
+	                             Para pruebas, puedes poner un ID fijo de un usuario que exista en tu DB. -->
+						<input type="hidden" id="idUsuario" name="idUsuario" th:value="${idUsuarioActual}">
+						<!-- Asegúrate de que idUsuarioActual se pase al modelo en el método perfilusuario() -->
 						<div class="mb-3">
-							<label for="pet-name" class="form-label">Nombre</label>
-							<input type="text" class="form-control" id="pet-name" required>
+							<label for="nombre" class="form-label">Nombre</label>
+							<input type="text" class="form-control" id="nombre" name="nombre" required>
 						</div>
 						<div class="mb-3">
-							<label for="pet-species" class="form-label">Especie</label>
-							<select class="form-select" id="pet-species" required>
+							<label for="especie" class="form-label">Especie</label>
+							<select class="form-select" id="especie" name="especie" required>
 								<option value="" selected disabled>Selecciona una especie</option>
 								<option value="perro">Perro</option>
 								<option value="gato">Gato</option>
@@ -445,32 +452,48 @@
 							</select>
 						</div>
 						<div class="mb-3">
-							<label for="pet-breed" class="form-label">Raza</label>
-							<input type="text" class="form-control" id="pet-breed">
+							<label for="raza" class="form-label">Raza</label>
+							<input type="text" class="form-control" id="raza" name="raza">
 						</div>
 						<div class="row mb-3">
 							<div class="col-md-6">
-								<label for="pet-age" class="form-label">Edad</label>
-								<input type="number" class="form-control" id="pet-age" min="0">
+								<label for="edad" class="form-label">Edad</label>
+								<input type="number" class="form-control" id="edad" name="edad" min="0">
 							</div>
 							<div class="col-md-6">
-								<label for="pet-sex" class="form-label">Sexo</label>
-								<select class="form-select" id="pet-sex">
-									<option value="macho">Macho</option>
-									<option value="hembra">Hembra</option>
+								<label for="genero" class="form-label">Género</label>
+								<select class="form-select" id="genero" name="genero">
+									<option value="M">Macho</option>
+									<option value="F">Hembra</option>
 									<option value="desconocido">Desconocido</option>
 								</select>
 							</div>
 						</div>
 						<div class="mb-3">
-							<label for="pet-image" class="form-label">Foto (opcional)</label>
-							<input class="form-control" type="file" id="pet-image" accept="image/*">
+							<label for="tamaño" class="form-label">Tamaño</label>
+							<select class="form-select" id="tamaño" name="tamaño">
+								<option value="" selected disabled>Selecciona un tamaño</option>
+								<option value="pequeño">Pequeño</option>
+								<option value="mediano">Mediano</option>
+								<option value="grande">Grande</option>
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="descripcion" class="form-label">Descripción</label>
+							<textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+						</div>
+						<div class="mb-3">
+							<label for="fotoFile" class="form-label">Subir Foto (opcional)</label>
+							<!-- Cambiado de 'foto' a 'fotoFile' para evitar conflictos con el nombre de la propiedad en Mascota si aún la usas para URL -->
+							<input class="form-control" type="file" id="fotoFile" name="fotoFile" accept="image/*">
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary">Guardar</button>
+							<!-- Cambiado a type="submit" -->
 						</div>
 					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-					<button type="button" class="btn btn-primary" id="save-pet-btn">Guardar</button>
 				</div>
 			</div>
 		</div>
