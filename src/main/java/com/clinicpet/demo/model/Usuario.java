@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,32 +13,52 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column; // Import básico para @Column
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuarios")
 public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@Column(nullable = false, length = 100)
 	private String nombres;
+
+	@Column(nullable = false, length = 100)
 	private String apellidos;
+
+	@Column(nullable = false, unique = true, length = 150)
 	private String correo;
+
+	@Column(name = "tipo_documento", nullable = false, length = 20)
 	private String tipoDocumento;
+
+	@Column(name = "num_documento", nullable = false, unique = true, length = 50)
 	private String numDocumento;
+
+	@Column(nullable = false, length = 20)
 	private String telefono;
+
+	@Column(nullable = false)
 	private Integer edad;
+
+	@Column(nullable = false, length = 255)
 	private String password;
+
+	@Column(nullable = false)
 	private boolean activo = true; // para aprobar/desaprobar usuarios
+
+	@Column(length = 255)
 	private String direccion;
 
 	// Relación con rol
-	@ManyToOne
-	@JoinColumn(name = "idRol")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "rol_id", nullable = false)
 	private Rol rol;
 
 	// Relación con mascotas
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Mascota> mascotas = new ArrayList<>();
 
 	// constructor vacio
@@ -47,7 +68,7 @@ public class Usuario {
 
 	// constructor con campos
 	public Usuario(Integer id, String nombres, String apellidos, String correo, String tipoDocumento,
-			String numDocumento, String telefono, Integer edad, String contraseña, boolean activo, String direccion,
+			String numDocumento, String telefono, Integer edad, String password, boolean activo, String direccion,
 			Rol rol, List<Mascota> mascotas) {
 		super();
 		this.id = id;
@@ -58,7 +79,7 @@ public class Usuario {
 		this.numDocumento = numDocumento;
 		this.telefono = telefono;
 		this.edad = edad;
-		this.password = contraseña;
+		this.password = password; // Corregido: parámetro coincide con campo
 		this.activo = activo;
 		this.direccion = direccion;
 		this.rol = rol;
@@ -175,8 +196,14 @@ public class Usuario {
 	public String toString() {
 		return "Usuario [id=" + id + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo
 				+ ", tipoDocumento=" + tipoDocumento + ", numDocumento=" + numDocumento + ", telefono=" + telefono
-				+ ", edad=" + edad + ", contraseña=" + password + ", activo=" + activo + ", direccion=" + direccion
-				+ "]";
+				+ ", edad=" + edad + ", password=***, activo=" + activo + ", direccion=" + direccion + "]"; // Corregido:
+																											// no
+																											// muestra
+																											// valor de
+																											// password
+																											// por
+																											// seguridad
+																											// básica
 	}
 
 }

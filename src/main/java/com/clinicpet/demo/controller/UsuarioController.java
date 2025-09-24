@@ -2,11 +2,15 @@ package com.clinicpet.demo.controller;
 
 import com.clinicpet.demo.model.Usuario;
 import com.clinicpet.demo.service.IUsuarioService;
+
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/usuarios")
@@ -28,13 +32,40 @@ public class UsuarioController {
 		LOGGER.info("Intentando iniciar sesión con correo: {}", correo);
 
 		if (usuarioService.validarCredencialesPorCorreo(correo, password)) {
-			// Login exitoso
-			return "redirect:/usuarios/inicio";
-		} else {
-			// Credenciales incorrectas
-			model.addAttribute("error", "Correo o contraseña incorrectos");
-			return "IniciarSesion/iniciarsesion";
+			// Obtener el usuario para verificar su rol
+			Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorCorreo(correo);
+			if (usuarioOpt.isPresent()) {
+				Usuario usuario = usuarioOpt.get();
+
+				// Verificar que el rol no sea null
+				if (usuario.getRol() == null) {
+					model.addAttribute("error", "Usuario sin rol asignado");
+					return "IniciarSesion/iniciarsesion";
+				}
+
+				Integer rolId = usuario.getRol().getId();
+
+				// Redirigir según el rol (ajusta los endpoints según tus vistas)
+				switch (rolId) {
+				case 1: // Usuario normal (ID 1 en tabla rol)
+					return "redirect:/usuarios/perfilusuario";
+				case 2: // Veterinario (ID 2)
+					return "redirect:/veterinario/dashboard";
+				case 3: // Administrador (ID 3)
+					return "redirect:/admin/panel";
+				default:
+					model.addAttribute("error", "Rol no válido");
+					return "IniciarSesion/iniciarsesion";
+				}
+			} else {
+				model.addAttribute("error", "Usuario no encontrado");
+				return "IniciarSesion/iniciarsesion";
+			}
 		}
+
+		// Credenciales incorrectas
+		model.addAttribute("error", "Correo o contraseña incorrectos");
+		return "IniciarSesion/iniciarsesion";
 	}
 
 	@GetMapping("/inicio")
@@ -51,19 +82,19 @@ public class UsuarioController {
 
 	// Procesar formulario de registro
 	@PostMapping("/registro")
-	public String procesarRegistro(@ModelAttribute Usuario usuario,
-			@RequestParam("confirmPassword") String confirmPassword, Model model) {
-		System.out.println("Usuario recibido: " + usuario);
-
-		if (usuario.getPassword() == null || !usuario.getPassword().equals(confirmPassword)) {
-			model.addAttribute("error", "Las contraseñas no coinciden");
-			return "Registro/registro";
+	public String procesarRegistro(@ModelAttribute Usuario usuario, Model model,
+			RedirectAttributes redirectAttributes) {
+		try {
+			// NO hagas: usuario.setRol(null); o asignaciones manuales aquí
+			// El servicio asignará rol por defecto
+			Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
+			redirectAttributes.addFlashAttribute("mensaje", "Usuario registrado con éxito");
+			return "redirect:/usuarios/iniciarsesion";
+		} catch (RuntimeException e) {
+			model.addAttribute("error", e.getMessage()); // Muestra error, e.g., "Rol por defecto no encontrado"
+			model.addAttribute("usuario", usuario); // Rellena formulario
+			return "Registro/registro"; // Vuelve al form
 		}
-
-		usuarioService.save(usuario);
-		System.out.println("Usuario guardado");
-
-		return "redirect:/usuarios/iniciarsesion";
 	}
 
 	@GetMapping("/perfilusuario")
