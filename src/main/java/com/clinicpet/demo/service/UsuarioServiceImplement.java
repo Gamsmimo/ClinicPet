@@ -81,7 +81,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	@Override
 	public Optional<Usuario> buscarUsuarioPorCorreo(String correo) {
 		// TODO Auto-generated method stub
-		return Optional.empty();
+		return usuarioRepository.findByCorreo(correo);
 	}
 
 	@Override
@@ -141,7 +141,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	@Override
 	public void eliminarUsuario(Integer id) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
