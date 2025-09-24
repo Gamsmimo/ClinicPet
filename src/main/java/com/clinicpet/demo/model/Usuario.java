@@ -58,7 +58,7 @@ public class Usuario {
 	private Rol rol;
 
 	// Relación con mascotas
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Mascota> mascotas = new ArrayList<>();
 
 	// constructor vacio

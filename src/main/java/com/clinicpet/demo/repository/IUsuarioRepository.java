@@ -10,30 +10,42 @@ import java.util.Optional;
 @Repository
 public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-	// Buscar por nombres, correo o documento
+	// Buscar por nombres, correo o documento (búsquedas exactas)
 	Optional<Usuario> findByNombres(String nombres);
 
 	Optional<Usuario> findByCorreo(String correo);
 
 	Optional<Usuario> findByNumDocumento(String numDocumento);
 
-	// Buscar por nombre o apellido
+	// *** CORRECCIÓN BÁSICA: AGREGADO para búsqueda parcial en nombres (resuelve el
+	// error en service) ***
+	// Búsqueda LIKE '%nombres%' – útil para parcial (ej. "Juan" en "Juan Pérez")
+	Optional<Usuario> findByNombresContaining(String nombres);
+
+	// Buscar por nombre o apellido (búsqueda parcial OR)
 	List<Usuario> findByNombresContainingOrApellidosContaining(String nombres, String apellidos);
 
-	// Verificar existencia
+	// Verificar existencia (exactas)
 	boolean existsByNombres(String nombres);
 
 	boolean existsByCorreo(String correo);
 
 	boolean existsByNumDocumento(String numDocumento);
 
-	// Buscar por rol
+	// *** OPCIONAL: AGREGADO si necesitas verificación parcial (para existeNombres
+	// en service) ***
+	// boolean existsByNombresContaining(String nombres); // LIKE '%nombres%'
+
+	// Buscar por rol (asumiendo campo rol.id en Usuario)
 	List<Usuario> findByRolId(Integer rolId);
 
-	// Buscar por dirección
+	// Buscar por dirección (parcial)
 	List<Usuario> findByDireccionContaining(String direccion);
 
-	// Buscar usuarios que tengan al menos 1 mascota
+	// Buscar usuarios que tengan al menos 1 mascota (asumiendo @OneToMany en
+	// mascotas)
 	List<Usuario> findByMascotasIsNotEmpty();
 
+	// Otros métodos estándar de JpaRepository (ya disponibles: findAll, save,
+	// deleteById, etc.)
 }

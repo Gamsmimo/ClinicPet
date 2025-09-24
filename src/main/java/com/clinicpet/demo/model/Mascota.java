@@ -1,41 +1,49 @@
 package com.clinicpet.demo.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "mascota")
+@Table(name = "mascotas") // Plural básico (cambia a "mascota" si prefieres singular)
 public class Mascota {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+
+	@Column(nullable = false, length = 100)
 	private String nombre;
+
+	@Column(nullable = false, length = 50)
 	private String especie;
+
+	@Column(length = 100)
 	private String raza;
+
+	@Column(nullable = false)
 	private Integer edad;
-	private String genero; // M/F
+
+	@Column(length = 10)
+	private String genero;
+
+	@Column(length = 50)
 	private String tamaño;
+
+	@Column(length = 500)
 	private String descripcion;
-	private String estado; // disponible, adoptada, en proceso
+
+	@Column(nullable = false, length = 50)
+	private String estado;
+
+	@Column(length = 255)
 	private String foto;
 
-	// Relación con Usuario
-	@ManyToOne
-	@JoinColumn(name = "idUsuario", nullable = false) // FK en la tabla mascota
-	private Usuario usuario; // dueño actual
-
-	// constructor vacio
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idUsuario", nullable = false)
+	private Usuario usuario;
 
 	public Mascota() {
 	}
 
-	// constructor con campos
 	public Mascota(Integer id, String nombre, String especie, String raza, Integer edad, String genero, String tamaño,
 			String descripcion, String estado, String foto, Usuario usuario) {
 		super();
@@ -52,6 +60,7 @@ public class Mascota {
 		this.usuario = usuario;
 	}
 
+	// Getters y Setters (tus originales, sin cambios)
 	public Integer getId() {
 		return id;
 	}
@@ -146,5 +155,4 @@ public class Mascota {
 				+ ", genero=" + genero + ", tamaño=" + tamaño + ", descripcion=" + descripcion + ", estado=" + estado
 				+ ", foto=" + foto + "]";
 	}
-
 }

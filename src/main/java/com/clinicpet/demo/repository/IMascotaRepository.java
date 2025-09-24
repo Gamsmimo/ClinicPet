@@ -10,13 +10,10 @@ import com.clinicpet.demo.model.Mascota;
 @Repository
 public interface IMascotaRepository extends JpaRepository<Mascota, Integer> {
 
-	// buscar por usuario
-	List<Mascota> findByUsuarioId(Integer id);
+	List<Mascota> findByUsuario_Id(Integer id);
 
-	// buscar por estado
 	List<Mascota> findByEstado(String estado);
 
-	// buscar mascota por especie
 	List<Mascota> findByEspecie(String especie);
 
 }
