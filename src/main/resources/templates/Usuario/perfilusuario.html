@@ -98,6 +98,7 @@
 					</div>
 				</nav>
 
+
 				<!-- Flash Messages (Success/Error post-agregar) - Movidos aquí para visibilidad en contenido -->
 				<div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
 					<i class="fas fa-check-circle me-2"></i><span th:text="${success}">Mascota agregada!</span>
@@ -115,6 +116,8 @@
 						<h1 class="h2">Bienvenido, <span id="username-header"
 								th:text="${usuarioLogueado.nombres}">Juan</span></h1>
 					</div>
+
+
 					<!-- Mis Mascotas (Preview) - CORREGIDO: Cards dinámicas con th:each -->
 					<div class="card mb-4">
 						<div class="card-header">
@@ -131,14 +134,17 @@
 									<div class="row">
 										<div th:each="mascota : ${mascotas}" class="col-md-6 col-lg-4 mb-3">
 											<div class="card h-100">
-												<img th:src="@{${mascota.foto}}" th:alt="${mascota.nombre}"
+												<img th:src="${mascota.foto}" th:alt="'Foto de ' + ${mascota.nombre}"
 													class="card-img-top" style="height: 200px; object-fit: cover;"
-													th:if="${mascota.foto != null and !mascota.foto.isEmpty()}" />
+													th:if="${mascota.foto != null and !mascota.foto.isEmpty()}"
+													onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+													loading="lazy" />
 												<div th:unless="${mascota.foto != null and !mascota.foto.isEmpty()}"
 													class="card-img-top bg-light d-flex align-items-center justify-content-center"
-													style="height: 200px;">
+													style="height: 200px; display: none;">
 													<i class="fas fa-paw fa-3x text-muted"></i>
 												</div>
+
 												<div class="card-body">
 													<h5 class="card-title" th:text="${mascota.nombre}">Nombre Mascota
 													</h5>
@@ -162,7 +168,7 @@
 
 
 				<!-- Sección Mis Mascotas - CORREGIDO: Removido display:none, tabla con th:each -->
-				<section id="mascotas" class="content-section">
+				<section id="mascotas" class="content-section" style="display: none;">
 					<div
 						class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 						<h1 class="h2"><i class="fas fa-paw me-2"></i>Mis Mascotas</h1>
@@ -196,11 +202,13 @@
 									<tbody>
 										<tr th:each="mascota : ${mascotas}">
 											<td>
-												<img th:src="@{${mascota.foto}}" th:alt="${mascota.nombre}"
+												<img th:src="${mascota.foto}" th:alt="'Foto de ' + ${mascota.nombre}"
 													class="rounded" width="50" height="50"
-													th:if="${mascota.foto != null and !mascota.foto.isEmpty()}" />
+													th:if="${mascota.foto != null and !mascota.foto.isEmpty()}"
+													onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+													loading="lazy" />
 												<span th:unless="${mascota.foto != null and !mascota.foto.isEmpty()}"
-													class="text-muted">Sin foto</span>
+													class="text-muted" style="display: none;">Sin foto</span>
 											</td>
 											<td><strong th:text="${mascota.nombre}">Nombre</strong></td>
 											<td th:text="${mascota.especie}">Especie</td>
@@ -477,6 +485,7 @@
 		</div>
 	</div>
 
+
 	<!-- Modal para agregar mascota -->
 	<div class="modal fade" id="addPetModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
@@ -490,8 +499,8 @@
 					<form th:action="@{/usuarios/perfilusuario/agregarMascota}" method="post" th:object="${mascota}"
 						enctype="multipart/form-data">
 						<!-- Campo oculto para el ID del usuario.
-				                             En una aplicación real, este ID se obtendría de la sesión del usuario logueado.
-				                             Para pruebas, puedes poner un ID fijo de un usuario que exista en tu DB. -->
+							                             En una aplicación real, este ID se obtendría de la sesión del usuario logueado.
+							                             Para pruebas, puedes poner un ID fijo de un usuario que exista en tu DB. -->
 						<input type="hidden" id="idUsuario" name="idUsuario" th:value="${idUsuarioActual}">
 						<!-- Asegúrate de que idUsuarioActual se pase al modelo en el método perfilusuario() -->
 						<div class="mb-3">
@@ -558,6 +567,7 @@
 		</div>
 	</div>
 
+
 	<!-- Modal para detalles de compra -->
 	<div class="modal fade" id="purchaseDetailsModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
@@ -600,3 +610,6 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<!-- JS Personalizado -->
 	<script th:src="@{/assets/JS/JS-Usuario.js}"></script>
+</body>
+
+</html>
