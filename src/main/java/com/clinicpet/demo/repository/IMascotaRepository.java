@@ -12,8 +12,6 @@ public interface IMascotaRepository extends JpaRepository<Mascota, Integer> {
 
 	List<Mascota> findByUsuario_Id(Integer id);
 
-	List<Mascota> findByEstado(String estado);
-
 	List<Mascota> findByEspecie(String especie);
 
 }

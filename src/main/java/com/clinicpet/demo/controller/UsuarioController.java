@@ -172,9 +172,6 @@ public class UsuarioController {
 		System.out.println("DEBUG CONTROLLER: Seteando usuario ID=" + usuarioExistente.getId() + " para mascota '"
 				+ mascota.getNombre() + "'");
 
-		if (mascota.getEstado() == null || mascota.getEstado().isEmpty()) {
-			mascota.setEstado("disponible");
-		}
 		try {
 			// Manejo de foto (sin cambios)
 			if (fotoFile != null && !fotoFile.isEmpty()) {

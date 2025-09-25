@@ -17,7 +17,6 @@ public interface IMascotaService {
 
 	List<Mascota> buscarPorUsuario(Integer usuarioId);
 
-	List<Mascota> buscarPorEstado(String estado);
 
 	List<Mascota> buscarPorEspecie(String especie);
 

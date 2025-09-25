@@ -31,9 +31,6 @@ public class Mascota {
 	@Column(length = 500)
 	private String descripcion;
 
-	@Column(nullable = false, length = 50)
-	private String estado;
-
 	@Column(length = 255)
 	private String foto;
 
@@ -45,7 +42,7 @@ public class Mascota {
 	}
 
 	public Mascota(Integer id, String nombre, String especie, String raza, Integer edad, String genero, String tamaño,
-			String descripcion, String estado, String foto, Usuario usuario) {
+			String descripcion, String foto, Usuario usuario) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -55,7 +52,6 @@ public class Mascota {
 		this.genero = genero;
 		this.tamaño = tamaño;
 		this.descripcion = descripcion;
-		this.estado = estado;
 		this.foto = foto;
 		this.usuario = usuario;
 	}
@@ -125,14 +121,6 @@ public class Mascota {
 		this.descripcion = descripcion;
 	}
 
-	public String getEstado() {
-		return estado;
-	}
-
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
-
 	public String getFoto() {
 		return foto;
 	}
@@ -152,7 +140,6 @@ public class Mascota {
 	@Override
 	public String toString() {
 		return "Mascota [id=" + id + ", nombre=" + nombre + ", especie=" + especie + ", raza=" + raza + ", edad=" + edad
-				+ ", genero=" + genero + ", tamaño=" + tamaño + ", descripcion=" + descripcion + ", estado=" + estado
-				+ ", foto=" + foto + "]";
+				+ ", genero=" + genero + ", tamaño=" + tamaño + ", descripcion=" + descripcion + ", foto=" + foto + "]";
 	}
 }

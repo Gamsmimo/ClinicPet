@@ -33,16 +33,12 @@ public class MascotaServiceImplement implements IMascotaService {
 		if (mascota.getUsuario() == null || mascota.getUsuario().getId() == null) {
 			throw new RuntimeException("Usuario requerido");
 		}
-		if (mascota.getEstado() == null || mascota.getEstado().isEmpty()) {
-			mascota.setEstado("disponible");
-		}
 
 		// Trim básico (mantengo)
 		mascota.setNombre(mascota.getNombre().trim());
 		mascota.setEspecie(mascota.getEspecie().trim());
 		if (mascota.getRaza() != null)
 			mascota.setRaza(mascota.getRaza().trim());
-		mascota.setEstado(mascota.getEstado().trim());
 
 		// *** AGREGADO: Log temporal para debug BD (confirma FK y save)
 		System.out.println("DEBUG SERVICE: Guardando mascota '" + mascota.getNombre() + "' con FK idUsuario = "
@@ -97,16 +93,10 @@ public class MascotaServiceImplement implements IMascotaService {
 	}
 
 	@Override
-	public List<Mascota> buscarPorEstado(String estado) {
-		if (estado == null || estado.trim().isEmpty())
-			return List.of();
-		return mascotaRepository.findByEstado(estado.trim());
-	}
-
-	@Override
 	public List<Mascota> buscarPorEspecie(String especie) {
 		if (especie == null || especie.trim().isEmpty())
 			return List.of();
 		return mascotaRepository.findByEspecie(especie.trim());
 	}
+
 }
