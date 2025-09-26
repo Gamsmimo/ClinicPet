@@ -15,9 +15,9 @@ public interface IMascotaService {
 
 	void eliminarMascota(Integer id);
 
+	Mascota actualizarMascota(Mascota mascota); // Este se implementa ahora
+
 	List<Mascota> buscarPorUsuario(Integer usuarioId);
 
-
 	List<Mascota> buscarPorEspecie(String especie);
-
 }

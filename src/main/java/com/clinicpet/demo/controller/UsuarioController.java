@@ -5,10 +5,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List; // *** AGREGADO: Para List<Mascota> en perfil ***
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -199,9 +202,58 @@ public class UsuarioController {
 		return "redirect:/usuarios/perfilusuario";
 	}
 
-	// Index simple
-	@GetMapping("/index")
-	public String index() {
-		return "index";
+	// Corrección completa: Eliminar mascota (integra verificación con buscarPorId)
+	@PostMapping("/perfilusuario/eliminarMascota")
+	@ResponseBody
+	public ResponseEntity<?> eliminarMascota(@RequestParam Integer id) { // Cambiado a Integer
+		try {
+			// Corrección de línea 1: Usar nombre correcto y verificar existencia primero
+			Optional<Mascota> mascotaOpcional = mascotaService.buscarMascotaPorId(id);
+			if (mascotaOpcional.isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Mascota no encontrada"));
+			}
+
+			mascotaService.eliminarMascota(id); // Nombre correcto: eliminarMascota(Integer id)
+			return ResponseEntity.ok(Map.of("success", true, "message", "Mascota eliminada correctamente"));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("success", false, "message", e.getMessage()));
+		}
+	}
+
+	// Corrección completa: Editar mascota (manejo de Optional)
+	@GetMapping("/perfilusuario/editarMascota")
+	public String editarMascota(@RequestParam Integer id, Model model) { // Cambiado a Integer
+		try {
+			// Corrección de línea 2: Manejar Optional para evitar NPE
+			Optional<Mascota> mascotaOpcional = mascotaService.buscarMascotaPorId(id);
+			if (mascotaOpcional.isEmpty()) {
+				model.addAttribute("error", "Mascota no encontrada");
+				return "error"; // Vista de error (crea si no existe)
+			}
+			Mascota mascota = mascotaOpcional.get(); // Extrae el valor
+			model.addAttribute("mascota", mascota);
+			return "/editarmascota"; // Tu vista (Thymeleaf/JSP)
+		} catch (Exception e) {
+			model.addAttribute("error", e.getMessage());
+			return "error";
+		}
+	}
+
+	// Agregado: Método para actualizar (POST desde formulario de edición)
+	@PostMapping("/perfilusuario/actualizarMascota")
+	public String actualizarMascota(@ModelAttribute Mascota mascota, Model model) {
+		try {
+			if (mascota.getId() == null) {
+				model.addAttribute("error", "ID requerido");
+				return "/editarmascota";
+			}
+			Mascota updated = mascotaService.actualizarMascota(mascota);
+			model.addAttribute("success", "Mascota actualizada correctamente");
+			model.addAttribute("mascota", updated);
+			return "perfilusuario"; // O redirige a perfil
+		} catch (Exception e) {
+			model.addAttribute("error", e.getMessage());
+			return "/editarmascota";
+		}
 	}
 }

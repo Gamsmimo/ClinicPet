@@ -1006,3 +1006,33 @@ $(document).ready(function() {
 		return reasons[reason] || capitalizeFirstLetter(reason);
 	}
 });
+// Función para redirigir a formulario de edición pasando el id de la mascota
+function editarMascota(mascotaId) {
+	// Aquí puedes redirigir a un formulario dedicado a la edición
+	// Ejemplo, si tienes una ruta para editar:
+	window.location.href = `/usuarios/perfilusuario/editarMascota?id=${mascotaId}`;
+}
+
+
+// Función para eliminar mascota con confirmación
+function eliminarMascota(mascotaId) {
+	if (confirm('¿Estás seguro que deseas eliminar esta mascota? Esta acción es irreversible.')) {
+		$.ajax({
+			url: `/usuarios/perfilusuario/eliminarMascota`,  // Endpoint en backend que procesa la eliminación
+			type: 'POST',
+			data: { id: mascotaId },
+			success: function(response) {
+				if (response.success) {
+					alert('Mascota eliminada correctamente.');
+					location.reload();  // Recarga la página para actualizar la lista
+				} else {
+					alert('Error al eliminar la mascota: ' + response.message);
+				}
+			},
+			error: function() {
+				alert('Error en el servidor al intentar eliminar la mascota.');
+			}
+		});
+	}
+}
+

@@ -10,8 +10,10 @@ import com.clinicpet.demo.model.Mascota;
 @Repository
 public interface IMascotaRepository extends JpaRepository<Mascota, Integer> {
 
+	// Sin cambios: Método derivado (usa si el mapeo JPA es correcto)
 	List<Mascota> findByUsuario_Id(Integer id);
 
+	// Sin cambios: Método derivado
 	List<Mascota> findByEspecie(String especie);
 
 }
