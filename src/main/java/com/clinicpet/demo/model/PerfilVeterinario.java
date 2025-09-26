@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -19,37 +21,44 @@ public class PerfilVeterinario {
 	private Integer id;
 	private String especialidad;
 	private String tarjetaProfesional;
-	private String estado;
+	private Boolean estado; // false: inactivo por defecto hasta que el admin lo apruebe
+	private String experiencia;
 
 	// Relación con Usuario
 	@OneToOne
+	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
 
 	// Relación con citas
 	@OneToMany(mappedBy = "veterinario")
-	private List<Cita> cita;
+	private List<Cita> citas;
 
-	// Relación con emergencia
-	@OneToMany(mappedBy = "veterinario")
-	private List<Emergencia> emergencia;
+	// relacion con veterinaria
+	@ManyToOne
+	@JoinColumn(name = "veterinaria_id")
+	private Veterinaria veterinaria;
 
 	// constructor vacio
 	public PerfilVeterinario() {
+		this.estado = false; // inactivo hasta aprobacion
+
 	}
 
 	// constructor con campos
-	public PerfilVeterinario(Integer id, String especialidad, String tarjetaProfesional, String telefono, String estado,
-			Usuario usuario, List<Cita> cita, List<Emergencia> emergencia) {
+	public PerfilVeterinario(Integer id, String especialidad, String tarjetaProfesional, Boolean estado,
+			String experiencia, Usuario usuario, List<Cita> citas, Veterinaria veterinaria) {
 		super();
 		this.id = id;
 		this.especialidad = especialidad;
 		this.tarjetaProfesional = tarjetaProfesional;
 		this.estado = estado;
+		this.experiencia = experiencia;
 		this.usuario = usuario;
-		this.cita = cita;
-		this.emergencia = emergencia;
+		this.citas = citas;
+		this.veterinaria = veterinaria;
 	}
 
+	// getters y setters
 	public Integer getId() {
 		return id;
 	}
@@ -74,12 +83,20 @@ public class PerfilVeterinario {
 		this.tarjetaProfesional = tarjetaProfesional;
 	}
 
-	public String getEstado() {
+	public Boolean getEstado() {
 		return estado;
 	}
 
-	public void setEstado(String estado) {
+	public void setEstado(Boolean estado) {
 		this.estado = estado;
+	}
+
+	public String getExperiencia() {
+		return experiencia;
+	}
+
+	public void setExperiencia(String experiencia) {
+		this.experiencia = experiencia;
 	}
 
 	public Usuario getUsuario() {
@@ -90,26 +107,27 @@ public class PerfilVeterinario {
 		this.usuario = usuario;
 	}
 
-	public List<Cita> getCita() {
-		return cita;
+	public List<Cita> getCitas() {
+		return citas;
 	}
 
-	public void setCita(List<Cita> cita) {
-		this.cita = cita;
+	public void setCitas(List<Cita> citas) {
+		this.citas = citas;
 	}
 
-	public List<Emergencia> getEmergencia() {
-		return emergencia;
+	public Veterinaria getVeterinaria() {
+		return veterinaria;
 	}
 
-	public void setEmergencia(List<Emergencia> emergencia) {
-		this.emergencia = emergencia;
+	public void setVeterinaria(Veterinaria veterinaria) {
+		this.veterinaria = veterinaria;
 	}
 
+	// to string
 	@Override
 	public String toString() {
 		return "PerfilVeterinario [id=" + id + ", especialidad=" + especialidad + ", tarjetaProfesional="
-				+ tarjetaProfesional + ", estado=" + estado + "]";
+				+ tarjetaProfesional + ", estado=" + estado + ", experiencia=" + experiencia + "]";
 	}
 
 }

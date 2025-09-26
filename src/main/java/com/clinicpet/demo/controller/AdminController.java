@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
-public class PerfilAdminController {
+public class AdminController {
 
 	@Autowired
 	private IPerfilAdminService adminService;

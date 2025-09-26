@@ -1,43 +1,33 @@
 package com.clinicpet.demo.service;
 
-import com.clinicpet.demo.model.PerfilVeterinario;
-
-import java.util.List;
 import java.util.Optional;
 
+import com.clinicpet.demo.model.PerfilVeterinario;
+
 public interface IPerfilVeterinarioService {
-	List<PerfilVeterinario> ListarPorEstado(String estado);
 
-	PerfilVeterinario crearPerfilVeterinario(PerfilVeterinario perfilVeterinario);
+	// Guardar/actualizar perfil
+	PerfilVeterinario guardarPerfil(PerfilVeterinario perfil);
 
-	PerfilVeterinario findById(Integer id);
+	// Buscar por ID
+	Optional<PerfilVeterinario> buscarPorId(Integer id);
 
-	List<PerfilVeterinario> obtenerTodosLosPerfilesVeterinario();
+	// Buscar por ID de usuario
+	Optional<PerfilVeterinario> buscarPorUsuarioId(Integer usuarioId);
 
-	PerfilVeterinario obtenerPerfilVeterinarioPorUsuarioId(Integer usuarioId);
+	// Buscar por correo del usuario
+	Optional<PerfilVeterinario> buscarPorUsuarioCorreo(String correo);
 
-	PerfilVeterinario obtenerPerfilVeterinarioPorNombres(String nombres);
+	// Buscar por documento del usuario
+	Optional<PerfilVeterinario> buscarPorUsuarioNumDocumento(String numDocumento);
 
-	List<PerfilVeterinario> obtenerTodosLosPerfilesVeterinarios();
+	// Actualizar información del perfil (sin afectar usuario)
+	PerfilVeterinario actualizarPerfil(Integer id, PerfilVeterinario perfilActualizado);
 
-	List<PerfilVeterinario> obtenerVeterinariosPorEspecialidad(String especialidad);
+	// Verificar existencia por correo
+	boolean existePorUsuarioCorreo(String correo);
 
-	PerfilVeterinario obtenerVeterinarioPorTarjetaProfesional(String tarjetaProfesional);
-
-	List<PerfilVeterinario> obtenerVeterinariosDisponibles();
-
-	PerfilVeterinario actualizarPerfilVeterinario(Integer id, PerfilVeterinario perfilVeterinario);
-
-	Optional<PerfilVeterinario> obtenerPerfilVeterinarioPorTargetaProfesional(String tarjetaProfesional);
-
-	void aprobarVeterinario(Integer id);
-
-	PerfilVeterinario desactivarVeterinario(Integer id);
-
-	PerfilVeterinario activarVeterinario(Integer id);
-
-	void rechazarVeterinario(Integer id);
-
-	void editarVeterinario(Integer id);
+	// Verificar existencia por documento
+	boolean existePorUsuarioNumDocumento(String numDocumento);
 
 }
