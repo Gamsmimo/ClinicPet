@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ClinicPet | Panel de Administración</title>
+	<link rel="stylesheet" th:href="@{/assets/CSS/estilos.css}">
+</head>
+
+<body>
+	<div class="app">
+		<aside>
+			<div class="brand">
+				<div class="logo" aria-hidden>
+					<!-- simple paw svg -->
+					<a th:href="@{/admin/home}"><img th:src="@{/assets/IMG/logo.png}" alt="ClinicPet Logo"
+							style="width:40px;height:auto;">
+				</div>
+				<h1>ClinicPet · Admin</h1>
+			</div>
+			<nav id="nav">
+				<a th:href="@{/admin/home}"><button class="nav-btn active" data-target="dashboard">📊
+						Dashboard</button></a>
+
+				<a th:href="@{/admin/perfil}"><button class="nav-btn" data-target="perfil">👤 Perfil</button></a>
+
+				<a th:href="@{/admin/gestion-usuario}"><button class="nav-btn" data-target="usuarios">👥 Gestión de
+						usuarios</button></a>
+
+				<a th:href="@{/admin/mascotas-adopciones}"><button class="nav-btn" data-target="mascotas">🐾 Mascotas y
+						adopciones</button></a>
+
+				<a th:href="@{/admin/gestion-veterinaria}"><button class="nav-btn" data-target="veterinaria">🏥 Gestión
+						veterinaria</button></a>
+
+				<a th:href="@{/admin/comentarios}"><button class="nav-btn" data-target="comentarios">💬 Moderación de
+						comentarios <span class="tag">previo
+							a publicación</span></button></a>
+
+				<a th:href="@{/admin/reportes-maltrato}"><button class="nav-btn" data-target="reportes">🚨 Reportes
+						/
+						Maltrato</button></a>
+
+				<a th:href="@{/admin/respaldo}"><button class="nav-btn" data-target="respaldo">🗄️ Respaldo</button></a>
+			</nav>
+			<div class="footer">Nota: El administrador <b>no puede</b> editar historias clínicas ni agendar citas.</div>
+		</aside>
+
+		<!--Buscador-->
+		<section style="display:flex;flex-direction:column">
+			<header class="topbar">
+				<div class="search">
+					<input id="globalSearch" placeholder="Buscar en tablas (usuarios, mascotas, veterinarios…)" />
+					<button class="btn ghost" id="clearSearch">Limpiar</button>
+				</div>
+				<div>
+					<button class="btn ghost" id="themeToggle">
+						<span id="themeIcon">🌙</span> Tema
+					</button>
+				</div>
+			</header>
+
+			<main>
+
+				<!-- MODERACIÓN DE COMENTARIOS -->
+				<section id="comentarios" class="view">
+					<div class="card">
+						<div class="content">
+							<h3>Bandeja de moderación</h3>
+							<p class="notice">Los comentarios con lenguaje inapropiado o posibles <i>spam</i> son
+								marcados automáticamente.</p>
+							<table id="tblModeration">
+								<thead>
+									<tr>
+										<th>Autor</th>
+										<th>Comentario</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+
+				</section>
+				<h3 style="margin-top:12px">Calificaciones y comentarios a validar</h3>
+				<table id="tblRatings">
+					<thead>
+						<tr>
+							<th>Autor</th>
+							<th>Destino</th>
+							<th>Calificación</th>
+							<th>Comentario</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+
+			</main>
+		</section>
+	</div>
+
+	<script src="scrip.js" defer></script>
+</body>
+
+</html>
