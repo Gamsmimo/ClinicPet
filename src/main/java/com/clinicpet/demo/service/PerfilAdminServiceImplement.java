@@ -4,74 +4,83 @@ import com.clinicpet.demo.model.PerfilAdmin;
 import com.clinicpet.demo.repository.IPerfilAdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PerfilAdminServiceImplement implements IPerfilAdminService {
 
 	@Autowired
-	private IPerfilAdminRepository adminRepository;
-
-	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/"; // carpeta donde se guardarán las
-
-	private PerfilAdmin admin;
-	// fotos
+	private IPerfilAdminRepository perfilAdminRepository;
 
 	@Override
-	public Optional<PerfilAdmin> obtenerAdminPorId(Integer id) {
-		return adminRepository.findById(id);
+	public List<PerfilAdmin> listarTodos() {
+		return perfilAdminRepository.findAll();
 	}
 
 	@Override
-	public Optional<PerfilAdmin> obtenerAdminPrincipal() {
-		return adminRepository.findById(1); // se fija en 1 xq solo hay un admin
+	public Optional<PerfilAdmin> buscarPorId(Integer id) {
+		return perfilAdminRepository.findById(id);
 	}
 
 	@Override
-	public void actualizarAdmin(PerfilAdmin admin) {
-		adminRepository.save(admin);
+	public PerfilAdmin guardar(PerfilAdmin perfilAdmin) {
+		return perfilAdminRepository.save(perfilAdmin);
 	}
 
-	// ACTUALIZAR FOTO
 	@Override
-	public void actualizarFoto(Integer id, MultipartFile foto) {
-		if (!foto.isEmpty()) {
-			try {
-				String uploadDir = "uploads/"; // carpeta donde se guarda la foto
-
-				PerfilAdmin admin = obtenerAdminPorId(id).orElse(null);
-				if (admin != null) {
-
-					// Borrar foto anterior si existe
-					if (admin.getFoto() != null && !admin.getFoto().isEmpty()) {
-						File archivoAnterior = new File(uploadDir + admin.getFoto());
-						if (archivoAnterior.exists()) {
-							boolean borrado = archivoAnterior.delete();
-							if (!borrado) {
-								System.out.println("No se pudo borrar la foto anterior: " + archivoAnterior.getName());
-							}
-						}
-					}
-
-					// Guardar nueva foto
-					String nombreArchivo = System.currentTimeMillis() + "_" + foto.getOriginalFilename();
-					Path ruta = Paths.get(uploadDir + nombreArchivo);
-					Files.write(ruta, foto.getBytes());
-
-					admin.setFoto(nombreArchivo);
-					adminRepository.save(admin);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	public void eliminar(Integer id) {
+		perfilAdminRepository.deleteById(id);
 	}
 
+	@Override
+	public PerfilAdmin buscarPorCorreo(String correo) {
+		return perfilAdminRepository.findByCorreo(correo);
+	}
+
+	@Override
+	public boolean activarUsuario(Integer usuarioId) {
+		System.out.println("Activando usuario ID: " + usuarioId);
+		return true;
+	}
+
+	@Override
+	public boolean desactivarUsuario(Integer usuarioId) {
+		System.out.println("Desactivando usuario ID: " + usuarioId);
+		return true;
+	}
+
+	@Override
+	public boolean validarCalificacion(Integer calificacionId) {
+		System.out.println("Validando calificación ID: " + calificacionId);
+		return true;
+	}
+
+	@Override
+	public boolean asignarReporteMaltrato(Integer reporteId) {
+		System.out.println("Asignando reporte de maltrato ID: " + reporteId);
+		return true;
+	}
+
+	@Override
+	public long contarTotalAdmins() {
+		return perfilAdminRepository.count();
+	}
+
+	@Override
+	public long contarUsuariosActivos() {
+		return 150L;
+	}
+
+	@Override
+	public long contarMascotasRegistradas() {
+		return 300L;
+	}
+
+	// metodo para contar veterinarias activas
+	public long contarVeterinariasActivas() {
+		// Conectar con servicio de veterinarias
+		return 87L;
+	}
 }

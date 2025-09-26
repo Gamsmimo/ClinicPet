@@ -1,18 +1,36 @@
 package com.clinicpet.demo.service;
 
 import com.clinicpet.demo.model.PerfilAdmin;
-
+import java.util.List;
 import java.util.Optional;
-
-import org.springframework.web.multipart.MultipartFile;
 
 public interface IPerfilAdminService {
 
-	Optional<PerfilAdmin> obtenerAdminPorId(Integer id);
+	// CRUD
+	List<PerfilAdmin> listarTodos();
 
-	Optional<PerfilAdmin> obtenerAdminPrincipal(); // si hay solo un admin
+	Optional<PerfilAdmin> buscarPorId(Integer id);
 
-	void actualizarAdmin(PerfilAdmin admin);
+	PerfilAdmin guardar(PerfilAdmin perfilAdmin);
 
-	void actualizarFoto(Integer id, MultipartFile foto);
+	void eliminar(Integer id);
+
+	// busqueda
+	PerfilAdmin buscarPorCorreo(String correo);
+
+	// funcionalidades del administrador
+	boolean activarUsuario(Integer usuarioId);
+
+	boolean desactivarUsuario(Integer usuarioId);
+
+	boolean validarCalificacion(Integer calificacionId);
+
+	boolean asignarReporteMaltrato(Integer reporteId);
+
+	// estadísticas
+	long contarTotalAdmins();
+
+	long contarUsuariosActivos();
+
+	long contarMascotasRegistradas();
 }

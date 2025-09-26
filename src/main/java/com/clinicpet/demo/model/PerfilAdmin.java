@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "PerfilAdministrador")
+@Table(name = "PerfilAdmin")
 public class PerfilAdmin {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,32 +20,31 @@ public class PerfilAdmin {
 	private String correo;
 	private String telefono;
 	private String cedula;
-	private String foto; // guardarás la URL o nombre de archivo
+	private String imagen;
 
-	// relaciones
+	// Relación con Rol
 	@ManyToOne
 	@JoinColumn(name = "idRol")
 	private Rol rol;
 
-	// Constructor vacio
+	// Constructor vacío
 	public PerfilAdmin() {
 	}
 
-	// constructor con campos
+	// Constructor con campos
 	public PerfilAdmin(Integer id, String nombres, String apellidos, String correo, String telefono, String cedula,
-			String foto, Rol rol) {
-		super();
+			String foto, Rol rol, String imagen) {
 		this.id = id;
 		this.nombres = nombres;
 		this.apellidos = apellidos;
 		this.correo = correo;
 		this.telefono = telefono;
 		this.cedula = cedula;
-		this.foto = foto;
+		this.imagen = imagen;
 		this.rol = rol;
 	}
 
-	// getters y setters
+	// Getters y Setters
 	public Integer getId() {
 		return id;
 	}
@@ -94,12 +93,12 @@ public class PerfilAdmin {
 		this.cedula = cedula;
 	}
 
-	public String getFoto() {
-		return foto;
+	public String getImagen() {
+		return imagen;
 	}
 
-	public void setFoto(String foto) {
-		this.foto = foto;
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
 	}
 
 	public Rol getRol() {
@@ -113,7 +112,7 @@ public class PerfilAdmin {
 	@Override
 	public String toString() {
 		return "PerfilAdmin [id=" + id + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo
-				+ ", telefono=" + telefono + ", cedula=" + cedula + ", foto=" + foto + "]";
+				+ ", telefono=" + telefono + ", cedula=" + cedula + ", imagen=" + imagen + ", rol=" + rol + "]";
 	}
 
 }
