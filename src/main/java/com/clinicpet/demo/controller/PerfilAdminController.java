@@ -15,7 +15,12 @@ import com.clinicpet.demo.service.IPerfilAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -119,7 +124,7 @@ public class PerfilAdminController {
 		return "admin/panelAdmin";
 	}
 
-	// actualizar prefil
+	// actualizar perfil
 	@PostMapping("/perfil/editar")
 	public String guardarPerfil(@RequestParam String nombres, @RequestParam String apellidos,
 			@RequestParam String correo, @RequestParam String telefono, RedirectAttributes redirectAttributes) {
@@ -147,16 +152,16 @@ public class PerfilAdminController {
 	}
 
 	@PostMapping("/perfil/imagen")
-	public String subirimagen(@RequestParam("imagen") MultipartFile archivoimagen,
+	public String subirImagen(@RequestParam("imagen") MultipartFile archivoImagen,
 			RedirectAttributes redirectAttributes) {
 		try {
-			if (archivoimagen.isEmpty()) {
+			if (archivoImagen.isEmpty()) {
 				redirectAttributes.addFlashAttribute("error", "Por favor seleccione una imagen");
 				return "redirect:/admin#profile";
 			}
 
 			// Validar tipo de archivo
-			String contentType = archivoimagen.getContentType();
+			String contentType = archivoImagen.getContentType();
 			if (contentType == null || !contentType.startsWith("image/")) {
 				redirectAttributes.addFlashAttribute("error",
 						"Por favor seleccione un archivo de imagen válido (JPG, PNG, GIF)");
@@ -164,7 +169,7 @@ public class PerfilAdminController {
 			}
 
 			// Convertir imagen a Base64
-			byte[] bytesImagen = archivoimagen.getBytes();
+			byte[] bytesImagen = archivoImagen.getBytes();
 			String imagenBase64 = Base64.getEncoder().encodeToString(bytesImagen);
 			String imagenDataURL = "data:" + contentType + ";base64," + imagenBase64;
 
@@ -175,7 +180,7 @@ public class PerfilAdminController {
 				PerfilAdmin admin = adminOptional.get();
 				admin.setImagen(imagenDataURL);
 				adminService.guardar(admin);
-				redirectAttributes.addFlashAttribute("mensaje", "imagen actualizada correctamente");
+				redirectAttributes.addFlashAttribute("mensaje", "Imagen actualizada correctamente");
 			} else {
 				redirectAttributes.addFlashAttribute("error", "Administrador no encontrado");
 			}
@@ -191,10 +196,11 @@ public class PerfilAdminController {
 		return "redirect:/admin#profile";
 	}
 
-	// registrar veterinaria
+	// registrar veterinaria - COMPLETO con todos los campos
 	@PostMapping("/veterinarias/registrar")
 	public String registrarVeterinaria(@RequestParam String nombre, @RequestParam String direccion,
 			@RequestParam String telefono, @RequestParam String correo, @RequestParam String horario,
+			@RequestParam String descripcion, @RequestParam String estado, @RequestParam String rut,
 			RedirectAttributes redirectAttributes) {
 		try {
 			Veterinaria veterinaria = new Veterinaria();
@@ -203,7 +209,9 @@ public class PerfilAdminController {
 			veterinaria.setTelefono(telefono);
 			veterinaria.setCorreo(correo);
 			veterinaria.setHorario(horario);
-			veterinaria.setEstado("Activa");
+			veterinaria.setDescripcion(descripcion);
+			veterinaria.setEstado(estado);
+			veterinaria.setRut(rut);
 
 			veterinariaRepo.save(veterinaria);
 			redirectAttributes.addFlashAttribute("mensaje", "Veterinaria registrada correctamente");
@@ -214,29 +222,44 @@ public class PerfilAdminController {
 		return "redirect:/admin#veterinaria";
 	}
 
-	// registrar veterinario
+	// registrar veterinario - COMPLETO con todos los campos
 	@PostMapping("/veterinarios/registrar")
 	public String registrarVeterinario(@RequestParam String nombres, @RequestParam String apellidos,
-			@RequestParam String correo, @RequestParam String telefono, @RequestParam String especialidad,
-			@RequestParam String tarjetaProfesional, RedirectAttributes redirectAttributes) {
+			@RequestParam String correo, @RequestParam String tipoDocumento, @RequestParam String numDocumento,
+			@RequestParam String telefono, @RequestParam Integer edad, @RequestParam String password,
+			@RequestParam String confirmPassword, @RequestParam String direccion, @RequestParam String especialidad,
+			@RequestParam String tarjetaProfesional, @RequestParam Boolean estado, @RequestParam String experiencia,
+			RedirectAttributes redirectAttributes) {
 		try {
+			// Verificar contraseñas
+			if (!password.equals(confirmPassword)) {
+				redirectAttributes.addFlashAttribute("error", "Las contraseñas no coinciden");
+				return "redirect:/admin#veterinaria";
+			}
+
+			// Crear usuario
 			Usuario usuario = new Usuario();
 			usuario.setNombres(nombres);
 			usuario.setApellidos(apellidos);
 			usuario.setCorreo(correo);
+			usuario.setTipoDocumento(tipoDocumento);
+			usuario.setNumDocumento(numDocumento);
 			usuario.setTelefono(telefono);
+			usuario.setEdad(edad);
+			usuario.setPassword(password);
+			usuario.setDireccion(direccion);
 			usuario.setActivo(true);
 
-			// guardar usuario
+			// Guardar usuario
 			Usuario usuarioGuardado = usuarioRepo.save(usuario);
 
-			// crear perfil veterinario
+			// Crear perfil veterinario
 			PerfilVeterinario veterinario = new PerfilVeterinario();
 			veterinario.setUsuario(usuarioGuardado);
 			veterinario.setEspecialidad(especialidad);
 			veterinario.setTarjetaProfesional(tarjetaProfesional);
-			veterinario.setEstado(true);
-			veterinario.setExperiencia("Recién registrado");
+			veterinario.setEstado(estado);
+			veterinario.setExperiencia(experiencia);
 
 			veterinarioRepo.save(veterinario);
 			redirectAttributes.addFlashAttribute("mensaje", "Veterinario registrado correctamente");

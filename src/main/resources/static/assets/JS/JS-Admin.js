@@ -492,6 +492,31 @@ function loadInitialData() {
 
 }
 
+// Agregar esto al JS para manejar modales largos
+function ajustarAlturaModal() {
+	document.querySelectorAll('.modal-content').forEach(modal => {
+		const alturaVentana = window.innerHeight;
+		const alturaModal = modal.scrollHeight;
+
+		if (alturaModal > alturaVentana * 0.2) {
+			modal.style.maxHeight = '80vh';
+			modal.style.overflowY = 'auto';
+		}
+	});
+}
+
+// Ejecutar cuando se abra un modal
+function abrirModal(modalId) {
+	const modal = document.getElementById(modalId);
+	if (modal) {
+		modal.style.display = 'block';
+		setTimeout(ajustarAlturaModal, 100); // Pequeño delay para que se renderice
+	}
+}
+
+// También al redimensionar la ventana
+window.addEventListener('resize', ajustarAlturaModal);
+
 // Hacer funciones globales para HTML
 window.abrirModal = abrirModal;
 window.cerrarModal = cerrarModal;

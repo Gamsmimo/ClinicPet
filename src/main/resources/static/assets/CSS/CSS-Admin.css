@@ -790,3 +790,29 @@ input:checked+.toggle-label:before {
 		overflow-x: auto;
 	}
 }
+
+/* model registrar*/
+.modal-content {
+	max-height: 85vh;
+	/* Limitar altura máxima */
+	overflow-y: auto;
+	/* Habilitar scroll vertical */
+	overflow-x: hidden;/* No scroll horizontal *//* Posicionamiento mejorado */
+	position: absolute;
+	top: 35%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90%;
+	max-width: 700px;
+}
+
+/* Asegurar que los modales sean visibles */
+.modal {
+	z-index: 10000;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+/* Mejorar los formularios largos */
+.form-group {
+	margin-bottom: 15px;
+}
