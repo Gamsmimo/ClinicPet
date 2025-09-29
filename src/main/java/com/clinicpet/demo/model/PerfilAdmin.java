@@ -1,6 +1,7 @@
 package com.clinicpet.demo.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,12 +21,13 @@ public class PerfilAdmin {
 	private String correo;
 	private String telefono;
 	private String cedula;
+	private String password;
 	private String imagen;
 
 	// Relación con Rol
-	@ManyToOne
-	@JoinColumn(name = "idRol")
-	private Rol rol;
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idRol")
+    private Rol rol;
 
 	// Constructor vacío
 	public PerfilAdmin() {
@@ -33,7 +35,7 @@ public class PerfilAdmin {
 
 	// Constructor con campos
 	public PerfilAdmin(Integer id, String nombres, String apellidos, String correo, String telefono, String cedula,
-			String foto, Rol rol, String imagen) {
+			String password, Rol rol, String imagen) {
 		this.id = id;
 		this.nombres = nombres;
 		this.apellidos = apellidos;
@@ -91,6 +93,14 @@ public class PerfilAdmin {
 
 	public void setCedula(String cedula) {
 		this.cedula = cedula;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getImagen() {
