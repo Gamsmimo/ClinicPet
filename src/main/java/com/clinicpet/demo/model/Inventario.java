@@ -20,7 +20,9 @@ public class Inventario {
 	private Integer id;
 	private Integer cantidadDisponible;
 	private LocalDate fechaActualizacion;
+	private String estado;
 
+	
 	@ManyToOne
 	@JoinColumn(name = "idVeterinaria", nullable = false)
 	private Veterinaria veterinaria;
@@ -28,19 +30,39 @@ public class Inventario {
 	@ManyToOne
 	@JoinColumn(name = "idProducto", nullable = false)
 	private Producto producto;
+	
+	
+	// Método para actualizar stock
+	public void agregarStock(int cantidad) {
+		this.cantidadDisponible += cantidad;
+		actualizarEstado();
+	}
+
+	public void reducirStock(int cantidad) {
+		this.cantidadDisponible -= cantidad;
+		if (this.cantidadDisponible < 0)
+			this.cantidadDisponible = 0;
+		actualizarEstado();
+	}
+
+	// Actualiza estado automáticamente
+	public void actualizarEstado() {
+		this.estado = cantidadDisponible > 0 ? "disponible" : "agotado";
+	}
+
 
 	// constructor vacio
 	public Inventario() {
 
 	}
 
-	// constructor con campos
-	public Inventario(Integer id, Integer cantidadDisponible, LocalDate fechaActualizacion, Veterinaria veterinaria,
-			Producto producto) {
+	public Inventario(Integer id, Integer cantidadDisponible, LocalDate fechaActualizacion, String estado,
+			Veterinaria veterinaria, Producto producto) {
 		super();
 		this.id = id;
 		this.cantidadDisponible = cantidadDisponible;
 		this.fechaActualizacion = fechaActualizacion;
+		this.estado = estado;
 		this.veterinaria = veterinaria;
 		this.producto = producto;
 	}
@@ -68,6 +90,14 @@ public class Inventario {
 
 	public void setFechaActualizacion(LocalDate fechaActualizacion) {
 		this.fechaActualizacion = fechaActualizacion;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
 	}
 
 	public Veterinaria getVeterinaria() {

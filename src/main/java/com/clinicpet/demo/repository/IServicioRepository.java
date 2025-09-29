@@ -31,8 +31,6 @@ public interface IServicioRepository extends JpaRepository<Servicio, Integer> {
 
 	Optional<Servicio> findByNombreAndVeterinaria(String nombre, Veterinaria veterinaria);
 
-	@Query("SELECT s FROM Servicio s LEFT JOIN s.citas c GROUP BY s ORDER BY COUNT(c) DESC")
-	List<Servicio> findServiciosPopulares();
 
 	@Query("SELECT s FROM Servicio s LEFT JOIN s.calificaciones cal GROUP BY s ORDER BY AVG(COALESCE(cal.puntuacion, 0)) DESC")
 	List<Servicio> findServiciosMejorCalificados();

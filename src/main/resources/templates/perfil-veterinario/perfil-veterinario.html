@@ -39,14 +39,10 @@
 					<span>Agenda</span></a></li>
 			<li><a href="#historias" class="menu-link" data-section="historias"><i class="fas fa-paw"></i>
 					<span>Historias Clínicas</span></a></li>
-			<li><a href="#tratamientos" class="menu-link" data-section="tratamientos"><i class="fas fa-pills"></i>
-					<span>Tratamientos</span></a></li>
 			<li><a href="#adopciones" class="menu-link" data-section="adopciones"><i class="fas fa-heart"></i>
 					<span>Adopciones</span></a></li>
 			<li><a href="#petshop" class="menu-link" data-section="petshop"><i class="fas fa-shopping-bag"></i>
 					<span>Pet Shop</span></a></li>
-			<li><a href="#reportes" class="menu-link" data-section="reportes"><i class="fas fa-chart-bar"></i>
-					<span>Reportes</span></a></li>
 			<li><a href="#configuracion" class="menu-link" data-section="configuracion"><i class="fas fa-cog"></i>
 					<span>Configuración</span></a></li>
 		</ul>
@@ -140,7 +136,7 @@
 							<i class="fas fa-paw"></i>
 							<h3>42</h3>
 							<p>Mascotas atendidas hasta la fecha</p>
-							<a th:href="@{/assets/#historias}">Ver historias <i class="fas fa-arrow-right"></i></a>
+							<a th:href="@{/assets/#agenda}">Ver historias <i class="fas fa-arrow-right"></i></a>
 						</div>
 						<div class="card card-summary bg-warning">
 							<i class="fas fa-heart"></i>
@@ -187,7 +183,6 @@
 
 				<div class="filters">
 					<button class="btn btn-filter active" data-filter="all">Todas</button>
-					<button class="btn btn-filter" data-filter="pending">Pendientes</button>
 					<button class="btn btn-filter" data-filter="completed">Finalizadas</button>
 					<button class="btn btn-filter" data-filter="canceled">Canceladas</button>
 				</div>
@@ -200,7 +195,6 @@
 								<th>Mascota</th>
 								<th>Dueño</th>
 								<th>Motivo</th>
-								<th>Estado</th>
 								<th>Acciones</th>
 							</tr>
 						</thead>
@@ -216,10 +210,9 @@
 								</td>
 								<td>Ana López</td>
 								<td>Control anual</td>
-								<td><span class="badge bg-warning">Pendiente</span></td>
 								<td>
-									<button class="btn btn-sm btn-primary"
-										onclick="startAppointment(1)">Iniciar</button>
+									<button class="btn btn-sm btn-success"
+										onclick="completeAppointment(2)">Finalizar</button>
 									<button class="btn btn-sm btn-danger">Cancelar</button>
 								</td>
 							</tr>
@@ -234,11 +227,11 @@
 								</td>
 								<td>Carlos Ruiz</td>
 								<td>Vacunación</td>
-								<td><span class="badge bg-warning">Pendiente</span></td>
 								<td>
 									<button class="btn btn-sm btn-success"
 										onclick="completeAppointment(2)">Finalizar</button>
-									<button class="btn btn-sm btn-secondary">Posponer</button>
+									<button class="btn btn-sm btn-danger">Cancelar</button>
+
 								</td>
 							</tr>
 							<!-- Más citas... -->
@@ -251,42 +244,23 @@
 			<section id="historias" class="content-section">
 				<div class="section-header">
 					<h2><i class="fas fa-paw"></i> Historias Clínicas</h2>
-					<div class="search-container">
-						<input type="text" placeholder="Buscar mascota..." class="search-input">
-						<button class="btn btn-primary"><i class="fas fa-search"></i></button>
+				</div>
+
+				<div class="treatment-filters">
+					<div class="row">
+						<div class="col-md-3">
+							<label>Filtrar por mascota</label>
+							<select class="form-select">
+								<option>Todas las mascotas</option>
+								<option>Max (Golden Retriever)</option>
+								<option>Luna (Siamesa)</option>
+							</select>
+						</div>
+
 					</div>
 				</div>
 
 				<div class="row">
-					<div class="col-md-4">
-						<div class="pet-list-container">
-							<div class="pet-list-header">
-								<h4>Mascotas atendidas</h4>
-								<span class="badge bg-primary">42</span>
-							</div>
-							<div class="pet-list">
-								<div class="pet-item active" data-pet-id="1">
-									<img src="IMG/golden.jpg" alt="Max">
-									<div>
-										<h5>Max</h5>
-										<small>Golden Retriever · 3 años</small>
-										<small>Dueño: Ana López</small>
-									</div>
-									<i class="fas fa-chevron-right"></i>
-								</div>
-								<div class="pet-item" data-pet-id="2">
-									<img src="IMG/gata.jpg" alt="Luna">
-									<div>
-										<h5>Luna</h5>
-										<small>Siamesa · 2 años</small>
-										<small>Dueño: Carlos Ruiz</small>
-									</div>
-									<i class="fas fa-chevron-right"></i>
-								</div>
-								<!-- Más mascotas... -->
-							</div>
-						</div>
-					</div>
 					<div class="col-md-8">
 						<div class="medical-history-container">
 							<div class="pet-profile-header">
@@ -301,8 +275,6 @@
 							<div class="medical-tabs">
 								<button class="tab-btn active" data-tab="general">Datos Generales</button>
 								<button class="tab-btn" data-tab="history">Historial</button>
-								<button class="tab-btn" data-tab="treatments">Tratamientos</button>
-								<button class="tab-btn" data-tab="vaccines">Vacunas</button>
 							</div>
 
 							<div class="tab-content active" id="general-tab">
@@ -335,6 +307,9 @@
 									<h5>Notas Importantes</h5>
 									<p>Alergia a la penicilina. Requiere dieta especial por problemas digestivos.</p>
 								</div>
+								<div class="treatment-footer">
+									<button type="submit" class="btn btn-primary">Editar</button>
+								</div>
 							</div>
 
 							<div class="tab-content" id="history-tab">
@@ -354,6 +329,7 @@
 											<p>Diagnóstico: Gastritis. Tratamiento con omeprazol y dieta blanda por 5
 												días.</p>
 										</div>
+										<button type="submit" class="btn btn-primary">Editar</button>
 									</div>
 									<!-- Más historial... -->
 								</div>
@@ -363,58 +339,10 @@
 				</div>
 			</section>
 
-			<!-- Sección Tratamientos -->
-			<section id="tratamientos" class="content-section">
-				<div class="section-header">
-					<h2><i class="fas fa-pills"></i> Tratamientos</h2>
-					<button class="btn btn-primary" onclick="openModal('new-treatment')">
-						<i class="fas fa-plus"></i> Nuevo tratamiento
-					</button>
-				</div>
-
-				<div class="treatment-filters">
-					<div class="row">
-						<div class="col-md-3">
-							<label>Filtrar por mascota</label>
-							<select class="form-select">
-								<option>Todas las mascotas</option>
-								<option>Max (Golden Retriever)</option>
-								<option>Luna (Siamesa)</option>
-							</select>
-						</div>
-
-					</div>
-				</div>
-
-				<div class="treatment-list">
-					<div class="treatment-card">
-						<div class="treatment-header">
-							<div class="pet-info">
-								<img src="IMG/golden.jpg" alt="Max">
-								<div>
-									<h5>Max</h5>
-									<small>Golden Retriever · Ana López</small>
-								</div>
-							</div>
-						</div>
-						<div class="treatment-body">
-							<h5>Tratamiento para gastritis</h5>
-							<p><strong>Diagnóstico:</strong> Gastritis crónica leve</p>
-							<p><strong>Medicación:</strong> Omeprazol 20mg (1/2 tableta cada 24h), Probiótico Vet</p>
-							<p><strong>Duración:</strong> 15/03/2023 - 30/03/2023</p>
-						</div>
-						<div class="treatment-footer">
-							<button class="btn btn-sm btn-outline-secondary">Editar</button>
-						</div>
-					</div>
-					<!-- Más tratamientos... -->
-				</div>
-			</section>
-
 			<!-- Sección Adopciones -->
 			<section id="adopciones" class="content-section">
 				<div class="section-header">
-					<h2><i class="fas fa-heart"></i> Seguimiento de Adopciones</h2>
+					<h2><i class="fas fa-heart"></i>Adopciones Realizadas</h2>
 					<button class="btn btn-primary" onclick="openModal('new-adoption')">
 						<i class="fas fa-plus"></i> Registrar adopción
 					</button>
@@ -422,9 +350,7 @@
 
 				<div class="adoption-filters">
 					<button class="btn btn-filter active">Todas</button>
-					<button class="btn btn-filter">Primer control</button>
-					<button class="btn btn-filter">Control mensual</button>
-					<button class="btn btn-filter">Finalizadas</button>
+					<button class="btn btn-filter">Adopciones Pendientes</button>
 				</div>
 
 				<div class="adoption-list">
@@ -437,7 +363,6 @@
 									<small>Mezcla · 1 año</small>
 								</div>
 							</div>
-							<span class="badge bg-warning">Primer control pendiente</span>
 						</div>
 						<div class="adoption-body">
 							<div class="row">
@@ -454,11 +379,6 @@
 									<p><strong>Notas:</strong> Requiere seguimiento especial por ansiedad</p>
 								</div>
 							</div>
-						</div>
-						<div class="adoption-footer">
-							<button class="btn btn-sm btn-primary">Agendar control</button>
-							<button class="btn btn-sm btn-success">Registrar visita</button>
-							<button class="btn btn-sm btn-outline-secondary">Ver historial</button>
 						</div>
 					</div>
 					<!-- Más adopciones... -->
@@ -492,22 +412,14 @@
 								<option>Todos</option>
 								<option>Disponible</option>
 								<option>Agotado</option>
-								<option>Destacado</option>
 							</select>
-						</div>
-						<div class="col-md-6">
-							<label>Buscar</label>
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Nombre del producto...">
-								<button class="btn btn-primary"><i class="fas fa-search"></i></button>
-							</div>
 						</div>
 					</div>
 				</div>
 
 				<div class="product-grid">
 					<div class="product-card">
-						<div class="product-badge featured">Destacado</div>
+						<div class="product-badge featured">Disponible</div>
 						<div class="product-image">
 							<img src="IMG/alimentoP.jpg" alt="Alimento para perros">
 							<div class="product-actions">
@@ -526,88 +438,6 @@
 						</div>
 					</div>
 					<!-- Más productos... -->
-				</div>
-			</section>
-
-			<!-- Sección Reportes -->
-			<section id="reportes" class="content-section">
-				<div class="section-header">
-					<h2><i class="fas fa-chart-bar"></i> Reportes y Estadísticas</h2>
-					<div class="report-actions">
-						<button class="btn btn-primary">
-							<i class="fas fa-file-pdf"></i> Exportar PDF
-						</button>
-						<button class="btn btn-success">
-							<i class="fas fa-file-excel"></i> Exportar Excel
-						</button>
-					</div>
-				</div>
-
-				<div class="report-tabs">
-					<button class="tab-btn active" data-tab="general">General</button>
-					<button class="tab-btn" data-tab="clinical">Clínico</button>
-					<button class="tab-btn" data-tab="sales">Ventas</button>
-					<button class="tab-btn" data-tab="adoptions">Adopciones</button>
-				</div>
-
-				<div class="tab-content active" id="general-report">
-					<div class="row">
-						<div class="col-md-6">
-							<div class="chart-container">
-								<h5>Citas por mes</h5>
-								<div class="chart-placeholder" id="appointments-chart"></div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="chart-container">
-								<h5>Tipos de consulta</h5>
-								<div class="chart-placeholder" id="consultations-chart"></div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="stats-card">
-								<h5>Estadísticas rápidas</h5>
-								<div class="stats-grid">
-									<div class="stat-item">
-										<i class="fas fa-paw"></i>
-										<div>
-											<h3>42</h3>
-											<small>Mascotas atendidas</small>
-										</div>
-									</div>
-									<div class="stat-item">
-										<i class="fas fa-calendar-check"></i>
-										<div>
-											<h3>86%</h3>
-											<small>Citas completadas</small>
-										</div>
-									</div>
-									<div class="stat-item">
-										<i class="fas fa-shopping-bag"></i>
-										<div>
-											<h3>$1,250</h3>
-											<small>Ventas mensuales</small>
-										</div>
-									</div>
-									<div class="stat-item">
-										<i class="fas fa-heart"></i>
-										<div>
-											<h3>8</h3>
-											<small>Adopciones</small>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="chart-container">
-								<h5>Ventas por categoría</h5>
-								<div class="chart-placeholder" id="sales-chart"></div>
-							</div>
-						</div>
-					</div>
 				</div>
 			</section>
 
@@ -755,27 +585,131 @@
 
 	<!-- Modal Nueva Cita -->
 	<div class="modal" id="new-appointment-modal">
+		<form th:action="@{/perfil-veterinario/cita/guardar}" method="post">
+			<div class="modal-header">
+				<h3><i class="fas fa-calendar-plus"></i> Nueva Cita</h3>
+				<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+					<label class="form-label" for="mascota">Mascota</label>
+					<select id="mascotas" name="mascotas.id" class="form-control" required>
+						<option value="" disabled selected>Selecciona una mascota</option>
+						<option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre}"></option>
+					</select>
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label" for="fecha">Fecha</label>
+					<input type="date" id="fecha" name="fecha" class="form-control" required>
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label" for="hora">Hora</label>
+					<input type="time" id="hora" name="hora" class="form-control" required>
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label" for="motivo">Motivo</label>
+					<textarea id="motivo" name="motivo" class="form-control" rows="3" required></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+				<button type="submit" class="btn btn-primary">Agendar cita</button>
+			</div>
+		</form>
+	</div>
+
+	<!-- Modal Agregar Producto -->
+	<div class="modal" id="new-product-modal">
+		<form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data">
+			<div class="modal-header">
+				<h3><i class="fas fa-box-open"></i> Agregar Producto</h3>
+				<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="nombre">Nombre</label>
+						<input type="text" id="nombre" name="nombre" placeholder="Nombre" class="form-control" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="precio">Precio</label>
+						<input type="number" id="precio" name="precio" step="0.001" min="0" placeholder="0.000"
+							class="form-control" required>
+					</div>
+				</div>
+				<div class="mb-3">
+					<label for="cantidadDisponible" class="form-label">Cantidad</label>
+					<input type="number" id="cantidadDisponible" name="cantidadDisponible" class="form-control"
+						required>
+					<small class="text-muted">Número de unidades que ingresan al stock</small>
+				</div>
+				<div class="mb-3">
+					<label for="categoria" class="form-label">Categoría</label>
+					<select id="categoria" name="categoria" class="form-select">
+						<option value="todas las categorias">Todas las categorías</option>
+						<option value="Alimentos">Alimentos</option>
+						<option value="Medicamentos">Medicamentos</option>
+						<option value="Juguetes">Juguetes</option>
+						<option value="Accesorios">Accesorios</option>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="descripcion">Descripción</label>
+					<textarea id="descripcion" name="descripcion" class="form-control" rows="3"></textarea>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="imagen">Imagen del Producto</label>
+					<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
+					<input type="hidden" name="idveterinaria" th:value="${idVeterinaria}">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+				<button type="submit" class="btn btn-primary">Guardar</button>
+			</div>
+		</form>
+	</div>
+
+
+	<!-- Modal Emergencia -->
+	<div class="modal" id="new-pet-modal">
 		<div class="modal-header">
-			<h3><i class="fas fa-calendar-plus"></i> Nueva Cita</h3>
+			<h3><i class="fas fa-exclamation-triangle"></i>Registrar Emergencia</h3>
 			<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
 		</div>
 		<div class="modal-body">
-			<form>
+			<form th:action="@{/perfil-veterinario/emergencia/guardar}" method="post">
 				<div class="row">
 					<div class="col-md-6">
 						<div class="mb-3">
 							<label class="form-label">Mascota</label>
-							<select class="form-select">
-								<option>Seleccionar mascota...</option>
-								<option>Max (Golden Retriever) - Ana López</option>
-								<option>Luna (Siamesa) - Carlos Ruiz</option>
+							<select class="form-select" name="mascotaId">
+								<option value="">Seleccione una mascota</option>
+								<option th:each="m : ${mascotas}" th:value="${m.id}"
+									th:text="${m.nombre}">
+								</option>
 							</select>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Fecha</label>
+							<input type="date" class="form-control" name="fecha">
 						</div>
 					</div>
 					<div class="col-md-6">
 						<div class="mb-3">
-							<label class="form-label">Fecha</label>
-							<input type="date" class="form-control">
+							<label class="form-label">Tipo</label>
+							<select name="tipo" class="form-control" required>
+								<optio value="">Seleccione el tipo de emergencia</option>
+								<option value="accidente">Accidente</option>
+								<option value="enfermedad">Enfermedad</option>
+								<option value="intoxicacion">Intoxicación</option>
+								<option value="parto">Parto</option>
+								<option value="cirugia">Cirugia</option>
+								<option value="otro">Otro</option>
+							</select>
 						</div>
 					</div>
 				</div>
@@ -783,31 +717,21 @@
 					<div class="col-md-6">
 						<div class="mb-3">
 							<label class="form-label">Hora</label>
-							<input type="time" class="form-control">
-						</div>
-					</div>
-					<div class="col-md-6">
-						<div class="mb-3">
-							<label class="form-label">Duración</label>
-							<select class="form-select">
-								<option>30 minutos</option>
-								<option>1 hora</option>
-								<option>1.5 horas</option>
-							</select>
+							<input type="time" class="form-control" name="hora">
 						</div>
 					</div>
 				</div>
 				<div class="mb-3">
-					<label class="form-label">Motivo</label>
-					<textarea class="form-control" rows="3"></textarea>
+					<label class="form-label">Descripción</label>
+					<textarea class="form-control" rows="3" name="descripcion"></textarea>
+
 				</div>
-				<div class="mb-3">
-					<label class="form-label">Notas adicionales</label>
-					<textarea class="form-control" rows="2"></textarea>
-				</div>
+				<input type="hidden" name="veterinariaId" th:value="${veterinaria != null ? veterinaria.id : ''}">
+				<input type="hidden" name="veterinarioId" th:value="${veterinario != null ? veterinario.id : ''}">
+
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-					<button type="submit" class="btn btn-primary">Agendar cita</button>
+					<button type="submit" class="btn btn-primary">Registrar Emergencia</button>
 				</div>
 			</form>
 		</div>

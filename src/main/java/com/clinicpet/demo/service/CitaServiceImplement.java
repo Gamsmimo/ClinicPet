@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.clinicpet.demo.model.Cita;
 import com.clinicpet.demo.repository.ICitaRepository;
 
+@Service
 public class CitaServiceImplement implements ICitaService {
 
 	@Autowired
@@ -42,11 +44,6 @@ public class CitaServiceImplement implements ICitaService {
 	@Override
 	public List<Cita> buscarPorVeterinario(Integer veterinarioId) {
 		return citaRepository.findByVeterinarioId(veterinarioId);
-	}
-
-	@Override
-	public List<Cita> buscarPorServicio(Integer servicioId) {
-		return citaRepository.findByServicioId(servicioId);
 	}
 
 	@Override

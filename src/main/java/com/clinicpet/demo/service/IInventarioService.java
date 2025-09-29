@@ -20,8 +20,6 @@ public interface IInventarioService {
 
 	List<Inventario> obtenerInventarioPorProducto(Integer productoId);
 
-	List<Inventario> obtenerInventarioPorVeterinariaYProducto(Integer veterinariaId, Integer productoId);
-
 	List<Inventario> obtenerProductosConStockBajo(Integer cantidadMinima);
 
 	List<Inventario> obtenerProductosConStockSuficiente(Integer cantidadMinima);
@@ -32,4 +30,7 @@ public interface IInventarioService {
 	Inventario agregarStock(Integer inventarioId, Integer cantidadAagregar);
 
 	Inventario reducirStock(Integer inventarioId, Integer cantidadAReducir);
+
+	Inventario obtenerInventarioPorVeterinariaYProducto(Integer veterinariaId, Integer productoId);
+
 }

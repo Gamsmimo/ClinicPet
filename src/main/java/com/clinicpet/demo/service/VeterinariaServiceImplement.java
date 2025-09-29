@@ -25,6 +25,7 @@ public class VeterinariaServiceImplement implements IVeterinariaService {
 		}
 		throw new RuntimeException("Veterinaria no encontrada para actualizar");
 	}
+	
 
 	@Override
 	@Transactional
@@ -217,5 +218,12 @@ public class VeterinariaServiceImplement implements IVeterinariaService {
 		Veterinaria v = findById(id);
 		v.setEstado("Aprobada");
 		return veterinariaRepository.save(v);
+	}
+
+
+	@Override
+	public Optional<Veterinaria> obtenerPorId(Integer id) {
+		// TODO Auto-generated method stub
+		return veterinariaRepository.findById(id);
 	}
 }

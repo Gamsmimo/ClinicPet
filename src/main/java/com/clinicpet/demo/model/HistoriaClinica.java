@@ -1,13 +1,17 @@
 package com.clinicpet.demo.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,12 +25,12 @@ public class HistoriaClinica {
 	private String tratamiento;
 	private LocalDate fecha;
 
-	@ManyToOne
-	@JoinColumn(name = "idMascota", nullable = false)
+	@OneToOne
+	@JoinColumn(name = "idMascota", nullable = false, unique = true)
 	private Mascota mascota;
 
 	@ManyToOne
-	@JoinColumn(name = "idVterinario", nullable = false)
+	@JoinColumn(name = "idVeterinario", nullable = false)
 	private Usuario veterinario;
 
 	@ManyToOne
@@ -36,6 +40,9 @@ public class HistoriaClinica {
 	@ManyToOne
 	@JoinColumn(name = "idUsuario", nullable = false)
 	private Usuario usuario;
+
+	@OneToMany(mappedBy = "historiaClinica", cascade = CascadeType.ALL)
+	private List<Cita> citas;
 
 	// constructor vacio
 	public HistoriaClinica() {

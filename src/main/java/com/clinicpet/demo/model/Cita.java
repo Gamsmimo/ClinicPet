@@ -28,71 +28,116 @@ public class Cita {
 	private PerfilVeterinario veterinario;
 
 	@ManyToOne
-	@JoinColumn(name = "idServicio", nullable = false)
-	private Servicio servicio;
+	@JoinColumn(name = "idMascota", nullable = false)
+	private Mascota mascota;
+
+	@ManyToOne
+	@JoinColumn(name = "idHistoriaClinica")
+	private HistoriaClinica historiaClinica;
 
 	// constructor vacio
 	public Cita() {
 	}
 
+	
+
 	public Cita(Integer id, String motivo, LocalDateTime fechaHora, Usuario usuario, PerfilVeterinario veterinario,
-			Servicio servicio) {
+			Mascota mascota, HistoriaClinica historiaClinica) {
 		super();
 		this.id = id;
 		this.motivo = motivo;
 		this.fechaHora = fechaHora;
 		this.usuario = usuario;
 		this.veterinario = veterinario;
-		this.servicio = servicio;
+		this.mascota = mascota;
+		this.historiaClinica = historiaClinica;
 	}
+
+
 
 	public Integer getId() {
 		return id;
 	}
 
+
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+
 
 	public String getMotivo() {
 		return motivo;
 	}
 
+
+
 	public void setMotivo(String motivo) {
 		this.motivo = motivo;
 	}
+
+
 
 	public LocalDateTime getFechaHora() {
 		return fechaHora;
 	}
 
+
+
 	public void setFechaHora(LocalDateTime fechaHora) {
 		this.fechaHora = fechaHora;
 	}
+
+
 
 	public Usuario getUsuario() {
 		return usuario;
 	}
 
+
+
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+
+
 
 	public PerfilVeterinario getVeterinario() {
 		return veterinario;
 	}
 
+
+
 	public void setVeterinario(PerfilVeterinario veterinario) {
 		this.veterinario = veterinario;
 	}
 
-	public Servicio getServicio() {
-		return servicio;
+
+
+	public Mascota getMascota() {
+		return mascota;
 	}
 
-	public void setServicio(Servicio servicio) {
-		this.servicio = servicio;
+
+
+	public void setMascota(Mascota mascota) {
+		this.mascota = mascota;
 	}
+
+
+
+	public HistoriaClinica getHistoriaClinica() {
+		return historiaClinica;
+	}
+
+
+
+	public void setHistoriaClinica(HistoriaClinica historiaClinica) {
+		this.historiaClinica = historiaClinica;
+	}
+
+
 
 	@Override
 	public String toString() {

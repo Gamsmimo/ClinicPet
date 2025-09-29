@@ -10,6 +10,8 @@ public interface IVeterinariaService {
 	List<Veterinaria> findAll();
 
 	Veterinaria findById(Integer id);
+	
+	Optional<Veterinaria> obtenerPorId(Integer id);
 
 	Veterinaria save(Veterinaria veterinaria);
 

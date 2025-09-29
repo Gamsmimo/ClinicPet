@@ -18,17 +18,9 @@ public interface IProductoService {
 
 	List<Producto> buscarProductosPorRangoPrecio(Double precioMin, Double precioMax);
 
-	List<Producto> obtenerProductosConStockDisponible();
-
-	List<Producto> obtenerProductosConStockBajo(Integer stockMaximo);
-
-	List<Producto> obtenerProductosMasVendidos();
-
 	List<Producto> buscarProductosPorTexto(String texto);
 
 	Producto actualizarProducto(Integer id, Producto producto);
-
-	Producto actualizarStockProducto(Integer id, Integer nuevoStock);
 
 	void eliminarProducto(Integer id);
 
@@ -38,5 +30,4 @@ public interface IProductoService {
 
 	long contarTotalProductos();
 
-	long contarProductosSinStock();
 }
