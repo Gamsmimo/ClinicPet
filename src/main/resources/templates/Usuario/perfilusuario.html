@@ -113,8 +113,8 @@
 				<section id="dashboard" class="content-section">
 					<div
 						class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-						<h1 class="h2">Bienvenido, <span id="username-header"
-								th:text="${usuarioLogueado.nombres}">Juan</span></h1>
+						<h1 class="h2">Hola, <span id="username-header" th:text="${usuarioLogueado.nombres}">Juan</span>
+						</h1>
 					</div>
 
 
@@ -214,8 +214,8 @@
 											<td th:text="${mascota.raza}">Raza</td>
 											</td>
 											<td>
-												<button class="btn btn-sm btn-outline-primary"
-													th:onclick="'editarMascota(' + ${mascota.id} + ')'">Editar</button>
+												<button data-bs-toggle="modal" data-bs-target="#editPetModal"
+													data-id="${mascota.id}">Editar</button>
 												<button class="btn btn-sm btn-outline-danger"
 													th:onclick="'eliminarMascota(' + ${mascota.id} + ')'">Eliminar</button>
 
@@ -562,6 +562,85 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Modal para Editar Mascota -->
+	<div class="modal fade" id="editPetModal" tabindex="-1" aria-labelledby="editPetModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editPetModalLabel">Editar Mascota</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="editPetForm" th:action="@{/usuarios/perfilusuario/actualizarMascota}" method="post"
+						enctype="multipart/form-data">
+						<input type="hidden" id="editMascotaId" name="id">
+						<input type="hidden" id="editMascotaUsuarioId" name="usuario.id" th:value="${idUsuarioActual}">
+						<input type="hidden" id="editMascotaFotoActual" name="fotoActual">
+						<!-- Para mantener la foto si no se sube una nueva -->
+
+						<div class="mb-3">
+							<label for="editNombre" class="form-label">Nombre</label>
+							<input type="text" class="form-control" id="editNombre" name="nombre" required>
+						</div>
+						<div class="mb-3">
+							<label for="editEspecie" class="form-label">Especie</label>
+							<select class="form-select" id="editEspecie" name="especie" required>
+								<option value="perro">Perro</option>
+								<option value="gato">Gato</option>
+								<option value="ave">Ave</option>
+								<option value="roedor">Roedor</option>
+								<option value="reptil">Reptil</option>
+								<option value="otro">Otro</option>
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="editRaza" class="form-label">Raza</label>
+							<input type="text" class="form-control" id="editRaza" name="raza">
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<label for="editEdad" class="form-label">Edad</label>
+								<input type="number" class="form-control" id="editEdad" name="edad" min="0">
+							</div>
+							<div class="col-md-6">
+								<label for="editGenero" class="form-label">Género</label>
+								<select class="form-select" id="editGenero" name="genero">
+									<option value="M">Macho</option>
+									<option value="F">Hembra</option>
+									<option value="desconocido">Desconocido</option>
+								</select>
+							</div>
+						</div>
+						<div class="mb-3">
+							<label for="editTamaño" class="form-label">Tamaño</label>
+							<select class="form-select" id="editTamaño" name="tamaño">
+								<option value="pequeño">Pequeño</option>
+								<option value="mediano">Mediano</option>
+								<option value="grande">Grande</option>
+							</select>
+						</div>
+						<div class="mb-3">
+							<label for="editDescripcion" class="form-label">Descripción</label>
+							<textarea class="form-control" id="editDescripcion" name="descripcion" rows="3"></textarea>
+						</div>
+						<div class="mb-3">
+							<label for="editFotoFile" class="form-label">Cambiar Foto (opcional)</label>
+							<input class="form-control" type="file" id="editFotoFile" name="fotoFile" accept="image/*">
+							<small class="form-text text-muted">La foto actual se mantendrá si no subes una
+								nueva.</small>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary">Guardar Cambios</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 
 	<!-- Modal para detalles de compra -->

@@ -39,6 +39,12 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 	// Buscar por rol (asumiendo campo rol.id en Usuario)
 	List<Usuario> findByRolId(Integer rolId);
 
+	// Buscar usuarios por múltiples roles
+	List<Usuario> findByRolIdIn(List<Integer> rolIds);
+
+	// Contar usuarios por roles
+	long countByRolIdIn(List<Integer> rolIds);
+
 	// Buscar por dirección (parcial)
 	List<Usuario> findByDireccionContaining(String direccion);
 
