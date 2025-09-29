@@ -1006,12 +1006,49 @@ $(document).ready(function() {
 		return reasons[reason] || capitalizeFirstLetter(reason);
 	}
 });
-// Función para redirigir a formulario de edición pasando el id de la mascota
-function editarMascota(mascotaId) {
-	// Aquí puedes redirigir a un formulario dedicado a la edición
-	// Ejemplo, si tienes una ruta para editar:
-	window.location.href = `/usuarios/perfilusuario/editarMascota?id=${mascotaId}`;
-}
+
+document.addEventListener('DOMContentLoaded', function() {
+	var editPetModal = document.getElementById('editPetModal');
+	if (editPetModal) {
+		editPetModal.addEventListener('show.bs.modal', function(event) {
+			var button = event.relatedTarget;
+			var mascotaId = button.getAttribute('data-id');
+			console.log("Mascota ID desde botón:", mascotaId);
+
+
+			// Limpiar formulario antes de cargar
+			editPetModal.querySelector('#editPetForm').reset();
+
+			// Petición AJAX para obtener datos de la mascota
+			fetch('/usuarios/perfilusuario/mascota/' + mascotaId)
+				.then(response => {
+					if (!response.ok) throw new Error('Mascota no encontrada');
+					return response.json();
+				})
+				.then(mascota => {
+					console.log("ID mascota recibido para editar:", mascota.id);
+					editPetModal.querySelector('#editMascotaId').value = mascota.id;
+					// Rellenar campos del formulario
+					editPetModal.querySelector('#editMascotaId').value = mascota.id;
+					editPetModal.querySelector('#editNombre').value = mascota.nombre || '';
+					editPetModal.querySelector('#editEspecie').value = mascota.especie || '';
+					editPetModal.querySelector('#editRaza').value = mascota.raza || '';
+					editPetModal.querySelector('#editEdad').value = mascota.edad || '';
+					editPetModal.querySelector('#editGenero').value = mascota.genero || '';
+					editPetModal.querySelector('#editTamaño').value = mascota.tamaño || '';
+					editPetModal.querySelector('#editDescripcion').value = mascota.descripcion || '';
+					editPetModal.querySelector('#editMascotaFotoActual').value = mascota.foto || '';
+				})
+				.catch(error => {
+					alert('Error al cargar datos de la mascota: ' + error.message);
+					// Cerrar modal si falla
+					var modal = bootstrap.Modal.getInstance(editPetModal);
+					modal.hide();
+				});
+		});
+	}
+});
+
 
 
 // Función para eliminar mascota con confirmación

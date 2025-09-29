@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -106,7 +107,8 @@ public class UsuarioController {
 			redirectAttributes.addFlashAttribute("mensaje", "Usuario registrado con éxito");
 
 			// *** CORRECCIÓN BÁSICA: Redirigir al INICIO (página principal) ***
-			return "redirect:/"; // Cambia "/" por tu ruta de inicio si es diferente (ej. "redirect:/home")
+			return "IniciarSesion/iniciarsesion"; // Cambia "/" por tu ruta de inicio si es diferente (ej.
+													// "redirect:/home")
 
 		} catch (RuntimeException e) {
 			// *** CORRECCIÓN BÁSICA: Usar la misma ruta con subcarpeta para consistencia
@@ -142,6 +144,34 @@ public class UsuarioController {
 		model.addAttribute("usuarioLogueado", usuarioLogueado);
 
 		return "Usuario/perfilusuario"; // templates/perfilusuario.html
+	}
+
+	@GetMapping("/perfilusuario/mascota/{id}")
+	@ResponseBody
+	public ResponseEntity<Mascota> obtenerMascotaPorId(@PathVariable Integer id, HttpSession session) {
+		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+
+		// Log para verificar usuario en sesión
+		LOGGER.info("Usuario logueado ID: {}", usuarioLogueado != null ? usuarioLogueado.getId() : "null");
+		// Log para verificar ID recibido
+		LOGGER.info("Buscando mascota con ID: {}", id);
+		if (usuarioLogueado == null) {
+			LOGGER.warn("Intento de acceso sin sesión activa");
+			return ResponseEntity.status(401).build();
+		}
+		LOGGER.info("Usuario {} solicita mascota con ID {}", usuarioLogueado.getId(), id);
+
+		Optional<Mascota> mascotaOpt = mascotaService.buscarMascotaPorId(id);
+		if (mascotaOpt.isEmpty()) {
+			LOGGER.warn("Mascota con ID {} no encontrada", id);
+
+			return ResponseEntity.notFound().build();
+		}
+		Mascota mascota = mascotaOpt.get();
+		if (!mascota.getUsuario().getId().equals(usuarioLogueado.getId())) {
+			return ResponseEntity.status(403).build();
+		}
+		return ResponseEntity.ok(mascota);
 	}
 
 	// Agregar mascota (corregido: agregado check null y logs debug básicos)
@@ -220,40 +250,61 @@ public class UsuarioController {
 		}
 	}
 
-	// Corrección completa: Editar mascota (manejo de Optional)
-	@GetMapping("/perfilusuario/editarMascota")
-	public String editarMascota(@RequestParam Integer id, Model model) { // Cambiado a Integer
-		try {
-			// Corrección de línea 2: Manejar Optional para evitar NPE
-			Optional<Mascota> mascotaOpcional = mascotaService.buscarMascotaPorId(id);
-			if (mascotaOpcional.isEmpty()) {
-				model.addAttribute("error", "Mascota no encontrada");
-				return "error"; // Vista de error (crea si no existe)
-			}
-			Mascota mascota = mascotaOpcional.get(); // Extrae el valor
-			model.addAttribute("mascota", mascota);
-			return "/editarmascota"; // Tu vista (Thymeleaf/JSP)
-		} catch (Exception e) {
-			model.addAttribute("error", e.getMessage());
-			return "error";
-		}
-	}
-
-	// Agregado: Método para actualizar (POST desde formulario de edición)
+	// Método para actualizar (POST desde formulario de edición)
 	@PostMapping("/perfilusuario/actualizarMascota")
-	public String actualizarMascota(@ModelAttribute Mascota mascota, Model model) {
+	public String actualizarMascota(@ModelAttribute Mascota mascota,
+			@RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
+			@RequestParam(value = "fotoActual", required = false) String fotoActual, // Campo oculto para la foto actual
+			RedirectAttributes redirectAttributes) {
+		LOGGER.info("ID mascota recibida en actualización: {}", mascota.getId());
+
 		try {
 			if (mascota.getId() == null) {
-				model.addAttribute("error", "ID requerido");
-				return "/editarmascota";
+				redirectAttributes.addFlashAttribute("error", "ID de mascota requerido para actualización.");
+				return "redirect:/usuarios/perfilusuario";
 			}
-			Mascota updated = mascotaService.actualizarMascota(mascota);
-			model.addAttribute("success", "Mascota actualizada correctamente");
-			model.addAttribute("mascota", updated);
-			return "perfilusuario"; // O redirige a perfil
+
+			// Buscar la mascota existente para mantener el usuario asociado
+			Optional<Mascota> existingMascotaOpt = mascotaService.buscarMascotaPorId(mascota.getId());
+			if (existingMascotaOpt.isEmpty()) {
+				redirectAttributes.addFlashAttribute("error", "Mascota no encontrada para actualizar.");
+				return "redirect:/usuarios/perfilusuario";
+			}
+			Mascota existingMascota = existingMascotaOpt.get();
+			mascota.setUsuario(existingMascota.getUsuario()); // Asegurarse de que el usuario no se pierda
+
+			// Manejo de la foto
+			if (fotoFile != null && !fotoFile.isEmpty()) {
+				String uploadDir = "src/main/resources/static/images/mascotas/";
+				String fileName = System.currentTimeMillis() + "_" + fotoFile.getOriginalFilename();
+				Path uploadPath = Paths.get(uploadDir);
+				if (!Files.exists(uploadPath)) {
+					Files.createDirectories(uploadPath);
+				}
+				Path filePath = uploadPath.resolve(fileName);
+				Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+				mascota.setFoto("/images/mascotas/" + fileName);
+			} else {
+				// Si no se sube una nueva foto, mantener la que ya tenía
+				mascota.setFoto(
+						fotoActual != null && !fotoActual.isEmpty() ? fotoActual : "/images/mascotas/default_pet.png");
+			}
+
+			mascotaService.actualizarMascota(mascota);
+			redirectAttributes.addFlashAttribute("success",
+					"Mascota '" + mascota.getNombre() + "' actualizada correctamente!");
+			LOGGER.info("Mascota '{}' actualizada correctamente.", mascota.getNombre());
+
 		} catch (Exception e) {
-			model.addAttribute("error", e.getMessage());
-			return "/editarmascota";
+			LOGGER.error("Error al actualizar mascota ID {}: {}", mascota.getId(), e.getMessage(), e);
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar mascota: " + e.getMessage());
 		}
+		return "redirect:/usuarios/perfilusuario";
+	}
+
+//redireccion al cerrar sesion
+	@GetMapping("/index")
+	public String index() {
+		return "/index";
 	}
 }
