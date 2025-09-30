@@ -102,12 +102,12 @@
 							</td>
 							<td>
 								<span th:if="${usuario.activo}" class="status active">Activo</span>
-								<span th:unless="${usuario.activo}" class="status inactive">Inactivo</span>
+								<span th:unless="${usuario.activo}" class="status inactive">Desactivado</span>
 							</td>
 							<td>
-								<button class="btn-action" onclick="verDetallesUsuario([[$usuario.id]])">Ver</button>
+								<button class="btn-action" th:onclick="'verUsuario('+${usuario.id}+')'">Ver</button>
 								<button th:if="${usuario.activo}" class="btn-action btn-inactivate"
-									onclick="cambiarEstadoUsuario([[$usuario.id]], false)">Inactivar</button>
+									onclick="cambiarEstadoUsuario([[$usuario.id]], false)">Desactivar</button>
 								<button th:unless="${usuario.activo}" class="btn-action btn-activate"
 									onclick="cambiarEstadoUsuario([[$usuario.id]], true)">Activar</button>
 							</td>
@@ -131,23 +131,6 @@
 						</tr>
 					</thead>
 					<tbody>
-						<!-- Veterinarios -->
-						<tr th:each="veterinario : ${veterinarios}">
-							<td th:text="${veterinario.id}">1</td>
-							<td th:text="${veterinario.usuario?.nombres + ' ' + veterinario.usuario?.apellidos}">
-								Veterinario
-							</td>
-							<td>Veterinario</td>
-							<td th:text="${veterinario.usuario?.telefono}">Teléfono</td>
-							<td>
-								<span th:if="${veterinario.estado}" class="status active">Activo</span>
-								<span th:unless="${veterinario.estado}" class="status inactive">Inactivo</span>
-							</td>
-							<td>
-								<button class="btn-action"
-									onclick="verDetallesVeterinario([[$veterinario.id]])">Ver</button>
-							</td>
-						</tr>
 						<!-- Veterinarias -->
 						<tr th:each="veterinaria : ${veterinarias}">
 							<td th:text="${veterinaria.id}">1</td>
@@ -157,12 +140,10 @@
 							<td>
 								<span th:if="${veterinaria.estado == 'Activa'}" class="status active">Activa</span>
 								<span th:unless="${veterinaria.estado == 'Activa'}"
-									class="status inactive">Inactiva</span>
+									class="status inactive">Desactivada</span>
 							</td>
 							<td>
-								<button class="btn-action"
-									onclick="verDetallesVeterinaria([[$veterinaria.id]])">Ver</button>
-							</td>
+								<button class="btn-action" th:onclick="'verVeterinaria('+${veterinaria.id}+')'">Ver</button>
 						</tr>
 					</tbody>
 				</table>
@@ -209,6 +190,34 @@
 						</div>
 					</div>
 				</div>
+			</section>
+			<!-- Gestión de Mascotas -->
+			<section id="pets" class="content-section">
+				<h2>Gestión de Mascotas</h2>
+				<table class="data-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Nombre</th>
+							<th>Especie</th>
+							<th>Raza</th>
+							<th>Dueño</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody id="tablaMascotas">
+						<tr th:each="m : ${mascotas}">
+						  <td th:text="${m.id}">1</td>
+						  <td th:text="${m.nombre}">Toby</td>
+						  <td th:text="${m.especie}">Canino</td>
+						  <td th:text="${m.raza}">Labrador</td>
+						  <td th:text="${m.usuario.nombres + ' ' + m.usuario.apellidos}">Dueño</td>
+						  <td>
+						    <button class="btn-action" th:onclick="'verMascota('+${m.id}+')'">Ver</button>
+						  </td>
+						</tr>
+					</tbody>
+				</table>
 			</section>
 		</div>
 	</main>
@@ -347,6 +356,14 @@
 				<button type="submit" class="btn-primary">Registrar Veterinaria</button>
 			</form>
 		</div>
+	</div>	
+	<!-- Modal genérico -->
+	<div id="detalleModal" class="modal">
+	  <div class="modal-content">
+	    <span class="close" onclick="cerrarModal('detalleModal')">&times;</span>
+	    <h2 id="modalTitulo">Detalles</h2>
+	    <div id="modalCuerpo"></div>
+	  </div>
 	</div>
 
 	<script th:src="@{/assets/JS/JS-Admin.js}"></script>

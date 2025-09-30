@@ -230,10 +230,143 @@ function mostrarMensaje(mensaje, tipo = 'info') {
 	}
 }
 
+/* ---------- Abrir / cerrar modal ---------- */
+function abrirModal(idModal) { document.getElementById(idModal).style.display = 'flex'; }
+function cerrarModal(idModal) { document.getElementById(idModal).style.display = 'none'; }
+
+/* ---------- Ver detalles USUARIO ---------- */
+function verDetallesUsuario(id) {
+	fetch('/admin/usuario/' + id)   // necesitas crear este endpoint si no existe
+		.then(r => r.json())
+		.then(u => {
+			mostrarModal('Usuario',
+				`<p><b>Nombre:</b> ${u.nombres} ${u.apellidos}</p>
+             <p><b>Correo:</b> ${u.correo}</p>
+             <p><b>Teléfono:</b> ${u.telefono}</p>
+             <p><b>Estado:</b> ${u.activo ? 'Activo' : 'Desactivado'}</p>`);
+		});
+}
+
+/* ---------- Ver detalles MASCOTA ---------- */
+function verMascota(id) {
+	fetch('/admin/mascota/' + id)
+		.then(r => r.json())
+		.then(m => {
+			document.getElementById('modalTitulo').innerText = 'Datos de la mascota';
+			document.getElementById('modalCuerpo').innerHTML = `
+        <p><b>Nombre:</b> ${m.nombre}</p>
+        <p><b>Especie:</b> ${m.especie}</p>
+        <p><b>Edad:</b> ${m.edad} años</p>
+        <p><b>Género:</b> ${m.genero}</p>
+        <p><b>Tamaño:</b> ${m.tamano}</p>
+        <p><b>Descripción:</b> ${m.descripcion || 'Sin descripción'}</p>
+        <p><b>Dueño:</b> ${m.usuario.nombres} ${m.usuario.apellidos}</p>
+        <img src="${m.foto || 'https://via.placeholder.com/150'}" alt="Foto" style="width:150px;border-radius:8px;">
+      `;
+			abrirModal('detalleModal');
+		})
+		.catch(error => {
+			console.error('Error al cargar mascota:', error);
+			alert('No se pudo cargar la información de la mascota');
+		});
+}
+
+/* ---------- función auxiliar para llenar y abrir ---------- */
+function mostrarModal(titulo, htmlBody) {
+	document.getElementById('modalTitle').innerText = titulo;
+	document.getElementById('modalBody').innerHTML = htmlBody;
+	abrirModal('detalleModal');
+}
+
+
+/* ---------- Abrir / cerrar modal ---------- */
+function abrirModal(idModal) { document.getElementById(idModal).style.display = 'flex'; }
+function cerrarModal(idModal) { document.getElementById(idModal).style.display = 'none'; }
+
+/* ---------- Ver detalles MASCOTA ---------- */
+function verMascota(id) {
+	fetch('/admin/mascota/' + id)
+		.then(r => r.json())
+		.then(m => {
+			document.getElementById('modalTitulo').innerText = 'Datos de la mascota';
+			document.getElementById('modalCuerpo').innerHTML = `
+        <p><b>Nombre:</b> ${m.nombre}</p>
+        <p><b>Especie:</b> ${m.especie}</p>
+        <p><b>Edad:</b> ${m.edad} años</p>
+        <p><b>Género:</b> ${m.genero}</p>
+        <p><b>Tamaño:</b> ${m.tamano}</p>
+        <p><b>Descripción:</b> ${m.descripcion || 'Sin descripción'}</p>
+        <p><b>Dueño:</b> ${m.usuario.nombres} ${m.usuario.apellidos}</p>
+        <img src="${m.foto || 'https://via.placeholder.com/150'}" alt="Foto" style="width:150px;border-radius:8px;">
+      `;
+			abrirModal('detalleModal');
+		});
+}
+
+/* ---------- Ver detalles USUARIO ---------- */
+function verUsuario(id) {
+	fetch('/admin/usuario/' + id)
+		.then(r => r.json())
+		.then(usuario => {
+			document.getElementById('modalTitulo').innerText = 'Datos del usuario';
+			document.getElementById('modalCuerpo').innerHTML = `
+        <p><b>Nombre:</b> ${usuario.nombres} ${usuario.apellidos}</p>
+        <p><b>Correo:</b> ${usuario.correo}</p>
+        <p><b>Teléfono:</b> ${usuario.telefono}</p>
+        <p><b>Dirección:</b> ${usuario.direccion || 'No registrada'}</p>
+        <p><b>Edad:</b> ${usuario.edad || 'No indicada'}</p>
+      `;
+			abrirModal('detalleModal');
+		});
+}
+
+/* ---------- Ver detalles VETERINARIO ---------- */
+function verVeterinario(id) {
+	fetch('/admin/veterinario/' + id)
+		.then(r => r.json())
+		.then(v => {
+			document.getElementById('modalTitulo').innerText = 'Datos del veterinario';
+			document.getElementById('modalCuerpo').innerHTML = `
+        <p><b>Nombre:</b> ${v.usuario.nombres} ${v.usuario.apellidos}</p>
+        <p><b>Edad:</b> ${v.usuario.edad || 'No indicada'}</p>
+        <p><b>Documento:</b> ${v.usuario.tipoDocumento} ${v.usuario.numDocumento}</p>
+        <p><b>Dirección:</b> ${v.usuario.direccion || 'No registrada'}</p>
+        <p><b>Teléfono:</b> ${v.usuario.telefono}</p>
+        <p><b>Correo:</b> ${v.usuario.correo}</p>
+        <p><b>Especialidad:</b> ${v.especialidad}</p>
+        <p><b>Tarjeta profesional:</b> ${v.tarjetaProfesional}</p>
+        <p><b>Experiencia:</b> ${v.experiencia} años</p>
+        <p><b>Veterinaria:</b> ${v.veterinaria ? v.veterinaria.nombre : 'No asignada'}</p>
+      `;
+			abrirModal('detalleModal');
+		});
+}
+
+/* ---------- Ver detalles VETERINARIA ---------- */
+function verVeterinaria(id) {
+	fetch('/admin/veterinaria/' + id)
+		.then(r => r.json())
+		.then(vet => {
+			document.getElementById('modalTitulo').innerText = 'Datos de la veterinaria';
+			document.getElementById('modalCuerpo').innerHTML = `
+        <p><b>Nombre:</b> ${vet.nombre}</p>
+        <p><b>RUT:</b> ${vet.rut}</p>
+        <p><b>Dirección:</b> ${vet.direccion}</p>
+        <p><b>Correo:</b> ${vet.correo}</p>
+        <p><b>Horario:</b> ${vet.horario}</p>
+        <p><b>Descripción:</b> ${vet.descripcion || 'Sin descripción'}</p>
+        <p><b>Estado:</b> ${vet.estado}</p>
+      `;
+			abrirModal('detalleModal');
+		});
+}
+
+
 // ===== HACER FUNCIONES GLOBALES =====
 window.abrirModal = abrirModal;
 window.cerrarModal = cerrarModal;
 window.verDetallesUsuario = verDetallesUsuario;
+window.verMascota = verMascota;
 window.cambiarEstadoUsuario = cambiarEstadoUsuario;
 window.verDetallesVeterinario = verDetallesVeterinario;
 window.verDetallesVeterinaria = verDetallesVeterinaria;

@@ -2,7 +2,9 @@ package com.clinicpet.demo.controller;
 
 import com.clinicpet.demo.model.*;
 import com.clinicpet.demo.repository.*;
+import com.clinicpet.demo.service.HistoriaClinicaServiceImplement;
 import com.clinicpet.demo.service.IPerfilAdminService;
+import com.clinicpet.demo.service.VeterinariaServiceImplement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,10 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/admin")
 public class PerfilAdminController {
+
+	private final VeterinariaServiceImplement veterinariaServiceImplement;
+
+	private final HistoriaClinicaServiceImplement historiaClinicaServiceImplement;
 
 	@Autowired
 	private IPerfilAdminService adminService;
@@ -40,6 +46,12 @@ public class PerfilAdminController {
 	@Autowired
 	private IReporteDeMaltratoRepository reporteRepo;
 
+	PerfilAdminController(HistoriaClinicaServiceImplement historiaClinicaServiceImplement,
+			VeterinariaServiceImplement veterinariaServiceImplement) {
+		this.historiaClinicaServiceImplement = historiaClinicaServiceImplement;
+		this.veterinariaServiceImplement = veterinariaServiceImplement;
+	}
+
 	@GetMapping
 	public String mostrarPanelAdmin(Model model) {
 		try {
@@ -48,11 +60,11 @@ public class PerfilAdminController {
 			PerfilAdmin admin = obtenerAdminLogueado();
 			model.addAttribute("admin", admin);
 
-			// ✅ CARGAR TODOS LOS DATOS ACTUALIZADOS DESDE BD
+			// CARGAR TODOS LOS DATOS ACTUALIZADOS DESDE BD
 			cargarDatosDashboard(model);
 			cargarUsuariosParaVista(model);
 			cargarVeterinariasParaVista(model);
-			cargarVeterinariosParaVista(model);
+			cargarMascotasParaVista(model);
 
 			System.out.println("✅ Datos cargados correctamente desde BD");
 			return "admin/panelAdmin";
@@ -65,7 +77,7 @@ public class PerfilAdminController {
 		}
 	}
 
-	// ✅ MÉTODO MEJORADO PARA REGISTRAR VETERINARIOS
+	// MÉTODO MEJORADO PARA REGISTRAR VETERINARIOS
 	@PostMapping("/veterinarios/registrar")
 	public String registrarVeterinario(@RequestParam String nombres, @RequestParam String apellidos,
 			@RequestParam Integer edad, @RequestParam String correo, @RequestParam String telefono,
@@ -103,11 +115,11 @@ public class PerfilAdminController {
 			usuario.setActivo(true);
 			usuario.setRol(rolOpt.get());
 
-			// ✅ Guardar usuario en BD
+			// Guardar usuario en BD
 			Usuario usuarioGuardado = usuarioRepo.save(usuario);
 			System.out.println("✅ USUARIO GUARDADO EN BD CON ID: " + usuarioGuardado.getId());
 
-			// ✅ Crear perfil veterinario
+			// Crear perfil veterinario
 			PerfilVeterinario veterinario = new PerfilVeterinario();
 			veterinario.setUsuario(usuarioGuardado);
 			veterinario.setEspecialidad(especialidad);
@@ -129,7 +141,7 @@ public class PerfilAdminController {
 		return "redirect:/admin#users";
 	}
 
-	// ✅ MÉTODO PARA REGISTRAR VETERINARIAS
+	// MÉTODO PARA REGISTRAR VETERINARIAS
 	@PostMapping("/veterinarias/registrar")
 	public String registrarVeterinaria(@RequestParam String nombre, @RequestParam String rut,
 			@RequestParam String direccion, @RequestParam String telefono, @RequestParam String correo,
@@ -149,7 +161,7 @@ public class PerfilAdminController {
 			veterinaria.setDescripcion(descripcion);
 			veterinaria.setEstado(estado);
 
-			// ✅ Guardar en BD
+			// guardar en BD
 			veterinariaRepo.save(veterinaria);
 
 			System.out.println("✅ VETERINARIA GUARDADA EN BD: " + nombre);
@@ -162,7 +174,7 @@ public class PerfilAdminController {
 		return "redirect:/admin#vets";
 	}
 
-	// ✅ MÉTODO PARA ACTUALIZAR PERFIL ADMIN
+	// MÉTODO PARA ACTUALIZAR PERFIL ADMIN
 	@PostMapping("/perfil/editar")
 	public String guardarPerfil(@RequestParam String nombres, @RequestParam String apellidos,
 			@RequestParam String correo, @RequestParam String telefono, RedirectAttributes redirectAttributes) {
@@ -293,5 +305,48 @@ public class PerfilAdminController {
 			admin.setApellidos("Principal");
 			return admin;
 		}
+	}
+
+	/* 1. Lista para la vista “Gestión de Mascotas” */
+	@GetMapping("/mascotas")
+	public String verGestionMascotas(Model model) {
+		cargarDatosDashboard(model); // por si quieres los contadores
+		model.addAttribute("mascotas", mascotaRepo.findAll());
+		return "admin/panelAdmin :: #mascotas"; // fragmento Thymeleaf
+	}
+
+	/* 2. Json para llenar el modal vía AJAX */
+	@GetMapping("/mascota/{id}")
+	@ResponseBody
+	public Mascota detalleMascota(@PathVariable Integer id) {
+		return mascotaRepo.findById(id).orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+	}
+
+	private void cargarMascotasParaVista(Model model) {
+		List<Mascota> mascotas = mascotaRepo.findAll();
+		model.addAttribute("mascotas", mascotas);
+		System.out.println("mascotas cargadas: " + mascotas.size());
+	}
+
+	// metodo para boton ver detalles
+	// usuario
+	@GetMapping("/usuario/{id}")
+	@ResponseBody
+	public Usuario detalleUsuario(@PathVariable Integer id) {
+		return usuarioRepo.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+	}
+
+	// veterinario
+	@GetMapping("/veterinario/{id}")
+	@ResponseBody
+	public PerfilVeterinario detalleVeterinario(@PathVariable Integer id) {
+		return veterinarioRepo.findById(id).orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
+	}
+
+	// veterinaria
+	@GetMapping("/veterinaria/{id}")
+	@ResponseBody
+	public Veterinaria detalleVeterinaria(@PathVariable Integer id) {
+		return veterinariaRepo.findById(id).orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
 	}
 }

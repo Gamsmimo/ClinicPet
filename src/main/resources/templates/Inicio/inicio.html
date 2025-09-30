@@ -105,8 +105,16 @@
 					</button>
 					<div class="menu-content">
 						<div class="menu-item">
-							<a th:href="@{/usuarios/perfilusuario}"> <i class="fas fa-user-plus"></i>
-								<span>Perfil</span></a>
+						    <a th:if="${session.usuarioLogueado != null && session.usuarioLogueado.rol != null && session.usuarioLogueado.rol.id == 2}" 
+						       th:href="@{/perfil-veterinario}">
+						        <i class="fas fa-user-md"></i>
+						        <span>Perfil Veterinario</span>
+						    </a>
+						    <a th:unless="${session.usuarioLogueado != null && session.usuarioLogueado.rol != null && session.usuarioLogueado.rol.id == 2}" 
+						       th:href="@{/usuarios/perfilusuario}">
+						        <i class="fas fa-user"></i>
+						        <span>Perfil</span>
+						    </a>
 						</div>
 						<div class="menu-item">
 							<a href="Reporte.html"> <i class="fas fa-clinic-medical"></i>

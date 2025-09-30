@@ -274,7 +274,7 @@ body {
 	border-collapse: collapse;
 	background-color: var(--surface-color);
 	box-shadow: var(--shadow);
-	border-radius: 8px;
+	border-radius: 10px;
 	overflow: hidden;
 }
 
@@ -797,7 +797,9 @@ input:checked+.toggle-label:before {
 	/* Limitar altura máxima */
 	overflow-y: auto;
 	/* Habilitar scroll vertical */
-	overflow-x: hidden;/* No scroll horizontal *//* Posicionamiento mejorado */
+	overflow-x: hidden;
+	/* No scroll horizontal */
+	/* Posicionamiento mejorado */
 	position: absolute;
 	top: 35%;
 	left: 50%;

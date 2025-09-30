@@ -3,6 +3,8 @@ package com.clinicpet.demo.model;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -91,5 +93,10 @@ public class Rol {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, nombre);
+	}
+	
+	@JsonIgnore // ← PEGALO EN ESTA LÍNEA
+	public List<Usuario> getUsuarios1() {
+	    return usuarios;
 	}
 }

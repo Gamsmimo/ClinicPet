@@ -99,6 +99,10 @@ public class UsuarioServiceImplement implements IUsuarioService {
 			usuario.setCorreo(usuarioActualizado.getCorreo().trim());
 			usuario.setNombres(usuarioActualizado.getNombres() != null ? usuarioActualizado.getNombres().trim()
 					: usuario.getNombres());
+			usuario.setApellidos(usuarioActualizado.getApellidos() != null ? usuarioActualizado.getApellidos().trim()
+					: usuario.getApellidos());
+			usuario.setTelefono(usuarioActualizado.getTelefono() != null ? usuarioActualizado.getTelefono().trim()
+					: usuario.getTelefono());
 			usuario.setPassword(usuarioActualizado.getPassword() != null ? usuarioActualizado.getPassword()
 					: usuario.getPassword());
 
