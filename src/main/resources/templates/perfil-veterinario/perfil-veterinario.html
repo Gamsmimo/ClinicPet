@@ -443,62 +443,96 @@
 
 			<!-- Sección Configuración -->
 			<section id="configuracion" class="content-section">
-				<div class="section-header">
-					<h2><i class="fas fa-cog"></i> Configuración</h2>
-				</div>
+			    <div class="section-header">
+			        <h2><i class="fas fa-cog"></i> Configuración</h2>
+			    </div>
 
-				<div class="settings-tabs">
-					<button class="tab-btn active" data-tab="profile">Perfil</button>
-					<button class="tab-btn" data-tab="account">Restablecer contraseña.</button>
-					<button class="tab-btn" data-tab="schedule">Horario</button>
-				</div>
+			    <!-- Mensajes de éxito/error -->
+			    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+			        <span th:text="${success}"></span>
+			        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+			    </div>
+			    
+			    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			        <span th:text="${error}"></span>
+			        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+			    </div>
 
-				<div class="tab-content active" id="profile-tab">
-					<div class="settings-card">
-						<h5>Información personal</h5>
-						<form>
-							<div class="row">
-								<div class="mb-3">
-									<label class="form-label">Foto de perfil</label>
-									<div class="profile-picture-upload">
-										<img src="IMG/veterinario1.png" alt="Foto de perfil">
-										<div>
-											<button class="btn btn-sm btn-primary">Cambiar foto</button>
-											<small>Formatos: JPG, PNG (Max. 2MB)</small>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Nombre</label>
-										<input type="text" class="form-control" value="Dr. Juan Pérez">
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Especialidad</label>
-										<input type="text" class="form-control" value="Cirugía veterinaria">
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Email</label>
-										<input type="email" class="form-control" value="dr.perez@clinicpet.com">
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Teléfono</label>
-										<input type="tel" class="form-control" value="+1 555-1234">
-									</div>
-								</div>
-							</div>
-							<button type="submit" class="btn btn-primary">Guardar cambios</button>
-						</form>
-					</div>
-				</div>
+			    <div class="settings-tabs">
+			        <button class="tab-btn active" data-tab="profile">Perfil</button>
+			        <button class="tab-btn" data-tab="account">Restablecer contraseña</button>
+			        <button class="tab-btn" data-tab="schedule">Horario</button>
+			    </div>
+
+			    <div class="tab-content active" id="profile-tab">
+			        <div class="settings-card">
+			            <h5>Información personal</h5>
+			            <form th:action="@{/perfil-veterinario/configuracion/actualizar}" method="post" th:object="${perfilVeterinario}">
+			                <div class="row">
+			                    <div class="mb-3">
+			                        <label class="form-label">Foto de perfil</label>
+			                        <div class="profile-picture-upload">
+			                            <img src="/IMG/veterinario1.png" alt="Foto de perfil">
+			                            <div>
+			                                <button type="button" class="btn btn-sm btn-primary">Cambiar foto</button>
+			                                <small>Formatos: JPG, PNG (Max. 2MB)</small>
+			                            </div>
+			                        </div>
+			                    </div>
+			                    <div class="col-md-6">
+			                        <div class="mb-3">
+			                            <label class="form-label">Nombre</label>
+			                            <input type="text" class="form-control" th:field="*{usuario.nombres}">
+			                        </div>
+			                    </div>
+			                    <div class="col-md-6">
+			                        <div class="mb-3">
+			                            <label class="form-label">Apellidos</label>
+			                            <input type="text" class="form-control" th:field="*{usuario.apellidos}">
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="row">
+			                    <div class="col-md-6">
+			                        <div class="mb-3">
+			                            <label class="form-label">Especialidad</label>
+			                            <input type="text" class="form-control" th:field="*{especialidad}">
+			                        </div>
+			                    </div>
+			                    <div class="col-md-6">
+			                        <div class="mb-3">
+			                            <label class="form-label">Tarjeta Profesional</label>
+			                            <input type="text" class="form-control" th:field="*{tarjetaProfesional}">
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="row">
+			                    <div class="col-md-6">
+			                        <div class="mb-3">
+			                            <label class="form-label">Email</label>
+			                            <input type="email" class="form-control" th:value="${perfilVeterinario.usuario.correo}" readonly>
+			                            <small class="text-muted">El email no se puede modificar</small>
+			                        </div>
+			                    </div>
+			                    <div class="col-md-6">
+			                        <div class="mb-3">
+			                            <label class="form-label">Teléfono</label>
+			                            <input type="tel" class="form-control" th:field="*{usuario.telefono}">
+			                        </div>
+			                    </div>
+			                </div>
+			                <div class="row">
+			                    <div class="col-12">
+			                        <div class="mb-3">
+			                            <label class="form-label">Experiencia</label>
+			                            <textarea class="form-control" th:field="*{experiencia}" rows="3" placeholder="Describe tu experiencia profesional"></textarea>
+			                        </div>
+			                    </div>
+			                </div>
+			                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+			            </form>
+			        </div>
+			    </div>
 
 				<div class="tab-content" id="account-tab">
 					<div class="settings-card">
