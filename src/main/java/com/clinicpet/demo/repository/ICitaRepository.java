@@ -17,9 +17,6 @@ public interface ICitaRepository extends JpaRepository<Cita, Integer> {
 	// buscar las citas de un veterinario
 	List<Cita> findByVeterinarioId(Integer veterinarioId);
 
-	// buscar todas las citas de un servicio
-	List<Cita> findByServicioId(Integer servicio);
-
 	// Buscar citas de un usuario en un rango de fechas
 	List<Cita> findByUsuarioIdAndFechaHoraBetween(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin); // between=rango
 

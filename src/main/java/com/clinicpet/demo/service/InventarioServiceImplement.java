@@ -60,9 +60,9 @@ public class InventarioServiceImplement implements IInventarioService {
 	}
 
 	@Override
-	public List<Inventario> obtenerInventarioPorVeterinariaYProducto(Integer veterinariaId, Integer productoId) {
+	public Inventario obtenerInventarioPorVeterinariaYProducto(Integer veterinariaId, Integer productoId) {
 		// TODO Auto-generated method stub
-		return inventarioRepository.findByVeterinaria_IdAndProducto_Id(veterinariaId, productoId);
+		return (Inventario) inventarioRepository.findByVeterinaria_IdAndProducto_Id(veterinariaId, productoId);
 	}
 
 	@Override
@@ -92,21 +92,20 @@ public class InventarioServiceImplement implements IInventarioService {
 
 	@Override
 	public Inventario agregarStock(Integer inventarioId, Integer cantidadAagregar) {
-		// TODO Auto-generated method stub
 		if (cantidadAagregar <= 0) {
 			throw new IllegalArgumentException("La cantidad a agregar debe ser mayor a cero");
 		}
 		Inventario inventario = inventarioRepository.findById(inventarioId).orElseThrow(
 				() -> new IllegalArgumentException("No existe el registro de inventario con ID: " + inventarioId));
-		int nuevoStock = inventario.getCantidadDisponible() + cantidadAagregar;
-		inventario.setCantidadDisponible(nuevoStock);
+
+		inventario.setCantidadDisponible(inventario.getCantidadDisponible() + cantidadAagregar);
+		inventario.actualizarEstado(); // <-- actualizar estado automáticamente
 		inventario.setFechaActualizacion(LocalDate.now());
 		return inventarioRepository.save(inventario);
 	}
 
 	@Override
 	public Inventario reducirStock(Integer inventarioId, Integer cantidadAReducir) {
-		// TODO Auto-generated method stub
 		if (cantidadAReducir <= 0) {
 			throw new IllegalArgumentException("La cantidad a reducir debe ser mayor a cero");
 		}
@@ -117,8 +116,9 @@ public class InventarioServiceImplement implements IInventarioService {
 			throw new IllegalArgumentException("Stock insuficiente. Stock actual: " + inventario.getCantidadDisponible()
 					+ ", intentando reducir: " + cantidadAReducir);
 		}
-		int nuevoStock = inventario.getCantidadDisponible() - cantidadAReducir;
-		inventario.setCantidadDisponible(nuevoStock);
+
+		inventario.setCantidadDisponible(inventario.getCantidadDisponible() - cantidadAReducir);
+		inventario.actualizarEstado(); // <-- actualizar estado automáticamente
 		inventario.setFechaActualizacion(LocalDate.now());
 		return inventarioRepository.save(inventario);
 	}

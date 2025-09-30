@@ -22,6 +22,8 @@ public interface IVeterinariaRepository extends JpaRepository<Veterinaria, Integ
 
 	boolean existsByTelefono(String telefono);
 
+	Optional<Veterinaria> findById(Integer id);
+
 	List<Veterinaria> findByNombreContainingIgnoreCase(String nombre);
 
 	List<Veterinaria> findByDireccionContainingIgnoreCase(String direccion);

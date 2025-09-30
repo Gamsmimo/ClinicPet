@@ -27,82 +27,84 @@ public class Servicio {
 	private Veterinaria veterinaria;
 
 	@OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL)
-	private List<Cita> citas;
-
-	@OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL)
 	private List<Calificacion> calificaciones;
 
 	public Servicio() {
 
 	}
 
+
 	public Servicio(Integer id, String nombre, String descripcion, Double precioBase, Veterinaria veterinaria,
-			List<Cita> citas, List<Calificacion> calificaciones) {
+			List<Calificacion> calificaciones) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precioBase = precioBase;
 		this.veterinaria = veterinaria;
-		this.citas = citas;
 		this.calificaciones = calificaciones;
 	}
+
 
 	public Integer getId() {
 		return id;
 	}
 
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 
 	public String getNombre() {
 		return nombre;
 	}
 
+
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+
 
 	public String getDescripcion() {
 		return descripcion;
 	}
 
+
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
 
 	public Double getPrecioBase() {
 		return precioBase;
 	}
 
+
 	public void setPrecioBase(Double precioBase) {
 		this.precioBase = precioBase;
 	}
+
 
 	public Veterinaria getVeterinaria() {
 		return veterinaria;
 	}
 
+
 	public void setVeterinaria(Veterinaria veterinaria) {
 		this.veterinaria = veterinaria;
 	}
 
-	public List<Cita> getCitas() {
-		return citas;
-	}
-
-	public void setCitas(List<Cita> citas) {
-		this.citas = citas;
-	}
 
 	public List<Calificacion> getCalificaciones() {
 		return calificaciones;
 	}
 
+
 	public void setCalificaciones(List<Calificacion> calificaciones) {
 		this.calificaciones = calificaciones;
 	}
+
 
 	@Override
 	public String toString() {

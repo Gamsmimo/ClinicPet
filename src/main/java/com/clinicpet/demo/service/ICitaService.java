@@ -27,9 +27,6 @@ public interface ICitaService {
 	// Buscar por un veterinario
 	List<Cita> buscarPorVeterinario(Integer veterinarioId);
 
-	// Buscar todas las citas de un servicio
-	List<Cita> buscarPorServicio(Integer servicio);
-
 	// Buscar por un usuario en un rango de fechas
 	List<Cita> buscarPorUsuarioYFechaRango(Integer usuarioId, LocalDateTime inicio, LocalDateTime fin);
 

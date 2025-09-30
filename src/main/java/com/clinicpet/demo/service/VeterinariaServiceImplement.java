@@ -16,7 +16,6 @@ public class VeterinariaServiceImplement implements IVeterinariaService {
 	@Autowired
 	private IVeterinariaRepository repo;
 
-	/* ========== CRUD BÁSICO ========== */
 	@Override
 	public Veterinaria save(Veterinaria v) {
 		return repo.save(v);
@@ -59,6 +58,12 @@ public class VeterinariaServiceImplement implements IVeterinariaService {
 	@Override
 	public long countTotalVeterinarias() {
 		return repo.count();
+	}
+
+	@Override
+	public Optional<Veterinaria> obtenerPorId(Integer id) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
 	}
 
 	@Override

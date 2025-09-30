@@ -18,7 +18,8 @@ public class Producto {
 	private String nombre;
 	private String descripcion;
 	private Double precio;
-	private Integer stock;
+	private String imagen;
+	private String categoria;
 
 	@OneToMany(mappedBy = "producto")
 	private List<DetalleVenta> detalle;
@@ -28,23 +29,20 @@ public class Producto {
 	}
 	// constructor con campos
 
-	public Producto(Integer id, String nombre, String descripcion, Double precio, Integer stock,
-			List<CarritoProducto> carritoproducto, List<DetalleVenta> detalle) {
+	public Integer getId() {
+		return id;
+	}
+
+	public Producto(Integer id, String nombre, String descripcion, Double precio, String imagen, String categoria,
+			List<DetalleVenta> detalle) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precio = precio;
-		this.stock = stock;
+		this.imagen = imagen;
+		this.categoria = categoria;
 		this.detalle = detalle;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	public String getNombre() {
@@ -71,12 +69,20 @@ public class Producto {
 		this.precio = precio;
 	}
 
-	public Integer getStock() {
-		return stock;
+	public String getImagen() {
+		return imagen;
 	}
 
-	public void setStock(Integer stock) {
-		this.stock = stock;
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+
+	public String getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
 	}
 
 	public List<DetalleVenta> getDetalle() {
@@ -87,10 +93,14 @@ public class Producto {
 		this.detalle = detalle;
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	@Override
 	public String toString() {
 		return "Producto [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", precio=" + precio
-				+ ", stock=" + stock + "]";
+				+ ", imagen=" + imagen + ", categoria=" + categoria + "]";
 	}
 
 }
