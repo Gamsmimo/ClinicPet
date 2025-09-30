@@ -1027,7 +1027,6 @@ document.addEventListener('DOMContentLoaded', function() {
 				})
 				.then(mascota => {
 					console.log("ID mascota recibido para editar:", mascota.id);
-					editPetModal.querySelector('#editMascotaId').value = mascota.id;
 					// Rellenar campos del formulario
 					editPetModal.querySelector('#editMascotaId').value = mascota.id;
 					editPetModal.querySelector('#editNombre').value = mascota.nombre || '';

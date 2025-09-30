@@ -20,9 +20,14 @@ public class MascotaServiceImplement implements IMascotaService {
 	@Override
 	@Transactional
 	public Mascota actualizarMascota(Mascota mascota) {
+		System.out.println("=== SERVICE: Iniciando actualización ===");
+		System.out.println("ID: " + mascota.getId());
+		System.out.println("Nombre: " + mascota.getNombre());
+
 		if (mascota == null || mascota.getId() == null) {
 			throw new RuntimeException("Mascota e ID requeridos para actualización");
 		}
+
 		// Verifica existencia
 		Optional<Mascota> existing = mascotaRepository.findById(mascota.getId());
 		if (existing.isEmpty()) {
@@ -31,34 +36,43 @@ public class MascotaServiceImplement implements IMascotaService {
 
 		// Actualiza campos (mantén FK usuario por defecto)
 		Mascota toUpdate = existing.get();
-		if (mascota.getNombre() != null)
+
+		// ✅ Actualizar campos básicos
+		if (mascota.getNombre() != null && !mascota.getNombre().trim().isEmpty())
 			toUpdate.setNombre(mascota.getNombre().trim());
-		if (mascota.getEspecie() != null)
+
+		if (mascota.getEspecie() != null && !mascota.getEspecie().trim().isEmpty())
 			toUpdate.setEspecie(mascota.getEspecie().trim());
+
 		if (mascota.getEdad() != null)
 			toUpdate.setEdad(mascota.getEdad());
-		if (mascota.getRaza() != null)
+
+		if (mascota.getRaza() != null && !mascota.getRaza().trim().isEmpty())
 			toUpdate.setRaza(mascota.getRaza().trim());
-		// Agregamos los demás campos que pueden ser actualizados
+
 		if (mascota.getGenero() != null)
 			toUpdate.setGenero(mascota.getGenero());
+
 		if (mascota.getTamaño() != null)
 			toUpdate.setTamaño(mascota.getTamaño());
-		if (mascota.getDescripcion() != null)
+
+		if (mascota.getDescripcion() != null && !mascota.getDescripcion().trim().isEmpty())
 			toUpdate.setDescripcion(mascota.getDescripcion().trim());
-		// La foto se maneja en el controlador antes de llamar al servicio
-		if (mascota.getFoto() != null)
+
+		// ✅ IMPORTANTE: Solo actualizar foto si viene una nueva (no null)
+		if (mascota.getFoto() != null && !mascota.getFoto().trim().isEmpty()) {
 			toUpdate.setFoto(mascota.getFoto());
+			System.out.println("SERVICE: Actualizando foto a: " + mascota.getFoto());
+		} else {
+			System.out.println("SERVICE: Manteniendo foto actual: " + toUpdate.getFoto());
+		}
 
-		// Si quieres actualizar usuario: toUpdate.setUsuario(mascota.getUsuario()); //
-		// Esto ya lo manejamos en el controlador para evitar perderlo
+		// ✅ NO tocar el usuario, ya está asociado en toUpdate
+		System.out.println("SERVICE: Usuario asociado ID: " + toUpdate.getUsuario().getId());
 
-		// Logs para debug
-		System.out.println("DEBUG SERVICE: Actualizando mascota ID=" + mascota.getId() + ", nombre='"
-				+ toUpdate.getNombre() + "'");
-
+		// Guardar
 		Mascota updated = mascotaRepository.save(toUpdate);
-		System.out.println("DEBUG SERVICE: Mascota actualizada con ID = " + updated.getId());
+		System.out.println("=== SERVICE: Mascota actualizada exitosamente ID=" + updated.getId() + " ===");
 
 		return updated;
 	}

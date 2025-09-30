@@ -1,5 +1,6 @@
 package com.clinicpet.demo.controller;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -149,28 +150,28 @@ public class UsuarioController {
 	@GetMapping("/perfilusuario/mascota/{id}")
 	@ResponseBody
 	public ResponseEntity<Mascota> obtenerMascotaPorId(@PathVariable Integer id, HttpSession session) {
-		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+		LOGGER.info("🔍 Buscando mascota con ID: {}", id);
 
-		// Log para verificar usuario en sesión
-		LOGGER.info("Usuario logueado ID: {}", usuarioLogueado != null ? usuarioLogueado.getId() : "null");
-		// Log para verificar ID recibido
-		LOGGER.info("Buscando mascota con ID: {}", id);
+		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
-			LOGGER.warn("Intento de acceso sin sesión activa");
+			LOGGER.warn("❌ Usuario no logueado");
 			return ResponseEntity.status(401).build();
 		}
-		LOGGER.info("Usuario {} solicita mascota con ID {}", usuarioLogueado.getId(), id);
 
 		Optional<Mascota> mascotaOpt = mascotaService.buscarMascotaPorId(id);
 		if (mascotaOpt.isEmpty()) {
-			LOGGER.warn("Mascota con ID {} no encontrada", id);
-
+			LOGGER.warn("❌ Mascota no encontrada con ID: {}", id);
 			return ResponseEntity.notFound().build();
 		}
+
 		Mascota mascota = mascotaOpt.get();
+
 		if (!mascota.getUsuario().getId().equals(usuarioLogueado.getId())) {
+			LOGGER.warn("❌ Usuario {} intentó acceder a mascota {} que no le pertenece", usuarioLogueado.getId(), id);
 			return ResponseEntity.status(403).build();
 		}
+
+		LOGGER.info("✅ Mascota encontrada: {}", mascota.getNombre());
 		return ResponseEntity.ok(mascota);
 	}
 
@@ -250,55 +251,87 @@ public class UsuarioController {
 		}
 	}
 
-	// Método para actualizar (POST desde formulario de edición)
 	@PostMapping("/perfilusuario/actualizarMascota")
 	public String actualizarMascota(@ModelAttribute Mascota mascota,
 			@RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
-			@RequestParam(value = "fotoActual", required = false) String fotoActual, // Campo oculto para la foto actual
-			RedirectAttributes redirectAttributes) {
-		LOGGER.info("ID mascota recibida en actualización: {}", mascota.getId());
+			@RequestParam(value = "fotoActual", required = false) String fotoActual,
+			RedirectAttributes redirectAttributes, HttpSession session) {
+
+		LOGGER.info("=== INICIO ACTUALIZACIÓN MASCOTA ===");
+		LOGGER.info("ID mascota recibida: {}", mascota.getId());
+		LOGGER.info("Nombre recibido: {}", mascota.getNombre());
 
 		try {
+			// ✅ 1. Validar ID
 			if (mascota.getId() == null) {
 				redirectAttributes.addFlashAttribute("error", "ID de mascota requerido para actualización.");
 				return "redirect:/usuarios/perfilusuario";
 			}
 
-			// Buscar la mascota existente para mantener el usuario asociado
-			Optional<Mascota> existingMascotaOpt = mascotaService.buscarMascotaPorId(mascota.getId());
-			if (existingMascotaOpt.isEmpty()) {
-				redirectAttributes.addFlashAttribute("error", "Mascota no encontrada para actualizar.");
+			// ✅ 2. Validar usuario logueado
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				LOGGER.warn("Usuario no logueado intentando actualizar mascota");
+				return "redirect:/usuarios/login";
+			}
+
+			// ✅ 3. Verificar que la mascota existe y pertenece al usuario
+			Optional<Mascota> mascotaExistenteOpt = mascotaService.buscarMascotaPorId(mascota.getId());
+			if (mascotaExistenteOpt.isEmpty()) {
+				redirectAttributes.addFlashAttribute("error", "Mascota no encontrada.");
 				return "redirect:/usuarios/perfilusuario";
 			}
-			Mascota existingMascota = existingMascotaOpt.get();
-			mascota.setUsuario(existingMascota.getUsuario()); // Asegurarse de que el usuario no se pierda
 
-			// Manejo de la foto
+			Mascota mascotaExistente = mascotaExistenteOpt.get();
+
+			// ✅ 4. Verificar permisos
+			if (!mascotaExistente.getUsuario().getId().equals(usuarioLogueado.getId())) {
+				LOGGER.warn("Usuario {} intentó editar mascota {} que no le pertenece", usuarioLogueado.getId(),
+						mascota.getId());
+				redirectAttributes.addFlashAttribute("error", "No tienes permiso para editar esta mascota.");
+				return "redirect:/usuarios/perfilusuario";
+			}
+
+			// ✅ 5. Manejo de la foto
 			if (fotoFile != null && !fotoFile.isEmpty()) {
-				String uploadDir = "src/main/resources/static/images/mascotas/";
+				LOGGER.info("Subiendo nueva foto para mascota ID: {}", mascota.getId());
+
 				String fileName = System.currentTimeMillis() + "_" + fotoFile.getOriginalFilename();
-				Path uploadPath = Paths.get(uploadDir);
+				Path uploadPath = Paths.get("src/main/resources/static/images/mascotas");
+
 				if (!Files.exists(uploadPath)) {
 					Files.createDirectories(uploadPath);
 				}
-				Path filePath = uploadPath.resolve(fileName);
-				Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+				Files.copy(fotoFile.getInputStream(), uploadPath.resolve(fileName),
+						StandardCopyOption.REPLACE_EXISTING);
+
 				mascota.setFoto("/images/mascotas/" + fileName);
+				LOGGER.info("Foto subida exitosamente: {}", fileName);
 			} else {
-				// Si no se sube una nueva foto, mantener la que ya tenía
-				mascota.setFoto(
-						fotoActual != null && !fotoActual.isEmpty() ? fotoActual : "/images/mascotas/default_pet.png");
+				// ✅ NO establecer foto aquí, el Service la mantendrá
+				LOGGER.info("No se subió nueva foto, se mantendrá la actual");
+				mascota.setFoto(null); // El service ignorará este null y mantendrá la foto actual
 			}
 
-			mascotaService.actualizarMascota(mascota);
-			redirectAttributes.addFlashAttribute("success",
-					"Mascota '" + mascota.getNombre() + "' actualizada correctamente!");
-			LOGGER.info("Mascota '{}' actualizada correctamente.", mascota.getNombre());
+			// ✅ 6. Actualizar mascota (el Service maneja el usuario y la foto si es null)
+			Mascota mascotaActualizada = mascotaService.actualizarMascota(mascota);
 
+			redirectAttributes.addFlashAttribute("success",
+					"¡Mascota '" + mascotaActualizada.getNombre() + "' actualizada correctamente!");
+			LOGGER.info("=== MASCOTA ACTUALIZADA EXITOSAMENTE: ID={} ===", mascotaActualizada.getId());
+
+		} catch (IllegalArgumentException e) {
+			LOGGER.error("Error de validación: {}", e.getMessage());
+			redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
+		} catch (IOException e) {
+			LOGGER.error("Error al subir foto: {}", e.getMessage(), e);
+			redirectAttributes.addFlashAttribute("error", "Error al subir la foto. Intenta de nuevo.");
 		} catch (Exception e) {
-			LOGGER.error("Error al actualizar mascota ID {}: {}", mascota.getId(), e.getMessage(), e);
-			redirectAttributes.addFlashAttribute("error", "Error al actualizar mascota: " + e.getMessage());
+			LOGGER.error("Error inesperado al actualizar mascota ID {}: {}", mascota.getId(), e.getMessage(), e);
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar mascota. Intenta de nuevo.");
 		}
+
 		return "redirect:/usuarios/perfilusuario";
 	}
 
