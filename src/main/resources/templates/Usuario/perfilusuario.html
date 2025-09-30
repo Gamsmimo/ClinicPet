@@ -214,8 +214,13 @@
 											<td th:text="${mascota.raza}">Raza</td>
 											</td>
 											<td>
-												<button data-bs-toggle="modal" data-bs-target="#editPetModal"
-													data-id="${mascota.id}">Editar</button>
+												<!-- ✅ CORRECTO: -->
+												<button type="button" class="btn btn-sm btn-outline-primary"
+													data-bs-toggle="modal" data-bs-target="#editPetModal"
+													th:data-id="${mascota.id}">
+													<i class="fas fa-edit"></i> Editar
+												</button>
+
 												<button class="btn btn-sm btn-outline-danger"
 													th:onclick="'eliminarMascota(' + ${mascota.id} + ')'">Eliminar</button>
 
@@ -574,9 +579,8 @@
 				<div class="modal-body">
 					<form id="editPetForm" th:action="@{/usuarios/perfilusuario/actualizarMascota}" method="post"
 						enctype="multipart/form-data">
-						<input type="hidden" id="editMascotaId" name="id">
-						<input type="hidden" id="editMascotaUsuarioId" name="usuario.id" th:value="${idUsuarioActual}">
-						<input type="hidden" id="editMascotaFotoActual" name="fotoActual">
+						<input type="hidden" name="id" id="editMascotaId">
+						<input type="hidden" name="fotoActual" id="editMascotaFotoActual">
 						<!-- Para mantener la foto si no se sube una nueva -->
 
 						<div class="mb-3">
