@@ -52,6 +52,9 @@ public class Usuario {
 	@Column(length = 255)
 	private String direccion;
 
+	@Column(name = "imagen")
+	private String imagen;
+
 	// Relación con rol
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "rol_id")
@@ -66,10 +69,9 @@ public class Usuario {
 
 	}
 
-	// constructor con campos
 	public Usuario(Integer id, String nombres, String apellidos, String correo, String tipoDocumento,
 			String numDocumento, String telefono, Integer edad, String password, boolean activo, String direccion,
-			Rol rol, List<Mascota> mascotas) {
+			String imagen, Rol rol, List<Mascota> mascotas) {
 		super();
 		this.id = id;
 		this.nombres = nombres;
@@ -79,9 +81,10 @@ public class Usuario {
 		this.numDocumento = numDocumento;
 		this.telefono = telefono;
 		this.edad = edad;
-		this.password = password; // Corregido: parámetro coincide con campo
+		this.password = password;
 		this.activo = activo;
 		this.direccion = direccion;
+		this.imagen = imagen;
 		this.rol = rol;
 		this.mascotas = mascotas;
 	}
@@ -152,6 +155,14 @@ public class Usuario {
 		this.edad = edad;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public boolean isActivo() {
 		return activo;
 	}
@@ -166,6 +177,14 @@ public class Usuario {
 
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
+	}
+
+	public String getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
 	}
 
 	public Rol getRol() {
@@ -184,26 +203,19 @@ public class Usuario {
 		this.mascotas = mascotas;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	@Override
 	public String toString() {
 		return "Usuario [id=" + id + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo
 				+ ", tipoDocumento=" + tipoDocumento + ", numDocumento=" + numDocumento + ", telefono=" + telefono
-				+ ", edad=" + edad + ", password=***, activo=" + activo + ", direccion=" + direccion + "]"; // Corregido:
-																											// no
-																											// muestra
-																											// valor de
-																											// password
-																											// por
-																											// seguridad
-																											// básica
+				+ ", edad=" + edad + ", password=" + password + ", activo=" + activo + ", direccion=" + direccion
+				+ ", imagen=" + imagen + "]"; // Corregido:
+												// no
+												// muestra
+												// valor de
+												// password
+												// por
+												// seguridad
+												// básica
 	}
 
 }

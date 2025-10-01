@@ -21,16 +21,22 @@
 </head>
 
 <body>
+
 	<!-- Menú Lateral -->
 	<nav class="sidebar">
 		<div class="user-profile">
-			<img th:src="@{/assets/IMG/veterinario1.png}" alt="Dr. Pérez">
+			<!-- ✅ Foto dinámica -->
+			<img th:src="${session.usuarioLogueado.imagen != null} ? 
+			            @{${session.usuarioLogueado.imagen}} : 
+			            @{'/uploads/default.jpg'}">
 			<div>
-				<h5>Dr. Pérez</h5>
 				<small>Veterinario</small>
+				<!-- ✅ Nombre dinámico -->
+				<h6 th:text="${perfilVeterinario.usuario.nombres} + ' ' + ${perfilVeterinario.usuario.apellidos}">Dr.
+					Pérez</h6>
 			</div>
-			<button class="btn-close-menu"><i class="fas fa-times"></i></button>
 		</div>
+
 
 		<ul class="menu-items">
 			<li><a href="#inicio" class="menu-link active" data-section="inicio"><i class="fas fa-home"></i>
@@ -116,9 +122,15 @@
 				<span class="badge">3</span>
 			</div>
 			<div class="user-dropdown">
-				<img src="IMG/veterinario1.png" alt="Usuario">
-				<span>Dr. Pérez</span>
-			</div>
+				<!-- ✅ Foto dinámica -->
+				<img th:src="${session.usuarioLogueado.imagen != null} ? 
+				            @{${session.usuarioLogueado.imagen}} : 
+				            @{'/uploads/default.jpg'}">
+				<!-- ✅ Nombre
+					dinámico -->
+
+				<h6 th:text="${perfilVeterinario.usuario.nombres} + ' ' + ${perfilVeterinario.usuario.apellidos}">Dr.
+					Pérez</h6>
 			</div>
 		</header>
 
@@ -127,9 +139,10 @@
 			<!-- Sección Inicio -->
 			<section id="inicio" class="content-section active">
 				<div class="welcome-section">
-					<h1>Hola, <span class="vet-name">Dr. Pérez</span> 👋</h1>
-					<p class="welcome-message">Bienvenido a tu panel de control. Aquí puedes gestionar todas las
-						actividades de la clínica.</p>
+				    <h1 th:text="'Hola, ' + ${perfilVeterinario.usuario.nombres} + ' ' + ${perfilVeterinario.usuario.apellidos} + ' 👋'">
+				        Hola, Dr. Pérez 👋
+				    </h1>
+				    <p>Bienvenido a tu panel de control. Aquí puedes gestionar todas las actividades de la clínica.</p>
 
 					<div class="summary-cards">
 						<div class="card card-summary bg-success">
@@ -441,98 +454,121 @@
 				</div>
 			</section>
 
+
+
 			<!-- Sección Configuración -->
 			<section id="configuracion" class="content-section">
-			    <div class="section-header">
-			        <h2><i class="fas fa-cog"></i> Configuración</h2>
-			    </div>
+				<div class="section-header">
+					<h2><i class="fas fa-cog"></i> Configuración</h2>
+				</div>
 
-			    <!-- Mensajes de éxito/error -->
-			    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-			        <span th:text="${success}"></span>
-			        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-			    </div>
-			    
-			    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-			        <span th:text="${error}"></span>
-			        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-			    </div>
+				<!-- Mensajes de éxito/error -->
+				<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+					<span th:text="${success}"></span>
+					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+				</div>
 
-			    <div class="settings-tabs">
-			        <button class="tab-btn active" data-tab="profile">Perfil</button>
-			        <button class="tab-btn" data-tab="account">Restablecer contraseña</button>
-			        <button class="tab-btn" data-tab="schedule">Horario</button>
-			    </div>
+				<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+					<span th:text="${error}"></span>
+					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+				</div>
 
-			    <div class="tab-content active" id="profile-tab">
-			        <div class="settings-card">
-			            <h5>Información personal</h5>
-			            <form th:action="@{/perfil-veterinario/configuracion/actualizar}" method="post" th:object="${perfilVeterinario}">
-			                <div class="row">
-			                    <div class="mb-3">
-			                        <label class="form-label">Foto de perfil</label>
-			                        <div class="profile-picture-upload">
-			                            <img src="/IMG/veterinario1.png" alt="Foto de perfil">
-			                            <div>
-			                                <button type="button" class="btn btn-sm btn-primary">Cambiar foto</button>
-			                                <small>Formatos: JPG, PNG (Max. 2MB)</small>
-			                            </div>
-			                        </div>
-			                    </div>
-			                    <div class="col-md-6">
-			                        <div class="mb-3">
-			                            <label class="form-label">Nombre</label>
-			                            <input type="text" class="form-control" th:field="*{usuario.nombres}">
-			                        </div>
-			                    </div>
-			                    <div class="col-md-6">
-			                        <div class="mb-3">
-			                            <label class="form-label">Apellidos</label>
-			                            <input type="text" class="form-control" th:field="*{usuario.apellidos}">
-			                        </div>
-			                    </div>
-			                </div>
-			                <div class="row">
-			                    <div class="col-md-6">
-			                        <div class="mb-3">
-			                            <label class="form-label">Especialidad</label>
-			                            <input type="text" class="form-control" th:field="*{especialidad}">
-			                        </div>
-			                    </div>
-			                    <div class="col-md-6">
-			                        <div class="mb-3">
-			                            <label class="form-label">Tarjeta Profesional</label>
-			                            <input type="text" class="form-control" th:field="*{tarjetaProfesional}">
-			                        </div>
-			                    </div>
-			                </div>
-			                <div class="row">
-			                    <div class="col-md-6">
-			                        <div class="mb-3">
-			                            <label class="form-label">Email</label>
-			                            <input type="email" class="form-control" th:value="${perfilVeterinario.usuario.correo}" readonly>
-			                            <small class="text-muted">El email no se puede modificar</small>
-			                        </div>
-			                    </div>
-			                    <div class="col-md-6">
-			                        <div class="mb-3">
-			                            <label class="form-label">Teléfono</label>
-			                            <input type="tel" class="form-control" th:field="*{usuario.telefono}">
-			                        </div>
-			                    </div>
-			                </div>
-			                <div class="row">
-			                    <div class="col-12">
-			                        <div class="mb-3">
-			                            <label class="form-label">Experiencia</label>
-			                            <textarea class="form-control" th:field="*{experiencia}" rows="3" placeholder="Describe tu experiencia profesional"></textarea>
-			                        </div>
-			                    </div>
-			                </div>
-			                <button type="submit" class="btn btn-primary">Guardar cambios</button>
-			            </form>
-			        </div>
-			    </div>
+				<div class="settings-tabs">
+					<button class="tab-btn active" data-tab="profile">Perfil</button>
+					<button class="tab-btn" data-tab="account">Restablecer contraseña</button>
+					<button class="tab-btn" data-tab="schedule">Horario</button>
+				</div>
+
+				<div class="tab-content active" id="profile-tab">
+					<div class="settings-card">
+						<h5>Información personal</h5>
+						<form th:action="@{/perfil-veterinario/configuracion/actualizar}" method="post"
+							th:object="${perfilVeterinario}" enctype="multipart/form-data"> <!-- 🔥 AÑADE ESTO -->
+							<div class="row">
+								<!-- Campo de foto -->
+								<div class="mb-3">
+									<label class="form-label">Foto de perfil</label>
+									<div class="profile-picture-upload">
+										<img id="previewFoto" th:src="${session.usuarioLogueado.imagen != null} ? 
+					                                               @{${session.usuarioLogueado.imagen}} : 
+					                                               @{'/uploads/default.jpg'}"
+											style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+										<div>
+											<input type="file" name="foto" id="inputFoto" accept="image/jpeg,image/png"
+												class="form-control" style="max-width: 300px;">
+											<small class="form-text text-muted">Formatos: JPG, PNG (Max. 2MB)</small>
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label">Nombre</label>
+										<input type="text" class="form-control" th:field="*{usuario.nombres}">
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label">Apellidos</label>
+										<input type="text" class="form-control" th:field="*{usuario.apellidos}">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label">Especialidad</label>
+										<input type="text" class="form-control" th:field="*{especialidad}" readonly>
+										<small class="text-muted">La especialidad no se puede modificar</small>
+
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label">Tarjeta Profesional</label>
+										<input type="text" class="form-control" th:field="*{tarjetaProfesional}"
+											readonly>
+										<small class="text-muted">La tarjeta profesional no se puede modificar</small>
+
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label">Email</label>
+										<input type="email" class="form-control"
+											th:value="${perfilVeterinario.usuario.correo}" readonly>
+										<small class="text-muted">El email no se puede modificar</small>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label">Teléfono</label>
+										<input type="tel" class="form-control" th:field="*{usuario.telefono}">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label">Experiencia</label>
+										<input type="text" class="form-control" th:field="*{experiencia}"
+											placeholder="Describe tu experiencia profesional">
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="mb-3">
+										<label class="form-label">Dirección</label>
+										<input type="text" class="form-control" th:field="*{usuario.direccion}">
+									</div>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-primary">Guardar cambios</button>
+						</form>
+					</div>
+				</div>
 
 				<div class="tab-content" id="account-tab">
 					<div class="settings-card">
@@ -722,8 +758,7 @@
 							<label class="form-label">Mascota</label>
 							<select class="form-select" name="mascotaId">
 								<option value="">Seleccione una mascota</option>
-								<option th:each="m : ${mascotas}" th:value="${m.id}"
-									th:text="${m.nombre}">
+								<option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre}">
 								</option>
 							</select>
 						</div>
@@ -736,7 +771,7 @@
 						<div class="mb-3">
 							<label class="form-label">Tipo</label>
 							<select name="tipo" class="form-control" required>
-								<optio value="">Seleccione el tipo de emergencia</option>
+								<option value="">Seleccione el tipo de emergencia</option>
 								<option value="accidente">Accidente</option>
 								<option value="enfermedad">Enfermedad</option>
 								<option value="intoxicacion">Intoxicación</option>
@@ -807,14 +842,66 @@
 			const btnMenu = document.querySelector('.btn-menu');
 			const sidebar = document.querySelector('.sidebar');
 			const btnCloseMenu = document.querySelector('.btn-close-menu');
+			if (btnCloseMenu) {                       // ← evita el null
+				btnCloseMenu.addEventListener('click', function () {
+					sidebar.classList.remove('active');
+				});
+			}
+		});
+	</script>
 
-			btnMenu.addEventListener('click', function () {
-				sidebar.classList.add('active');
-			});
+	<script>
+		document.getElementById('inputFoto').addEventListener('change', function () {
+			const file = this.files[0];
+			if (!file) return;
 
-			btnCloseMenu.addEventListener('click', function () {
-				sidebar.classList.remove('active');
-			});
+			// Validación frontend
+			if (file.size > 2 * 1024 * 1024) {
+				alert('❌ La imagen no debe superar 2MB');
+				this.value = '';
+				return;
+			}
+
+			const formData = new FormData();
+			formData.append('foto', file);
+
+			// Feedback visual
+			const button = document.querySelector('button[onclick*="inputFoto"]');
+			const originalText = button.textContent;
+			button.textContent = 'Subiendo...';
+			button.disabled = true;
+
+			fetch('/perfil-veterinario/subir-foto', {
+				method: 'POST',
+				body: formData
+			})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success) {
+						// 🔥 **Usar la ruta completa con timestamp para evitar cache**
+						const newSrc = data.fotoPath + '?t=' + new Date().getTime();
+
+						// Actualizar todas las imágenes
+						document.getElementById('previewFoto').src = newSrc;
+						document.querySelectorAll('.user-profile img, .user-dropdown img').forEach(img => {
+							img.src = newSrc;
+						});
+
+						alert('✅ ' + data.message);
+					} else {
+						alert('❌ ' + data.message);
+					}
+				})
+				.catch(err => {
+					console.error('Error:', err);
+					alert('❌ Error de red: ' + err);
+				})
+				.finally(() => {
+					// Restaurar botón
+					button.textContent = originalText;
+					button.disabled = false;
+					this.value = '';
+				});
 		});
 	</script>
 </body>

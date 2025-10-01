@@ -1,14 +1,17 @@
 package com.clinicpet.demo.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -61,66 +65,48 @@ public class PerfilVeterinarioController {
 
 	@Autowired
 	private IEmergenciaService emergenciaService;
-	
+
 	@Autowired
 	private IUsuarioService usuarioService;
-	
-	
-	
 
 	// ==================== VISTA PRINCIPAL ====================
 	@GetMapping
-	public String mostrarPerfilVeterinario(Principal principal, Model model) {
-	    System.out.println("🔍 Accediendo a vista principal del veterinario");
-	    
+	public String mostrarPerfilVeterinario(HttpSession session, Model model) {
+		System.out.println("🔍 Accediendo a vista principal del veterinario");
 
-	    // ✅ MODIFICADO: Si no hay usuario, redirigir al login
-	    if (principal == null) {
-	        System.out.println("❌ Usuario no autenticado - Redirigiendo al login");
-	        return "redirect:/login";
-	    }
+		// ✅ USAR SESIÓN
+		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+		if (usuarioLogueado == null) {
+			System.out.println("❌ Usuario no autenticado - Redirigiendo al login");
+			return "redirect:/usuarios/iniciarsesion";
+		}
 
-	    String correo = principal.getName();
-	    System.out.println("📧 Buscando perfil para: " + correo);
+		// Verificar si es veterinario
+		if (usuarioLogueado.getRol().getId() != 2) {
+			System.out.println("❌ Usuario no tiene rol de veterinario");
+			return "redirect:/acceso-denegado";
+		}
 
-	    // Buscar usuario por correo
-	    Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorCorreo(correo);
-	    
-	    if (usuarioOpt.isPresent()) {
-	        Usuario usuario = usuarioOpt.get();
-	        
-	        // Verificar si es veterinario (rol_id = 2)
-	        if (usuario.getRol() != null && usuario.getRol().getId() == 2) {
-	            // Buscar perfil veterinario por usuario_id
-	            Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuario.getId());
-	            
-	            if (perfilOpt.isPresent()) {
-	                model.addAttribute("perfilVeterinario", perfilOpt.get());
-	                System.out.println("✅ Perfil veterinario encontrado para: " + correo);
-	            } else {
-	                // ERROR: Veterinario sin perfil (no debería pasar)
-	                System.out.println("❌ ERROR: Veterinario sin perfil en BD: " + correo);
-	                model.addAttribute("error", "Error: Perfil de veterinario no encontrado. Contacte al administrador.");
-	                // Aún así cargamos las mascotas
-	            }
-	        } else {
-	            System.out.println("❌ Usuario no tiene rol de veterinario");
-	            model.addAttribute("error", "No tiene permisos de veterinario");
-	            return "redirect:/acceso-denegado";
-	        }
-	    } else {
-	        System.out.println("❌ Usuario no encontrado: " + correo);
-	        model.addAttribute("error", "Usuario no encontrado");
-	        return "redirect:/login";
-	    }
+		String correo = usuarioLogueado.getCorreo();
+		System.out.println("📧 Buscando perfil para: " + correo);
 
-	    // 🔹 MANTENIDO: Cargamos TODAS las mascotas de la BD
-	    List<Mascota> mascotas = mascotaService.listarMascotas();
-	    System.out.println("🐾 Mascotas encontradas: " + mascotas.size());
-	    mascotas.forEach(m -> System.out.println(" - " + m.getId() + " | " + m.getNombre()));
-	    model.addAttribute("mascotas", mascotas);
+		// Buscar perfil veterinario
+		Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
 
-	    return "perfil-veterinario/perfil-veterinario";
+		if (perfilOpt.isPresent()) {
+			model.addAttribute("perfilVeterinario", perfilOpt.get());
+			System.out.println("✅ Perfil veterinario encontrado para: " + correo);
+		} else {
+			System.out.println("❌ ERROR: Veterinario sin perfil en BD: " + correo);
+			model.addAttribute("error", "Error: Perfil de veterinario no encontrado.");
+		}
+
+		// 🔹 Cargar mascotas (MANTENIDO)
+		List<Mascota> mascotas = mascotaService.listarMascotas();
+		System.out.println("🐾 Mascotas encontradas: " + mascotas.size());
+		model.addAttribute("mascotas", mascotas);
+
+		return "perfil-veterinario/perfil-veterinario";
 	}
 
 	// ==================== OTRAS SECCIONES (PLACEHOLDERS) ====================
@@ -149,137 +135,105 @@ public class PerfilVeterinarioController {
 		return "perfil-veterinario/pet-shop";
 	}
 
-	// ==================== SECCIÓN CONFIGURACIÓN ====================
-	@GetMapping("/configuracion")
-	public String mostrarConfiguracion(Principal principal, Model model) {
-	    System.out.println("🔧 Accediendo a configuración");
+	// ==================== SECCION CONFIGURACION ====================
 
-	    if (principal == null) {
-	        System.out.println("❌ Usuario no autenticado - Redirigiendo al login");
-	        return "redirect:/login";
-	    }
-
-	    String correo = principal.getName();
-	    System.out.println("📧 Buscando perfil para: " + correo);
-
-	    // Buscar usuario por correo
-	    Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorCorreo(correo);
-	    
-	    if (usuarioOpt.isPresent()) {
-	        Usuario usuario = usuarioOpt.get();
-	        
-	        // Verificar si es veterinario (rol_id = 2)
-	        if (usuario.getRol() != null && usuario.getRol().getId() == 2) {
-	            // Buscar perfil veterinario por usuario_id - DEBE existir
-	            Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuario.getId());
-	            
-	            if (perfilOpt.isPresent()) {
-	                PerfilVeterinario perfil = perfilOpt.get();
-	                model.addAttribute("perfilVeterinario", perfil);
-	                System.out.println("✅ Perfil veterinario encontrado para: " + correo);
-	            } else {
-	                // ERROR: Veterinario sin perfil (no debería pasar)
-	                System.out.println("❌ ERROR: Veterinario sin perfil en BD: " + correo);
-	                model.addAttribute("error", "Error: Perfil de veterinario no encontrado. Contacte al administrador.");
-	            }
-	        } else {
-	            System.out.println("❌ Usuario no tiene rol de veterinario");
-	            model.addAttribute("error", "No tiene permisos de veterinario");
-	            return "redirect:/acceso-denegado";
-	        }
-	    } else {
-	        System.out.println("❌ Usuario no encontrado: " + correo);
-	        model.addAttribute("error", "Usuario no encontrado");
-	        return "redirect:/login";
-	    }
-
-	    return "perfil-veterinario/configuracion";
-	}
-
-	// ==================== ACTUALIZAR CONFIGURACIÓN ====================
 	@PostMapping("/configuracion/actualizar")
-	public String actualizarConfiguracion(@ModelAttribute PerfilVeterinario perfilForm, 
-	                                    Principal principal,
-	                                    RedirectAttributes redirectAttributes) {
-	    System.out.println("🔄 Procesando actualización de configuración");
+	public String actualizarConfiguracion(@ModelAttribute PerfilVeterinario perfilForm,
+			@RequestParam(value = "foto", required = false) MultipartFile fotoFile, HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		System.out.println("🔄 Procesando actualización de configuración");
 
-	    if (principal == null) {
-	        return "redirect:/login";
-	    }
+		// ✅ USAR SESIÓN
+		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+		if (usuarioLogueado == null) {
+			System.out.println("❌ Usuario no autenticado - Redirigiendo al login");
+			return "redirect:/usuarios/iniciarsesion";
+		}
 
-	    try {
-	        String correo = principal.getName();
-	        Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorCorreo(correo);
-	        
-	        if (usuarioOpt.isPresent() && usuarioOpt.get().getRol().getId() == 2) {
-	            Usuario usuario = usuarioOpt.get();
-	            
-	            // Crear un nuevo objeto con los datos actualizados
-	            Usuario usuarioActualizado = new Usuario();
-	            usuarioActualizado.setId(usuario.getId()); // ✅ Mantener el mismo ID
-	            usuarioActualizado.setNombres(perfilForm.getUsuario().getNombres());
-	            usuarioActualizado.setApellidos(perfilForm.getUsuario().getApellidos());
-	            usuarioActualizado.setTelefono(perfilForm.getUsuario().getTelefono());
-	            usuarioActualizado.setCorreo(usuario.getCorreo()); // ✅ Mantener correo
-	            usuarioActualizado.setRol(usuario.getRol()); // ✅ Mantener rol
-	            // ... otros campos que necesites mantener
-	            
-	            // ✅ Usar TU método más seguro
-	            Usuario usuarioGuardado = usuarioService.actualizarUsuario(usuario.getId(), usuarioActualizado);
-	            
-	            // Buscar perfil veterinario existente - DEBE existir
-	            Optional<PerfilVeterinario> perfilExistenteOpt = perfilVeterinarioService.buscarPorUsuarioId(usuario.getId());
-	            
-	            if (perfilExistenteOpt.isPresent()) {
-	                PerfilVeterinario perfilExistente = perfilExistenteOpt.get();
-	                
-	                // Actualizar perfil veterinario con TU método seguro
-	                PerfilVeterinario perfilActualizado = new PerfilVeterinario();
-	                perfilActualizado.setId(perfilExistente.getId());
-	                perfilActualizado.setEspecialidad(perfilForm.getEspecialidad());
-	                perfilActualizado.setExperiencia(perfilForm.getExperiencia());
-	                perfilActualizado.setTarjetaProfesional(perfilForm.getTarjetaProfesional());
-	                perfilActualizado.setUsuario(usuarioGuardado); // ✅ Usar el usuario actualizado
-	                perfilActualizado.setEstado(perfilExistente.getEstado()); // ✅ Mantener estado
-	                // ... otros campos necesarios
-	                
-	                PerfilVeterinario perfilGuardado = perfilVeterinarioService.actualizarPerfil(perfilExistente.getId(), perfilActualizado);
-	                redirectAttributes.addFlashAttribute("success", "✅ Perfil actualizado correctamente");
-	                System.out.println("✅ Perfil actualizado para: " + correo);
-	            } else {
-	                // ERROR: No debería pasar
-	                System.out.println("❌ ERROR: Intentando actualizar perfil que no existe: " + correo);
-	                redirectAttributes.addFlashAttribute("error", "❌ Error: Perfil no encontrado");
-	            }
-	        } else {
-	            redirectAttributes.addFlashAttribute("error", "❌ No tiene permisos de veterinario");
-	        }
+		try {
+			// Verificar si es veterinario
+			if (usuarioLogueado.getRol().getId() != 2) {
+				redirectAttributes.addFlashAttribute("error", "❌ No tiene permisos de veterinario");
+				return "redirect:/perfil-veterinario";
+			}
 
-	        return "redirect:/perfil-veterinario/configuracion";
+			// Buscar perfil veterinario existente
+			Optional<PerfilVeterinario> perfilExistenteOpt = perfilVeterinarioService
+					.buscarPorUsuarioId(usuarioLogueado.getId());
 
-	    } catch (Exception e) {
-	        System.out.println("❌ Error al actualizar perfil: " + e.getMessage());
-	        redirectAttributes.addFlashAttribute("error", "❌ Error al actualizar perfil: " + e.getMessage());
-	        return "redirect:/perfil-veterinario/configuracion";
-	    }
+			if (perfilExistenteOpt.isPresent()) {
+				PerfilVeterinario perfilExistente = perfilExistenteOpt.get();
+
+				// ✅ ACTUALIZAR USUARIO EXISTENTE
+				Usuario usuarioActual = usuarioLogueado;
+				usuarioActual.setNombres(perfilForm.getUsuario().getNombres());
+				usuarioActual.setApellidos(perfilForm.getUsuario().getApellidos());
+				usuarioActual.setTelefono(perfilForm.getUsuario().getTelefono());
+
+				// 🔥 **MANEJO DE FOTO - CORREGIDO**
+				if (fotoFile != null && !fotoFile.isEmpty()) {
+					// Validaciones de foto
+					if (fotoFile.getSize() > 2 * 1024 * 1024) {
+						redirectAttributes.addFlashAttribute("error", "La imagen no debe superar 2MB");
+						return "redirect:/perfil-veterinario";
+					}
+
+					String contentType = fotoFile.getContentType();
+					if (contentType == null
+							|| (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+						redirectAttributes.addFlashAttribute("error", "Formato no válido. Solo JPG y PNG");
+						return "redirect:/perfil-veterinario";
+					}
+
+					// Usar sistema uploads
+					String uploadDir = System.getProperty("user.dir") + "/uploads/";
+					String extension = contentType.equals("image/jpeg") ? ".jpg" : ".png";
+					String fileName = "vet_" + usuarioLogueado.getId() + extension;
+
+					Path uploadPath = Paths.get(uploadDir);
+					if (!Files.exists(uploadPath)) {
+						Files.createDirectories(uploadPath);
+					}
+
+					// Guardar foto
+					Path filePath = uploadPath.resolve(fileName);
+					Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+					// 🔥 **IMPORTANTE: Actualizar la imagen en el usuario**
+					usuarioActual.setImagen("/uploads/" + fileName);
+				}
+
+				Usuario usuarioGuardado = usuarioService.actualizarUsuario(usuarioActual.getId(), usuarioActual);
+
+				// ✅ ACTUALIZAR PERFIL EXISTENTE
+				perfilExistente.setEspecialidad(perfilForm.getEspecialidad());
+				perfilExistente.setExperiencia(perfilForm.getExperiencia());
+				perfilExistente.setTarjetaProfesional(perfilForm.getTarjetaProfesional());
+
+				PerfilVeterinario perfilGuardado = perfilVeterinarioService.actualizarPerfil(perfilExistente.getId(),
+						perfilExistente);
+
+				// ✅ ACTUALIZAR SESIÓN con los nuevos datos
+				session.setAttribute("usuarioLogueado", usuarioGuardado);
+
+				redirectAttributes.addFlashAttribute("success", "✅ Perfil actualizado correctamente");
+				System.out.println("✅ Perfil actualizado para: " + usuarioLogueado.getCorreo());
+			} else {
+				System.out
+						.println("❌ ERROR: Intentando actualizar perfil que no existe: " + usuarioLogueado.getCorreo());
+				redirectAttributes.addFlashAttribute("error", "❌ Error: Perfil no encontrado");
+			}
+
+			return "redirect:/perfil-veterinario";
+
+		} catch (Exception e) {
+			System.out.println("❌ Error al actualizar perfil: " + e.getMessage());
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("error", "❌ Error al actualizar perfil: " + e.getMessage());
+			return "redirect:/perfil-veterinario";
+		}
 	}
 
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	// MODAL CITA!!!!!!!!!!!!!
 	@GetMapping("/perfil-veterinario")
 	public String nuevaCita(Model model) {

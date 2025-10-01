@@ -1,6 +1,7 @@
 package com.clinicpet.demo.service;
 
 import com.clinicpet.demo.model.Usuario;
+import com.clinicpet.demo.repository.IReporteDeMaltratoRepository;
 import com.clinicpet.demo.model.Rol;
 import com.clinicpet.demo.repository.IUsuarioRepository;
 import com.clinicpet.demo.repository.IRolRepository;
@@ -16,10 +17,17 @@ import java.util.stream.Collectors;
 public class UsuarioServiceImplement implements IUsuarioService {
 
 	@Autowired
+	private final IReporteDeMaltratoRepository reporteDeMaltratoRepository;
+
+	@Autowired
 	private IUsuarioRepository usuarioRepository;
 
 	@Autowired
 	private IRolRepository rolRepository;
+
+	UsuarioServiceImplement(IReporteDeMaltratoRepository IReporteDeMaltratoRepository) {
+		this.reporteDeMaltratoRepository = IReporteDeMaltratoRepository;
+	}
 
 	@Override
 	@Transactional
@@ -96,6 +104,8 @@ public class UsuarioServiceImplement implements IUsuarioService {
 				throw new RuntimeException("Correo ya existe en otro usuario");
 			}
 
+			usuario.setImagen(
+					usuarioActualizado.getImagen() != null ? usuarioActualizado.getImagen() : usuario.getImagen());
 			usuario.setCorreo(usuarioActualizado.getCorreo().trim());
 			usuario.setNombres(usuarioActualizado.getNombres() != null ? usuarioActualizado.getNombres().trim()
 					: usuario.getNombres());
@@ -103,6 +113,9 @@ public class UsuarioServiceImplement implements IUsuarioService {
 					: usuario.getApellidos());
 			usuario.setTelefono(usuarioActualizado.getTelefono() != null ? usuarioActualizado.getTelefono().trim()
 					: usuario.getTelefono());
+
+			usuario.setDireccion(usuarioActualizado.getDireccion() != null ? usuarioActualizado.getDireccion().trim()
+					: usuario.getDireccion());
 			usuario.setPassword(usuarioActualizado.getPassword() != null ? usuarioActualizado.getPassword()
 					: usuario.getPassword());
 

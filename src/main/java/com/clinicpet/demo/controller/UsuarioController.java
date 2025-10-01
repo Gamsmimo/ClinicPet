@@ -59,23 +59,23 @@ public class UsuarioController {
 				Usuario usuario = usuarioOpt.get();
 				if (usuario.getPassword().equals(usuarioLogin.getPassword()) && usuario.isActivo()) {
 					session.setAttribute("usuarioLogueado", usuario);
-
-					// ✅ Si es administrador (rol ID 3), redirigir al panel admin
-					if (usuario.getRol() != null && usuario.getRol().getId().equals(3)) {
-						redirectAttributes.addFlashAttribute("mensaje",
-								"Bienvenido Administrador, " + usuario.getNombres());
-						return "redirect:/admin";
-					}
-
-					// ✅ Si es usuario normal, ir al inicio
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
-					return "redirect:/usuarios/inicio";
+
+					// ✅ REDIRIGIR SEGÚN ROL
+					if (usuario.getRol().getId() == 2) { // Veterinario
+						return "redirect:/perfil-veterinario";
+
+					} else { // Usuario normal
+
+						return "redirect:/usuarios/inicio"; // Corregido: coincide con mapeo /usuarios/inicio
+					}
 				}
 			}
 			// Bloque unificado para errores (evita duplicación)
 			model.addAttribute("error", "Correo o contraseña incorrectos, o usuario inactivo");
 			model.addAttribute("usuarioLogin", usuarioLogin); // Rellena campos en error
 			return "IniciarSesion/iniciarsesion"; // Corregido: unificado a "iniciarsesion"
+
 		} catch (Exception e) {
 			model.addAttribute("error", "Error al iniciar sesión: " + e.getMessage());
 			model.addAttribute("usuarioLogin", usuarioLogin != null ? usuarioLogin : new Usuario()); // Consistente:

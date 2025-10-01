@@ -8,9 +8,6 @@ btnMenu.addEventListener('click', () => {
     sidebar.classList.add('active');
 });
 
-btnCloseMenu.addEventListener('click', () => {
-    sidebar.classList.remove('active');
-});
 
 // Navegación entre secciones
 const menuItems = document.querySelectorAll('.menu-items a');
