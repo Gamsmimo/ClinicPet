@@ -169,6 +169,8 @@ public class PerfilVeterinarioController {
 				usuarioActual.setNombres(perfilForm.getUsuario().getNombres());
 				usuarioActual.setApellidos(perfilForm.getUsuario().getApellidos());
 				usuarioActual.setTelefono(perfilForm.getUsuario().getTelefono());
+				usuarioActual.setDireccion(perfilForm.getUsuario().getDireccion());
+
 
 				// 🔥 **MANEJO DE FOTO - CORREGIDO**
 				if (fotoFile != null && !fotoFile.isEmpty()) {
