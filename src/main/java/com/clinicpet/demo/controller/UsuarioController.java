@@ -59,8 +59,17 @@ public class UsuarioController {
 				Usuario usuario = usuarioOpt.get();
 				if (usuario.getPassword().equals(usuarioLogin.getPassword()) && usuario.isActivo()) {
 					session.setAttribute("usuarioLogueado", usuario);
+
+					// ✅ Si es administrador (rol ID 3), redirigir al panel admin
+					if (usuario.getRol() != null && usuario.getRol().getId().equals(3)) {
+						redirectAttributes.addFlashAttribute("mensaje",
+								"Bienvenido Administrador, " + usuario.getNombres());
+						return "redirect:/admin";
+					}
+
+					// ✅ Si es usuario normal, ir al inicio
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
-					return "redirect:/usuarios/inicio"; // Corregido: coincide con mapeo /usuarios/inicio
+					return "redirect:/usuarios/inicio";
 				}
 			}
 			// Bloque unificado para errores (evita duplicación)

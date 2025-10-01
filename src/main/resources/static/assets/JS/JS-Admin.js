@@ -86,7 +86,7 @@ function cambiarFotoPerfil(event) {
 	if (!file) return;
 
 	// Validar tipo de archivo
-	if (!file.type.startsWith('image/')) {
+	if (!file.type.startsWith('imagen/')) {
 		mostrarMensaje('Por favor seleccione un archivo de imagen válido', 'error');
 		return;
 	}
@@ -279,88 +279,78 @@ function mostrarModal(titulo, htmlBody) {
 }
 
 
-/* ---------- Abrir / cerrar modal ---------- */
-function abrirModal(idModal) { document.getElementById(idModal).style.display = 'flex'; }
-function cerrarModal(idModal) { document.getElementById(idModal).style.display = 'none'; }
-
-/* ---------- Ver detalles MASCOTA ---------- */
 function verMascota(id) {
-	fetch('/admin/mascota/' + id)
-		.then(r => r.json())
-		.then(m => {
-			document.getElementById('modalTitulo').innerText = 'Datos de la mascota';
+	fetch(`/admin/mascota/${id}`)
+		.then(res => res.json())
+		.then(data => {
+			document.getElementById('modalTitulo').innerText = 'Detalles de Mascota';
 			document.getElementById('modalCuerpo').innerHTML = `
-        <p><b>Nombre:</b> ${m.nombre}</p>
-        <p><b>Especie:</b> ${m.especie}</p>
-        <p><b>Edad:</b> ${m.edad} años</p>
-        <p><b>Género:</b> ${m.genero}</p>
-        <p><b>Tamaño:</b> ${m.tamano}</p>
-        <p><b>Descripción:</b> ${m.descripcion || 'Sin descripción'}</p>
-        <p><b>Dueño:</b> ${m.usuario.nombres} ${m.usuario.apellidos}</p>
-        <img src="${m.foto || 'https://via.placeholder.com/150'}" alt="Foto" style="width:150px;border-radius:8px;">
+        <p><strong>Nombre:</strong> ${data.nombre}</p>
+        <p><strong>Especie:</strong> ${data.especie}</p>
+        <p><strong>Edad:</strong> ${data.edad}</p>
+        <p><strong>Género:</strong> ${data.genero}</p>
+        <p><strong>Tamaño:</strong> ${data.tamano}</p>
+        <p><strong>Descripción:</strong> ${data.descripcion}</p>
+        <p><strong>Dueño:</strong> ${data.usuario.nombres} ${data.usuario.apellidos}</p>
+        <img src="${data.foto || 'https://via.placeholder.com/150'}" width="150" />
       `;
 			abrirModal('detalleModal');
 		});
 }
 
-/* ---------- Ver detalles USUARIO ---------- */
 function verUsuario(id) {
-	fetch('/admin/usuario/' + id)
-		.then(r => r.json())
-		.then(usuario => {
-			document.getElementById('modalTitulo').innerText = 'Datos del usuario';
+	fetch(`/admin/usuario/${id}`)
+		.then(res => res.json())
+		.then(data => {
+			document.getElementById('modalTitulo').innerText = 'Detalles de Usuario';
 			document.getElementById('modalCuerpo').innerHTML = `
-        <p><b>Nombre:</b> ${usuario.nombres} ${usuario.apellidos}</p>
-        <p><b>Correo:</b> ${usuario.correo}</p>
-        <p><b>Teléfono:</b> ${usuario.telefono}</p>
-        <p><b>Dirección:</b> ${usuario.direccion || 'No registrada'}</p>
-        <p><b>Edad:</b> ${usuario.edad || 'No indicada'}</p>
+        <p><strong>Nombre:</strong> ${data.nombres} ${data.apellidos}</p>
+        <p><strong>Correo:</strong> ${data.correo}</p>
+        <p><strong>Teléfono:</strong> ${data.telefono}</p>
+        <p><strong>Dirección:</strong> ${data.direccion}</p>
+        <p><strong>Edad:</strong> ${data.edad}</p>
       `;
 			abrirModal('detalleModal');
 		});
 }
 
-/* ---------- Ver detalles VETERINARIO ---------- */
 function verVeterinario(id) {
-	fetch('/admin/veterinario/' + id)
-		.then(r => r.json())
-		.then(v => {
-			document.getElementById('modalTitulo').innerText = 'Datos del veterinario';
+	fetch(`/admin/veterinario/${id}`)
+		.then(res => res.json())
+		.then(data => {
+			document.getElementById('modalTitulo').innerText = 'Detalles de Veterinario';
 			document.getElementById('modalCuerpo').innerHTML = `
-        <p><b>Nombre:</b> ${v.usuario.nombres} ${v.usuario.apellidos}</p>
-        <p><b>Edad:</b> ${v.usuario.edad || 'No indicada'}</p>
-        <p><b>Documento:</b> ${v.usuario.tipoDocumento} ${v.usuario.numDocumento}</p>
-        <p><b>Dirección:</b> ${v.usuario.direccion || 'No registrada'}</p>
-        <p><b>Teléfono:</b> ${v.usuario.telefono}</p>
-        <p><b>Correo:</b> ${v.usuario.correo}</p>
-        <p><b>Especialidad:</b> ${v.especialidad}</p>
-        <p><b>Tarjeta profesional:</b> ${v.tarjetaProfesional}</p>
-        <p><b>Experiencia:</b> ${v.experiencia} años</p>
-        <p><b>Veterinaria:</b> ${v.veterinaria ? v.veterinaria.nombre : 'No asignada'}</p>
+        <p><strong>Nombre:</strong> ${data.usuario.nombres} ${data.usuario.apellidos}</p>
+        <p><strong>Edad:</strong> ${data.usuario.edad}</p>
+        <p><strong>Documento:</strong> ${data.usuario.tipoDocumento} ${data.usuario.numDocumento}</p>
+        <p><strong>Dirección:</strong> ${data.usuario.direccion}</p>
+        <p><strong>Teléfono:</strong> ${data.usuario.telefono}</p>
+        <p><strong>Correo:</strong> ${data.usuario.correo}</p>
+        <p><strong>Especialidad:</strong> ${data.especialidad}</p>
+        <p><strong>Tarjeta Profesional:</strong> ${data.tarjetaProfesional}</p>
+        <p><strong>Experiencia:</strong> ${data.experiencia} años</p>
       `;
 			abrirModal('detalleModal');
 		});
 }
 
-/* ---------- Ver detalles VETERINARIA ---------- */
 function verVeterinaria(id) {
-	fetch('/admin/veterinaria/' + id)
-		.then(r => r.json())
-		.then(vet => {
-			document.getElementById('modalTitulo').innerText = 'Datos de la veterinaria';
+	fetch(`/admin/veterinaria/${id}`)
+		.then(res => res.json())
+		.then(data => {
+			document.getElementById('modalTitulo').innerText = 'Detalles de Veterinaria';
 			document.getElementById('modalCuerpo').innerHTML = `
-        <p><b>Nombre:</b> ${vet.nombre}</p>
-        <p><b>RUT:</b> ${vet.rut}</p>
-        <p><b>Dirección:</b> ${vet.direccion}</p>
-        <p><b>Correo:</b> ${vet.correo}</p>
-        <p><b>Horario:</b> ${vet.horario}</p>
-        <p><b>Descripción:</b> ${vet.descripcion || 'Sin descripción'}</p>
-        <p><b>Estado:</b> ${vet.estado}</p>
+        <p><strong>Nombre:</strong> ${data.nombre}</p>
+        <p><strong>RUT:</strong> ${data.rut}</p>
+        <p><strong>Dirección:</strong> ${data.direccion}</p>
+        <p><strong>Correo:</strong> ${data.correo}</p>
+        <p><strong>Horario:</strong> ${data.horario}</p>
+        <p><strong>Descripción:</strong> ${data.descripcion}</p>
+        <p><strong>Estado:</strong> ${data.estado}</p>
       `;
 			abrirModal('detalleModal');
 		});
 }
-
 
 // ===== HACER FUNCIONES GLOBALES =====
 window.abrirModal = abrirModal;

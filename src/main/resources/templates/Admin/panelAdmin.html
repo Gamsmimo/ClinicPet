@@ -106,10 +106,13 @@
 							</td>
 							<td>
 								<button class="btn-action" th:onclick="'verUsuario('+${usuario.id}+')'">Ver</button>
-								<button th:if="${usuario.activo}" class="btn-action btn-inactivate"
-									onclick="cambiarEstadoUsuario([[$usuario.id]], false)">Desactivar</button>
-								<button th:unless="${usuario.activo}" class="btn-action btn-activate"
-									onclick="cambiarEstadoUsuario([[$usuario.id]], true)">Activar</button>
+								<form th:action="@{/admin/usuario/cambiar-estado/} + ${usuario.id}" method="post"
+									style="display:inline;">
+									<input type="hidden" name="activo" th:value="${!usuario.activo}" />
+									<button type="submit" class="btn-action"
+										th:classappend="${usuario.activo} ? 'btn-inactivate' : 'btn-activate'"
+										th:text="${usuario.activo} ? 'Desactivar' : 'Activar'"></button>
+								</form>
 							</td>
 						</tr>
 					</tbody>
@@ -143,7 +146,15 @@
 									class="status inactive">Desactivada</span>
 							</td>
 							<td>
-								<button class="btn-action" th:onclick="'verVeterinaria('+${veterinaria.id}+')'">Ver</button>
+								<button class="btn-action"
+									th:onclick="'verVeterinaria('+${veterinaria.id}+')'">Ver</button>
+								<form th:action="@{/admin/veterinaria/cambiar-estado/} + ${veterinaria.id}"
+									method="post" style="display:inline;">
+									<input type="hidden" name="estado" th:value="${veterinaria.estado != 'Activa'}" />
+									<button type="submit" class="btn-action"
+										th:classappend="${veterinaria.estado == 'Activa'} ? 'btn-inactivate' : 'btn-activate'"
+										th:text="${veterinaria.estado == 'Activa'} ? 'Desactivar' : 'Activar'"></button>
+								</form>
 						</tr>
 					</tbody>
 				</table>
@@ -155,12 +166,10 @@
 				<div class="profile-container">
 					<div class="profile-header">
 						<div class="profile-image-section">
-							<img th:src="${admin.imagen}" alt="imagen de perfil" class="profile-large"
-								id="adminProfilePic">
-							<button class="btn-action" onclick="document.getElementById('photoInput').click()">Cambiar
-								imagen</button>
-							<input type="file" id="photoInput" accept="image/*" style="display: none;"
-								onchange="cambiarFotoPerfil(this)">
+							<form id="fotoForm" th:action="@{/admin/perfil/imagen}" method="post"
+								enctype="multipart/form-data">
+								<input type="file" name="imagen" accept=".jpg,.jpeg,.png"  class="btn-icon" onchange="this.form.submit()">
+							</form>
 						</div>
 						<div class="profile-info">
 							<h3>Información Personal</h3>
@@ -207,14 +216,14 @@
 					</thead>
 					<tbody id="tablaMascotas">
 						<tr th:each="m : ${mascotas}">
-						  <td th:text="${m.id}">1</td>
-						  <td th:text="${m.nombre}">Toby</td>
-						  <td th:text="${m.especie}">Canino</td>
-						  <td th:text="${m.raza}">Labrador</td>
-						  <td th:text="${m.usuario.nombres + ' ' + m.usuario.apellidos}">Dueño</td>
-						  <td>
-						    <button class="btn-action" th:onclick="'verMascota('+${m.id}+')'">Ver</button>
-						  </td>
+							<td th:text="${m.id}">1</td>
+							<td th:text="${m.nombre}">Toby</td>
+							<td th:text="${m.especie}">Canino</td>
+							<td th:text="${m.raza}">Labrador</td>
+							<td th:text="${m.usuario.nombres + ' ' + m.usuario.apellidos}">Dueño</td>
+							<td>
+								<button class="btn-action" th:onclick="'verMascota('+${m.id}+')'">Ver</button>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -227,6 +236,12 @@
 		<div class="modal-content">
 			<span class="close" onclick="cerrarModal('profileModal')">&times;</span>
 			<h2>Editar Perfil</h2>
+			<div class="profile-image-section">
+				<h5>Cambiar foto de perfil</h5>
+				<form id="fotoForm" th:action="@{/admin/perfil/imagen}" method="post" enctype="multipart/form-data">
+					<input type="file" name="imagen" accept=".jpg,.jpeg,.png" onchange="this.form.submit()">
+				</form>
+			</div>
 			<form id="profileForm" th:action="@{/admin/perfil/editar}" method="post">
 				<div class="form-group">
 					<label for="profileName">Nombres:</label>
@@ -356,14 +371,14 @@
 				<button type="submit" class="btn-primary">Registrar Veterinaria</button>
 			</form>
 		</div>
-	</div>	
+	</div>
 	<!-- Modal genérico -->
 	<div id="detalleModal" class="modal">
-	  <div class="modal-content">
-	    <span class="close" onclick="cerrarModal('detalleModal')">&times;</span>
-	    <h2 id="modalTitulo">Detalles</h2>
-	    <div id="modalCuerpo"></div>
-	  </div>
+		<div class="modal-content">
+			<span class="close" onclick="cerrarModal('detalleModal')">&times;</span>
+			<h2 id="modalTitulo">Detalles</h2>
+			<div id="modalCuerpo"></div>
+		</div>
 	</div>
 
 	<script th:src="@{/assets/JS/JS-Admin.js}"></script>

@@ -1,20 +1,37 @@
 package com.clinicpet.demo.controller;
 
-import com.clinicpet.demo.model.*;
-import com.clinicpet.demo.repository.*;
+import com.clinicpet.demo.model.Mascota;
+import com.clinicpet.demo.model.PerfilAdmin;
+import com.clinicpet.demo.model.PerfilVeterinario;
+import com.clinicpet.demo.model.Rol;
+import com.clinicpet.demo.model.Usuario;
+import com.clinicpet.demo.model.Veterinaria;
+import com.clinicpet.demo.repository.IMascotaRepository;
+import com.clinicpet.demo.repository.IPerfilVeterinarioRepository;
+import com.clinicpet.demo.repository.IReporteDeMaltratoRepository;
+import com.clinicpet.demo.repository.IRolRepository;
+import com.clinicpet.demo.repository.IUsuarioRepository;
+import com.clinicpet.demo.repository.IVeterinariaRepository;
 import com.clinicpet.demo.service.HistoriaClinicaServiceImplement;
 import com.clinicpet.demo.service.IPerfilAdminService;
 import com.clinicpet.demo.service.VeterinariaServiceImplement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -210,42 +227,33 @@ public class PerfilAdminController {
 			RedirectAttributes redirectAttributes) {
 		try {
 			if (archivoImagen.isEmpty()) {
-				redirectAttributes.addFlashAttribute("error", "Por favor seleccione una imagen");
+				redirectAttributes.addFlashAttribute("error", "Archivo vacío");
 				return "redirect:/admin#profile";
 			}
 
-			// Validar tipo de archivo
 			String contentType = archivoImagen.getContentType();
-			if (contentType == null || !contentType.startsWith("image/")) {
-				redirectAttributes.addFlashAttribute("error", "Por favor seleccione un archivo de imagen válido");
+			if (!contentType.equals("image/JPG") && !contentType.equals("image/png")
+					&& !contentType.equals("image/jpg")) {
+				redirectAttributes.addFlashAttribute("error", "Solo se permiten imágenes JPG, JPEG o PNG");
 				return "redirect:/admin#profile";
 			}
 
-			// Convertir imagen a Base64
-			byte[] bytesImagen = archivoImagen.getBytes();
-			String imagenBase64 = Base64.getEncoder().encodeToString(bytesImagen);
-			String imagenDataURL = "data:" + contentType + ";base64," + imagenBase64;
+			byte[] bytes = archivoImagen.getBytes();
+			String base64 = Base64.getEncoder().encodeToString(bytes);
 
-			// Actualizar el admin en BD
-			Optional<PerfilAdmin> adminOptional = adminService.buscarPorId(1);
-
-			if (adminOptional.isPresent()) {
-				PerfilAdmin admin = adminOptional.get();
-				admin.setImagen(imagenDataURL);
+			Optional<PerfilAdmin> adminOpt = adminService.buscarPorId(1);
+			if (adminOpt.isPresent()) {
+				PerfilAdmin admin = adminOpt.get();
+				admin.setImagen("data:" + contentType + ";base64," + base64);
 				adminService.guardar(admin);
-
-				System.out.println("✅ IMAGEN DE PERFIL GUARDADA EN BD");
 				redirectAttributes.addFlashAttribute("mensaje", "Imagen actualizada correctamente");
 			} else {
-				redirectAttributes.addFlashAttribute("error", "Administrador no encontrado");
+				redirectAttributes.addFlashAttribute("error", "Admin no encontrado");
 			}
 
-		} catch (IOException e) {
-			System.out.println("❌ Error al procesar la imagen: " + e.getMessage());
-			redirectAttributes.addFlashAttribute("error", "Error al procesar la imagen");
 		} catch (Exception e) {
-			System.out.println("❌ Error al subir imagen a BD: " + e.getMessage());
-			redirectAttributes.addFlashAttribute("error", "Error al subir la imagen");
+			redirectAttributes.addFlashAttribute("error", "Error al subir imagen");
+			e.printStackTrace();
 		}
 
 		return "redirect:/admin#profile";
@@ -307,19 +315,12 @@ public class PerfilAdminController {
 		}
 	}
 
-	/* 1. Lista para la vista “Gestión de Mascotas” */
+	// Lista para la vista gestión de Mascotas
 	@GetMapping("/mascotas")
 	public String verGestionMascotas(Model model) {
 		cargarDatosDashboard(model); // por si quieres los contadores
 		model.addAttribute("mascotas", mascotaRepo.findAll());
 		return "admin/panelAdmin :: #mascotas"; // fragmento Thymeleaf
-	}
-
-	/* 2. Json para llenar el modal vía AJAX */
-	@GetMapping("/mascota/{id}")
-	@ResponseBody
-	public Mascota detalleMascota(@PathVariable Integer id) {
-		return mascotaRepo.findById(id).orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
 	}
 
 	private void cargarMascotasParaVista(Model model) {
@@ -348,5 +349,36 @@ public class PerfilAdminController {
 	@ResponseBody
 	public Veterinaria detalleVeterinaria(@PathVariable Integer id) {
 		return veterinariaRepo.findById(id).orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
+	}
+
+	// metodo para activar y desactivar
+	@PostMapping("/usuario/cambiar-estado/{id}")
+	public String cambiarEstadoUsuario(@PathVariable Integer id, @RequestParam boolean activo,
+			RedirectAttributes redirectAttributes) {
+		Optional<Usuario> opt = usuarioRepo.findById(id);
+		if (opt.isPresent()) {
+			Usuario u = opt.get();
+			u.setActivo(activo);
+			usuarioRepo.save(u);
+			redirectAttributes.addFlashAttribute("mensaje", "Usuario " + (activo ? "desactivado" : "activado"));
+		} else {
+			redirectAttributes.addFlashAttribute("error", "Usuario no encontrado");
+		}
+		return "redirect:/admin#users";
+	}
+
+	@PostMapping("/veterinaria/cambiar-estado/{id}")
+	public String cambiarEstadoVeterinaria(@PathVariable Integer id, @RequestParam boolean estado,
+			RedirectAttributes redirectAttributes) {
+		Optional<Veterinaria> opt = veterinariaRepo.findById(id);
+		if (opt.isPresent()) {
+			Veterinaria v = opt.get();
+			v.setEstado(estado ? "Activa" : "Inactiva");
+			veterinariaRepo.save(v);
+			redirectAttributes.addFlashAttribute("mensaje", "Veterinaria " + (estado ? "activada" : "desactivada"));
+		} else {
+			redirectAttributes.addFlashAttribute("error", "Veterinaria no encontrada");
+		}
+		return "redirect:/admin#vets";
 	}
 }

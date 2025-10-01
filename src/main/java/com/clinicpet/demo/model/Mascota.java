@@ -30,7 +30,7 @@ public class Mascota {
 
 
 	// ✅ CAMBIAR A @JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "idUsuario", nullable = false)
 	@JsonIgnore // ← AGREGAR ESTA ANOTACIÓN
 	private Usuario usuario;
