@@ -190,55 +190,50 @@ public class UsuarioController {
 			@RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
 			RedirectAttributes redirectAttributes) {
 
-		LOGGER.info("Intentando agregar mascota para usuario ID: {}", idUsuario);
-
-		// *** AGREGADO: Check básico null para idUsuario (evita Optional.empty)
-		if (idUsuario == null) {
-			LOGGER.error("ID Usuario null en request");
-			redirectAttributes.addFlashAttribute("error", "ID de usuario inválido");
-			return "redirect:/usuarios/perfilusuario";
-		}
-
-		// *** AGREGADO: Log debug para confirmar ID válido
-		System.out.println("DEBUG CONTROLLER: Agregando mascota para usuario ID=" + idUsuario);
-
-		Optional<Usuario> optionalUsuario = usuarioService.buscarUsuarioPorId(idUsuario);
-		if (optionalUsuario.isEmpty()) {
-			LOGGER.error("Usuario no encontrado para ID: {}", idUsuario);
-			redirectAttributes.addFlashAttribute("error", "Usuario no encontrado");
-			return "redirect:/usuarios/perfilusuario";
-		}
-		Usuario usuarioExistente = optionalUsuario.get();
-		mascota.setUsuario(usuarioExistente);
-
-		// *** AGREGADO: Log debug antes de save (confirma FK seteado)
-		System.out.println("DEBUG CONTROLLER: Seteando usuario ID=" + usuarioExistente.getId() + " para mascota '"
-				+ mascota.getNombre() + "'");
-
 		try {
-			// Manejo de foto (sin cambios)
+			if (idUsuario == null) {
+				redirectAttributes.addFlashAttribute("error", "ID de usuario inválido");
+				return "redirect:/usuarios/perfilusuario";
+			}
+
+			Optional<Usuario> optionalUsuario = usuarioService.buscarUsuarioPorId(idUsuario);
+			if (optionalUsuario.isEmpty()) {
+				redirectAttributes.addFlashAttribute("error", "Usuario no encontrado");
+				return "redirect:/usuarios/perfilusuario";
+			}
+
+			Usuario usuarioExistente = optionalUsuario.get();
+			mascota.setUsuario(usuarioExistente);
+
 			if (fotoFile != null && !fotoFile.isEmpty()) {
-				String uploadDir = "src/main/resources/static/images/mascotas/";
+				String uploadDir = System.getProperty("user.dir") + "/uploads/";
 				String fileName = System.currentTimeMillis() + "_" + fotoFile.getOriginalFilename();
+
 				Path uploadPath = Paths.get(uploadDir);
 				if (!Files.exists(uploadPath)) {
 					Files.createDirectories(uploadPath);
 				}
+
 				Path filePath = uploadPath.resolve(fileName);
 				Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-				mascota.setFoto("/images/mascotas/" + fileName);
+
+				mascota.setFoto("/uploads/" + fileName);
 			} else {
-				mascota.setFoto("/images/mascotas/default_pet.png");
+				mascota.setFoto("/uploads/default_pet.png"); // Asegúrate que exista esta imagen por defecto
 			}
+
 			mascotaService.guardarMascota(mascota);
-			redirectAttributes.addFlashAttribute("success", "Mascota '" + mascota.getNombre() + "' agregada!");
+			redirectAttributes.addFlashAttribute("success",
+					"Mascota '" + mascota.getNombre() + "' agregada correctamente");
 
-			LOGGER.info("Mascota '{}' agregada correctamente para usuario ID: {}", mascota.getNombre(), idUsuario);
-
+		} catch (IOException e) {
+			redirectAttributes.addFlashAttribute("error", "Error al subir la foto: " + e.getMessage());
+			e.printStackTrace();
 		} catch (Exception e) {
-			LOGGER.error("Error al guardar mascota: {}", e.getMessage(), e);
 			redirectAttributes.addFlashAttribute("error", "Error al agregar mascota: " + e.getMessage());
+			e.printStackTrace();
 		}
+
 		return "redirect:/usuarios/perfilusuario";
 	}
 
@@ -263,28 +258,19 @@ public class UsuarioController {
 	@PostMapping("/perfilusuario/actualizarMascota")
 	public String actualizarMascota(@ModelAttribute Mascota mascota,
 			@RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
-			@RequestParam(value = "fotoActual", required = false) String fotoActual,
 			RedirectAttributes redirectAttributes, HttpSession session) {
 
-		LOGGER.info("=== INICIO ACTUALIZACIÓN MASCOTA ===");
-		LOGGER.info("ID mascota recibida: {}", mascota.getId());
-		LOGGER.info("Nombre recibido: {}", mascota.getNombre());
-
 		try {
-			// ✅ 1. Validar ID
 			if (mascota.getId() == null) {
 				redirectAttributes.addFlashAttribute("error", "ID de mascota requerido para actualización.");
 				return "redirect:/usuarios/perfilusuario";
 			}
 
-			// ✅ 2. Validar usuario logueado
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 			if (usuarioLogueado == null) {
-				LOGGER.warn("Usuario no logueado intentando actualizar mascota");
 				return "redirect:/usuarios/login";
 			}
 
-			// ✅ 3. Verificar que la mascota existe y pertenece al usuario
 			Optional<Mascota> mascotaExistenteOpt = mascotaService.buscarMascotaPorId(mascota.getId());
 			if (mascotaExistenteOpt.isEmpty()) {
 				redirectAttributes.addFlashAttribute("error", "Mascota no encontrada.");
@@ -293,52 +279,41 @@ public class UsuarioController {
 
 			Mascota mascotaExistente = mascotaExistenteOpt.get();
 
-			// ✅ 4. Verificar permisos
 			if (!mascotaExistente.getUsuario().getId().equals(usuarioLogueado.getId())) {
-				LOGGER.warn("Usuario {} intentó editar mascota {} que no le pertenece", usuarioLogueado.getId(),
-						mascota.getId());
 				redirectAttributes.addFlashAttribute("error", "No tienes permiso para editar esta mascota.");
 				return "redirect:/usuarios/perfilusuario";
 			}
 
-			// ✅ 5. Manejo de la foto
 			if (fotoFile != null && !fotoFile.isEmpty()) {
-				LOGGER.info("Subiendo nueva foto para mascota ID: {}", mascota.getId());
-
+				String uploadDir = System.getProperty("user.dir") + "/uploads/";
 				String fileName = System.currentTimeMillis() + "_" + fotoFile.getOriginalFilename();
-				Path uploadPath = Paths.get("src/main/resources/static/images/mascotas");
 
+				Path uploadPath = Paths.get(uploadDir);
 				if (!Files.exists(uploadPath)) {
 					Files.createDirectories(uploadPath);
 				}
 
-				Files.copy(fotoFile.getInputStream(), uploadPath.resolve(fileName),
-						StandardCopyOption.REPLACE_EXISTING);
+				Path filePath = uploadPath.resolve(fileName);
+				Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-				mascota.setFoto("/images/mascotas/" + fileName);
-				LOGGER.info("Foto subida exitosamente: {}", fileName);
+				mascota.setFoto("/uploads/" + fileName);
 			} else {
-				// ✅ NO establecer foto aquí, el Service la mantendrá
-				LOGGER.info("No se subió nueva foto, se mantendrá la actual");
-				mascota.setFoto(null); // El service ignorará este null y mantendrá la foto actual
+				// Mantener la foto actual si no se sube una nueva
+				mascota.setFoto(mascotaExistente.getFoto());
 			}
 
-			// ✅ 6. Actualizar mascota (el Service maneja el usuario y la foto si es null)
-			Mascota mascotaActualizada = mascotaService.actualizarMascota(mascota);
+			mascota.setUsuario(usuarioLogueado); // Asegura que la mascota mantenga el usuario
+			mascotaService.actualizarMascota(mascota);
 
 			redirectAttributes.addFlashAttribute("success",
-					"¡Mascota '" + mascotaActualizada.getNombre() + "' actualizada correctamente!");
-			LOGGER.info("=== MASCOTA ACTUALIZADA EXITOSAMENTE: ID={} ===", mascotaActualizada.getId());
+					"Mascota '" + mascota.getNombre() + "' actualizada correctamente");
 
-		} catch (IllegalArgumentException e) {
-			LOGGER.error("Error de validación: {}", e.getMessage());
-			redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
 		} catch (IOException e) {
-			LOGGER.error("Error al subir foto: {}", e.getMessage(), e);
-			redirectAttributes.addFlashAttribute("error", "Error al subir la foto. Intenta de nuevo.");
+			redirectAttributes.addFlashAttribute("error", "Error al subir la foto: " + e.getMessage());
+			e.printStackTrace();
 		} catch (Exception e) {
-			LOGGER.error("Error inesperado al actualizar mascota ID {}: {}", mascota.getId(), e.getMessage(), e);
-			redirectAttributes.addFlashAttribute("error", "Error al actualizar mascota. Intenta de nuevo.");
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar mascota: " + e.getMessage());
+			e.printStackTrace();
 		}
 
 		return "redirect:/usuarios/perfilusuario";
