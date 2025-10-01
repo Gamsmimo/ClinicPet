@@ -139,27 +139,28 @@
 			<!-- Sección Inicio -->
 			<section id="inicio" class="content-section active">
 				<div class="welcome-section">
-				    <h1 th:text="'Hola, ' + ${perfilVeterinario.usuario.nombres} + ' ' + ${perfilVeterinario.usuario.apellidos} + ' 👋'">
-				        Hola, Dr. Pérez 👋
-				    </h1>
-				    <p>Bienvenido a tu panel de control. Aquí puedes gestionar todas las actividades de la clínica.</p>
+					<h1
+						th:text="'Hola, ' + ${perfilVeterinario.usuario.nombres} + ' ' + ${perfilVeterinario.usuario.apellidos} + ' 👋'">
+						Hola, Dr. Pérez 👋
+					</h1>
+					<p>Bienvenido a tu panel de control. Aquí puedes gestionar todas las actividades de la clínica.</p>
 
 					<div class="summary-cards">
 						<div class="card card-summary bg-success">
 							<i class="fas fa-paw"></i>
-							<h3>42</h3>
+							<h3>0</h3>
 							<p>Mascotas atendidas hasta la fecha</p>
 							<a th:href="@{/assets/#agenda}">Ver historias <i class="fas fa-arrow-right"></i></a>
 						</div>
 						<div class="card card-summary bg-warning">
 							<i class="fas fa-heart"></i>
-							<h3>8</h3>
+							<h3>0</h3>
 							<p>Adopciones</p>
 							<a th:href="@{/assets/#adopciones}">Ver seguimientos <i class="fas fa-arrow-right"></i></a>
 						</div>
 						<div class="card card-summary bg-info">
 							<i class="fas fa-shopping-bag"></i>
-							<h3>15</h3>
+							<h3>0</h3>
 							<p>Productos</p>
 							<a th:href="@{/assets/#petshop}">Ver tienda <i class="fas fa-arrow-right"></i></a>
 						</div>
@@ -572,22 +573,36 @@
 
 				<div class="tab-content" id="account-tab">
 					<div class="settings-card">
-						<h5>Seguridad de la cuenta</h5>
-						<form>
-							<div class="mb-3">
-								<label class="form-label">Contraseña actual</label>
-								<input type="password" class="form-control">
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Nueva contraseña</label>
-								<input type="password" class="form-control">
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Confirmar nueva contraseña</label>
-								<input type="password" class="form-control">
-							</div>
-							<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
-						</form>
+					    <h5>Seguridad de la cuenta</h5>
+					    
+					    <!-- Mensajes de éxito/error -->
+					    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+					        <span th:text="${success}"></span>
+					        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+					    </div>
+					    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+					        <span th:text="${error}"></span>
+					        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+					    </div>
+					    
+					    <form th:action="@{/perfil-veterinario/change-password}" method="post">
+					        <div class="mb-3">
+					            <label class="form-label">Contraseña actual</label>
+					            <input type="password" class="form-control" id="currentPassword" name="currentPassword" 
+					                   placeholder="Ingresa tu contraseña actual" required>
+					        </div>
+					        <div class="mb-3">
+					            <label class="form-label">Nueva contraseña</label>
+					            <input type="password" class="form-control" id="newPassword" name="newPassword" 
+					                   placeholder="Ingresa tu nueva contraseña" required>
+					        </div>
+					        <div class="mb-3">
+					            <label class="form-label">Confirmar nueva contraseña</label>
+					            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+					                   placeholder="Confirma tu nueva contraseña" required>
+					        </div>
+					        <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+					    </form>
 					</div>
 				</div>
 				<div class="tab-content" id="schedule-tab">
@@ -902,6 +917,26 @@
 					button.disabled = false;
 					this.value = '';
 				});
+		});
+	</script>
+
+
+	<script>
+		document.getElementById('changePasswordForm').addEventListener('submit', function (e) {
+			const newPassword = document.getElementById('newPassword').value;
+			const confirmPassword = document.getElementById('confirmPassword').value;
+
+			if (newPassword !== confirmPassword) {
+				e.preventDefault();
+				alert('Las contraseñas no coinciden');
+				return false;
+			}
+
+			if (newPassword.length < 4) {
+				e.preventDefault();
+				alert('La contraseña debe tener al menos 4 caracteres');
+				return false;
+			}
 		});
 	</script>
 </body>

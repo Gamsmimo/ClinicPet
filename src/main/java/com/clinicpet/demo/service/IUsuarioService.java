@@ -54,4 +54,6 @@ public interface IUsuarioService {
 
 	void save(Usuario usuario);
 
+	void actualizarPassword(Integer usuarioId, String nuevaPassword);
+
 }
