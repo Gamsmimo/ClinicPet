@@ -57,17 +57,20 @@ public class UsuarioController {
 			Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorCorreo(usuarioLogin.getCorreo());
 			if (usuarioOpt.isPresent()) {
 				Usuario usuario = usuarioOpt.get();
+				// Busca esta sección y reemplázala:
 				if (usuario.getPassword().equals(usuarioLogin.getPassword()) && usuario.isActivo()) {
 					session.setAttribute("usuarioLogueado", usuario);
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
 
-					// ✅ REDIRIGIR SEGÚN ROL
-					if (usuario.getRol().getId() == 2) { // Veterinario
+					// REEMPLAZA TODO ESTE BLOQUE:
+					if (usuario.getRol().getId() == 3) { // ADMIN
+						return "redirect:/admin";
+
+					} else if (usuario.getRol().getId() == 2) { // Veterinario
 						return "redirect:/perfil-veterinario";
 
-					} else { // Usuario normal
-
-						return "redirect:/usuarios/inicio"; // Corregido: coincide con mapeo /usuarios/inicio
+					} else { // Usuario normal (rol 1)
+						return "redirect:/usuarios/inicio";
 					}
 				}
 			}
@@ -323,5 +326,10 @@ public class UsuarioController {
 	@GetMapping("/index")
 	public String index() {
 		return "/index";
+	}
+
+	@GetMapping("/")
+	public String raiz() {
+		return "redirect:/admin/login";
 	}
 }

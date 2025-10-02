@@ -1,31 +1,45 @@
-// ===== CONFIGURACIÓN INICIAL =====
-document.addEventListener('DOMContentLoaded', function() {
+// ===== TEMA CLARO/OSCURO CON ICONOS DE BOOTSTRAP =====
+const themeToggleBtn = document.getElementById('themeToggle');
+const themeIcon = document.querySelector('.theme-icon');
+
+function getInitialTheme() {
+	const saved = localStorage.getItem('clinicpet-theme');
+	if (saved) return saved;
+	return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+		? 'dark'
+		: 'light';
+}
+
+function applyTheme(theme) {
+	document.body.setAttribute('data-theme', theme);
+	localStorage.setItem('clinicpet-theme', theme);
+
+	if (theme === 'dark') {
+		themeIcon.classList.remove('bi-moon-stars-fill');
+		themeIcon.classList.add('bi-sun-fill');
+	} else {
+		themeIcon.classList.remove('bi-sun-fill');
+		themeIcon.classList.add('bi-moon-stars-fill');
+	}
+}
+
+themeToggleBtn?.addEventListener('click', () => {
+	const current = document.body.getAttribute('data-theme');
+	const newTheme = current === 'light' ? 'dark' : 'light';
+	applyTheme(newTheme);
+});
+
+applyTheme(getInitialTheme());
+
+// ===== INICIALIZACIÓN GENERAL =====
+document.addEventListener('DOMContentLoaded', () => {
 	console.log('✅ Panel administrador inicializado');
-	initializeTheme();
 	setupNavigation();
 	setupModals();
 	setupFormValidation();
 	setupPhotoUpload();
+	setupAuthorityAssignment();
 });
-
-// ===== TEMA =====
-function initializeTheme() {
-	const savedTheme = localStorage.getItem('clinicpet-theme') || 'light';
-	document.documentElement.setAttribute('data-theme', savedTheme);
-	const btn = document.getElementById('themeToggle');
-	if (btn) {
-		btn.textContent = savedTheme === 'light' ? 'Modo Oscuro' : 'Modo Claro';
-		btn.addEventListener('click', toggleTheme);
-	}
-}
-
-function toggleTheme() {
-	const currentTheme = document.documentElement.getAttribute('data-theme');
-	const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-	document.documentElement.setAttribute('data-theme', newTheme);
-	localStorage.setItem('clinicpet-theme', newTheme);
-	document.getElementById('themeToggle').textContent = newTheme === 'light' ? 'Modo Oscuro' : 'Modo Claro';
-}
 
 // ===== NAVEGACIÓN =====
 function setupNavigation() {
@@ -42,19 +56,25 @@ function setupNavigation() {
 }
 
 // ===== MODALES =====
+function abrirModal(idModal) {
+	const modal = document.getElementById(idModal);
+	if (modal) modal.style.display = 'flex';
+}
+
+function cerrarModal(idModal) {
+	const modal = document.getElementById(idModal);
+	if (modal) modal.style.display = 'none';
+}
+
 function setupModals() {
-	// Botón editar perfil
 	document.getElementById('editProfileBtn')?.addEventListener('click', () => abrirModal('profileModal'));
 
-	// Cerrar modales
 	document.querySelectorAll('.modal .close').forEach(closeBtn => {
 		closeBtn.addEventListener('click', function() {
-			const modal = this.closest('.modal');
-			if (modal) modal.style.display = 'none';
+			cerrarModal(this.closest('.modal').id);
 		});
 	});
 
-	// Cerrar al hacer click fuera
 	window.addEventListener('click', function(e) {
 		if (e.target.classList.contains('modal')) {
 			e.target.style.display = 'none';
@@ -62,18 +82,7 @@ function setupModals() {
 	});
 }
 
-// ===== FUNCIONES GLOBALES =====
-function abrirModal(modalId) {
-	const modal = document.getElementById(modalId);
-	if (modal) modal.style.display = 'block';
-}
-
-function cerrarModal(modalId) {
-	const modal = document.getElementById(modalId);
-	if (modal) modal.style.display = 'none';
-}
-
-// ===== CAMBIAR FOTO DE PERFIL =====
+// ===== CARGA DE FOTO DE PERFIL =====
 function setupPhotoUpload() {
 	const input = document.getElementById('photoInput');
 	if (input) {
@@ -85,13 +94,11 @@ function cambiarFotoPerfil(event) {
 	const file = event.target.files[0];
 	if (!file) return;
 
-	// Validar tipo de archivo
-	if (!file.type.startsWith('imagen/')) {
+	if (!file.type.startsWith('image/')) {
 		mostrarMensaje('Por favor seleccione un archivo de imagen válido', 'error');
 		return;
 	}
 
-	// Validar tamaño (5MB máximo)
 	if (file.size > 5 * 1024 * 1024) {
 		mostrarMensaje('La imagen debe ser menor a 5MB', 'error');
 		return;
@@ -105,20 +112,16 @@ function cambiarFotoPerfil(event) {
 		body: formData
 	})
 		.then(response => {
-			if (response.ok) {
-				return response.text();
-			}
+			if (response.ok) return response.text();
 			throw new Error('Error al subir imagen');
 		})
 		.then(() => {
-			// Actualizar la vista previa
 			const reader = new FileReader();
 			reader.onload = function(e) {
 				document.getElementById('adminProfilePic').src = e.target.result;
 				document.getElementById('headerProfilePic').src = e.target.result;
 			};
 			reader.readAsDataURL(file);
-
 			mostrarMensaje('Foto de perfil actualizada correctamente', 'success');
 		})
 		.catch(error => {
@@ -129,7 +132,6 @@ function cambiarFotoPerfil(event) {
 
 // ===== VALIDACIÓN DE FORMULARIOS =====
 function setupFormValidation() {
-	// Validar formulario de veterinario
 	const vetForm = document.getElementById('vetForm');
 	if (vetForm) {
 		vetForm.addEventListener('submit', function(e) {
@@ -137,148 +139,41 @@ function setupFormValidation() {
 			if (password && password.length < 6) {
 				e.preventDefault();
 				mostrarMensaje('La contraseña debe tener al menos 6 caracteres', 'error');
-				return;
+			} else {
+				mostrarMensaje('Registrando veterinario...', 'info');
 			}
-			mostrarMensaje('Registrando veterinario...', 'info');
 		});
 	}
 
-	// Validar formulario de perfil
 	const profileForm = document.getElementById('profileForm');
 	if (profileForm) {
-		profileForm.addEventListener('submit', function() {
-			mostrarMensaje('Actualizando perfil...', 'info');
-		});
+		profileForm.addEventListener('submit', () => mostrarMensaje('Actualizando perfil...', 'info'));
 	}
 
-	// Validar formulario de veterinaria
 	const clinicForm = document.getElementById('clinicForm');
 	if (clinicForm) {
-		clinicForm.addEventListener('submit', function() {
-			mostrarMensaje('Registrando veterinaria...', 'info');
-		});
+		clinicForm.addEventListener('submit', () => mostrarMensaje('Registrando veterinaria...', 'info'));
 	}
 }
 
-// ===== FUNCIONES PARA GESTIÓN DE USUARIOS =====
-function verDetallesUsuario(id) {
-	fetch(`/admin/usuario/${id}`)
-		.then(response => response.json())
-		.then(usuario => {
-			mostrarMensaje(`Usuario: ${usuario.nombres} ${usuario.apellidos}\nEmail: ${usuario.correo}\nRol: ${usuario.rol?.nombre || 'Sin rol'}`, 'info');
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			mostrarMensaje('Error al cargar detalles del usuario', 'error');
-		});
-}
-
-function cambiarEstadoUsuario(id, activar) {
-	const accion = activar ? 'activar' : 'desactivar';
-
-	fetch(`/admin/usuarios/${accion}/${id}`, {
-		method: 'POST'
-	})
-		.then(response => {
-			if (response.ok) {
-				location.reload();
-			} else {
-				throw new Error('Error al cambiar estado');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			mostrarMensaje('Error al cambiar estado del usuario', 'error');
-		});
-}
-
-function verDetallesVeterinario(id) {
-	mostrarMensaje(`Cargando detalles del veterinario ID: ${id}`, 'info');
-}
-
-function verDetallesVeterinaria(id) {
-	mostrarMensaje(`Cargando detalles de la veterinaria ID: ${id}`, 'info');
-}
-
-// ===== FUNCIONES AUXILIARES =====
+// ===== MENSAJES AL USUARIO =====
 function mostrarMensaje(mensaje, tipo = 'info') {
 	if (typeof Swal !== 'undefined') {
-		const config = {
+		Swal.fire({
 			text: mensaje,
+			icon: tipo,
 			toast: true,
 			position: 'top-end',
 			showConfirmButton: false,
 			timer: 3000,
 			timerProgressBar: true
-		};
-
-		switch (tipo) {
-			case 'success':
-				Swal.fire({ ...config, icon: 'success', title: 'Éxito' });
-				break;
-			case 'error':
-				Swal.fire({ ...config, icon: 'error', title: 'Error' });
-				break;
-			case 'warning':
-				Swal.fire({ ...config, icon: 'warning', title: 'Advertencia' });
-				break;
-			default:
-				Swal.fire({ ...config, icon: 'info', title: 'Información' });
-		}
+		});
 	} else {
 		alert(mensaje);
 	}
 }
 
-/* ---------- Abrir / cerrar modal ---------- */
-function abrirModal(idModal) { document.getElementById(idModal).style.display = 'flex'; }
-function cerrarModal(idModal) { document.getElementById(idModal).style.display = 'none'; }
-
-/* ---------- Ver detalles USUARIO ---------- */
-function verDetallesUsuario(id) {
-	fetch('/admin/usuario/' + id)   // necesitas crear este endpoint si no existe
-		.then(r => r.json())
-		.then(u => {
-			mostrarModal('Usuario',
-				`<p><b>Nombre:</b> ${u.nombres} ${u.apellidos}</p>
-             <p><b>Correo:</b> ${u.correo}</p>
-             <p><b>Teléfono:</b> ${u.telefono}</p>
-             <p><b>Estado:</b> ${u.activo ? 'Activo' : 'Desactivado'}</p>`);
-		});
-}
-
-/* ---------- Ver detalles MASCOTA ---------- */
-function verMascota(id) {
-	fetch('/admin/mascota/' + id)
-		.then(r => r.json())
-		.then(m => {
-			document.getElementById('modalTitulo').innerText = 'Datos de la mascota';
-			document.getElementById('modalCuerpo').innerHTML = `
-        <p><b>Nombre:</b> ${m.nombre}</p>
-        <p><b>Especie:</b> ${m.especie}</p>
-        <p><b>Edad:</b> ${m.edad} años</p>
-        <p><b>Género:</b> ${m.genero}</p>
-        <p><b>Tamaño:</b> ${m.tamano}</p>
-        <p><b>Descripción:</b> ${m.descripcion || 'Sin descripción'}</p>
-        <p><b>Dueño:</b> ${m.usuario.nombres} ${m.usuario.apellidos}</p>
-        <img src="${m.foto || 'https://via.placeholder.com/150'}" alt="Foto" style="width:150px;border-radius:8px;">
-      `;
-			abrirModal('detalleModal');
-		})
-		.catch(error => {
-			console.error('Error al cargar mascota:', error);
-			alert('No se pudo cargar la información de la mascota');
-		});
-}
-
-/* ---------- función auxiliar para llenar y abrir ---------- */
-function mostrarModal(titulo, htmlBody) {
-	document.getElementById('modalTitle').innerText = titulo;
-	document.getElementById('modalBody').innerHTML = htmlBody;
-	abrirModal('detalleModal');
-}
-
-
+// ===== FUNCIONES DE CARGA DE DETALLES =====
 function verMascota(id) {
 	fetch(`/admin/mascota/${id}`)
 		.then(res => res.json())
@@ -295,6 +190,10 @@ function verMascota(id) {
         <img src="${data.foto || 'https://via.placeholder.com/150'}" width="150" />
       `;
 			abrirModal('detalleModal');
+		})
+		.catch(error => {
+			console.error('Error al cargar mascota:', error);
+			mostrarMensaje('No se pudo cargar la información de la mascota', 'error');
 		});
 }
 
@@ -352,12 +251,65 @@ function verVeterinaria(id) {
 		});
 }
 
-// ===== HACER FUNCIONES GLOBALES =====
+// ===== ASIGNACIÓN DE AUTORIDADES (REPORTES) =====
+function setupAuthorityAssignment() {
+	document.addEventListener('click', e => {
+		if (e.target.classList.contains('btn-assign')) {
+			const reportId = e.target.getAttribute('data-report-id');
+			const select = document.querySelector(`.authority-select[data-report-id="${reportId}"]`);
+			const selectedValue = select.value;
+			const selectedText = select.options[select.selectedIndex].text;
+
+			if (!selectedValue) return mostrarMensaje('Por favor selecciona una autoridad', 'warning');
+
+			const row = e.target.closest('tr');
+			row.querySelector('.status').textContent = 'Asignado';
+			row.querySelector('.status').className = 'status assigned';
+			row.querySelector('.authority-assigned').textContent = selectedText;
+			row.querySelector('.authority-assigned').className = `authority-assigned ${selectedValue}`;
+			row.querySelector('.authority-dropdown').innerHTML = `
+                <button class="btn-action btn-reassign" data-report-id="${reportId}">Reasignar</button>
+                <button class="btn-action btn-complete" data-report-id="${reportId}">Completado</button>
+            `;
+		}
+
+		if (e.target.classList.contains('btn-reassign')) {
+			const reportId = e.target.getAttribute('data-report-id');
+			const row = e.target.closest('tr');
+			row.querySelector('.status').textContent = 'Pendiente';
+			row.querySelector('.status').className = 'status pending';
+			row.querySelector('.authority-assigned').textContent = '-';
+			row.querySelector('.authority-assigned').className = 'authority-assigned';
+			row.querySelector('.authority-dropdown').innerHTML = `
+                <select class="authority-select" data-report-id="${reportId}">
+                    <option value="">Seleccionar autoridad...</option>
+                    <option value="policia">Policía Nacional</option>
+                    <option value="seguridad-animal">Seguridad Animal</option>
+                    <option value="defensa-animal">Defensa Animal Municipal</option>
+                    <option value="ambiental">Policía Ambiental</option>
+                    <option value="fiscalia">Fiscalía</option>
+                </select>
+                <button class="btn-action btn-assign" data-report-id="${reportId}">Asignar</button>
+            `;
+		}
+
+		if (e.target.classList.contains('btn-complete')) {
+			const reportId = e.target.getAttribute('data-report-id');
+			const row = e.target.closest('tr');
+			row.querySelector('.status').textContent = 'Completado';
+			row.querySelector('.status').className = 'status active';
+			row.querySelector('.authority-dropdown').innerHTML = '<span class="status completed">Finalizado</span>';
+			mostrarMensaje('Reporte marcado como completado', 'success');
+		}
+	});
+}
+
+// ===== EXPONER FUNCIONES AL HTML =====
 window.abrirModal = abrirModal;
 window.cerrarModal = cerrarModal;
-window.verDetallesUsuario = verDetallesUsuario;
 window.verMascota = verMascota;
-window.cambiarEstadoUsuario = cambiarEstadoUsuario;
-window.verDetallesVeterinario = verDetallesVeterinario;
-window.verDetallesVeterinaria = verDetallesVeterinaria;
+window.verUsuario = verUsuario;
+window.verVeterinario = verVeterinario;
+window.verVeterinaria = verVeterinaria;
 window.cambiarFotoPerfil = cambiarFotoPerfil;
+window.cambiarEstadoUsuario = cambiarEstadoUsuario;

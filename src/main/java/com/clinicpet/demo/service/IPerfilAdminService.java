@@ -11,7 +11,9 @@ public interface IPerfilAdminService {
 
 	Optional<PerfilAdmin> buscarPorId(Integer id);
 
-	PerfilAdmin guardar(PerfilAdmin perfilAdmin);
+	Optional<PerfilAdmin> buscarPorUsuarioId(Integer usuarioId);
+
+	PerfilAdmin guardar(PerfilAdmin Admin);
 
 	void eliminar(Integer id);
 

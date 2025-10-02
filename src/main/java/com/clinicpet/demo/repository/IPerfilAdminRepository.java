@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface IPerfilAdminRepository extends JpaRepository<PerfilAdmin, Integer> {
 
+	Optional<PerfilAdmin> findByUsuarioId(Integer usuarioId);
+
 	PerfilAdmin findByCorreo(String correo);
 
 	Optional<PerfilAdmin> findByCedula(String cedula);

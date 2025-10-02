@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>ClinicPet - Panel Administrador</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 	<link rel="stylesheet" th:href="@{/assets/CSS/CSS-Admin.css}">
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -13,11 +14,17 @@
 	<!-- Header -->
 	<header class="header">
 		<div class="logo-container">
-			<h1>ClinicPet</h1>
-			<span>Panel Administrador</span>
+			<img th:src="@{/assets/IMG/logo.png}" alt="Logo ClinicPet" class="logo-img">
+			<div class="logo-text">
+				<h1>ClinicPet</h1>
+				<span>Panel Administrador</span>
+			</div>
 		</div>
 		<div class="user-controls">
-			<button id="themeToggle" class="theme-toggle">Modo Oscuro</button>
+			<!-- Botón de cambio de tema -->
+			<button id="themeToggle" class="theme-toggle-btn" aria-label="Cambiar tema">
+				<i class="bi bi-moon-fill theme-icon"></i>
+			</button>
 			<div class="user-profile">
 				<img th:src="${admin.imagen}" alt="imagen de perfil" class="profile-pic" id="headerProfilePic">
 				<span th:text="${admin.nombres + ' ' + admin.apellidos}">Administrador</span>
