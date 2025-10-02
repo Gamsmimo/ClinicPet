@@ -28,7 +28,6 @@ public class Mascota {
 	private String descripcion;
 	private String foto;
 
-
 	// ✅ CAMBIAR A @JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "idUsuario", nullable = false)
