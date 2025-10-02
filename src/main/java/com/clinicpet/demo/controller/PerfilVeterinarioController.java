@@ -31,8 +31,10 @@ import com.clinicpet.demo.model.PerfilVeterinario;
 import com.clinicpet.demo.model.Producto;
 import com.clinicpet.demo.model.Usuario;
 import com.clinicpet.demo.model.Veterinaria;
+import com.clinicpet.demo.repository.IUsuarioRepository;
 import com.clinicpet.demo.service.*;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 @Controller
 @RequestMapping("/perfil-veterinario")
@@ -61,6 +63,9 @@ public class PerfilVeterinarioController {
 
 	@Autowired
 	private IEmergenciaService emergenciaService;
+
+	@Autowired
+	private IUsuarioRepository usuarioRepository;
 
 	@Autowired
 	private IUsuarioService usuarioService;
@@ -167,7 +172,6 @@ public class PerfilVeterinarioController {
 				usuarioActual.setTelefono(perfilForm.getUsuario().getTelefono());
 				usuarioActual.setDireccion(perfilForm.getUsuario().getDireccion());
 
-
 				// 🔥 **MANEJO DE FOTO - CORREGIDO**
 				if (fotoFile != null && !fotoFile.isEmpty()) {
 					// Validaciones de foto
@@ -231,84 +235,51 @@ public class PerfilVeterinarioController {
 			return "redirect:/perfil-veterinario";
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
 
-    @PostMapping("/change-password")
-    public String changePassword(
-        @RequestParam String currentPassword,
-        @RequestParam String newPassword,
-        @RequestParam String confirmPassword,
-        HttpSession session,
-        Model model) {
-        
-        System.out.println("🎯 changePassword en VeterinarioController ejecutado!");
-        
-        try {
-            Usuario usuarioLogueado = (Usuario) session.getAttribute("usuario");
-            if (usuarioLogueado == null) {
-                model.addAttribute("error", "Debe iniciar sesión");
-                return "redirect:/usuarios/iniciarsesion"; // ← CORREGIDO
-            }
-            
-            System.out.println("🔐 Contraseña actual en BD: " + usuarioLogueado.getPassword());
-            System.out.println("🔐 Contraseña ingresada: " + currentPassword);
-            
-            // Verificar contraseña actual
-            if (!usuarioLogueado.getPassword().equals(currentPassword)) {
-                model.addAttribute("error", "La contraseña actual es incorrecta");
-                return "perfil-veterinario";
-            }
-            
-            // Verificar que coincidan
-            if (!newPassword.equals(confirmPassword)) {
-                model.addAttribute("error", "Las nuevas contraseñas no coinciden");
-                return "perfil-veterinario";
-            }
-            
-            // Validar que la nueva contraseña sea diferente
-            if (currentPassword.equals(newPassword)) {
-                model.addAttribute("error", "La nueva contraseña debe ser diferente a la actual");
-                return "perfil-veterinario";
-            }
-            
-            System.out.println("✅ Contraseñas válidas, actualizando...");
-            
-            // Actualizar en BD
-            usuarioService.actualizarPassword(usuarioLogueado.getId(), newPassword);
-            
-            // Actualizar sesión
-            usuarioLogueado.setPassword(newPassword);
-            session.setAttribute("usuario", usuarioLogueado);
-            
-            System.out.println("✅ Contraseña actualizada correctamente para usuario: " + usuarioLogueado.getCorreo());
-            
-            // Cerrar sesión después de cambiar contraseña
-            session.invalidate();
-            model.addAttribute("success", "Contraseña actualizada correctamente. Por favor inicie sesión nuevamente.");
-            return "redirect:/usuarios/iniciarsesion"; // ← REDIRIGE AL LOGIN
-            
-        } catch (Exception e) {
-            System.out.println("❌ Error: " + e.getMessage());
-            model.addAttribute("error", "Error al cambiar la contraseña: " + e.getMessage());
-            e.printStackTrace();
-            return "perfil-veterinario";
-        }
-    }
+	@PostMapping("/change-password")
+	@Transactional
+	public String changePassword(@RequestParam String currentPassword, @RequestParam String newPassword,
+			@RequestParam String confirmPassword, HttpSession session, Model model) {
 
+		System.out.println("🎯 changePassword ejecutado!");
 
-	
-	
-	
-	
-	
-	
-	
+		try {
+			// Obtener el usuario actual de la base de datos
+			// Buscamos usuarios activos que sean veterinarios (rol_id = 2 según tus datos)
+			List<Usuario> veterinarios = usuarioRepository.findByRolId(2);
+
+			if (veterinarios.isEmpty()) {
+				System.out.println("❌ No hay veterinarios en el sistema");
+				model.addAttribute("error", "No se encontró usuario veterinario");
+				return "perfil-veterinario";
+			}
+
+			// Tomar el primer veterinario activo
+			Usuario usuario = veterinarios.get(0);
+			System.out.println("👤 Veterinario encontrado: " + usuario.getCorreo());
+
+			// ... resto del código de validación igual
+			if (!usuario.getPassword().equals(currentPassword)) {
+				model.addAttribute("error", "La contraseña actual es incorrecta");
+				return "perfil-veterinario";
+			}
+
+			if (!newPassword.equals(confirmPassword)) {
+				model.addAttribute("error", "Las nuevas contraseñas no coinciden");
+				return "perfil-veterinario";
+			}
+
+			usuarioService.actualizarPassword(usuario.getId(), newPassword);
+			session.invalidate();
+
+			model.addAttribute("success", "Contraseña actualizada correctamente. Por favor inicie sesión nuevamente.");
+			return "redirect:/usuarios/iniciarsesion";
+
+		} catch (Exception e) {
+			model.addAttribute("error", "Error: " + e.getMessage());
+			return "perfil-veterinario";
+		}
+	}
 
 	// MODAL CITA!!!!!!!!!!!!!
 	@GetMapping("/perfil-veterinario")

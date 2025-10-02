@@ -584,9 +584,8 @@
 					        <span th:text="${error}"></span>
 					        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 					    </div>
-					    
 					    <form th:action="@{/perfil-veterinario/change-password}" method="post">
-					        <div class="mb-3">
+							 <div class="mb-3">
 					            <label class="form-label">Contraseña actual</label>
 					            <input type="password" class="form-control" id="currentPassword" name="currentPassword" 
 					                   placeholder="Ingresa tu contraseña actual" required>

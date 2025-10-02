@@ -307,6 +307,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	}
 
 	@Override
+	@Transactional
 		public void actualizarPassword(Integer usuarioId, String nuevaPassword) {
 	    try {
 	        Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);

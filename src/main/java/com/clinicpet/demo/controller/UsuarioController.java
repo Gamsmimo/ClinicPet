@@ -67,7 +67,7 @@ public class UsuarioController {
 
 					} else { // Usuario normal
 
-						return "redirect:/usuarios/inicio"; // Corregido: coincide con mapeo /usuarios/inicio
+						return "redirect:/usuarios/inicio"; // coincide con mapeo /usuarios/inicio
 					}
 				}
 			}
