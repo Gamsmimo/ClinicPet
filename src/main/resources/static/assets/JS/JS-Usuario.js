@@ -4,7 +4,11 @@ $(document).ready(function() {
 	// En una aplicación real, el ID del usuario logueado se obtendría de la sesión
 	// o de un token JWT. Para este ejemplo, lo obtenemos de un campo oculto en el HTML.
 	// Asegúrate de que tu HTML tenga: <input type="hidden" id="current-user-id" th:value="${idUsuarioActual}">
+<<<<<<< HEAD
 	//const currentUserId = $('#current-user-id').val();
+=======
+	const currentUserId = $('#current-user-id').val();
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 
 	// URL base de tu API REST (ajusta el puerto si es necesario)
 	const API_BASE_URL = 'http://localhost:8080/api';
@@ -1013,15 +1017,24 @@ document.addEventListener('DOMContentLoaded', function() {
 		editPetModal.addEventListener('show.bs.modal', function(event) {
 			var button = event.relatedTarget;
 			var mascotaId = button.getAttribute('data-id');
+<<<<<<< HEAD
 			console.log("🔄 Cargando mascota con ID:", mascotaId);
 
 			// Limpiar formulario antes de cargar
 			var form = editPetModal.querySelector('#editPetForm');
 			form.reset();
+=======
+			console.log("Mascota ID desde botón:", mascotaId);
+
+
+			// Limpiar formulario antes de cargar
+			editPetModal.querySelector('#editPetForm').reset();
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 
 			// Petición AJAX para obtener datos de la mascota
 			fetch('/usuarios/perfilusuario/mascota/' + mascotaId)
 				.then(response => {
+<<<<<<< HEAD
 					console.log("📡 Respuesta recibida, status:", response.status);
 					if (!response.ok) {
 						throw new Error('Error al cargar mascota: ' + response.status);
@@ -1053,6 +1066,25 @@ document.addEventListener('DOMContentLoaded', function() {
 				})
 				.catch(error => {
 					console.error('❌ Error al cargar datos de la mascota:', error);
+=======
+					if (!response.ok) throw new Error('Mascota no encontrada');
+					return response.json();
+				})
+				.then(mascota => {
+					console.log("ID mascota recibido para editar:", mascota.id);
+					// Rellenar campos del formulario
+					editPetModal.querySelector('#editMascotaId').value = mascota.id;
+					editPetModal.querySelector('#editNombre').value = mascota.nombre || '';
+					editPetModal.querySelector('#editEspecie').value = mascota.especie || '';
+					editPetModal.querySelector('#editRaza').value = mascota.raza || '';
+					editPetModal.querySelector('#editEdad').value = mascota.edad || '';
+					editPetModal.querySelector('#editGenero').value = mascota.genero || '';
+					editPetModal.querySelector('#editTamaño').value = mascota.tamaño || '';
+					editPetModal.querySelector('#editDescripcion').value = mascota.descripcion || '';
+					editPetModal.querySelector('#editMascotaFotoActual').value = mascota.foto || '';
+				})
+				.catch(error => {
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 					alert('Error al cargar datos de la mascota: ' + error.message);
 					// Cerrar modal si falla
 					var modal = bootstrap.Modal.getInstance(editPetModal);
@@ -1062,6 +1094,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 });
 
+<<<<<<< HEAD
 //Script para eliminar mascota
 function eliminarMascota(id) {
 	if (confirm('¿Estás seguro de que quieres eliminar esta mascota?')) {
@@ -1092,3 +1125,29 @@ function eliminarMascota(id) {
 
 
 
+=======
+
+
+// Función para eliminar mascota con confirmación
+function eliminarMascota(mascotaId) {
+	if (confirm('¿Estás seguro que deseas eliminar esta mascota? Esta acción es irreversible.')) {
+		$.ajax({
+			url: `/usuarios/perfilusuario/eliminarMascota`,  // Endpoint en backend que procesa la eliminación
+			type: 'POST',
+			data: { id: mascotaId },
+			success: function(response) {
+				if (response.success) {
+					alert('Mascota eliminada correctamente.');
+					location.reload();  // Recarga la página para actualizar la lista
+				} else {
+					alert('Error al eliminar la mascota: ' + response.message);
+				}
+			},
+			error: function() {
+				alert('Error en el servidor al intentar eliminar la mascota.');
+			}
+		});
+	}
+}
+
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f

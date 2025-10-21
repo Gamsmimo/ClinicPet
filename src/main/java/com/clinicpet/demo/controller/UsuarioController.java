@@ -6,15 +6,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List; // *** AGREGADO: Para List<Mascota> en perfil ***
+<<<<<<< HEAD
+=======
+import java.util.Map;
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< HEAD
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
+=======
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -138,6 +148,7 @@ public class UsuarioController {
 		if (usuarioLogueado == null) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
+<<<<<<< HEAD
 
 		// ✅ AGREGAR ESTA LÍNEA - Pasar el ID al modelo
 		model.addAttribute("idUsuarioActual", usuarioLogueado.getId());
@@ -153,6 +164,25 @@ public class UsuarioController {
 		model.addAttribute("usuarioLogueado", usuarioLogueado);
 
 		return "Usuario/perfilusuario";
+=======
+		Integer idUsuarioActual = usuarioLogueado.getId(); // De sesión (mejor que hardcode)
+		model.addAttribute("idUsuarioActual", idUsuarioActual);
+		model.addAttribute("mascota", new Mascota());
+
+		// *** AGREGADO BÁSICO: Carga lista de mascotas del usuario logueado ***
+		List<Mascota> mascotas = mascotaService.buscarPorUsuario(idUsuarioActual);
+		model.addAttribute("mascotas", mascotas); // Para mostrar en HTML (ej. tabla con th:each)
+		model.addAttribute("tieneMascotas", !mascotas.isEmpty()); // Booleano simple para UI (opcional)
+
+		// *** AGREGADO: Log debug básico (confirma carga)
+		System.out.println("DEBUG CONTROLLER: Cargando perfil para usuario ID=" + idUsuarioActual
+				+ ", Mascotas encontradas: " + mascotas.size());
+
+		// *** AGREGADO: Para HTML (saludo, foto usuario, etc.)
+		model.addAttribute("usuarioLogueado", usuarioLogueado);
+
+		return "Usuario/perfilusuario"; // templates/perfilusuario.html
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 	}
 
 	@GetMapping("/perfilusuario/mascota/{id}")
@@ -174,13 +204,20 @@ public class UsuarioController {
 
 		Mascota mascota = mascotaOpt.get();
 
+<<<<<<< HEAD
 		// ✅ Verificar que la mascota pertenece al usuario
+=======
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 		if (!mascota.getUsuario().getId().equals(usuarioLogueado.getId())) {
 			LOGGER.warn("❌ Usuario {} intentó acceder a mascota {} que no le pertenece", usuarioLogueado.getId(), id);
 			return ResponseEntity.status(403).build();
 		}
 
+<<<<<<< HEAD
 		LOGGER.info("✅ Mascota encontrada: {} - Unidad Edad: {}", mascota.getNombre(), mascota.getUnidadEdad());
+=======
+		LOGGER.info("✅ Mascota encontrada: {}", mascota.getNombre());
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 		return ResponseEntity.ok(mascota);
 	}
 
@@ -237,6 +274,27 @@ public class UsuarioController {
 		return "redirect:/usuarios/perfilusuario";
 	}
 
+<<<<<<< HEAD
+=======
+	// Corrección completa: Eliminar mascota (integra verificación con buscarPorId)
+	@PostMapping("/perfilusuario/eliminarMascota")
+	@ResponseBody
+	public ResponseEntity<?> eliminarMascota(@RequestParam Integer id) { // Cambiado a Integer
+		try {
+			// Corrección de línea 1: Usar nombre correcto y verificar existencia primero
+			Optional<Mascota> mascotaOpcional = mascotaService.buscarMascotaPorId(id);
+			if (mascotaOpcional.isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Mascota no encontrada"));
+			}
+
+			mascotaService.eliminarMascota(id); // Nombre correcto: eliminarMascota(Integer id)
+			return ResponseEntity.ok(Map.of("success", true, "message", "Mascota eliminada correctamente"));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("success", false, "message", e.getMessage()));
+		}
+	}
+
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 	@PostMapping("/perfilusuario/actualizarMascota")
 	public String actualizarMascota(@ModelAttribute Mascota mascota,
 			@RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
@@ -301,6 +359,7 @@ public class UsuarioController {
 		return "redirect:/usuarios/perfilusuario";
 	}
 
+<<<<<<< HEAD
 	@DeleteMapping("/perfilusuario/eliminarmascota/{id}")
 	public ResponseEntity<String> eliminarMascota(@PathVariable Integer id, HttpSession session) {
 		try {
@@ -315,6 +374,8 @@ public class UsuarioController {
 		}
 	}
 
+=======
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 //redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {

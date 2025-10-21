@@ -10,8 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.clinicpet.demo.model.Mascota;
 import com.clinicpet.demo.repository.IMascotaRepository;
+<<<<<<< HEAD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+=======
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 
 @Service
 public class MascotaServiceImplement implements IMascotaService {
@@ -19,8 +22,11 @@ public class MascotaServiceImplement implements IMascotaService {
 	@Autowired
 	private IMascotaRepository mascotaRepository;
 
+<<<<<<< HEAD
 	private static final Logger LOGGER = LoggerFactory.getLogger(MascotaServiceImplement.class);
 
+=======
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 	@Override
 	@Transactional
 	public Mascota actualizarMascota(Mascota mascota) {
@@ -71,6 +77,7 @@ public class MascotaServiceImplement implements IMascotaService {
 			System.out.println("SERVICE: Manteniendo foto actual: " + toUpdate.getFoto());
 		}
 
+<<<<<<< HEAD
 		if (mascota.getUnidadEdad() != null && !mascota.getUnidadEdad().trim().isEmpty()) {
 			toUpdate.setUnidadEdad(mascota.getUnidadEdad().trim());
 			System.out.println("SERVICE: Actualizando unidad edad a: " + mascota.getUnidadEdad());
@@ -78,14 +85,21 @@ public class MascotaServiceImplement implements IMascotaService {
 			System.out.println("SERVICE: Manteniendo unidad edad actual: " + toUpdate.getUnidadEdad());
 		}
 
+=======
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 		// ✅ NO tocar el usuario, ya está asociado en toUpdate
 		System.out.println("SERVICE: Usuario asociado ID: " + toUpdate.getUsuario().getId());
 
 		// Guardar
 		Mascota updated = mascotaRepository.save(toUpdate);
+<<<<<<< HEAD
 		System.out.println("=== SERVICE: Mascota actualizada exitosamente ===");
 		System.out.println("ID: " + updated.getId());
 		System.out.println("Edad final: " + updated.getEdad() + " " + updated.getUnidadEdad());
+=======
+		System.out.println("=== SERVICE: Mascota actualizada exitosamente ID=" + updated.getId() + " ===");
+
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 		return updated;
 	}
 
@@ -105,6 +119,18 @@ public class MascotaServiceImplement implements IMascotaService {
 	}
 
 	@Override
+<<<<<<< HEAD
+=======
+	public void eliminarMascota(Integer id) {
+		if (id != null && mascotaRepository.existsById(id)) {
+			mascotaRepository.deleteById(id);
+		} else {
+			throw new RuntimeException("Mascota no encontrada o ID inválido para eliminar");
+		}
+	}
+
+	@Override
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 	public List<Mascota> buscarPorUsuario(Integer usuarioId) {
 		List<Mascota> mascotas = mascotaRepository.findByUsuario_Id(usuarioId);
 		return mascotas != null ? mascotas : new ArrayList<>();
@@ -119,6 +145,7 @@ public class MascotaServiceImplement implements IMascotaService {
 		return mascotas != null ? mascotas : new ArrayList<>();
 	}
 
+<<<<<<< HEAD
 	@Override
 	@Transactional
 	public void eliminarMascota(Integer id) {
@@ -134,4 +161,6 @@ public class MascotaServiceImplement implements IMascotaService {
 		}
 	}
 
+=======
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 }

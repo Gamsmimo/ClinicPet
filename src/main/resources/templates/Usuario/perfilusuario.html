@@ -93,8 +93,11 @@
 
 						</div>
 					</div>
+<<<<<<< HEAD
 					<input type="hidden" id="current-user-id" th:value="${idUsuarioActual}">
 
+=======
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 				</nav>
 
 
@@ -150,12 +153,17 @@
 													<p class="card-text">
 														<i class="fas fa-paw me-1"></i><small
 															th:text="${mascota.especie}">Especie</small><br>
+<<<<<<< HEAD
 														<i class="fas fa-calendar me-1"></i>
 														<small th:if="${mascota.unidadEdad == 'años'}"
 															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' año' : ' años'}">Edad</small>
 														<small th:if="${mascota.unidadEdad == 'meses'}"
 															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' mes' : ' meses'}">Edad</small>
 														<br>
+=======
+														<i class="fas fa-calendar me-1"></i><small
+															th:text="${mascota.edad + ' años'}">Edad</small><br>
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 													</p>
 												</div>
 											</div>
@@ -212,7 +220,11 @@
 											</td>
 											<td><strong th:text="${mascota.nombre}">Nombre</strong></td>
 											<td th:text="${mascota.especie}">Especie</td>
+<<<<<<< HEAD
 											<td th:text="${mascota.edad} + ' ' + ${mascota.unidadEdad}">Edad</td>
+=======
+											<td th:text="${mascota.edad}">Edad</td>
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 											<td th:text="${mascota.genero}">Género</td>
 											<td th:text="${mascota.raza}">Raza</td>
 											</td>
@@ -225,9 +237,13 @@
 												</button>
 
 												<button class="btn btn-sm btn-outline-danger"
+<<<<<<< HEAD
 													th:onclick="|eliminarMascota(${mascota.id});|">
 													<i class="fas fa-trash"></i> Eliminar
 												</button>
+=======
+													th:onclick="'eliminarMascota(' + ${mascota.id} + ')'">Eliminar</button>
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 
 											</td>
 										</tr>
@@ -496,6 +512,7 @@
 									<div class="row mb-3">
 										<div class="col-md-6">
 											<label for="edad" class="form-label">Edad</label>
+<<<<<<< HEAD
 											<div class="input-group">
 												<input type="number" class="form-control" id="edad" name="edad" min="0"
 													max="50" required>
@@ -505,6 +522,9 @@
 													<option value="años" selected>Años</option>
 												</select>
 											</div>
+=======
+											<input type="number" class="form-control" id="edad" name="edad" min="0">
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 										</div>
 										<div class="col-md-6">
 											<label for="genero" class="form-label">Género</label>
@@ -563,6 +583,10 @@
 									method="post" enctype="multipart/form-data">
 									<input type="hidden" name="id" id="editMascotaId">
 									<input type="hidden" name="fotoActual" id="editMascotaFotoActual">
+<<<<<<< HEAD
+=======
+									<!-- Para mantener la foto si no se sube una nueva -->
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 
 									<div class="mb-3">
 										<label for="editNombre" class="form-label">Nombre</label>
@@ -586,6 +610,7 @@
 									<div class="row mb-3">
 										<div class="col-md-6">
 											<label for="editEdad" class="form-label">Edad</label>
+<<<<<<< HEAD
 											<div class="input-group">
 												<input type="number" class="form-control" id="editEdad" name="edad"
 													min="0" max="50" required>
@@ -595,6 +620,9 @@
 													<option value="años">Años</option>
 												</select>
 											</div>
+=======
+											<input type="number" class="form-control" id="editEdad" name="edad" min="0">
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 										</div>
 										<div class="col-md-6">
 											<label for="editGenero" class="form-label">Género</label>
