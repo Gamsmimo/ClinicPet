@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Pet - Mi Perfil</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fredoka:wght@300..700&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Fredoka:wght@300..700&display=swap"
+        rel="stylesheet">
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="CSS/Estilos-Usuario.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar (Menú Hamburguesa) -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="sidebar-header">
+                    <h3 class="text-center">Clinic Pet</h3>
+                    <div class="user-profile text-center">
+                        <img src="IMG/humano.jpg" alt="Foto de perfil" class="rounded-circle mb-2">
+                        <h5 id="username">Julio Pérez</h5>
+                        <p class="text-muted">Dueño de mascotas</p>
+                    </div>
+                </div>
+
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">
+                            <i class="fas fa-home me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#mascotas">
+                            <i class="fas fa-paw me-2"></i>Mis Mascotas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#historia-clinica">
+                            <i class="fas fa-file-medical me-2"></i>Historia Clínica
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tratamientos">
+                            <i class="fas fa-pills me-2"></i>Tratamientos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#compras">
+                            <i class="fas fa-shopping-cart me-2"></i>Mis Compras
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#citas">
+                            <i class="fas fa-calendar-alt me-2"></i>Citas Veterinarias
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#configuracion">
+                            <i class="fas fa-cog me-2"></i>Configuración
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Contenido Principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Navbar Superior -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center">
+                            <span class="navbar-text me-3 notification-icon">
+                                <i class="fas fa-bell fa-lg" style="font-size: 35px;"></i>
+                            </span>
+
+                            <span class="navbar-text logout-text">
+                                <a href="Home.html" style="text-decoration: none; color: #000000;"> Cerrar Sesión<i
+                                        class="fas fa-sign-out-alt fa-lg me-1" style="font-size: 30px;"></i></a>
+                            </span>
+
+
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Sección Dashboard -->
+                <section id="dashboard" class="content-section">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Bienvenido, <span id="username-header">Juan</span></h1>
+                    </div>
+
+                    <!-- Resumen Rápido -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card card-summary">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-calendar-check me-2"></i>Ultima Cita</h5>
+                                    <p class="card-text" id="next-appointment">14 de Julio, 10:00 AM - Vacunación anual
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card card-summary">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-heartbeat me-2"></i>Estado de Salud</h5>
+                                    <p class="card-text" id="pet-health">Max - Saludable</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card card-summary">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-shopping-bag me-2"></i>Última Compra</h5>
+                                    <p class="card-text" id="last-purchase">10 de Julio - Alimento Premium (2kg)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card card-summary">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-stethoscope me-2"></i>Recomendación</h5>
+                                    <p class="card-text" id="vet-recommendation">Recordatorio: Desparasitación en 2
+                                        semanas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mis Mascotas (Preview) -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-paw me-2"></i>Mis Mascotas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="pets-preview">
+                                <!-- Las mascotas se cargarán aquí dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección Mis Mascotas -->
+                <section id="mascotas" class="content-section" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2"><i class="fas fa-paw me-2"></i>Mis Mascotas</h1>
+                        <button class="btn btn-primary" id="add-pet-btn"><i class="fas fa-plus me-2"></i>Agregar
+                            Mascota</button>
+                    </div>
+
+                    <div class="row" id="pets-list">
+                        <!-- Las mascotas se cargarán aquí dinámicamente -->
+                    </div>
+                </section>
+
+                <!-- Sección Historia Clínica -->
+                <section id="historia-clinica" class="content-section" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2"><i class="fas fa-file-medical me-2"></i>Historia Clínica</h1>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="pet-selector"
+                                data-bs-toggle="dropdown">
+                                Seleccionar Mascota
+                            </button>
+                            <ul class="dropdown-menu" id="pet-dropdown">
+                                <!-- Opciones de mascotas se cargarán aquí -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="medical-history-content">
+                        <div class="text-center py-5" id="no-pet-selected">
+                            <i class="fas fa-paw fa-3x mb-3"></i>
+                            <h4>Selecciona una mascota para ver su historia clínica</h4>
+                        </div>
+
+                        <div id="pet-history" style="display: none;">
+                            <div class="row mb-4">
+                                <div class="col-md-3 text-center">
+                                    <img id="pet-history-image" src="https://via.placeholder.com/150" alt="Mascota"
+                                        class="img-thumbnail mb-3">
+                                    <h4 id="pet-history-name">Max</h4>
+                                    <p id="pet-history-info">Golden Retriever · 3 años · Macho</p>
+                                    <p id="pet-history-status" class="badge bg-success">Saludable</p>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="timeline">
+                                        <!-- Los eventos de la historia clínica se cargarán aquí -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección Tratamientos y Recomendaciones -->
+                <section id="tratamientos" class="content-section" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2"><i class="fas fa-pills me-2"></i>Tratamientos y Recomendaciones</h1>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                id="treatment-pet-selector" data-bs-toggle="dropdown">
+                                Seleccionar Mascota
+                            </button>
+                            <ul class="dropdown-menu" id="treatment-pet-dropdown">
+                                <!-- Opciones de mascotas se cargarán aquí -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="treatments-content">
+                        <div class="text-center py-5" id="no-treatment-pet-selected">
+                            <i class="fas fa-paw fa-3x mb-3"></i>
+                            <h4>Selecciona una mascota para ver sus tratamientos</h4>
+                        </div>
+
+                        <div id="pet-treatments" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card mb-4">
+                                        <div class="card-header bg-info text-white">
+                                            <h5><i class="fas fa-prescription-bottle-alt me-2"></i>Tratamientos</h5>
+                                        </div>
+                                        <div class="card-body" id="active-treatments">
+                                            <!-- Tratamientos activos se cargarán aquí -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección Mis Compras -->
+                <section id="compras" class="content-section" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2"><i class="fas fa-shopping-cart me-2"></i>Mis Compras</h1>
+                        <button class="btn btn-primary" id="go-to-shop-btn">
+
+                            <a href="Tienda.html" style=" text-decoration: none; color: #000000"> <i
+                                    class="fas fa-store me-2"></i>Ir a la
+                                Tienda </a> </button>
+
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-history me-2"></i>Historial de Compras</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Productos</th>
+                                            <th>Total</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="purchase-history">
+                                        <!-- Historial de compras se cargará aquí -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección Citas Veterinarias -->
+                <section id="citas" class="content-section" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2"><i class="fas fa-calendar-alt me-2"></i>Citas Veterinarias</h1>
+                        <button class="btn btn-primary" id="new-appointment-btn"><i class="fas fa-plus me-2"></i>Nueva
+                            Cita</button>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header bg-secondary text-white">
+                                    <h5><i class="fas fa-history me-2"></i>Historial de citas</h5>
+                                </div>
+                                <div class="card-body" id="past-appointments">
+                                    <!-- Citas pasadas se cargarán aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección Configuración -->
+                <section id="configuracion" class="content-section" style="display: none;">
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2"><i class="fas fa-cog me-2"></i>Configuración de Perfil</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-user-edit me-2"></i>Información Personal</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="profile-form">
+                                        <div class="mb-3">
+                                            <label for="profile-name" class="form-label">Nombre Completo</label>
+                                            <input type="text" class="form-control" id="profile-name"
+                                                value="Juan Pérez">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="profile-email" class="form-label">Correo Electrónico</label>
+                                            <input type="email" class="form-control" id="profile-email"
+                                                value="juan.perez@gmail.com">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="profile-phone" class="form-label">Teléfono</label>
+                                            <input type="tel" class="form-control" id="profile-phone"
+                                                value="+57 300 123 4567">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="profile-address" class="form-label">Dirección</label>
+                                            <textarea class="form-control" id="profile-address"
+                                                rows="2">Calle 123 #45-67, Bogotá</textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-lock me-2"></i>Seguridad</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="password-form">
+                                        <div class="mb-3">
+                                            <label for="current-password" class="form-label">Contraseña Actual</label>
+                                            <input type="password" class="form-control" id="current-password">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="new-password" class="form-label">Nueva Contraseña</label>
+                                            <input type="password" class="form-control" id="new-password">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirm-password" class="form-label">Confirmar Nueva
+                                                Contraseña</label>
+                                            <input type="password" class="form-control" id="confirm-password">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Cambiar Contraseña</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-bell me-2"></i>Notificaciones</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notif-appointments" checked>
+                                        <label class="form-check-label" for="notif-appointments">Recordatorios de
+                                            citas</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notif-treatments" checked>
+                                        <label class="form-check-label" for="notif-treatments">Recordatorios de
+                                            tratamientos</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="notif-products" checked>
+                                        <label class="form-check-label" for="notif-products">Ofertas de
+                                            productos</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="notif-news" checked>
+                                        <label class="form-check-label" for="notif-news">Noticias y consejos</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card border-danger">
+                                <div class="card-header bg-danger text-white">
+                                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Acción Irreversible</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-danger">Esta acción no se puede deshacer. Se eliminarán todos tus
+                                        datos permanentemente.</p>
+                                    <button class="btn btn-outline-danger" id="delete-account-btn">Eliminar
+                                        Cuenta</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal para agregar mascota -->
+    <div class="modal fade" id="addPetModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Nueva Mascota</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-pet-form">
+                        <div class="mb-3">
+                            <label for="pet-name" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="pet-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pet-species" class="form-label">Especie</label>
+                            <select class="form-select" id="pet-species" required>
+                                <option value="" selected disabled>Selecciona una especie</option>
+                                <option value="perro">Perro</option>
+                                <option value="gato">Gato</option>
+                                <option value="ave">Ave</option>
+                                <option value="roedor">Roedor</option>
+                                <option value="reptil">Reptil</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pet-breed" class="form-label">Raza</label>
+                            <input type="text" class="form-control" id="pet-breed">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="pet-age" class="form-label">Edad</label>
+                                <input type="number" class="form-control" id="pet-age" min="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="pet-sex" class="form-label">Sexo</label>
+                                <select class="form-select" id="pet-sex">
+                                    <option value="macho">Macho</option>
+                                    <option value="hembra">Hembra</option>
+                                    <option value="desconocido">Desconocido</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pet-image" class="form-label">Foto (opcional)</label>
+                            <input class="form-control" type="file" id="pet-image" accept="image/*">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="save-pet-btn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para detalles de compra -->
+    <div class="modal fade" id="purchaseDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalles de Compra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="purchase-details-content">
+                    <!-- Los detalles de la compra se cargarán aquí -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para detalles de cita -->
+    <div class="modal fade" id="appointmentDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalles de Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="appointment-details-content">
+                    <!-- Los detalles de la cita se cargarán aquí -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- JS Personalizado -->
+    <script src="JS/JS-Usuario.js"></script>
+
+</body>
+
+</html>
