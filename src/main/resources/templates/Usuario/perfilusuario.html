@@ -33,7 +33,7 @@
 						<img th:src="@{/assets/IMG/humano.jpg}" alt="Foto de perfil" class="rounded-circle mb-2">
 						<!-- Ya th:src OK -->
 						<h5 id="username" th:text="${usuarioLogueado.nombres + ' ' + usuarioLogueado.apellidos}">
-						<p class="text-muted">Dueño de mascotas</p>
+							<p class="text-muted">Dueño de mascotas</p>
 					</div>
 
 				</div>
@@ -93,6 +93,11 @@
 
 						</div>
 					</div>
+<<<<<<< HEAD
+					<input type="hidden" id="current-user-id" th:value="${idUsuarioActual}">
+
+=======
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 				</nav>
 
 
@@ -148,8 +153,17 @@
 													<p class="card-text">
 														<i class="fas fa-paw me-1"></i><small
 															th:text="${mascota.especie}">Especie</small><br>
+<<<<<<< HEAD
+														<i class="fas fa-calendar me-1"></i>
+														<small th:if="${mascota.unidadEdad == 'años'}"
+															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' año' : ' años'}">Edad</small>
+														<small th:if="${mascota.unidadEdad == 'meses'}"
+															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' mes' : ' meses'}">Edad</small>
+														<br>
+=======
 														<i class="fas fa-calendar me-1"></i><small
 															th:text="${mascota.edad + ' años'}">Edad</small><br>
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 													</p>
 												</div>
 											</div>
@@ -206,7 +220,11 @@
 											</td>
 											<td><strong th:text="${mascota.nombre}">Nombre</strong></td>
 											<td th:text="${mascota.especie}">Especie</td>
+<<<<<<< HEAD
+											<td th:text="${mascota.edad} + ' ' + ${mascota.unidadEdad}">Edad</td>
+=======
 											<td th:text="${mascota.edad}">Edad</td>
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 											<td th:text="${mascota.genero}">Género</td>
 											<td th:text="${mascota.raza}">Raza</td>
 											</td>
@@ -219,7 +237,13 @@
 												</button>
 
 												<button class="btn btn-sm btn-outline-danger"
+<<<<<<< HEAD
+													th:onclick="|eliminarMascota(${mascota.id});|">
+													<i class="fas fa-trash"></i> Eliminar
+												</button>
+=======
 													th:onclick="'eliminarMascota(' + ${mascota.id} + ')'">Eliminar</button>
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
 
 											</td>
 										</tr>
@@ -387,305 +411,306 @@
 									<h5><i class="fas fa-user-edit me-2"></i>Información Personal</h5>
 								</div>
 								<div class="card-body">
-									<form id="profile-form">
+									<!-- Agregamos th:object para facilitar el binding si luego quieres actualizar -->
+									<form id="profile-form" th:object="${usuarioLogueado}"
+										th:action="@{/usuarios/perfilusuario/actualizarInfoPersonal}" method="post">
+										<!-- Campo oculto para el ID del usuario, necesario para la actualización -->
+										<input type="hidden" th:field="*{id}" />
+
 										<div class="mb-3">
-											<label for="profile-name" class="form-label">Nombre Completo</label>
+											<label for="profile-name" class="form-label">Nombres</label>
 											<input type="text" class="form-control" id="profile-name"
-												value="Juan Pérez">
+												th:field="*{nombres}" required>
+										</div>
+										<div class="mb-3">
+											<label for="profile-apellidos" class="form-label">Apellidos</label>
+											<input type="text" class="form-control" id="profile-apellidos"
+												th:field="*{apellidos}" required>
 										</div>
 										<div class="mb-3">
 											<label for="profile-email" class="form-label">Correo Electrónico</label>
 											<input type="email" class="form-control" id="profile-email"
-												value="juan.perez@gmail.com">
+												th:field="*{correo}" required>
 										</div>
 										<div class="mb-3">
 											<label for="profile-phone" class="form-label">Teléfono</label>
 											<input type="tel" class="form-control" id="profile-phone"
-												value="+57 300 123 4567">
+												th:field="*{telefono}">
 										</div>
 										<div class="mb-3">
 											<label for="profile-address" class="form-label">Dirección</label>
-											<textarea class="form-control" id="profile-address"
-												rows="2">Calle 123 #45-67, Bogotá</textarea>
+											<textarea class="form-control" id="profile-address" rows="2"
+												th:field="*{direccion}"></textarea>
 										</div>
+										<!-- Puedes añadir más campos si los tienes en tu entidad Usuario, como tipoDocumento, numDocumento, edad -->
+										<div class="mb-3">
+											<label for="profile-tipoDocumento" class="form-label">Tipo Documento</label>
+											<input type="text" class="form-control" id="profile-tipoDocumento"
+												th:field="*{tipoDocumento}">
+										</div>
+										<div class="mb-3">
+											<label for="profile-numDocumento" class="form-label">Número
+												Documento</label>
+											<input type="text" class="form-control" id="profile-numDocumento"
+												th:field="*{numDocumento}">
+										</div>
+										<div class="mb-3">
+											<label for="profile-edad" class="form-label">Edad</label>
+											<input type="number" class="form-control" id="profile-edad"
+												th:field="*{edad}">
+										</div>
+
 										<button type="submit" class="btn btn-primary">Guardar Cambios</button>
 									</form>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-6">
-							<div class="card mb-4">
-								<div class="card-header">
-									<h5><i class="fas fa-lock me-2"></i>Seguridad</h5>
-								</div>
-								<div class="card-body">
-									<form id="password-form">
-										<div class="mb-3">
-											<label for="current-password" class="form-label">Contraseña Actual</label>
-											<input type="password" class="form-control" id="current-password">
-										</div>
-										<div class="mb-3">
-											<label for="new-password" class="form-label">Nueva Contraseña</label>
-											<input type="password" class="form-control" id="new-password">
-										</div>
-										<div class="mb-3">
-											<label for="confirm-password" class="form-label">Confirmar Nueva
-												Contraseña</label>
-											<input type="password" class="form-control" id="confirm-password">
-										</div>
-										<button type="submit" class="btn btn-primary">Cambiar Contraseña</button>
-									</form>
-								</div>
-							</div>
+						<!-- ... el resto de la sección de configuración ... -->
+					</div>
+				</section>
 
-							<div class="card mb-4">
-								<div class="card-header">
-									<h5><i class="fas fa-bell me-2"></i>Notificaciones</h5>
-								</div>
-								<div class="card-body">
-									<div class="form-check form-switch mb-3">
-										<input class="form-check-input" type="checkbox" id="notif-appointments" checked>
-										<label class="form-check-label" for="notif-appointments">Recordatorios de
-											citas</label>
-									</div>
-									<div class="form-check form-switch mb-3">
-										<input class="form-check-input" type="checkbox" id="notif-treatments" checked>
-										<label class="form-check-label" for="notif-treatments">Recordatorios de
-											tratamientos</label>
-									</div>
-									<div class="form-check form-switch mb-3">
-										<input class="form-check-input" type="checkbox" id="notif-products" checked>
-										<label class="form-check-label" for="notif-products">Ofertas de
-											productos</label>
-									</div>
-									<div class="form-check form-switch">
-										<input class="form-check-input" type="checkbox" id="notif-news" checked>
-										<label class="form-check-label" for="notif-news">Noticias y consejos</label>
-									</div>
-								</div>
-							</div>
 
-							<div class="card border-danger">
-								<div class="card-header bg-danger text-white">
-									<h5><i class="fas fa-exclamation-triangle me-2"></i>Acción Irreversible</h5>
-								</div>
-								<div class="card-body">
-									<p class="text-danger">Esta acción no se puede deshacer. Se eliminarán todos tus
-										datos permanentemente.</p>
-									<button class="btn btn-outline-danger" id="delete-account-btn">Eliminar
-										Cuenta</button>
-								</div>
+
+				<!-- Modal para agregar mascota -->
+				<div class="modal fade" id="addPetModal" tabindex="-1" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Agregar Nueva Mascota</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<!-- El action del formulario apunta al nuevo endpoint en UsuarioController -->
+								<form th:action="@{/usuarios/perfilusuario/agregarMascota}" method="post"
+									th:object="${mascota}" enctype="multipart/form-data">
+									<!-- Campo oculto para el ID del usuario.
+							                             En una aplicación real, este ID se obtendría de la sesión del usuario logueado.
+							                             Para pruebas, puedes poner un ID fijo de un usuario que exista en tu DB. -->
+									<input type="hidden" id="idUsuario" name="idUsuario" th:value="${idUsuarioActual}">
+									<!-- Asegúrate de que idUsuarioActual se pase al modelo en el método perfilusuario() -->
+									<div class="mb-3">
+										<label for="nombre" class="form-label">Nombre</label>
+										<input type="text" class="form-control" id="nombre" name="nombre" required>
+									</div>
+									<div class="mb-3">
+										<label for="especie" class="form-label">Especie</label>
+										<select class="form-select" id="especie" name="especie" required>
+											<option value="" selected disabled>Selecciona una especie</option>
+											<option value="perro">Perro</option>
+											<option value="gato">Gato</option>
+											<option value="ave">Ave</option>
+											<option value="roedor">Roedor</option>
+											<option value="reptil">Reptil</option>
+											<option value="otro">Otro</option>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label for="raza" class="form-label">Raza</label>
+										<input type="text" class="form-control" id="raza" name="raza">
+									</div>
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<label for="edad" class="form-label">Edad</label>
+<<<<<<< HEAD
+											<div class="input-group">
+												<input type="number" class="form-control" id="edad" name="edad" min="0"
+													max="50" required>
+												<select class="form-select" id="unidadEdad" name="unidadEdad"
+													style="max-width: 120px;" required>
+													<option value="meses">Meses</option>
+													<option value="años" selected>Años</option>
+												</select>
+											</div>
+=======
+											<input type="number" class="form-control" id="edad" name="edad" min="0">
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
+										</div>
+										<div class="col-md-6">
+											<label for="genero" class="form-label">Género</label>
+											<select class="form-select" id="genero" name="genero">
+												<option value="M">Macho</option>
+												<option value="F">Hembra</option>
+												<option value="desconocido">Desconocido</option>
+											</select>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label for="tamaño" class="form-label">Tamaño</label>
+										<select class="form-select" id="tamaño" name="tamaño">
+											<option value="" selected disabled>Selecciona un tamaño</option>
+											<option value="pequeño">Pequeño</option>
+											<option value="mediano">Mediano</option>
+											<option value="grande">Grande</option>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label for="descripcion" class="form-label">Descripción</label>
+										<textarea class="form-control" id="descripcion" name="descripcion"
+											rows="3"></textarea>
+									</div>
+									<div class="mb-3">
+										<label for="fotoFile" class="form-label">Subir Foto (opcional)</label>
+										<!-- Cambiado de 'foto' a 'fotoFile' para evitar conflictos con el nombre de la propiedad en Mascota si aún la usas para URL -->
+										<input class="form-control" type="file" id="fotoFile" name="fotoFile"
+											accept="image/*">
+									</div>
+
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary"
+											data-bs-dismiss="modal">Cancelar</button>
+										<button type="submit" class="btn btn-primary">Guardar</button>
+										<!-- Cambiado a type="submit" -->
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>
-				</section>
-			</main>
-		</div>
-	</div>
-
-
-	<!-- Modal para agregar mascota -->
-	<div class="modal fade" id="addPetModal" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Agregar Nueva Mascota</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body">
-					<!-- El action del formulario apunta al nuevo endpoint en UsuarioController -->
-					<form th:action="@{/usuarios/perfilusuario/agregarMascota}" method="post" th:object="${mascota}"
-						enctype="multipart/form-data">
-						<!-- Campo oculto para el ID del usuario.
-							                             En una aplicación real, este ID se obtendría de la sesión del usuario logueado.
-							                             Para pruebas, puedes poner un ID fijo de un usuario que exista en tu DB. -->
-						<input type="hidden" id="idUsuario" name="idUsuario" th:value="${idUsuarioActual}">
-						<!-- Asegúrate de que idUsuarioActual se pase al modelo en el método perfilusuario() -->
-						<div class="mb-3">
-							<label for="nombre" class="form-label">Nombre</label>
-							<input type="text" class="form-control" id="nombre" name="nombre" required>
-						</div>
-						<div class="mb-3">
-							<label for="especie" class="form-label">Especie</label>
-							<select class="form-select" id="especie" name="especie" required>
-								<option value="" selected disabled>Selecciona una especie</option>
-								<option value="perro">Perro</option>
-								<option value="gato">Gato</option>
-								<option value="ave">Ave</option>
-								<option value="roedor">Roedor</option>
-								<option value="reptil">Reptil</option>
-								<option value="otro">Otro</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label for="raza" class="form-label">Raza</label>
-							<input type="text" class="form-control" id="raza" name="raza">
-						</div>
-						<div class="row mb-3">
-							<div class="col-md-6">
-								<label for="edad" class="form-label">Edad</label>
-								<input type="number" class="form-control" id="edad" name="edad" min="0">
-							</div>
-							<div class="col-md-6">
-								<label for="genero" class="form-label">Género</label>
-								<select class="form-select" id="genero" name="genero">
-									<option value="M">Macho</option>
-									<option value="F">Hembra</option>
-									<option value="desconocido">Desconocido</option>
-								</select>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label for="tamaño" class="form-label">Tamaño</label>
-							<select class="form-select" id="tamaño" name="tamaño">
-								<option value="" selected disabled>Selecciona un tamaño</option>
-								<option value="pequeño">Pequeño</option>
-								<option value="mediano">Mediano</option>
-								<option value="grande">Grande</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label for="descripcion" class="form-label">Descripción</label>
-							<textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
-						</div>
-						<div class="mb-3">
-							<label for="fotoFile" class="form-label">Subir Foto (opcional)</label>
-							<!-- Cambiado de 'foto' a 'fotoFile' para evitar conflictos con el nombre de la propiedad en Mascota si aún la usas para URL -->
-							<input class="form-control" type="file" id="fotoFile" name="fotoFile" accept="image/*">
-						</div>
 
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-							<button type="submit" class="btn btn-primary">Guardar</button>
-							<!-- Cambiado a type="submit" -->
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Modal para Editar Mascota -->
-	<div class="modal fade" id="editPetModal" tabindex="-1" aria-labelledby="editPetModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="editPetModalLabel">Editar Mascota</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<form id="editPetForm" th:action="@{/usuarios/perfilusuario/actualizarMascota}" method="post"
-						enctype="multipart/form-data">
-						<input type="hidden" name="id" id="editMascotaId">
-						<input type="hidden" name="fotoActual" id="editMascotaFotoActual">
-						<!-- Para mantener la foto si no se sube una nueva -->
-
-						<div class="mb-3">
-							<label for="editNombre" class="form-label">Nombre</label>
-							<input type="text" class="form-control" id="editNombre" name="nombre" required>
-						</div>
-						<div class="mb-3">
-							<label for="editEspecie" class="form-label">Especie</label>
-							<select class="form-select" id="editEspecie" name="especie" required>
-								<option value="perro">Perro</option>
-								<option value="gato">Gato</option>
-								<option value="ave">Ave</option>
-								<option value="roedor">Roedor</option>
-								<option value="reptil">Reptil</option>
-								<option value="otro">Otro</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label for="editRaza" class="form-label">Raza</label>
-							<input type="text" class="form-control" id="editRaza" name="raza">
-						</div>
-						<div class="row mb-3">
-							<div class="col-md-6">
-								<label for="editEdad" class="form-label">Edad</label>
-								<input type="number" class="form-control" id="editEdad" name="edad" min="0">
+				<!-- Modal para Editar Mascota -->
+				<div class="modal fade" id="editPetModal" tabindex="-1" aria-labelledby="editPetModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="editPetModalLabel">Editar Mascota</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
 							</div>
-							<div class="col-md-6">
-								<label for="editGenero" class="form-label">Género</label>
-								<select class="form-select" id="editGenero" name="genero">
-									<option value="M">Macho</option>
-									<option value="F">Hembra</option>
-									<option value="desconocido">Desconocido</option>
-								</select>
+							<div class="modal-body">
+								<form id="editPetForm" th:action="@{/usuarios/perfilusuario/actualizarMascota}"
+									method="post" enctype="multipart/form-data">
+									<input type="hidden" name="id" id="editMascotaId">
+									<input type="hidden" name="fotoActual" id="editMascotaFotoActual">
+<<<<<<< HEAD
+=======
+									<!-- Para mantener la foto si no se sube una nueva -->
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
+
+									<div class="mb-3">
+										<label for="editNombre" class="form-label">Nombre</label>
+										<input type="text" class="form-control" id="editNombre" name="nombre" required>
+									</div>
+									<div class="mb-3">
+										<label for="editEspecie" class="form-label">Especie</label>
+										<select class="form-select" id="editEspecie" name="especie" required>
+											<option value="perro">Perro</option>
+											<option value="gato">Gato</option>
+											<option value="ave">Ave</option>
+											<option value="roedor">Roedor</option>
+											<option value="reptil">Reptil</option>
+											<option value="otro">Otro</option>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label for="editRaza" class="form-label">Raza</label>
+										<input type="text" class="form-control" id="editRaza" name="raza">
+									</div>
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<label for="editEdad" class="form-label">Edad</label>
+<<<<<<< HEAD
+											<div class="input-group">
+												<input type="number" class="form-control" id="editEdad" name="edad"
+													min="0" max="50" required>
+												<select class="form-select" id="editUnidadEdad" name="unidadEdad"
+													style="max-width: 120px;" required>
+													<option value="meses">Meses</option>
+													<option value="años">Años</option>
+												</select>
+											</div>
+=======
+											<input type="number" class="form-control" id="editEdad" name="edad" min="0">
+>>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
+										</div>
+										<div class="col-md-6">
+											<label for="editGenero" class="form-label">Género</label>
+											<select class="form-select" id="editGenero" name="genero">
+												<option value="M">Macho</option>
+												<option value="F">Hembra</option>
+												<option value="desconocido">Desconocido</option>
+											</select>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label for="editTamaño" class="form-label">Tamaño</label>
+										<select class="form-select" id="editTamaño" name="tamaño">
+											<option value="pequeño">Pequeño</option>
+											<option value="mediano">Mediano</option>
+											<option value="grande">Grande</option>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label for="editDescripcion" class="form-label">Descripción</label>
+										<textarea class="form-control" id="editDescripcion" name="descripcion"
+											rows="3"></textarea>
+									</div>
+									<div class="mb-3">
+										<label for="editFotoFile" class="form-label">Cambiar Foto (opcional)</label>
+										<input class="form-control" type="file" id="editFotoFile" name="fotoFile"
+											accept="image/*">
+										<small class="form-text text-muted">La foto actual se mantendrá si no subes una
+											nueva.</small>
+									</div>
+
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary"
+											data-bs-dismiss="modal">Cancelar</button>
+										<button type="submit" class="btn btn-primary">Guardar Cambios</button>
+									</div>
+								</form>
 							</div>
 						</div>
-						<div class="mb-3">
-							<label for="editTamaño" class="form-label">Tamaño</label>
-							<select class="form-select" id="editTamaño" name="tamaño">
-								<option value="pequeño">Pequeño</option>
-								<option value="mediano">Mediano</option>
-								<option value="grande">Grande</option>
-							</select>
+					</div>
+				</div>
+
+
+
+				<!-- Modal para detalles de compra -->
+				<div class="modal fade" id="purchaseDetailsModal" tabindex="-1" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Detalles de Compra</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body" id="purchase-details-content">
+								<!-- Los detalles de la compra se cargarán aquí -->
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							</div>
 						</div>
-						<div class="mb-3">
-							<label for="editDescripcion" class="form-label">Descripción</label>
-							<textarea class="form-control" id="editDescripcion" name="descripcion" rows="3"></textarea>
+					</div>
+				</div>
+
+				<!-- Modal para detalles de cita -->
+				<div class="modal fade" id="appointmentDetailsModal" tabindex="-1" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Detalles de Cita</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body" id="appointment-details-content">
+								<!-- Los detalles de la cita se cargarán aquí -->
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							</div>
 						</div>
-						<div class="mb-3">
-							<label for="editFotoFile" class="form-label">Cambiar Foto (opcional)</label>
-							<input class="form-control" type="file" id="editFotoFile" name="fotoFile" accept="image/*">
-							<small class="form-text text-muted">La foto actual se mantendrá si no subes una
-								nueva.</small>
-						</div>
+					</div>
+				</div>
 
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-							<button type="submit" class="btn btn-primary">Guardar Cambios</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-
-	<!-- Modal para detalles de compra -->
-	<div class="modal fade" id="purchaseDetailsModal" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Detalles de Compra</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body" id="purchase-details-content">
-					<!-- Los detalles de la compra se cargarán aquí -->
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Modal para detalles de cita -->
-	<div class="modal fade" id="appointmentDetailsModal" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Detalles de Cita</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body" id="appointment-details-content">
-					<!-- Los detalles de la cita se cargarán aquí -->
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Bootstrap JS Bundle with Popper -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	<!-- jQuery -->
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<!-- JS Personalizado -->
-	<script th:src="@{/assets/JS/JS-Usuario.js}"></script>
+				<!-- Bootstrap JS Bundle with Popper -->
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+				<!-- jQuery -->
+				<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+				<!-- JS Personalizado -->
+				<script th:src="@{/assets/JS/JS-Usuario.js}"></script>
 </body>
 
 </html>

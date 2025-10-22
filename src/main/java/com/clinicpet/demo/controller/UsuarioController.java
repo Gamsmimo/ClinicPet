@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,8 +70,9 @@ public class UsuarioController {
 					} else if (usuario.getRol().getId() == 2) { // Veterinario
 						return "redirect:/perfil-veterinario";
 
-					} else { // Usuario normal (rol 1)
-						return "redirect:/usuarios/inicio";
+					} else { // Usuario normal
+
+						return "redirect:/usuarios/inicio"; // coincide con mapeo /usuarios/inicio
 					}
 				}
 			}
@@ -140,6 +142,7 @@ public class UsuarioController {
 		if (usuarioLogueado == null) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
+
 		Integer idUsuarioActual = usuarioLogueado.getId(); // De sesión (mejor que hardcode)
 		model.addAttribute("idUsuarioActual", idUsuarioActual);
 		model.addAttribute("mascota", new Mascota());

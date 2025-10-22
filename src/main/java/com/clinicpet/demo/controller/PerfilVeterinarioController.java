@@ -1,6 +1,5 @@
 package com.clinicpet.demo.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,9 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -35,8 +31,10 @@ import com.clinicpet.demo.model.PerfilVeterinario;
 import com.clinicpet.demo.model.Producto;
 import com.clinicpet.demo.model.Usuario;
 import com.clinicpet.demo.model.Veterinaria;
+import com.clinicpet.demo.repository.IUsuarioRepository;
 import com.clinicpet.demo.service.*;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 @Controller
 @RequestMapping("/perfil-veterinario")
@@ -65,6 +63,9 @@ public class PerfilVeterinarioController {
 
 	@Autowired
 	private IEmergenciaService emergenciaService;
+
+	@Autowired
+	private IUsuarioRepository usuarioRepository;
 
 	@Autowired
 	private IUsuarioService usuarioService;
@@ -171,7 +172,6 @@ public class PerfilVeterinarioController {
 				usuarioActual.setTelefono(perfilForm.getUsuario().getTelefono());
 				usuarioActual.setDireccion(perfilForm.getUsuario().getDireccion());
 
-
 				// 🔥 **MANEJO DE FOTO - CORREGIDO**
 				if (fotoFile != null && !fotoFile.isEmpty()) {
 					// Validaciones de foto
@@ -233,6 +233,51 @@ public class PerfilVeterinarioController {
 			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("error", "❌ Error al actualizar perfil: " + e.getMessage());
 			return "redirect:/perfil-veterinario";
+		}
+	}
+
+	@PostMapping("/change-password")
+	@Transactional
+	public String changePassword(@RequestParam String currentPassword, @RequestParam String newPassword,
+			@RequestParam String confirmPassword, HttpSession session, Model model) {
+
+		System.out.println("🎯 changePassword ejecutado!");
+
+		try {
+			// Obtener el usuario actual de la base de datos
+			// Buscamos usuarios activos que sean veterinarios (rol_id = 2 según tus datos)
+			List<Usuario> veterinarios = usuarioRepository.findByRolId(2);
+
+			if (veterinarios.isEmpty()) {
+				System.out.println("❌ No hay veterinarios en el sistema");
+				model.addAttribute("error", "No se encontró usuario veterinario");
+				return "perfil-veterinario";
+			}
+
+			// Tomar el primer veterinario activo
+			Usuario usuario = veterinarios.get(0);
+			System.out.println("👤 Veterinario encontrado: " + usuario.getCorreo());
+
+			// ... resto del código de validación igual
+			if (!usuario.getPassword().equals(currentPassword)) {
+				model.addAttribute("error", "La contraseña actual es incorrecta");
+				return "perfil-veterinario";
+			}
+
+			if (!newPassword.equals(confirmPassword)) {
+				model.addAttribute("error", "Las nuevas contraseñas no coinciden");
+				return "perfil-veterinario";
+			}
+
+			usuarioService.actualizarPassword(usuario.getId(), newPassword);
+			session.invalidate();
+
+			model.addAttribute("success", "Contraseña actualizada correctamente. Por favor inicie sesión nuevamente.");
+			return "redirect:/usuarios/iniciarsesion";
+
+		} catch (Exception e) {
+			model.addAttribute("error", "Error: " + e.getMessage());
+			return "perfil-veterinario";
 		}
 	}
 

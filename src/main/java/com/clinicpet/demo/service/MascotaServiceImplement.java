@@ -72,7 +72,6 @@ public class MascotaServiceImplement implements IMascotaService {
 
 		// Guardar
 		Mascota updated = mascotaRepository.save(toUpdate);
-		System.out.println("=== SERVICE: Mascota actualizada exitosamente ID=" + updated.getId() + " ===");
 
 		return updated;
 	}
@@ -93,15 +92,7 @@ public class MascotaServiceImplement implements IMascotaService {
 	}
 
 	@Override
-	public void eliminarMascota(Integer id) {
-		if (id != null && mascotaRepository.existsById(id)) {
-			mascotaRepository.deleteById(id);
-		} else {
-			throw new RuntimeException("Mascota no encontrada o ID inválido para eliminar");
-		}
-	}
 
-	@Override
 	public List<Mascota> buscarPorUsuario(Integer usuarioId) {
 		List<Mascota> mascotas = mascotaRepository.findByUsuario_Id(usuarioId);
 		return mascotas != null ? mascotas : new ArrayList<>();
@@ -114,6 +105,12 @@ public class MascotaServiceImplement implements IMascotaService {
 		}
 		List<Mascota> mascotas = mascotaRepository.findByEspecie(especie.trim());
 		return mascotas != null ? mascotas : new ArrayList<>();
+	}
+
+	@Override
+	public void eliminarMascota(Integer id) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
