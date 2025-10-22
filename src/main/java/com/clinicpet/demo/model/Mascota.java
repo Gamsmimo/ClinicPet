@@ -27,6 +27,7 @@ public class Mascota {
 	private String tamaño;
 	private String descripcion;
 	private String foto;
+	private String unidadEdad;
 
 	// ✅ CAMBIAR A @JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -39,7 +40,8 @@ public class Mascota {
 	}
 
 	public Mascota(Integer id, String nombre, String especie, String raza, Integer edad, String genero, String tamaño,
-			String descripcion, String foto, Usuario usuario) {
+			String descripcion, String foto, String unidadEdad, Usuario usuario) {
+		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.especie = especie;
@@ -49,11 +51,10 @@ public class Mascota {
 		this.tamaño = tamaño;
 		this.descripcion = descripcion;
 		this.foto = foto;
-
+		this.unidadEdad = unidadEdad;
 		this.usuario = usuario;
 	}
 
-	// Getters y Setters (todos los que ya tienes)
 	public Integer getId() {
 		return id;
 	}
@@ -124,6 +125,14 @@ public class Mascota {
 
 	public void setFoto(String foto) {
 		this.foto = foto;
+	}
+
+	public String getUnidadEdad() {
+		return unidadEdad;
+	}
+
+	public void setUnidadEdad(String unidadEdad) {
+		this.unidadEdad = unidadEdad;
 	}
 
 	public Usuario getUsuario() {

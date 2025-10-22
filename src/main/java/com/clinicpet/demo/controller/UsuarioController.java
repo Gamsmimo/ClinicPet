@@ -6,15 +6,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List; // *** AGREGADO: Para List<Mascota> en perfil ***
+
 import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,16 +60,12 @@ public class UsuarioController {
 			Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorCorreo(usuarioLogin.getCorreo());
 			if (usuarioOpt.isPresent()) {
 				Usuario usuario = usuarioOpt.get();
-				// Busca esta sección y reemplázala:
 				if (usuario.getPassword().equals(usuarioLogin.getPassword()) && usuario.isActivo()) {
 					session.setAttribute("usuarioLogueado", usuario);
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
 
-					// REEMPLAZA TODO ESTE BLOQUE:
-					if (usuario.getRol().getId() == 3) { // ADMIN
-						return "redirect:/admin";
-
-					} else if (usuario.getRol().getId() == 2) { // Veterinario
+					// ✅ REDIRIGIR SEGÚN ROL
+					if (usuario.getRol().getId() == 2) { // Veterinario
 						return "redirect:/perfil-veterinario";
 
 					} else { // Usuario normal
@@ -142,24 +140,21 @@ public class UsuarioController {
 		if (usuarioLogueado == null) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
+		// ✅ AGREGAR ESTA LÍNEA - Pasar el ID al modelo
+		model.addAttribute("idUsuarioActual", usuarioLogueado.getId());
 
-		Integer idUsuarioActual = usuarioLogueado.getId(); // De sesión (mejor que hardcode)
-		model.addAttribute("idUsuarioActual", idUsuarioActual);
 		model.addAttribute("mascota", new Mascota());
 
-		// *** AGREGADO BÁSICO: Carga lista de mascotas del usuario logueado ***
-		List<Mascota> mascotas = mascotaService.buscarPorUsuario(idUsuarioActual);
-		model.addAttribute("mascotas", mascotas); // Para mostrar en HTML (ej. tabla con th:each)
-		model.addAttribute("tieneMascotas", !mascotas.isEmpty()); // Booleano simple para UI (opcional)
+		// Carga lista de mascotas del usuario logueado
+		List<Mascota> mascotas = mascotaService.buscarPorUsuario(usuarioLogueado.getId());
+		model.addAttribute("mascotas", mascotas);
+		model.addAttribute("tieneMascotas", !mascotas.isEmpty());
 
-		// *** AGREGADO: Log debug básico (confirma carga)
-		System.out.println("DEBUG CONTROLLER: Cargando perfil para usuario ID=" + idUsuarioActual
-				+ ", Mascotas encontradas: " + mascotas.size());
-
-		// *** AGREGADO: Para HTML (saludo, foto usuario, etc.)
+		// Para HTML (saludo, foto usuario, etc.)
 		model.addAttribute("usuarioLogueado", usuarioLogueado);
 
-		return "Usuario/perfilusuario"; // templates/perfilusuario.html
+		return "Usuario/perfilusuario";
+
 	}
 
 	@GetMapping("/perfilusuario/mascota/{id}")
@@ -181,11 +176,13 @@ public class UsuarioController {
 
 		Mascota mascota = mascotaOpt.get();
 
+		// ✅ Verificar que la mascota pertenece al usuario
 		if (!mascota.getUsuario().getId().equals(usuarioLogueado.getId())) {
 			LOGGER.warn("❌ Usuario {} intentó acceder a mascota {} que no le pertenece", usuarioLogueado.getId(), id);
 			return ResponseEntity.status(403).build();
 		}
 
+		LOGGER.info("✅ Mascota encontrada: {} - Unidad Edad: {}", mascota.getNombre(), mascota.getUnidadEdad());
 		LOGGER.info("✅ Mascota encontrada: {}", mascota.getNombre());
 		return ResponseEntity.ok(mascota);
 	}
@@ -325,14 +322,23 @@ public class UsuarioController {
 		return "redirect:/usuarios/perfilusuario";
 	}
 
+	@DeleteMapping("/perfilusuario/eliminarmascota/{id}")
+	public ResponseEntity<String> eliminarMascota(@PathVariable Integer id, HttpSession session) {
+		try {
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+			}
+			mascotaService.eliminarMascota(id);
+			return ResponseEntity.ok("Mascota eliminada exitosamente");
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+		}
+	}
+
 //redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {
 		return "/index";
-	}
-
-	@GetMapping("/")
-	public String raiz() {
-		return "redirect:/admin/login";
 	}
 }

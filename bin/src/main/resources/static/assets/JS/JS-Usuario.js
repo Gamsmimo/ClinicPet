@@ -1050,8 +1050,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<<<<<<< HEAD
-=======
+
 // Función para eliminar mascota con confirmación
 function eliminarMascota(mascotaId) {
 	if (confirm('¿Estás seguro que deseas eliminar esta mascota? Esta acción es irreversible.')) {
@@ -1073,4 +1072,3 @@ function eliminarMascota(mascotaId) {
 		});
 	}
 }
->>>>>>> bcd859d018ce2d6ff7cc81e0398cf721f3ed8b6f
