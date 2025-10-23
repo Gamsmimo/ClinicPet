@@ -156,8 +156,6 @@
 														<small th:if="${mascota.unidadEdad == 'meses'}"
 															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' mes' : ' meses'}">Edad</small>
 														<br>
-														<i class="fas fa-calendar me-1"></i><small
-															th:text="${mascota.edad + ' años'}">Edad</small><br>
 													</p>
 												</div>
 											</div>
@@ -215,7 +213,6 @@
 											<td><strong th:text="${mascota.nombre}">Nombre</strong></td>
 											<td th:text="${mascota.especie}">Especie</td>
 											<td th:text="${mascota.edad} + ' ' + ${mascota.unidadEdad}">Edad</td>
-											<td th:text="${mascota.edad}">Edad</td>
 											<td th:text="${mascota.genero}">Género</td>
 											<td th:text="${mascota.raza}">Raza</td>
 											</td>
@@ -231,7 +228,6 @@
 													th:onclick="|eliminarMascota(${mascota.id});|">
 													<i class="fas fa-trash"></i> Eliminar
 												</button>
-												th:onclick="'eliminarMascota(' + ${mascota.id} + ')'">Eliminar</button>
 
 											</td>
 										</tr>
@@ -509,7 +505,6 @@
 													<option value="años" selected>Años</option>
 												</select>
 											</div>
-											<input type="number" class="form-control" id="edad" name="edad" min="0">
 										</div>
 										<div class="col-md-6">
 											<label for="genero" class="form-label">Género</label>
@@ -569,8 +564,6 @@
 									<input type="hidden" name="id" id="editMascotaId">
 									<input type="hidden" name="fotoActual" id="editMascotaFotoActual">
 
-									<!-- Para mantener la foto si no se sube una nueva -->
-
 									<div class="mb-3">
 										<label for="editNombre" class="form-label">Nombre</label>
 										<input type="text" class="form-control" id="editNombre" name="nombre" required>
@@ -602,7 +595,6 @@
 													<option value="años">Años</option>
 												</select>
 											</div>
-											<input type="number" class="form-control" id="editEdad" name="edad" min="0">
 										</div>
 										<div class="col-md-6">
 											<label for="editGenero" class="form-label">Género</label>

@@ -86,8 +86,6 @@ public class MascotaServiceImplement implements IMascotaService {
 		System.out.println("=== SERVICE: Mascota actualizada exitosamente ===");
 		System.out.println("ID: " + updated.getId());
 		System.out.println("Edad final: " + updated.getEdad() + " " + updated.getUnidadEdad());
-		System.out.println("=== SERVICE: Mascota actualizada exitosamente ID=" + updated.getId() + " ===");
-
 		return updated;
 	}
 

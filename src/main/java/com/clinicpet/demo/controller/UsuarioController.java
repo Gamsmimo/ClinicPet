@@ -6,8 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List; // *** AGREGADO: Para List<Mascota> en perfil ***
-
-import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -140,6 +138,7 @@ public class UsuarioController {
 		if (usuarioLogueado == null) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
+
 		// ✅ AGREGAR ESTA LÍNEA - Pasar el ID al modelo
 		model.addAttribute("idUsuarioActual", usuarioLogueado.getId());
 
@@ -154,7 +153,6 @@ public class UsuarioController {
 		model.addAttribute("usuarioLogueado", usuarioLogueado);
 
 		return "Usuario/perfilusuario";
-
 	}
 
 	@GetMapping("/perfilusuario/mascota/{id}")
@@ -183,7 +181,6 @@ public class UsuarioController {
 		}
 
 		LOGGER.info("✅ Mascota encontrada: {} - Unidad Edad: {}", mascota.getNombre(), mascota.getUnidadEdad());
-		LOGGER.info("✅ Mascota encontrada: {}", mascota.getNombre());
 		return ResponseEntity.ok(mascota);
 	}
 
@@ -238,24 +235,6 @@ public class UsuarioController {
 		}
 
 		return "redirect:/usuarios/perfilusuario";
-	}
-
-	// Corrección completa: Eliminar mascota (integra verificación con buscarPorId)
-	@PostMapping("/perfilusuario/eliminarMascota")
-	@ResponseBody
-	public ResponseEntity<?> eliminarMascota(@RequestParam Integer id) { // Cambiado a Integer
-		try {
-			// Corrección de línea 1: Usar nombre correcto y verificar existencia primero
-			Optional<Mascota> mascotaOpcional = mascotaService.buscarMascotaPorId(id);
-			if (mascotaOpcional.isEmpty()) {
-				return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Mascota no encontrada"));
-			}
-
-			mascotaService.eliminarMascota(id); // Nombre correcto: eliminarMascota(Integer id)
-			return ResponseEntity.ok(Map.of("success", true, "message", "Mascota eliminada correctamente"));
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError().body(Map.of("success", false, "message", e.getMessage()));
-		}
 	}
 
 	@PostMapping("/perfilusuario/actualizarMascota")
