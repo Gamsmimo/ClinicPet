@@ -403,7 +403,7 @@ main {
 .custom-logout-link i {
 	font-size: 20px;
 	/* Tamaño personalizado del icono */
-<<<<<<< HEAD
+
 }
 
 
@@ -472,6 +472,5 @@ main {
 
 .file-validation-message.invalid {
 	color: var(--accent-color);
-=======
->>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
+
 }
