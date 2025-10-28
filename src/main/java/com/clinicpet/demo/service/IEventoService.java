@@ -3,6 +3,8 @@ package com.clinicpet.demo.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.clinicpet.demo.model.Evento;
 
 public interface IEventoService {
@@ -21,4 +23,7 @@ public interface IEventoService {
 
 	// Obtener eventos vigentes (no han terminado)
 	public List<Evento> obtenerEventosVigentes();
+
+	public void guardarEvento(String titulo, String descripcion, String fechaInicio, String fechaFin,
+			MultipartFile imagen, Integer id);
 }

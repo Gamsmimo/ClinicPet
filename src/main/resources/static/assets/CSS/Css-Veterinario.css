@@ -336,7 +336,7 @@ a {
 .card-summary {
     padding: 20px;
     border-radius: 10px;
-    color: white;
+    color: rgb(255, 255, 255);
     text-align: center;
     transition: all 0.3s;
     position: relative;
@@ -351,7 +351,6 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
     z-index: -1;
 }
 
@@ -378,39 +377,13 @@ a {
     margin-bottom: 10px;
 }
 
-.card-summary a {
-    display: inline-block;
-    color: white;
-    font-size: 0.8rem;
-    margin-top: 10px;
-    opacity: 0.8;
-    transition: opacity 0.3s;
+.bg-warning{
+	background: linear-gradient( #e0a332, #e0a332);
 }
 
-.card-summary a:hover {
-    opacity: 1;
-    text-decoration: underline;
-}
+.bg-info{
+	background: linear-gradient( #318fad, #318fad);
 
-.card-summary a i {
-    font-size: 0.8rem;
-    margin-left: 5px;
-}
-
-.bg-primary {
-    background-color: var(--primary);
-}
-
-.bg-success {
-    background-color: var(--secondary);
-}
-
-.bg-warning {
-    background-color: var(--accent);
-}
-
-.bg-info {
-    background-color: var(--info);
 }
 
 .quick-actions {
@@ -583,21 +556,6 @@ a {
 }
 
 /* Sección Historias Clínicas */
-.search-container {
-    display: flex;
-    max-width: 300px;
-}
-
-.search-input {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: none;
-}
-
-.search-container .btn {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
 
 .pet-list-container {
     background-color: var(--white);
@@ -830,6 +788,7 @@ a {
     justify-content: flex-end;
 }
 
+
 /* Sección Tratamientos */
 .treatment-filters {
     background-color: var(--white);
@@ -915,6 +874,7 @@ a {
     gap: 10px;
 }
 
+
 /* Sección Adopciones */
 .adoption-list {
     display: grid;
@@ -923,6 +883,7 @@ a {
 }
 
 .adoption-card {
+	margin-top: 25px;
     background-color: var(--white);
     border-radius: 10px;
     overflow: hidden;
@@ -969,6 +930,7 @@ a {
     gap: 10px;
 }
 
+
 /* Sección Pet Shop */
 .product-grid {
     display: grid;
@@ -977,6 +939,7 @@ a {
 }
 
 .product-card {
+	margin-top: 25px;
     background-color: var(--white);
     border-radius: 10px;
     overflow: hidden;

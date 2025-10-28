@@ -107,6 +107,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
 
 			usuario.setImagen(
 					usuarioActualizado.getImagen() != null ? usuarioActualizado.getImagen() : usuario.getImagen());
+
 			usuario.setCorreo(usuarioActualizado.getCorreo().trim());
 			usuario.setNombres(usuarioActualizado.getNombres() != null ? usuarioActualizado.getNombres().trim()
 					: usuario.getNombres());
@@ -308,6 +309,7 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	}
 
 	@Override
+
 	@Transactional
 	public void actualizarPassword(Integer usuarioId, String nuevaPassword) {
 		try {

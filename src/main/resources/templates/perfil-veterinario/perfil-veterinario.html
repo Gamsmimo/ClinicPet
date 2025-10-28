@@ -37,7 +37,6 @@
 			</div>
 		</div>
 
-
 		<ul class="menu-items">
 			<li><a href="#inicio" class="menu-link active" data-section="inicio"><i class="fas fa-home"></i>
 					<span>Inicio</span></a></li>
@@ -64,73 +63,20 @@
 				<i class="fas fa-search"></i>
 			</div>
 			<div class="user-actions">
-				<div class="notifications" data-bs-toggle="modal" data-bs-target="#notificationsModal">
-					<i class="fas fa-bell"></i>
-					<span class="badge">3</span>
-				</div>
-				<!-- Modal para notificaciones -->
-				<div class="modal fade" id="notificationsModal" tabindex="-1" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title"><i class="fas fa-bell me-2"></i>Notificaciones</h5>
-								<button type="button" class="btn-close" data-bs-dismiss="modal"
-									aria-label="Close"></button>
-							</div>
-							<div class="modal-body">
-								<div class="notification-list">
-									<div class="notification-item unread">
-										<div class="notification-icon">
-											<i class="fas fa-calendar-check text-primary"></i>
-										</div>
-										<div class="notification-content">
-											<h6>Recordatorio de cita</h6>
-											<p>Tienes una cita programada para mañana a las 10:00 AM con Max.</p>
-											<small>Hace 2 horas</small>
-										</div>
-									</div>
-									<div class="notification-item unread">
-										<div class="notification-icon">
-											<i class="fas fa-shipping-fast text-success"></i>
-										</div>
-										<div class="notification-content">
-											<h6>Pedido en camino</h6>
-											<p>Tu pedido #12345 ha sido enviado y llegará en 2 días.</p>
-											<small>Ayer</small>
-										</div>
-									</div>
-									<div class="notification-item unread">
-										<div class="notification-icon">
-											<i class="fas fa-stethoscope text-info"></i>
-										</div>
-										<div class="notification-content">
-											<h6>Recordatorio de vacuna</h6>
-											<p>Luna necesita su refuerzo de vacuna antirrábica este mes.</p>
-											<small>Hace 3 días</small>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-								<button type="button" class="btn btn-primary" id="markAllRead">Marcar todas como
-									leídas</button>
-							</div>
-						</div>
+					<div class="notifications" data-bs-toggle="modal" data-bs-target="#notificationsModal">
+						<i class="fas fa-bell"></i>
+						<span class="badge">3</span>
+					</div>
+
+					<div class="d-flex align-items-center">
+						<span class="navbar-text logout-text">
+							<a th:href="@{/usuarios/index}" class="custom-logout-link">
+								<i class="fas fa-sign-out-alt me-2"></i>
+								Cerrar Sesión
+							</a>
+						</span>
 					</div>
 				</div>
-				<span class="badge">3</span>
-			</div>
-			<div class="user-dropdown">
-				<!-- ✅ Foto dinámica -->
-				<img th:src="${session.usuarioLogueado.imagen != null} ? 
-				            @{${session.usuarioLogueado.imagen}} : 
-				            @{'/uploads/default.jpg'}">
-				<!-- ✅ Nombre
-					dinámico -->
-
-				<h6 th:text="${perfilVeterinario.usuario.nombres} + ' ' + ${perfilVeterinario.usuario.apellidos}">Dr.
-					Pérez</h6>
 			</div>
 		</header>
 
@@ -150,35 +96,36 @@
 							<i class="fas fa-paw"></i>
 							<h3>0</h3>
 							<p>Mascotas atendidas hasta la fecha</p>
-							<a th:href="@{/assets/#agenda}">Ver historias <i class="fas fa-arrow-right"></i></a>
 						</div>
 						<div class="card card-summary bg-warning">
 							<i class="fas fa-heart"></i>
 							<h3>0</h3>
 							<p>Adopciones</p>
-							<a th:href="@{/assets/#adopciones}">Ver seguimientos <i class="fas fa-arrow-right"></i></a>
 						</div>
 						<div class="card card-summary bg-info">
 							<i class="fas fa-shopping-bag"></i>
 							<h3>0</h3>
 							<p>Productos</p>
-							<a th:href="@{/assets/#petshop}">Ver tienda <i class="fas fa-arrow-right"></i></a>
 						</div>
 					</div>
 
 					<div class="quick-actions">
 						<h3>Acciones rápidas</h3>
 						<div class="actions-grid">
-							<button class="btn-action" onclick="openModal('new-appointment')">
-								<i class="fas fa-plus-circle"></i>
-								<span>Nueva cita</span>
+							<button class="btn-action" onclick="openModal('new-event')">
+								<i class="fa-solid fa-calendar-week"></i>
+								<span>Crear evento</span>
 							</button>
 							<button class="btn-action" onclick="openModal('new-product')">
 								<i class="fas fa-box-open"></i>
 								<span>Agregar producto</span>
 							</button>
+							<button class="btn-action" onclick="openModal('new-appointment')">
+								<i class="fa-solid fa-file-medical"></i>
+								<span>Nueva cita</span>
+							</button>
 							<button class="btn-action" onclick="openModal('new-pet')">
-								<i class="fas fa-exclamation-triangle"></i>
+								<i class="fa-solid fa-file-circle-exclamation"></i>
 								<span>Registrar emergencia</span>
 							</button>
 						</div>
@@ -573,6 +520,38 @@
 
 				<div class="tab-content" id="account-tab">
 					<div class="settings-card">
+<<<<<<< HEAD
+						<h5>Seguridad de la cuenta</h5>
+
+						<!-- Mensajes de éxito/error -->
+						<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+							<span th:text="${success}"></span>
+							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+						</div>
+						<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+							<span th:text="${error}"></span>
+							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+						</div>
+
+						<form th:action="@{/perfil-veterinario/change-password}" method="post">
+							<div class="mb-3">
+								<label class="form-label">Contraseña actual</label>
+								<input type="password" class="form-control" id="currentPassword" name="currentPassword"
+									placeholder="Ingresa tu contraseña actual" required>
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Nueva contraseña</label>
+								<input type="password" class="form-control" id="newPassword" name="newPassword"
+									placeholder="Ingresa tu nueva contraseña" required>
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Confirmar nueva contraseña</label>
+								<input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+									placeholder="Confirma tu nueva contraseña" required>
+							</div>
+							<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+						</form>
+=======
 					    <h5>Seguridad de la cuenta</h5>
 					    
 					    <!-- Mensajes de éxito/error -->
@@ -602,8 +581,11 @@
 					        </div>
 					        <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
 					    </form>
+>>>>>>> 88841ed3c6f48ef207861e15541afb49cbd5cfe3
 					</div>
 				</div>
+				
+				
 				<div class="tab-content" id="schedule-tab">
 					<div class="settings-card">
 						<h5>Horario de Atención</h5>
@@ -667,6 +649,97 @@
 	<!-- Modales -->
 	<div class="modal-overlay" id="modal-overlay"></div>
 
+	<!-- Modal Crear Evento -->
+	<div class="modal" id="new-event-modal">
+		<form th:action="@{/perfil-veterinario/?/guardar}" method="post">
+			<div class="modal-header">
+				<h3><i class="fa-solid fa-calendar-week"></i>Crear Evento</h3>
+				<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="nombre">Nombre del evento</label>
+						<input type="text" id="nombre" name="nombre" placeholder="Nombre" class="form-control" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="imagen">Imagen del evento</label>
+						<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="fecha">Fecha de Inicio</label>
+						<input type="date" id="fecha" name="fecha" class="form-control" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="fecha">Fecha de finalizaciòn</label>
+						<input type="date" id="fecha" name="fecha" class="form-control" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Descripción del evento</label>
+						<textarea class="form-control" rows="3" name="descripcion"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+				<button type="submit" class="btn btn-primary">Publicar evento</button>
+			</div>
+		</form>
+	</div>
+
+	<!-- Modal Agregar Producto -->
+	<div class="modal" id="new-product-modal">
+	    <form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data">
+	        <div class="modal-header">
+	            <h3><i class="fas fa-box-open"></i> Agregar Producto</h3>
+	            <button type="button" class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+	        </div>
+	        <div class="modal-body">
+	            <div class="row">
+	                <div class="col-md-6 mb-3">
+	                    <label class="form-label" for="nombre">Nombre</label>
+	                    <input type="text" id="nombre" name="nombre" placeholder="Nombre" class="form-control" required>
+	                </div>
+	                <div class="col-md-6 mb-3">
+	                    <label class="form-label" for="precio">Precio</label>
+	                    <input type="number" id="precio" name="precio" step="0.001" min="0" placeholder="0.000"
+	                        class="form-control" required>
+	                </div>
+	                <div class="col-md-6 mb-3">
+	                    <label for="cantidadDisponible" class="form-label">Cantidad</label>
+	                    <input type="number" id="cantidadDisponible" name="cantidadDisponible" class="form-control"
+	                        min="0" required>
+	                    <small class="text-muted">Número de unidades que ingresan al stock</small>
+	                </div>
+	                <div class="col-md-6 mb-3">
+	                    <label for="categoria" class="form-label">Categoría</label>
+	                    <select id="categoria" name="categoria" class="form-select" required>
+	                        <option value="">Seleccionar categoría</option>
+	                        <option value="Alimentos">Alimentos</option>
+	                        <option value="Medicamentos">Medicamentos</option>
+	                        <option value="Juguetes">Juguetes</option>
+	                        <option value="Accesorios">Accesorios</option>
+	                    </select>
+	                </div>
+	            </div>
+	            <div class="mb-3">
+	                <label class="form-label" for="descripcion">Descripción</label>
+	                <textarea id="descripcion" name="descripcion" class="form-control" rows="3" required></textarea>
+	            </div>
+	            <div class="mb-3">
+	                <label class="form-label" for="imagen">Imagen del Producto</label>
+	                <input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
+	                <input type="hidden" name="idveterinaria" th:value="${idVeterinaria}">
+	            </div>
+	        </div>
+	        <div class="modal-footer">
+	            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+	            <button type="submit" class="btn btn-primary">Guardar</button>
+	        </div>
+	    </form>
+	</div>
+
+
 	<!-- Modal Nueva Cita -->
 	<div class="modal" id="new-appointment-modal">
 		<form th:action="@{/perfil-veterinario/cita/guardar}" method="post">
@@ -682,17 +755,20 @@
 						<option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre}"></option>
 					</select>
 				</div>
-
-				<div class="mb-3">
-					<label class="form-label" for="fecha">Fecha</label>
-					<input type="date" id="fecha" name="fecha" class="form-control" required>
+				<div class="row">
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label class="form-label">Fecha</label>
+							<input type="date" class="form-control" name="fecha">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label class="form-label">Hora</label>
+							<input type="time" class="form-control" name="hora">
+						</div>
+					</div>
 				</div>
-
-				<div class="mb-3">
-					<label class="form-label" for="hora">Hora</label>
-					<input type="time" id="hora" name="hora" class="form-control" required>
-				</div>
-
 				<div class="mb-3">
 					<label class="form-label" for="motivo">Motivo</label>
 					<textarea id="motivo" name="motivo" class="form-control" rows="3" required></textarea>
@@ -701,58 +777,6 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
 				<button type="submit" class="btn btn-primary">Agendar cita</button>
-			</div>
-		</form>
-	</div>
-
-	<!-- Modal Agregar Producto -->
-	<div class="modal" id="new-product-modal">
-		<form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data">
-			<div class="modal-header">
-				<h3><i class="fas fa-box-open"></i> Agregar Producto</h3>
-				<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="nombre">Nombre</label>
-						<input type="text" id="nombre" name="nombre" placeholder="Nombre" class="form-control" required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="precio">Precio</label>
-						<input type="number" id="precio" name="precio" step="0.001" min="0" placeholder="0.000"
-							class="form-control" required>
-					</div>
-				</div>
-				<div class="mb-3">
-					<label for="cantidadDisponible" class="form-label">Cantidad</label>
-					<input type="number" id="cantidadDisponible" name="cantidadDisponible" class="form-control"
-						required>
-					<small class="text-muted">Número de unidades que ingresan al stock</small>
-				</div>
-				<div class="mb-3">
-					<label for="categoria" class="form-label">Categoría</label>
-					<select id="categoria" name="categoria" class="form-select">
-						<option value="todas las categorias">Todas las categorías</option>
-						<option value="Alimentos">Alimentos</option>
-						<option value="Medicamentos">Medicamentos</option>
-						<option value="Juguetes">Juguetes</option>
-						<option value="Accesorios">Accesorios</option>
-					</select>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="descripcion">Descripción</label>
-					<textarea id="descripcion" name="descripcion" class="form-control" rows="3"></textarea>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="imagen">Imagen del Producto</label>
-					<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
-					<input type="hidden" name="idveterinaria" th:value="${idVeterinaria}">
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-				<button type="submit" class="btn btn-primary">Guardar</button>
 			</div>
 		</form>
 	</div>
@@ -776,10 +800,6 @@
 								</option>
 							</select>
 						</div>
-						<div class="mb-3">
-							<label class="form-label">Fecha</label>
-							<input type="date" class="form-control" name="fecha">
-						</div>
 					</div>
 					<div class="col-md-6">
 						<div class="mb-3">
@@ -795,8 +815,12 @@
 							</select>
 						</div>
 					</div>
-				</div>
-				<div class="row">
+					<div class="col-md-6">
+						<div class="mb-3">
+							<label class="form-label">Fecha</label>
+							<input type="date" class="form-control" name="fecha">
+						</div>
+					</div>
 					<div class="col-md-6">
 						<div class="mb-3">
 							<label class="form-label">Hora</label>
@@ -807,7 +831,6 @@
 				<div class="mb-3">
 					<label class="form-label">Descripción</label>
 					<textarea class="form-control" rows="3" name="descripcion"></textarea>
-
 				</div>
 				<input type="hidden" name="veterinariaId" th:value="${veterinaria != null ? veterinaria.id : ''}">
 				<input type="hidden" name="veterinarioId" th:value="${veterinario != null ? veterinario.id : ''}">
@@ -885,7 +908,7 @@
 			button.textContent = 'Subiendo...';
 			button.disabled = true;
 
-			fetch('/perfil-veterinario/subir-foto', {
+			fetch('/perfil-veterinario/configuracion/actualizar', {
 				method: 'POST',
 				body: formData
 			})
