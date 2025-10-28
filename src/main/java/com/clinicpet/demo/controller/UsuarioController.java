@@ -5,19 +5,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import java.util.List; // *** AGREGADO: Para List<Mascota> en perfil ***
 import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -67,7 +71,7 @@ public class UsuarioController {
 
 					} else { // Usuario normal
 
-						return "redirect:/usuarios/inicio"; // Corregido: coincide con mapeo /usuarios/inicio
+						return "redirect:/usuarios/inicio"; // coincide con mapeo /usuarios/inicio
 					}
 				}
 			}
@@ -137,23 +141,21 @@ public class UsuarioController {
 		if (usuarioLogueado == null) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
-		Integer idUsuarioActual = usuarioLogueado.getId(); // De sesión (mejor que hardcode)
-		model.addAttribute("idUsuarioActual", idUsuarioActual);
+
+		// ✅ AGREGAR ESTA LÍNEA - Pasar el ID al modelo
+		model.addAttribute("idUsuarioActual", usuarioLogueado.getId());
+
 		model.addAttribute("mascota", new Mascota());
 
-		// *** AGREGADO BÁSICO: Carga lista de mascotas del usuario logueado ***
-		List<Mascota> mascotas = mascotaService.buscarPorUsuario(idUsuarioActual);
-		model.addAttribute("mascotas", mascotas); // Para mostrar en HTML (ej. tabla con th:each)
-		model.addAttribute("tieneMascotas", !mascotas.isEmpty()); // Booleano simple para UI (opcional)
+		// Carga lista de mascotas del usuario logueado
+		List<Mascota> mascotas = mascotaService.buscarPorUsuario(usuarioLogueado.getId());
+		model.addAttribute("mascotas", mascotas);
+		model.addAttribute("tieneMascotas", !mascotas.isEmpty());
 
-		// *** AGREGADO: Log debug básico (confirma carga)
-		System.out.println("DEBUG CONTROLLER: Cargando perfil para usuario ID=" + idUsuarioActual
-				+ ", Mascotas encontradas: " + mascotas.size());
-
-		// *** AGREGADO: Para HTML (saludo, foto usuario, etc.)
+		// Para HTML (saludo, foto usuario, etc.)
 		model.addAttribute("usuarioLogueado", usuarioLogueado);
 
-		return "Usuario/perfilusuario"; // templates/perfilusuario.html
+		return "Usuario/perfilusuario";
 	}
 
 	@GetMapping("/perfilusuario/mascota/{id}")
@@ -175,12 +177,13 @@ public class UsuarioController {
 
 		Mascota mascota = mascotaOpt.get();
 
+		// ✅ Verificar que la mascota pertenece al usuario
 		if (!mascota.getUsuario().getId().equals(usuarioLogueado.getId())) {
 			LOGGER.warn("❌ Usuario {} intentó acceder a mascota {} que no le pertenece", usuarioLogueado.getId(), id);
 			return ResponseEntity.status(403).build();
 		}
 
-		LOGGER.info("✅ Mascota encontrada: {}", mascota.getNombre());
+		LOGGER.info("✅ Mascota encontrada: {} - Unidad Edad: {}", mascota.getNombre(), mascota.getUnidadEdad());
 		return ResponseEntity.ok(mascota);
 	}
 
@@ -235,24 +238,6 @@ public class UsuarioController {
 		}
 
 		return "redirect:/usuarios/perfilusuario";
-	}
-
-	// Corrección completa: Eliminar mascota (integra verificación con buscarPorId)
-	@PostMapping("/perfilusuario/eliminarMascota")
-	@ResponseBody
-	public ResponseEntity<?> eliminarMascota(@RequestParam Integer id) { // Cambiado a Integer
-		try {
-			// Corrección de línea 1: Usar nombre correcto y verificar existencia primero
-			Optional<Mascota> mascotaOpcional = mascotaService.buscarMascotaPorId(id);
-			if (mascotaOpcional.isEmpty()) {
-				return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Mascota no encontrada"));
-			}
-
-			mascotaService.eliminarMascota(id); // Nombre correcto: eliminarMascota(Integer id)
-			return ResponseEntity.ok(Map.of("success", true, "message", "Mascota eliminada correctamente"));
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError().body(Map.of("success", false, "message", e.getMessage()));
-		}
 	}
 
 	@PostMapping("/perfilusuario/actualizarMascota")
@@ -317,6 +302,101 @@ public class UsuarioController {
 		}
 
 		return "redirect:/usuarios/perfilusuario";
+	}
+
+	@DeleteMapping("/perfilusuario/eliminarmascota/{id}")
+	public ResponseEntity<String> eliminarMascota(@PathVariable Integer id, HttpSession session) {
+		try {
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+			}
+			mascotaService.eliminarMascota(id);
+			return ResponseEntity.ok("Mascota eliminada exitosamente");
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+		}
+	}
+
+	// Endpoint para actualizar foto de perfil
+	@PostMapping("/perfilusuario/actualizarFotoPerfil")
+	@ResponseBody
+	public ResponseEntity<?> actualizarFotoPerfil(@RequestBody Map<String, String> request) {
+		try {
+			String fotoBase64 = request.get("fotoPerfil");
+			Long usuarioId = Long.parseLong(request.get("usuarioId"));
+
+			// Validar y procesar la imagen
+			if (fotoBase64 != null && !fotoBase64.isEmpty()) {
+				// Decodificar Base64 y guardar la imagen
+				String rutaFoto = guardarImagenDesdeBase64(fotoBase64, usuarioId);
+
+				// Actualizar en la base de datos
+				usuarioService.actualizarFotoPerfil(usuarioId, rutaFoto);
+
+				return ResponseEntity.ok().body(Map.of("mensaje", "Foto actualizada correctamente"));
+			}
+
+			return ResponseEntity.badRequest().body(Map.of("error", "Datos de imagen inválidos"));
+
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError()
+					.body(Map.of("error", "Error al actualizar la foto: " + e.getMessage()));
+		}
+	}
+
+	// Endpoint para eliminar foto de perfil
+	@PostMapping("/perfilusuario/eliminarFotoPerfil")
+	@ResponseBody
+	public ResponseEntity<?> eliminarFotoPerfil(@RequestBody Map<String, String> request) {
+		try {
+			Long usuarioId = Long.parseLong(request.get("usuarioId"));
+
+			// Eliminar foto y establecer por defecto
+			usuarioService.eliminarFotoPerfil(usuarioId);
+
+			return ResponseEntity.ok().body(Map.of("mensaje", "Foto eliminada correctamente"));
+
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError()
+					.body(Map.of("error", "Error al eliminar la foto: " + e.getMessage()));
+		}
+	}
+
+	// Método auxiliar para guardar imágenes
+	private String guardarImagenDesdeBase64(String base64Image, Long usuarioId) {
+		try {
+			// Eliminar el prefijo data:image/...;base64,
+			String[] parts = base64Image.split(",");
+			String imageString = parts[1];
+
+			// Decodificar Base64
+			byte[] imageBytes = Base64.getDecoder().decode(imageString);
+
+			// Validar tamaño (2MB máximo)
+			if (imageBytes.length > 2 * 1024 * 1024) {
+				throw new RuntimeException("La imagen excede el tamaño máximo permitido de 2MB");
+			}
+
+			// Crear directorio si no existe
+			String uploadDir = "uploads/profiles/";
+			Path uploadPath = Paths.get(uploadDir);
+			if (!Files.exists(uploadPath)) {
+				Files.createDirectories(uploadPath);
+			}
+
+			// Generar nombre único
+			String fileName = "profile_" + usuarioId + "_" + System.currentTimeMillis() + ".webp";
+			Path filePath = uploadPath.resolve(fileName);
+
+			// Guardar archivo
+			Files.write(filePath, imageBytes);
+
+			return "/" + uploadDir + fileName;
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error al guardar la imagen: " + e.getMessage(), e);
+		}
 	}
 
 //redireccion al cerrar sesion

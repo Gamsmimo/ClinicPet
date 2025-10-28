@@ -520,6 +520,7 @@
 
 				<div class="tab-content" id="account-tab">
 					<div class="settings-card">
+<<<<<<< HEAD
 						<h5>Seguridad de la cuenta</h5>
 
 						<!-- Mensajes de éxito/error -->
@@ -550,6 +551,37 @@
 							</div>
 							<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
 						</form>
+=======
+					    <h5>Seguridad de la cuenta</h5>
+					    
+					    <!-- Mensajes de éxito/error -->
+					    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+					        <span th:text="${success}"></span>
+					        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+					    </div>
+					    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+					        <span th:text="${error}"></span>
+					        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+					    </div>
+					    <form th:action="@{/perfil-veterinario/change-password}" method="post">
+							 <div class="mb-3">
+					            <label class="form-label">Contraseña actual</label>
+					            <input type="password" class="form-control" id="currentPassword" name="currentPassword" 
+					                   placeholder="Ingresa tu contraseña actual" required>
+					        </div>
+					        <div class="mb-3">
+					            <label class="form-label">Nueva contraseña</label>
+					            <input type="password" class="form-control" id="newPassword" name="newPassword" 
+					                   placeholder="Ingresa tu nueva contraseña" required>
+					        </div>
+					        <div class="mb-3">
+					            <label class="form-label">Confirmar nueva contraseña</label>
+					            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+					                   placeholder="Confirma tu nueva contraseña" required>
+					        </div>
+					        <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+					    </form>
+>>>>>>> 88841ed3c6f48ef207861e15541afb49cbd5cfe3
 					</div>
 				</div>
 				

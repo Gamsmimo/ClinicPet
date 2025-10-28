@@ -60,20 +60,11 @@
 					</button>
 				</div>
 			</header>
-<<<<<<< HEAD
-			<main>
-				<!-- GESTIÓN VETERINARIA -->
-				<H1>CLINICAS VETERINARIAS</H1>
-				<div class="toolbar">
-					<input id="userSearch" placeholder="Buscar por nombre/correo" />
-					<button class="btn" id="btnNuevaVeterinaria">Nueva veterinaria</button>
-				</div>
-=======
+
 
 			<main>
 				<H1>CLINICAS VETERINARIAS</H1>
 				<!-- GESTIÓN VETERINARIA -->
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 				<section id="veterinaria" class="view">
 					<!-- Veterinarias activas -->
 					<div class="card">
@@ -104,58 +95,21 @@
 												style="display:inline">
 												<button type="submit" class="btn warn">Desactivar</button>
 											</form>
-<<<<<<< HEAD
-=======
+
 											<form th:action="@{'/admin/editar/' + ${v.id}}" method="post"
 												style="display:inline">
 												<button type="submit" class="btn warn">Editar</button>
 											</form>
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 										</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 					</div>
-<<<<<<< HEAD
-					<!--------Formulario para crear nueva veterinaria------>
-					<form th:action="@{/admin/guardarVeterinaria}" th:object="${veterinaria}" method="post"
-						style="display:none" id="formEditar">
-						<label>Nombre:</label>
-						<input type="text" th:field="*{nombre}" required>
 
-						<label>Dirección:</label>
-						<input type="text" th:field="*{direccion}" required>
-
-						<label>Teléfono:</label>
-						<input type="text" th:field="*{telefono}" required>
-
-						<label>Correo:</label>
-						<input type="email" th:field="*{correo}" required>
-
-						<label>Horario:</label>
-						<input type="text" th:field="*{horario}" required>
-
-						<label>Descripción:</label>
-						<input type="text" th:field="*{descripcion}">
-
-						<label>Rut:</label>
-						<input type="text" th:field="*{rut}" required>
-
-						<button type="submit" class="btn success">Guardar</button>
-						<button type="button" id="btnCancelEdit">Cancelar</button>
-					</form>
-
-
-
-
-					<!-- Veterinarias pendientes -->
-					<!--<div class="card" style="margin-top:16px">
-=======
 
 					<!-- Veterinarias pendientes -->
 					<div class="card" style="margin-top:16px">
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 						<div class="content">
 							<h3>Solicitudes de registro (pendientes)</h3>
 							<table>
@@ -192,11 +146,8 @@
 								</tbody>
 							</table>
 						</div>
-<<<<<<< HEAD
-					</div>-->
-=======
+
 					</div>
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 					<!-- Veterinarias desactivadas -->
 					<div class="card" style="margin-top:16px">
 						<div class="content">
@@ -249,10 +200,8 @@
 											<th>Apellido</th>
 											<th>Cédula</th>
 											<th>Email</th>
-<<<<<<< HEAD
-=======
+
 											<!--------<th>Password</th>--->
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 											<th>Username</th>
 											<th>Especialidad</th>
 											<th>Tarjeta profesional</th>
@@ -263,16 +212,11 @@
 									<tbody>
 										<tr th:each="veterinario : ${veterinariosAprobados}">
 											<td th:text="${veterinario.usuario.nombre}"></td>
-<<<<<<< HEAD
-											<td th:text="${veterinario.usuario.apellidos}"></td>
-											<td th:text="${veterinario.usuario.numDocument}"></td>
-											<td th:text="${veterinario.usuario.email}"></td>
-=======
+
 											<td th:text="${veterinario.usuario.apellido}"></td>
 											<td th:text="${veterinario.usuario.cedula}"></td>
 											<td th:text="${veterinario.usuario.email}"></td>
 											<!------<td th:text="${v.password}"></td>----->
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 											<td th:text="${veterinario.usuario.username}"></td>
 											<td th:text="${veterinario.especialidad}"></td>
 											<td th:text="${veterinario.tarjetaProfesional}"></td>
@@ -294,28 +238,10 @@
 							</div>
 						</div>
 						<!-- Veterinarios pendientes -->
-<<<<<<< HEAD
-						<!--<div class="card" style="margin-top:16px">
-=======
-						<div class="card" style="margin-top:16px">
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
-							<div class="content">
-								<h3>Solicitudes de registro (pendientes)</h3>
-								<table>
-									<thead>
-										<tr>
-											<th>Nombre</th>
-											<th>Apellido</th>
-											<th>Cédula</th>
-<<<<<<< HEAD
-											<th>Email</th>----->
-						<!--------<th>Password</th>--->
-						<!-- <th>Username</th>
-=======
+
 											<th>Email</th>
 											<!--------<th>Password</th>--->
 											<th>Username</th>
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 											<th>Especialidad</th>
 											<th>Tarjeta profesional</th>
 											<th>Teléfono</th>
@@ -327,15 +253,10 @@
 											<td th:text="${veterinario.usuario.nombre}"></td>
 											<td th:text="${veterinario.usuario.apellido}"></td>
 											<td th:text="${veterinario.usuario.cedula}"></td>
-<<<<<<< HEAD
-											<td th:text="${veterinario.usuario.email}"></td>----->
-						<!------<td th:text="${v.password}"></td>----->
-						<!-- <td th:text="${veterinario.usuario.username}"></td>
-=======
+
 											<td th:text="${veterinario.usuario.email}"></td>
 											<!------<td th:text="${v.password}"></td>----->
 											<td th:text="${veterinario.usuario.username}"></td>
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 											<td th:text="${veterinario.especialidad}"></td>
 											<td th:text="${veterinario.tarjetaProfesional}"></td>
 											<td th:text="${veterinario.telefono}"></td>
@@ -355,11 +276,8 @@
 									</tbody>
 								</table>
 							</div>
-<<<<<<< HEAD
-						</div> -->
-=======
+
 						</div>
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 						<!-- Veterinarios desactivados -->
 						<div class="card" style="margin-top:16px">
 							<div class="content">
@@ -371,10 +289,8 @@
 											<th>Apellido</th>
 											<th>Cédula</th>
 											<th>Email</th>
-<<<<<<< HEAD
-=======
+
 											<!--------<th>Password</th>--->
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 											<th>Username</th>
 											<th>Especialidad</th>
 											<th>Tarjeta profesional</th>
@@ -388,10 +304,8 @@
 											<td th:text="${veterinario.usuario.apellido}"></td>
 											<td th:text="${veterinario.usuario.cedula}"></td>
 											<td th:text="${veterinario.usuario.email}"></td>
-<<<<<<< HEAD
-=======
+
 											<!------<td th:text="${v.password}"></td>----->
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 											<td th:text="${veterinario.usuario.username}"></td>
 											<td th:text="${veterinario.especialidad}"></td>
 											<td th:text="${veterinario.tarjetaProfesional}"></td>
@@ -407,8 +321,7 @@
 								</table>
 							</div>
 						</div>
-<<<<<<< HEAD
-=======
+
 
 						<!-------COMENTARIOS-->
 						<h1 style="margin-top:12px">Calificaciones y comentarios a validar</h1>
@@ -424,7 +337,6 @@
 							</thead>
 							<tbody></tbody>
 						</table>
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 	</div>
 	</section>
 
@@ -437,23 +349,9 @@
 	</section>
 	</main>
 	</div>
-<<<<<<< HEAD
-	<script>
-		//Abrir formularios
-		document.getElementById("btnNuevaVeterinaria").addEventListener("click", () => {
-			document.getElementById("formEditar").style.display = "block";
-		});
 
-		//Cerrar formularios 
-		document.getElementById("btnCancelEdit").addEventListener("click", () => {
-			document.getElementById("formEditar").style.display = "none";
-		});
-
-	</script>
-=======
 
 	<script src="scrip.js" defer></script>
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
 </body>
 
 </html>

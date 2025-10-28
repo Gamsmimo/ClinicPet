@@ -13,11 +13,12 @@ public interface IMascotaService {
 
 	Optional<Mascota> buscarMascotaPorId(Integer id);
 
-	void eliminarMascota(Integer id);
-
 	Mascota actualizarMascota(Mascota mascota); // Este se implementa ahora
 
 	List<Mascota> buscarPorUsuario(Integer usuarioId);
 
 	List<Mascota> buscarPorEspecie(String especie);
+
+	void eliminarMascota(Integer id);
+
 }

@@ -74,6 +74,11 @@ public class PerfilAdminServiceImplement implements IPerfilAdminService {
 	}
 
 	@Override
+	public Optional<PerfilAdmin> buscarPorUsuarioId(Integer usuarioId) {
+		return perfilAdminRepository.findByUsuarioId(usuarioId);
+	}
+
+	@Override
 	public long contarMascotasRegistradas() {
 		return 300L;
 	}

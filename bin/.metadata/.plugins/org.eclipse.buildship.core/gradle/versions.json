@@ -1,6 +1,5 @@
 [ {
-<<<<<<< HEAD
-<<<<<<< HEAD
+
   "version" : "9.2.0-20250922130024+0000",
   "buildTime" : "20250922130024+0000",
   "commitId" : "704699ade7411d5757646db852c5c1b1c29e8961",
@@ -69,10 +68,7 @@
   "wrapperChecksumUrl" : "https://services.gradle.org/distributions/gradle-9.2.0-milestone-2-wrapper.jar.sha256",
   "wrapperChecksum" : "423cb469ccc0ecc31f0e4e1c309976198ccb734cdcbb7029d4bda0f18f57e8d9"
 }, {
-=======
->>>>>>> d3ed7d2d17b8d78ad74cfde5b9542d0e8cd839ac
-=======
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
+
   "version" : "9.2.0-milestone-1",
   "buildTime" : "20250916093851+0000",
   "commitId" : "fdecc3c95828bb9a1c1bb6114483fe5b16f9159d",
@@ -90,11 +86,8 @@
   "wrapperChecksumUrl" : "https://services.gradle.org/distributions/gradle-9.2.0-milestone-1-wrapper.jar.sha256",
   "wrapperChecksum" : "423cb469ccc0ecc31f0e4e1c309976198ccb734cdcbb7029d4bda0f18f57e8d9"
 }, {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
+
+
   "version" : "9.1.0-20250916022252+0000",
   "buildTime" : "20250916022252+0000",
   "commitId" : "e45a8dbf2470c2e2474ccc25be9f49331406a07e",
@@ -129,10 +122,7 @@
   "wrapperChecksumUrl" : "https://services.gradle.org/distributions-snapshots/gradle-9.2.0-20250916005259+0000-wrapper.jar.sha256",
   "wrapperChecksum" : "423cb469ccc0ecc31f0e4e1c309976198ccb734cdcbb7029d4bda0f18f57e8d9"
 }, {
-<<<<<<< HEAD
->>>>>>> d3ed7d2d17b8d78ad74cfde5b9542d0e8cd839ac
-=======
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
+
   "version" : "9.1.0-rc-4",
   "buildTime" : "20250915153701+0000",
   "commitId" : "769a0dee8eb81a087a64b7286b5e0ef3ca945723",
@@ -140,15 +130,10 @@
   "snapshot" : false,
   "nightly" : false,
   "releaseNightly" : false,
-<<<<<<< HEAD
-<<<<<<< HEAD
-  "activeRc" : false,
-=======
+
   "activeRc" : true,
->>>>>>> d3ed7d2d17b8d78ad74cfde5b9542d0e8cd839ac
-=======
-  "activeRc" : true,
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
+
+
   "rcFor" : "9.1.0",
   "milestoneFor" : "",
   "broken" : false,
@@ -212,15 +197,9 @@
   "version" : "9.0.0",
   "buildTime" : "20250731163512+0000",
   "commitId" : "328772c6bae126949610a8beb59cb227ee580241",
-<<<<<<< HEAD
-<<<<<<< HEAD
-  "current" : false,
-=======
+
+
   "current" : true,
->>>>>>> d3ed7d2d17b8d78ad74cfde5b9542d0e8cd839ac
-=======
-  "current" : true,
->>>>>>> 21ec2e8465c2f8d5e6595cb364bf21309a264dc8
   "snapshot" : false,
   "nightly" : false,
   "releaseNightly" : false,

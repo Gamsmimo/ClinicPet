@@ -10,12 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.clinicpet.demo.model.Mascota;
 import com.clinicpet.demo.repository.IMascotaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class MascotaServiceImplement implements IMascotaService {
 
 	@Autowired
 	private IMascotaRepository mascotaRepository;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(MascotaServiceImplement.class);
 
 	@Override
 	@Transactional
@@ -67,13 +71,21 @@ public class MascotaServiceImplement implements IMascotaService {
 			System.out.println("SERVICE: Manteniendo foto actual: " + toUpdate.getFoto());
 		}
 
+		if (mascota.getUnidadEdad() != null && !mascota.getUnidadEdad().trim().isEmpty()) {
+			toUpdate.setUnidadEdad(mascota.getUnidadEdad().trim());
+			System.out.println("SERVICE: Actualizando unidad edad a: " + mascota.getUnidadEdad());
+		} else {
+			System.out.println("SERVICE: Manteniendo unidad edad actual: " + toUpdate.getUnidadEdad());
+		}
+
 		// ✅ NO tocar el usuario, ya está asociado en toUpdate
 		System.out.println("SERVICE: Usuario asociado ID: " + toUpdate.getUsuario().getId());
 
 		// Guardar
 		Mascota updated = mascotaRepository.save(toUpdate);
-		System.out.println("=== SERVICE: Mascota actualizada exitosamente ID=" + updated.getId() + " ===");
-
+		System.out.println("=== SERVICE: Mascota actualizada exitosamente ===");
+		System.out.println("ID: " + updated.getId());
+		System.out.println("Edad final: " + updated.getEdad() + " " + updated.getUnidadEdad());
 		return updated;
 	}
 
@@ -93,15 +105,6 @@ public class MascotaServiceImplement implements IMascotaService {
 	}
 
 	@Override
-	public void eliminarMascota(Integer id) {
-		if (id != null && mascotaRepository.existsById(id)) {
-			mascotaRepository.deleteById(id);
-		} else {
-			throw new RuntimeException("Mascota no encontrada o ID inválido para eliminar");
-		}
-	}
-
-	@Override
 	public List<Mascota> buscarPorUsuario(Integer usuarioId) {
 		List<Mascota> mascotas = mascotaRepository.findByUsuario_Id(usuarioId);
 		return mascotas != null ? mascotas : new ArrayList<>();
@@ -114,6 +117,21 @@ public class MascotaServiceImplement implements IMascotaService {
 		}
 		List<Mascota> mascotas = mascotaRepository.findByEspecie(especie.trim());
 		return mascotas != null ? mascotas : new ArrayList<>();
+	}
+
+	@Override
+	@Transactional
+	public void eliminarMascota(Integer id) {
+		LOGGER.info("Intentando eliminar mascota con ID: {}", id);
+
+		if (mascotaRepository.existsById(id)) {
+			// Usar eliminación nativa
+			mascotaRepository.eliminarMascotaPorId(id);
+			LOGGER.info("Mascota eliminada exitosamente con ID: {}", id);
+		} else {
+			LOGGER.warn("No se encontró mascota con ID: {} para eliminar", id);
+			throw new RuntimeException("Mascota no encontrada con ID: " + id);
+		}
 	}
 
 }

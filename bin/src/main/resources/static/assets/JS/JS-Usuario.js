@@ -1050,6 +1050,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 // Función para eliminar mascota con confirmación
 function eliminarMascota(mascotaId) {
 	if (confirm('¿Estás seguro que deseas eliminar esta mascota? Esta acción es irreversible.')) {

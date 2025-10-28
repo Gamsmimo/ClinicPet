@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,8 +27,12 @@ public class PerfilAdmin {
 
 	// Relación con Rol
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "idRol")
-    private Rol rol;
+	@JoinColumn(name = "idRol")
+	private Rol rol;
+
+	@OneToOne
+	@JoinColumn(name = "usuario_id")
+	private Usuario usuario;
 
 	// Constructor vacío
 	public PerfilAdmin() {
@@ -117,6 +122,14 @@ public class PerfilAdmin {
 
 	public void setRol(Rol rol) {
 		this.rol = rol;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	@Override

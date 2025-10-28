@@ -403,4 +403,75 @@ main {
 .custom-logout-link i {
 	font-size: 20px;
 	/* Tamaño personalizado del icono */
+<<<<<<< HEAD
+}
+
+
+/* Estilos para la sección de foto de perfil */
+.profile-picture-section {
+	border-bottom: 1px solid #e9ecef;
+	padding-bottom: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+#current-profile-picture {
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#current-profile-picture:hover {
+	transform: scale(1.05);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+#picture-preview {
+	transition: all 0.3s ease;
+}
+
+#new-picture-preview {
+	background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-green));
+	border-radius: 10px;
+	padding: 15px;
+	margin-top: 10px;
+}
+
+/* Botones de acción para fotos */
+.btn-profile-picture {
+	border-radius: 20px;
+	font-size: 0.875rem;
+	padding: 0.375rem 0.75rem;
+}
+
+/* Indicador de carga */
+.loading-spinner {
+	display: inline-block;
+	width: 1rem;
+	height: 1rem;
+	border: 2px solid #ffffff;
+	border-radius: 50%;
+	border-top-color: transparent;
+	animation: spin 1s linear infinite;
+	margin-right: 0.5rem;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Mensajes de validación */
+.file-validation-message {
+	font-size: 0.75rem;
+	margin-top: 0.25rem;
+}
+
+.file-validation-message.valid {
+	color: var(--secondary-color);
+}
+
+.file-validation-message.invalid {
+	color: var(--accent-color);
+=======
+>>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
 }

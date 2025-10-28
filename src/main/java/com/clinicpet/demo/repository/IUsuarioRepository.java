@@ -52,6 +52,8 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 	// mascotas)
 	List<Usuario> findByMascotasIsNotEmpty();
 
+	Optional<Usuario> findByCorreoAndPassword(String correo, String password);
+
 	// Otros métodos estándar de JpaRepository (ya disponibles: findAll, save,
 	// deleteById, etc.)
 }

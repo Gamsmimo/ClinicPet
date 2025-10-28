@@ -1,6 +1,7 @@
 package com.clinicpet.demo.service;
 
 import com.clinicpet.demo.model.Usuario;
+
 import com.clinicpet.demo.repository.IReporteDeMaltratoRepository;
 import com.clinicpet.demo.model.Rol;
 import com.clinicpet.demo.repository.IUsuarioRepository;
@@ -104,7 +105,8 @@ public class UsuarioServiceImplement implements IUsuarioService {
 				throw new RuntimeException("Correo ya existe en otro usuario");
 			}
 
-			usuario.setImagen(usuarioActualizado.getImagen() != null ? usuarioActualizado.getImagen() : usuario.getImagen());
+			usuario.setImagen(
+					usuarioActualizado.getImagen() != null ? usuarioActualizado.getImagen() : usuario.getImagen());
 
 			usuario.setCorreo(usuarioActualizado.getCorreo().trim());
 			usuario.setNombres(usuarioActualizado.getNombres() != null ? usuarioActualizado.getNombres().trim()
@@ -307,6 +309,8 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	}
 
 	@Override
+
+	@Transactional
 	public void actualizarPassword(Integer usuarioId, String nuevaPassword) {
 		try {
 			Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
@@ -323,4 +327,17 @@ public class UsuarioServiceImplement implements IUsuarioService {
 			throw e;
 		}
 	}
+
+	@Override
+	public void eliminarFotoPerfil(Long usuarioId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void actualizarFotoPerfil(Long usuarioId, String rutaFoto) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

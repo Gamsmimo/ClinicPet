@@ -12,7 +12,6 @@ public interface IUsuarioService {
 
 	List<Usuario> listarTodosUsuarios();
 
-
 	Optional<Usuario> buscarUsuarioPorId(Integer id);
 
 	Optional<Usuario> buscarUsuarioPorNombres(String nombres);
@@ -55,5 +54,9 @@ public interface IUsuarioService {
 	void save(Usuario usuario);
 
 	void actualizarPassword(Integer usuarioId, String nuevaPassword);
+
+	void eliminarFotoPerfil(Long usuarioId);
+
+	void actualizarFotoPerfil(Long usuarioId, String rutaFoto);
 
 }
