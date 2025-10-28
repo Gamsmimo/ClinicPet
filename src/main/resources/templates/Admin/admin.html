@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ClinicPet - Panel Administrador</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+	<link rel="stylesheet" th:href="@{/assets/CSS/CSS-Admin.css}">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+	<!-- Header -->
+	<header class="header">
+		<div class="logo-container">
+			<img th:src="@{/assets/IMG/logo.png}" alt="Logo ClinicPet" class="logo-img">
+			<div class="logo-text">
+				<h1>ClinicPet</h1>
+				<span>Panel Administrador</span>
+			</div>
+		</div>
+		<div class="user-controls">
+			<!-- Botón de cambio de tema -->
+			<button id="themeToggle" class="theme-toggle-btn" aria-label="Cambiar tema">
+				<i class="bi bi-moon-fill theme-icon"></i>
+			</button>
+			<div class="user-profile">
+				<img th:src="${admin.imagen}" alt="imagen de perfil" class="profile-pic" id="headerProfilePic">
+				<span th:text="${admin.nombres + ' ' + admin.apellidos}">Administrador</span>
+				<button id="editProfileBtn" class="btn-edit">Editar</button>
+			</div>
+		</div>
+	</header>
+
+	<!-- Contenido principal -->
+	<main class="main-container">
+		<!-- Sidebar -->
+		<nav class="sidebar">
+			<ul class="nav-menu">
+				<li><a href="#" class="nav-link active" data-section="dashboard">Dashboard</a></li>
+				<li><a href="#" class="nav-link" data-section="users">Gestión de Usuarios</a></li>
+				<li><a href="#" class="nav-link" data-section="pets">Gestión de Mascotas</a></li>
+				<li><a href="#" class="nav-link" data-section="vets">Gestión Veterinaria</a></li>
+				<li><a href="#" class="nav-link" data-section="profile">Perfil Administrador</a></li>
+			</ul>
+		</nav>
+
+		<!-- Contenido -->
+		<div class="content-area">
+			<!-- Mensajes -->
+			<div th:if="${mensaje}" class="alert alert-success">
+				<span th:text="${mensaje}"></span>
+			</div>
+			<div th:if="${error}" class="alert alert-error">
+				<span th:text="${error}"></span>
+			</div>
+
+			<!-- Dashboard -->
+			<section id="dashboard" class="content-section active">
+				<h2>Dashboard</h2>
+				<div class="dashboard-cards">
+					<div class="card">
+						<h3>Usuarios Activos</h3>
+						<p class="stat-number" th:text="${totalUsuarios}">0</p>
+					</div>
+					<div class="card">
+						<h3>Mascotas Registradas</h3>
+						<p class="stat-number" th:text="${totalMascotas}">0</p>
+					</div>
+					<div class="card">
+						<h3>Veterinarias Activas</h3>
+						<p class="stat-number" th:text="${totalVeterinarias}">0</p>
+					</div>
+					<div class="card">
+						<h3>Reportes Pendientes</h3>
+						<p class="stat-number" th:text="${totalReportes}">0</p>
+					</div>
+				</div>
+			</section>
+
+			<!-- Gestión de Usuarios -->
+			<section id="users" class="content-section">
+				<h2>Gestión de Usuarios</h2>
+				<div class="section-actions">
+					<button class="btn-primary" onclick="abrirModal('vetModal')">Registrar Veterinario</button>
+					<button class="btn-primary" onclick="abrirModal('clinicModal')">Registrar Veterinaria</button>
+				</div>
+
+				<table class="data-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Nombre</th>
+							<th>Email</th>
+							<th>Rol</th>
+							<th>Estado</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody id="tablaUsuarios">
+						<tr th:each="usuario : ${usuarios}">
+							<td th:text="${usuario.id}">1</td>
+							<td th:text="${usuario.nombres + ' ' + usuario.apellidos}">Nombre</td>
+							<td th:text="${usuario.correo}">Email</td>
+							<td>
+								<span th:if="${usuario.rol != null}" th:text="${usuario.rol?.nombre}">Rol</span>
+								<span th:unless="${usuario.rol != null}">Sin rol</span>
+							</td>
+							<td>
+								<span th:if="${usuario.activo}" class="status active">Activo</span>
+								<span th:unless="${usuario.activo}" class="status inactive">Inactivo</span>
+							</td>
+							<td>
+								<button class="btn-action" onclick="verDetallesUsuario([[$usuario.id]])">Ver</button>
+								<button th:if="${usuario.activo}" class="btn-action btn-inactivate"
+									onclick="cambiarEstadoUsuario([[$usuario.id]], false)">Inactivar</button>
+								<button th:unless="${usuario.activo}" class="btn-action btn-activate"
+									onclick="cambiarEstadoUsuario([[$usuario.id]], true)">Activar</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+
+			<!-- Gestión Veterinaria -->
+			<section id="vets" class="content-section">
+				<h2>Gestión Veterinaria</h2>
+				<table class="data-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Nombre</th>
+							<th>Tipo</th>
+							<th>Contacto</th>
+							<th>Estado</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Veterinarios -->
+						<tr th:each="veterinario : ${veterinarios}">
+							<td th:text="${veterinario.id}">1</td>
+							<td th:text="${veterinario.usuario?.nombres + ' ' + veterinario.usuario?.apellidos}">
+								Veterinario
+							</td>
+							<td>Veterinario</td>
+							<td th:text="${veterinario.usuario?.telefono}">Teléfono</td>
+							<td>
+								<span th:if="${veterinario.estado}" class="status active">Activo</span>
+								<span th:unless="${veterinario.estado}" class="status inactive">Inactivo</span>
+							</td>
+							<td>
+								<button class="btn-action"
+									onclick="verDetallesVeterinario([[$veterinario.id]])">Ver</button>
+							</td>
+						</tr>
+						<!-- Veterinarias -->
+						<tr th:each="veterinaria : ${veterinarias}">
+							<td th:text="${veterinaria.id}">1</td>
+							<td th:text="${veterinaria.nombre}">Veterinaria</td>
+							<td>Veterinaria</td>
+							<td th:text="${veterinaria.telefono}">Teléfono</td>
+							<td>
+								<span th:if="${veterinaria.estado == 'Activa'}" class="status active">Activa</span>
+								<span th:unless="${veterinaria.estado == 'Activa'}"
+									class="status inactive">Inactiva</span>
+							</td>
+							<td>
+								<button class="btn-action"
+									onclick="verDetallesVeterinaria([[$veterinaria.id]])">Ver</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+
+			<!-- Perfil Administrador -->
+			<section id="profile" class="content-section">
+				<h2>Perfil Administrador</h2>
+				<div class="profile-container">
+					<div class="profile-header">
+						<div class="profile-image-section">
+							<img th:src="${admin.imagen}" alt="imagen de perfil" class="profile-large"
+								id="adminProfilePic">
+							<button class="btn-action" onclick="document.getElementById('photoInput').click()">Cambiar
+								imagen</button>
+							<input type="file" id="photoInput" accept="image/*" style="display: none;"
+								onchange="cambiarFotoPerfil(this)">
+						</div>
+						<div class="profile-info">
+							<h3>Información Personal</h3>
+							<div class="info-grid">
+								<div class="info-item">
+									<label>Nombre:</label>
+									<span th:text="${admin.nombres}">Administrador</span>
+								</div>
+								<div class="info-item">
+									<label>Apellidos:</label>
+									<span th:text="${admin.apellidos}">Principal</span>
+								</div>
+								<div class="info-item">
+									<label>Email:</label>
+									<span th:text="${admin.correo}">admin@clinicpet.com</span>
+								</div>
+								<div class="info-item">
+									<label>Teléfono:</label>
+									<span th:text="${admin.telefono}">+57 300 123 4567</span>
+								</div>
+								<div class="info-item">
+									<label>Cédula:</label>
+									<span th:text="${admin.cedula}">123456789</span>
+								</div>
+							</div>
+							<button class="btn-primary" onclick="abrirModal('profileModal')">Editar Información</button>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</main>
+
+	<!-- Modal Editar Perfil -->
+	<div id="profileModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="cerrarModal('profileModal')">&times;</span>
+			<h2>Editar Perfil</h2>
+			<form id="profileForm" th:action="@{/admin/perfil/editar}" method="post">
+				<div class="form-group">
+					<label for="profileName">Nombres:</label>
+					<input type="text" id="profileName" name="nombres" th:value="${admin.nombres}" required>
+				</div>
+				<div class="form-group">
+					<label for="profileApellidos">Apellidos:</label>
+					<input type="text" id="profileApellidos" name="apellidos" th:value="${admin.apellidos}" required>
+				</div>
+				<div class="form-group">
+					<label for="profileEmail">Email:</label>
+					<input type="email" id="profileEmail" name="correo" th:value="${admin.correo}" required>
+				</div>
+				<div class="form-group">
+					<label for="profilePhone">Teléfono:</label>
+					<input type="tel" id="profilePhone" name="telefono" th:value="${admin.telefono}" required>
+				</div>
+				<button type="submit" class="btn-primary">Guardar Cambios</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- Modal Registrar Veterinario -->
+	<div id="vetModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="cerrarModal('vetModal')">&times;</span>
+			<h2>Registrar Nuevo Veterinario</h2>
+			<form id="vetForm" th:action="@{/admin/veterinarios/registrar}" method="post">
+				<div class="form-group">
+					<label for="vetNombres">Nombres:</label>
+					<input type="text" id="vetNombres" name="nombres" required>
+				</div>
+				<div class="form-group">
+					<label for="vetApellidos">Apellidos:</label>
+					<input type="text" id="vetApellidos" name="apellidos" required>
+				</div>
+				<div class="form-group">
+					<label for="vetEdad">Edad:</label>
+					<input type="number" id="vetEdad" name="edad" required min="18" max="100">
+				</div>
+				<div class="form-group">
+					<label for="vetTipoDocumento">Tipo Documento:</label>
+					<select id="vetTipoDocumento" name="tipoDocumento" required>
+						<option value="CC">Cédula de Ciudadanía</option>
+						<option value="CE">Cédula de Extranjería</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="vetNumDocumento">Número de Documento:</label>
+					<input type="text" id="vetNumDocumento" name="numDocumento" required>
+				</div>
+				<div class="form-group">
+					<label for="vetDireccion">Dirección:</label>
+					<input type="text" id="vetDireccion" name="direccion" required>
+				</div>
+				<div class="form-group">
+					<label for="vetCorreo">Correo:</label>
+					<input type="email" id="vetCorreo" name="correo" required>
+				</div>
+				<div class="form-group">
+					<label for="vetTelefono">Teléfono:</label>
+					<input type="tel" id="vetTelefono" name="telefono" required>
+				</div>
+				<div class="form-group">
+					<label for="vetPassword">Contraseña:</label>
+					<input type="password" id="vetPassword" name="password" required minlength="6">
+				</div>
+				<div class="form-group">
+					<label for="vetEspecialidad">Especialidad:</label>
+					<input type="text" id="vetEspecialidad" name="especialidad" required>
+				</div>
+				<div class="form-group">
+					<label for="vetTarjetaProfesional">Tarjeta Profesional:</label>
+					<input type="text" id="vetTarjetaProfesional" name="tarjetaProfesional" required>
+				</div>
+				<div class="form-group">
+					<label for="vetExperiencia">Experiencia (años):</label>
+					<input type="number" id="vetExperiencia" name="experiencia" required min="0">
+				</div>
+				<button type="submit" class="btn-primary">Registrar Veterinario</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- Modal Registrar Veterinaria -->
+	<div id="clinicModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="cerrarModal('clinicModal')">&times;</span>
+			<h2>Registrar Nueva Veterinaria</h2>
+			<form id="clinicForm" th:action="@{/admin/veterinarias/registrar}" method="post">
+				<div class="form-group">
+					<label for="clinicNombre">Nombre:</label>
+					<input type="text" id="clinicNombre" name="nombre" required>
+				</div>
+				<div class="form-group">
+					<label for="clinicRUT">RUT:</label>
+					<input type="text" id="clinicRUT" name="rut" required>
+				</div>
+				<div class="form-group">
+					<label for="clinicDireccion">Dirección:</label>
+					<input type="text" id="clinicDireccion" name="direccion" required>
+				</div>
+				<div class="form-group">
+					<label for="clinicTelefono">Teléfono:</label>
+					<input type="tel" id="clinicTelefono" name="telefono" required>
+				</div>
+				<div class="form-group">
+					<label for="clinicCorreo">Correo:</label>
+					<input type="email" id="clinicCorreo" name="correo" required>
+				</div>
+				<div class="form-group">
+					<label for="clinicHorario">Horario:</label>
+					<input type="text" id="clinicHorario" name="horario" placeholder="Ej: Lunes a Viernes 8:00-18:00">
+				</div>
+				<div class="form-group">
+					<label for="clinicDescripcion">Descripción:</label>
+					<textarea id="clinicDescripcion" name="descripcion"
+						placeholder="Descripción de servicios..."></textarea>
+				</div>
+				<div class="form-group">
+					<label for="clinicEstado">Estado:</label>
+					<select id="clinicEstado" name="estado">
+						<option value="Activa">Activa</option>
+						<option value="Inactiva">Inactiva</option>
+					</select>
+				</div>
+				<button type="submit" class="btn-primary">Registrar Veterinaria</button>
+			</form>
+		</div>
+	</div>
+
+	<script th:src="@{/assets/JS/JS-Admin.js}"></script>
+</body>
+
+</html>

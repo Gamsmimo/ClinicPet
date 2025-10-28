@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="CSS/CSS-PRUEBAS.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <img src="img/perro.png" alt="perrito" class="perro">
+    <img src="img/gato.png" alt="gatito" class="gato">
+    <img src="img/perro2.png" alt="perrote" class="perro2">
+    <img src="img/gato2.png" alt="gatote" class="gato2">
+    <div class="password-recovery-container">
+        <div class="logo">
+            <img src="img/logo.png" alt="Logo de la empresa">
+        </div>
+        
+        <div class="recovery-card">
+            <h1>Restablecer contraseña</h1>
+            <p class="instructions">Ingresa tu nueva contraseña a continuación.</p>
+            
+            <form id="passwordResetForm">
+                <div class="form-group">
+                    <label for="newPassword">Nueva contraseña</label>
+                    <div class="password-input">
+                        <input type="password" id="newPassword" name="newPassword" required>
+                        <span class="toggle-password" onclick="togglePasswordVisibility('newPassword')">👁️</span>
+                    </div>
+                    <div class="password-strength">
+                        <span id="strength-bar-1"></span>
+                        <span id="strength-bar-2"></span>
+                        <span id="strength-bar-3"></span>
+                        <span id="strength-bar-4"></span>
+                    </div>
+                    <p id="password-strength-text">Seguridad: <span id="strength-text">Débil</span></p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar nueva contraseña</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <span class="toggle-password" onclick="togglePasswordVisibility('confirmPassword')">👁️</span>
+                    </div>
+                    <p id="password-match-message"></p>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>Restablecer contraseña</button>
+            </form>
+            
+            <div class="success-message" id="successMessage">
+                <div class="checkmark">✓</div>
+                <h2>¡Contraseña actualizada!</h2>
+                <p>Tu contraseña ha sido cambiada exitosamente.</p>
+                <a href="login deep.html" class="login-link">Volver al inicio de sesión</a>
+            </div>
+        </div>
+        
+        <p class="footer-text">¿Necesitas ayuda? <a href="#">Contáctanos</a></p>
+    </div>
+    
+    <script src="JS/JS-PRUEBAS.js"></script>
+</body>
+</html>
