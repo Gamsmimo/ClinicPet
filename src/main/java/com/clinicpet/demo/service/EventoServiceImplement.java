@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.clinicpet.demo.model.Evento;
 import com.clinicpet.demo.repository.IEventoRepository;
@@ -87,6 +88,13 @@ public class EventoServiceImplement implements IEventoService {
 		if (evento.getTitulo().length() > 100) {
 			throw new IllegalArgumentException("El título no puede exceder los 100 caracteres");
 		}
+	}
+
+	@Override
+	public void guardarEvento(String titulo, String descripcion, String fechaInicio, String fechaFin,
+			MultipartFile imagen, Integer id) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

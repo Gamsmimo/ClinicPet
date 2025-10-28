@@ -104,8 +104,8 @@ public class UsuarioServiceImplement implements IUsuarioService {
 				throw new RuntimeException("Correo ya existe en otro usuario");
 			}
 
-			usuario.setImagen(
-					usuarioActualizado.getImagen() != null ? usuarioActualizado.getImagen() : usuario.getImagen());
+			usuario.setImagen(usuarioActualizado.getImagen() != null ? usuarioActualizado.getImagen() : usuario.getImagen());
+
 			usuario.setCorreo(usuarioActualizado.getCorreo().trim());
 			usuario.setNombres(usuarioActualizado.getNombres() != null ? usuarioActualizado.getNombres().trim()
 					: usuario.getNombres());
@@ -307,20 +307,20 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	}
 
 	@Override
-		public void actualizarPassword(Integer usuarioId, String nuevaPassword) {
-	    try {
-	        Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
-	        if (usuarioOpt.isPresent()) {
-	            Usuario usuario = usuarioOpt.get();
-	            usuario.setPassword(nuevaPassword);
-	            usuarioRepository.save(usuario);
-	            System.out.println("✅ Contraseña actualizada en BD para ID: " + usuarioId);
-	        } else {
-	            throw new RuntimeException("Usuario no encontrado con ID: " + usuarioId);
-	        }
-	    } catch (Exception e) {
-	        System.out.println("❌ Error en actualizarPassword: " + e.getMessage());
-	        throw e;
-	    }
+	public void actualizarPassword(Integer usuarioId, String nuevaPassword) {
+		try {
+			Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
+			if (usuarioOpt.isPresent()) {
+				Usuario usuario = usuarioOpt.get();
+				usuario.setPassword(nuevaPassword);
+				usuarioRepository.save(usuario);
+				System.out.println("✅ Contraseña actualizada en BD para ID: " + usuarioId);
+			} else {
+				throw new RuntimeException("Usuario no encontrado con ID: " + usuarioId);
+			}
+		} catch (Exception e) {
+			System.out.println("❌ Error en actualizarPassword: " + e.getMessage());
+			throw e;
+		}
 	}
 }

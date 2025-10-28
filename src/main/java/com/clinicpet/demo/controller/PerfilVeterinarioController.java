@@ -1,5 +1,6 @@
 package com.clinicpet.demo.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,6 +9,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -166,40 +168,94 @@ public class PerfilVeterinarioController {
 				usuarioActual.setApellidos(perfilForm.getUsuario().getApellidos());
 				usuarioActual.setTelefono(perfilForm.getUsuario().getTelefono());
 				usuarioActual.setDireccion(perfilForm.getUsuario().getDireccion());
+				usuarioActual.setImagen(perfilForm.getUsuario().getImagen());
 
+
+				
+				
+				
 
 				// 🔥 **MANEJO DE FOTO - CORREGIDO**
+				// En tu método del controller, reemplaza esta parte:
 				if (fotoFile != null && !fotoFile.isEmpty()) {
-					// Validaciones de foto
-					if (fotoFile.getSize() > 2 * 1024 * 1024) {
-						redirectAttributes.addFlashAttribute("error", "La imagen no debe superar 2MB");
-						return "redirect:/perfil-veterinario";
-					}
+				    // Validaciones de foto
+				    if (fotoFile.getSize() > 2 * 1024 * 1024) {
+				        redirectAttributes.addFlashAttribute("error", "La imagen no debe superar 2MB");
+				        return "redirect:/perfil-veterinario";
+				    }
 
-					String contentType = fotoFile.getContentType();
-					if (contentType == null
-							|| (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
-						redirectAttributes.addFlashAttribute("error", "Formato no válido. Solo JPG y PNG");
-						return "redirect:/perfil-veterinario";
-					}
+				    String contentType = fotoFile.getContentType();
+				    if (contentType == null
+				            || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+				        redirectAttributes.addFlashAttribute("error", "Formato no válido. Solo JPG y PNG");
+				        return "redirect:/perfil-veterinario";
+				    }
 
-					// Usar sistema uploads
-					String uploadDir = System.getProperty("user.dir") + "/uploads/";
-					String extension = contentType.equals("image/jpeg") ? ".jpg" : ".png";
-					String fileName = "vet_" + usuarioLogueado.getId() + extension;
+				    // CON LOS LOGS AÑADIDOS QUEDARÍA ASÍ:
+				    System.out.println("=== DEBUG INICIO SUBIDA DE IMAGEN ===");
+				    System.out.println("📸 Archivo recibido: " + fotoFile.getOriginalFilename());
+				    System.out.println("📸 Tamaño archivo: " + fotoFile.getSize() + " bytes");
+				    System.out.println("📸 ContentType: " + contentType);
+				    System.out.println("📸 ¿Está vacío?: " + fotoFile.isEmpty());
+				    
+				    // Usar sistema uploads
+				    String uploadDir = System.getProperty("user.dir") + "/uploads/";
+				    System.out.println("📁 Ruta uploads: " + uploadDir);
+				    
+				    // Verificar si el directorio existe y tiene permisos
+				    File dir = new File(uploadDir);
+				    System.out.println("📁 ¿Directorio existe?: " + dir.exists());
+				    System.out.println("📁 ¿Directorio puede escribir?: " + dir.canWrite());
+				    System.out.println("📁 Ruta absoluta: " + dir.getAbsolutePath());
+				    
+				    String extension = contentType.equals("image/jpeg") ? ".jpg" : ".png";
+				    String fileName = "vet_" + usuarioLogueado.getId() + "_" + System.currentTimeMillis() + extension;
+				    System.out.println("📝 Nombre archivo generado: " + fileName);
 
-					Path uploadPath = Paths.get(uploadDir);
-					if (!Files.exists(uploadPath)) {
-						Files.createDirectories(uploadPath);
-					}
+				    Path uploadPath = Paths.get(uploadDir);
+				    if (!Files.exists(uploadPath)) {
+				        System.out.println("📁 Creando directorio...");
+				        Files.createDirectories(uploadPath);
+				    }
 
-					// Guardar foto
-					Path filePath = uploadPath.resolve(fileName);
-					Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+				    // Guardar foto
+				    Path filePath = uploadPath.resolve(fileName);
+				    System.out.println("💾 Ruta completa archivo: " + filePath.toString());
+				    
+				    try {
+				        Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+				        System.out.println("✅ Archivo guardado exitosamente");
+				        
+				        // Verificar si el archivo se creó
+				        File savedFile = new File(filePath.toString());
+				        System.out.println("✅ ¿Archivo guardado existe?: " + savedFile.exists());
+				        System.out.println("✅ Tamaño archivo guardado: " + savedFile.length() + " bytes");
+				        
+				    } catch (IOException e) {
+				        System.out.println("❌ Error al guardar archivo: " + e.getMessage());
+				        e.printStackTrace();
+				        throw e; // re-lanzar la excepción
+				    }
 
-					// 🔥 **IMPORTANTE: Actualizar la imagen en el usuario**
-					usuarioActual.setImagen("/uploads/" + fileName);
+				    // 🔥 **IMPORTANTE: Actualizar la imagen en el usuario**
+				    usuarioActual.setImagen("/uploads/" + fileName);
+				    usuarioService.actualizarUsuario(usuarioActual.getId(), usuarioActual);
+
+				    System.out.println("👤 Nueva ruta de imagen en usuario: " + usuarioActual.getImagen());
+				    
+				    // AÑADE ESTO PARA VER SI SE GUARDA EN BD:
+				    System.out.println("💾 Guardando usuario en BD...");
+				    System.out.println("✅ Usuario actualizado en BD");
+				    
+				    System.out.println("=== DEBUG FIN SUBIDA DE IMAGEN ===");
+				} else {
+				    System.out.println("⚠️ No se recibió archivo de foto o está vacío");
+				    System.out.println("⚠️ fotoFile es null: " + (fotoFile == null));
+				    if (fotoFile != null) {
+				        System.out.println("⚠️ fotoFile isEmpty: " + fotoFile.isEmpty());
+				    }
 				}
+				
 
 				Usuario usuarioGuardado = usuarioService.actualizarUsuario(usuarioActual.getId(), usuarioActual);
 
@@ -351,49 +407,95 @@ public class PerfilVeterinarioController {
 		return perfilVeterinarioService.buscarPorUsuarioId(usuario.getId())
 				.orElseThrow(() -> new IllegalArgumentException("Perfil veterinario no encontrado"));
 	}
+	
+	
+	
+	
+	
+	
 
 	// MODAL DE AGREGAR PRODUCTO!!!!!!!!!!!!!!1
 	@PostMapping("/producto/guardar")
-	public String guardarProducto(@ModelAttribute Producto producto, @RequestParam("fileImagen") MultipartFile imagen,
-			@RequestParam("cantidadDisponible") Integer cantidadDisponible,
-			@RequestParam("idveterinaria") Integer idVeterinaria, Model model) {
+	public String guardarProducto(@ModelAttribute Producto producto, 
+	                             @RequestParam("fileImagen") MultipartFile imagen,
+	                             @RequestParam("cantidadDisponible") Integer cantidadDisponible,
+	                             @RequestParam("idveterinaria") Integer idVeterinaria, 
+	                             Model model) {
 
-		if (!imagen.isEmpty()) {
-			try {
-				String nombreArchivo = Paths.get(imagen.getOriginalFilename()).getFileName().toString();
-				String rutaBase = "C:/imagenesProductos/";
-				Path ruta = Paths.get(rutaBase + nombreArchivo);
-				Files.createDirectories(ruta.getParent());
-				imagen.transferTo(ruta.toFile());
-				producto.setImagen(nombreArchivo);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		productoService.crearProducto(producto); // Guarda en la base de datos
-		List<Producto> productos = productoService.obtenerTodosLosProductos();
-		model.addAttribute("productos", productos);
+	    // Validaciones básicas
+	    if (cantidadDisponible == null || cantidadDisponible < 0) {
+	        cantidadDisponible = 0;
+	    }
 
-		Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(idVeterinaria,
-				producto.getId());
+	    // 1. Guardar la imagen
+	    if (!imagen.isEmpty()) {
+	        try {
+	            // Usar la ruta configurada en tu clase ConfigUploads
+	            String uploadsDir = System.getProperty("user.dir") + "/uploads/";
+	            String nombreArchivo = System.currentTimeMillis() + "_" + 
+	                Paths.get(imagen.getOriginalFilename()).getFileName().toString();
+	            
+	            Path rutaCompleta = Paths.get(uploadsDir + nombreArchivo);
+	            Files.createDirectories(rutaCompleta.getParent());
+	            imagen.transferTo(rutaCompleta.toFile());
+	            
+	            producto.setImagen("/uploads/" + nombreArchivo); // Ruta relativa para acceso web
+	            
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            // Puedes manejar el error como prefieras
+	            producto.setImagen(null);
+	        }
+	    }
 
-		if (inventario != null) {
-			inventario.agregarStock(cantidadDisponible); // suma si ya existeInteger veterinariaId, Integer productoId
-		} else {
-			inventario = new Inventario();
-			inventario.setProducto(producto);
-			Veterinaria veterinaria = veterinariaService.obtenerPorId(idVeterinaria)
-					.orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
+	    // 2. Guardar el producto PRIMERO para obtener el ID
+	    Producto productoGuardado = productoService.crearProducto(producto);
+	    
+	    // Verificar que el producto se guardó correctamente
+	    if (productoGuardado == null || productoGuardado.getId() == null) {
+	        throw new RuntimeException("Error al guardar el producto");
+	    }
 
-			inventario.setVeterinaria(veterinaria);
-			inventario.setCantidadDisponible(cantidadDisponible);
-			inventario.actualizarEstado();
-		}
+	    // 3. Buscar la veterinaria
+	    Veterinaria veterinaria = veterinariaService.obtenerPorId(idVeterinaria)
+	            .orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
 
-		inventarioService.guardarInventario(inventario);
+	    // 4. Verificar si ya existe inventario para este producto y veterinaria
+	    Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(
+	            idVeterinaria, productoGuardado.getId());
 
-		return "redirect:/perfil-veterinario";
+	    if (inventario != null) {
+	        // Si existe, actualizar el stock
+	        inventario.agregarStock(cantidadDisponible);
+	    } else {
+	        // Si no existe, crear nuevo registro de inventario
+	        inventario = new Inventario();
+	        inventario.setProducto(productoGuardado);
+	        inventario.setVeterinaria(veterinaria);
+	        inventario.setCantidadDisponible(cantidadDisponible);
+	        inventario.setFechaActualizacion(LocalDate.now()); // Fecha actual
+	        inventario.actualizarEstado(); // Asumiendo que este método setea el estado según cantidad
+	    }
+
+	    // 5. Guardar el inventario
+	    inventarioService.guardarInventario(inventario);
+
+	    return "redirect:/perfil-veterinario";
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	// MODAL EMERGENCIA!!!!!!!!!!!!!!!!
 	@PostMapping("/emergencia/guardar")

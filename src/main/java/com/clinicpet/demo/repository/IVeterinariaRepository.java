@@ -16,6 +16,7 @@ public interface IVeterinariaRepository extends JpaRepository<Veterinaria, Integ
 
 	Optional<Veterinaria> findByTelefono(String telefono);
 
+
 	boolean existsByNombre(String nombre);
 
 	boolean existsByCorreo(String correo);
