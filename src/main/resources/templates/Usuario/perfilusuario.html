@@ -389,13 +389,17 @@
 					</div>
 
 					<div class="row">
+<<<<<<< HEAD
 						<!-- Columna Izquierda - Información Personal con Foto -->
+=======
+>>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
 						<div class="col-md-6">
 							<div class="card mb-4">
 								<div class="card-header">
 									<h5><i class="fas fa-user-edit me-2"></i>Información Personal</h5>
 								</div>
 								<div class="card-body">
+<<<<<<< HEAD
 									<!-- Sección de Foto de Perfil -->
 									<div class="row mb-4">
 										<div class="col-md-12">
@@ -470,11 +474,30 @@
 											</div>
 										</div>
 
+=======
+									<!-- Agregamos th:object para facilitar el binding si luego quieres actualizar -->
+									<form id="profile-form" th:object="${usuarioLogueado}"
+										th:action="@{/usuarios/perfilusuario/actualizarInfoPersonal}" method="post">
+										<!-- Campo oculto para el ID del usuario, necesario para la actualización -->
+										<input type="hidden" th:field="*{id}" />
+
+										<div class="mb-3">
+											<label for="profile-name" class="form-label">Nombres</label>
+											<input type="text" class="form-control" id="profile-name"
+												th:field="*{nombres}" required>
+										</div>
+										<div class="mb-3">
+											<label for="profile-apellidos" class="form-label">Apellidos</label>
+											<input type="text" class="form-control" id="profile-apellidos"
+												th:field="*{apellidos}" required>
+										</div>
+>>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
 										<div class="mb-3">
 											<label for="profile-email" class="form-label">Correo Electrónico</label>
 											<input type="email" class="form-control" id="profile-email"
 												th:field="*{correo}" required>
 										</div>
+<<<<<<< HEAD
 
 										<div class="row">
 											<div class="col-md-6 mb-3">
@@ -489,11 +512,19 @@
 											</div>
 										</div>
 
+=======
+										<div class="mb-3">
+											<label for="profile-phone" class="form-label">Teléfono</label>
+											<input type="tel" class="form-control" id="profile-phone"
+												th:field="*{telefono}">
+										</div>
+>>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
 										<div class="mb-3">
 											<label for="profile-address" class="form-label">Dirección</label>
 											<textarea class="form-control" id="profile-address" rows="2"
 												th:field="*{direccion}"></textarea>
 										</div>
+<<<<<<< HEAD
 
 										<div class="row">
 											<div class="col-md-6 mb-3">
@@ -513,10 +544,32 @@
 										<button type="submit" class="btn btn-primary">
 											<i class="fas fa-save me-2"></i>Guardar Cambios
 										</button>
+=======
+										<!-- Puedes añadir más campos si los tienes en tu entidad Usuario, como tipoDocumento, numDocumento, edad -->
+										<div class="mb-3">
+											<label for="profile-tipoDocumento" class="form-label">Tipo Documento</label>
+											<input type="text" class="form-control" id="profile-tipoDocumento"
+												th:field="*{tipoDocumento}">
+										</div>
+										<div class="mb-3">
+											<label for="profile-numDocumento" class="form-label">Número
+												Documento</label>
+											<input type="text" class="form-control" id="profile-numDocumento"
+												th:field="*{numDocumento}">
+										</div>
+										<div class="mb-3">
+											<label for="profile-edad" class="form-label">Edad</label>
+											<input type="number" class="form-control" id="profile-edad"
+												th:field="*{edad}">
+										</div>
+
+										<button type="submit" class="btn btn-primary">Guardar Cambios</button>
+>>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
 									</form>
 								</div>
 							</div>
 						</div>
+<<<<<<< HEAD
 
 						<!-- Columna Derecha - Configuración de Cuenta y Preferencias -->
 						<div class="col-md-6">
@@ -566,6 +619,9 @@
 								</div>
 							</div>
 						</div>
+=======
+						<!-- ... el resto de la sección de configuración ... -->
+>>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
 					</div>
 				</section>
 

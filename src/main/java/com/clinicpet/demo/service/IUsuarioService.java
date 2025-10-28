@@ -12,7 +12,6 @@ public interface IUsuarioService {
 
 	List<Usuario> listarTodosUsuarios();
 
-
 	Optional<Usuario> buscarUsuarioPorId(Integer id);
 
 	Optional<Usuario> buscarUsuarioPorNombres(String nombres);
