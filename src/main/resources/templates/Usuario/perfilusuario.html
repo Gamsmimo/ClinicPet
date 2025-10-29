@@ -25,7 +25,6 @@
 <body>
 	<div class="container-fluid">
 		<div class="row">
-			<!-- Sidebar (Menú Hamburguesa) -->
 			<nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
 				<div class="sidebar-header">
 					<h3 class="text-center">Clinic Pet</h3>
@@ -67,27 +66,19 @@
 							<i class="fas fa-cog me-2"></i>Configuración
 						</a>
 					</li>
+
+					<!-- Separador y Cerrar Sesión -->
+					<li class="nav-item mt-4 pt-3 border-top">
+						<a class="nav-link text-danger logout-sidebar" th:href="@{/usuarios/index}">
+							<i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+						</a>
+					</li>
 				</ul>
 			</nav>
 
 			<!-- Contenido Principal -->
-			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-				<!-- Navbar Superior -->
-				<nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<div class="container-fluid">
-						<div class="d-flex align-items-center">
-							<span class="navbar-text logout-text">
-								<a th:href="@{/usuarios/index}" class="custom-logout-link">
-									<i class="fas fa-sign-out-alt me-2"></i>
-									Cerrar Sesión
-								</a>
-							</span>
-						</div>
-					</div>
-					<input type="hidden" id="current-user-id" th:value="${idUsuarioActual}">
-				</nav>
-
-				<!-- Flash Messages (Success/Error post-agregar) - Movidos aquí para visibilidad en contenido -->
+			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+				<!-- Flash Messages (Success/Error post-agregar) -->
 				<div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
 					<i class="fas fa-check-circle me-2"></i><span th:text="${success}">Mascota agregada!</span>
 					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -99,13 +90,12 @@
 
 				<!-- Sección Dashboard -->
 				<section id="dashboard" class="content-section">
-					<div
-						class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<div class="section-header">
 						<h1 class="h2">Hola, <span id="username-header" th:text="${usuarioLogueado.nombres}">Juan</span>
 						</h1>
 					</div>
 
-					<!-- Mis Mascotas (Preview) - CORREGIDO: Cards dinámicas con th:each -->
+					<!-- Mis Mascotas (Preview) -->
 					<div class="card mb-4">
 						<div class="card-header">
 							<h5><i class="fas fa-paw me-2"></i>Mis Mascotas</h5>
@@ -118,33 +108,37 @@
 									</div>
 								</div>
 								<div th:if="${tieneMascotas}" class="col-12">
-									<div class="row">
-										<div th:each="mascota : ${mascotas}" class="col-md-6 col-lg-4 mb-3">
-											<div class="card h-100">
+									<div class="pets-grid">
+										<div th:each="mascota : ${mascotas}" class="pet-card">
+											<div class="pet-image-container">
 												<img th:src="${mascota.foto}" th:alt="'Foto de ' + ${mascota.nombre}"
-													class="card-img-top" style="height: 200px; object-fit: cover;"
+													class="pet-image"
 													th:if="${mascota.foto != null and !mascota.foto.isEmpty()}"
-													onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+													onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
 													loading="lazy" />
 												<div th:unless="${mascota.foto != null and !mascota.foto.isEmpty()}"
-													class="card-img-top bg-light d-flex align-items-center justify-content-center"
-													style="height: 200px; display: none;">
-													<i class="fas fa-paw fa-3x text-muted"></i>
+													class="pet-image-placeholder d-none">
+													<i class="fas fa-paw"></i>
 												</div>
-
-												<div class="card-body">
-													<h5 class="card-title" th:text="${mascota.nombre}">Nombre Mascota
-													</h5>
-													<p class="card-text">
-														<i class="fas fa-paw me-1"></i><small
-															th:text="${mascota.especie}">Especie</small><br>
-														<i class="fas fa-calendar me-1"></i>
-														<small th:if="${mascota.unidadEdad == 'años'}"
-															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' año' : ' años'}">Edad</small>
-														<small th:if="${mascota.unidadEdad == 'meses'}"
-															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' mes' : ' meses'}">Edad</small>
-														<br>
-													</p>
+											</div>
+											<div class="pet-info">
+												<h5 class="pet-name" th:text="${mascota.nombre}">Nombre Mascota</h5>
+												<div class="pet-details">
+													<div class="pet-detail">
+														<i class="fas fa-paw"></i>
+														<span th:text="${mascota.especie}">Especie</span>
+													</div>
+													<div class="pet-detail">
+														<i class="fas fa-calendar"></i>
+														<span th:if="${mascota.unidadEdad == 'años'}"
+															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' año' : ' años'}">Edad</span>
+														<span th:if="${mascota.unidadEdad == 'meses'}"
+															th:text="${mascota.edad} + ${mascota.edad == 1 ? ' mes' : ' meses'}">Edad</span>
+													</div>
+													<div class="pet-detail" th:if="${mascota.raza}">
+														<i class="fas fa-dna"></i>
+														<span th:text="${mascota.raza}">Raza</span>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -155,18 +149,19 @@
 					</div>
 				</section>
 
-				<!-- Sección Mis Mascotas - CORREGIDO: Removido display:none, tabla con th:each -->
+				<!-- Sección Mis Mascotas -->
 				<section id="mascotas" class="content-section" style="display: none;">
-					<div
-						class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-paw me-2"></i>Mis Mascotas</h1>
-						<button class="btn btn-primary" id="add-pet-btn"><i class="fas fa-plus me-2"></i>Agregar
-							Mascota</button>
+						<button class="btn btn-primary" id="add-pet-btn" data-bs-toggle="modal"
+							data-bs-target="#addPetModal">
+							<i class="fas fa-plus me-2"></i>Agregar Mascota
+						</button>
 					</div>
 
 					<div class="row" id="pets-list">
 						<div th:if="${mascotas == null or mascotas.isEmpty() or !tieneMascotas}" class="col-12">
-							<div class="alert alert-info text-center">
+							<div class="alert alert-info text-center py-5">
 								<i class="fas fa-paw fa-3x mb-3"></i>
 								<h4>No tienes mascotas registradas.</h4>
 								<p>¡Agrega tu primera mascota haciendo clic en el botón arriba!</p>
@@ -192,30 +187,29 @@
 												<img th:src="${mascota.foto}" th:alt="'Foto de ' + ${mascota.nombre}"
 													class="rounded" width="50" height="50"
 													th:if="${mascota.foto != null and !mascota.foto.isEmpty()}"
-													onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+													onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"
 													loading="lazy" />
 												<span th:unless="${mascota.foto != null and !mascota.foto.isEmpty()}"
-													class="text-muted" style="display: none;">Sin foto</span>
+													class="text-muted d-none">Sin foto</span>
 											</td>
 											<td><strong th:text="${mascota.nombre}">Nombre</strong></td>
 											<td th:text="${mascota.especie}">Especie</td>
 											<td th:text="${mascota.edad} + ' ' + ${mascota.unidadEdad}">Edad</td>
 											<td th:text="${mascota.genero}">Género</td>
 											<td th:text="${mascota.raza}">Raza</td>
-											</td>
 											<td>
-												<!-- ✅ CORRECTO: -->
-												<button type="button" class="btn btn-sm btn-outline-primary"
-													data-bs-toggle="modal" data-bs-target="#editPetModal"
-													th:data-id="${mascota.id}">
-													<i class="fas fa-edit"></i> Editar
-												</button>
-
-												<button class="btn btn-sm btn-outline-danger"
-													th:onclick="|eliminarMascota(${mascota.id});|">
-													<i class="fas fa-trash"></i> Eliminar
-												</button>
-
+												<div class="d-flex gap-2 flex-wrap">
+													<button type="button"
+														class="btn btn-sm btn-outline-primary edit-pet-btn"
+														data-bs-toggle="modal" data-bs-target="#editPetModal"
+														th:data-id="${mascota.id}">
+														<i class="fas fa-edit"></i> Editar
+													</button>
+													<button class="btn btn-sm btn-outline-danger"
+														th:onclick="|eliminarMascota(${mascota.id});|">
+														<i class="fas fa-trash"></i> Eliminar
+													</button>
+												</div>
 											</td>
 										</tr>
 									</tbody>
@@ -227,8 +221,7 @@
 
 				<!-- Sección Historia Clínica -->
 				<section id="historia-clinica" class="content-section" style="display: none;">
-					<div
-						class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-file-medical me-2"></i>Historia Clínica</h1>
 						<div class="dropdown">
 							<button class="btn btn-outline-secondary dropdown-toggle" type="button" id="pet-selector"
@@ -268,11 +261,10 @@
 
 				<!-- Sección Mis Compras -->
 				<section id="compras" class="content-section" style="display: none;">
-					<div
-						class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-shopping-cart me-2"></i>Mis Compras</h1>
 						<button class="btn btn-primary" id="go-to-shop-btn">
-							<a th:href="@{/Tienda.html}" style=" text-decoration: none; color: #000000">
+							<a th:href="@{/Tienda.html}" class="text-white text-decoration-none">
 								<i class="fas fa-store me-2"></i>Ir a la Tienda
 							</a>
 						</button>
@@ -304,17 +296,17 @@
 
 				<!-- Sección Citas Veterinarias -->
 				<section id="citas" class="content-section" style="display: none;">
-					<div
-						class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-calendar-alt me-2"></i>Citas Veterinarias</h1>
-						<button class="btn btn-primary" id="new-appointment-btn"><i class="fas fa-plus me-2"></i>Nueva
-							Cita</button>
+						<button class="btn btn-primary" id="new-appointment-btn">
+							<i class="fas fa-plus me-2"></i>Nueva Cita
+						</button>
 					</div>
 
 					<div class="row">
 						<div class="col-md-12">
 							<div class="card">
-								<div class="card-header bg-secondary text-white">
+								<div class="card-header">
 									<h5><i class="fas fa-history me-2"></i>Historial de citas</h5>
 								</div>
 								<div class="card-body" id="past-appointments">
@@ -327,8 +319,7 @@
 
 				<!-- Sección Configuración -->
 				<section id="configuracion" class="content-section" style="display: none;">
-					<div
-						class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-cog me-2"></i>Configuración de Perfil</h1>
 					</div>
 
@@ -336,7 +327,7 @@
 						<!-- Información Personal - Ocupa todo el ancho -->
 						<div class="col-12">
 							<div class="card">
-								<div class="card-header bg-primary text-white">
+								<div class="card-header">
 									<h5 class="mb-0"><i class="fas fa-user-edit me-2"></i>Información Personal</h5>
 								</div>
 								<div class="card-body">
@@ -516,276 +507,269 @@
 						</div>
 					</div>
 				</section>
-
-				<!-- Modal para agregar mascota - DOS COLUMNAS -->
-				<div class="modal fade" id="addPetModal" tabindex="-1" aria-hidden="true">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header bg-primary text-white">
-								<h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Agregar Nueva Mascota
-								</h5>
-								<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-									aria-label="Close"></button>
-							</div>
-							<div class="modal-body">
-								<form th:action="@{/usuarios/perfilusuario/agregarMascota}" method="post"
-									th:object="${mascota}" enctype="multipart/form-data">
-									<input type="hidden" id="idUsuario" name="idUsuario" th:value="${idUsuarioActual}">
-
-									<div class="row g-3">
-										<!-- Columna Izquierda -->
-										<div class="col-md-6">
-											<div class="mb-3">
-												<label for="nombre" class="form-label fw-bold">Nombre de la
-													Mascota</label>
-												<input type="text" class="form-control" id="nombre" name="nombre"
-													required placeholder="Ej: Max, Luna">
-											</div>
-
-											<div class="mb-3">
-												<label for="especie" class="form-label fw-bold">Especie</label>
-												<select class="form-select" id="especie" name="especie" required>
-													<option value="" selected disabled>Selecciona una especie</option>
-													<option value="perro">Perro</option>
-													<option value="gato">Gato</option>
-													<option value="ave">Ave</option>
-													<option value="roedor">Roedor</option>
-													<option value="reptil">Reptil</option>
-													<option value="otro">Otro</option>
-												</select>
-											</div>
-
-											<div class="mb-3">
-												<label for="raza" class="form-label fw-bold">Raza</label>
-												<input type="text" class="form-control" id="raza" name="raza"
-													placeholder="Ej: Labrador, Siames">
-											</div>
-
-											<div class="mb-3">
-												<label for="fotoFile" class="form-label fw-bold">Foto de la
-													Mascota</label>
-												<input class="form-control" type="file" id="fotoFile" name="fotoFile"
-													accept="image/*">
-												<div class="form-text">Formatos: JPG, PNG, GIF. Máx: 5MB</div>
-											</div>
-										</div>
-
-										<!-- Columna Derecha -->
-										<div class="col-md-6">
-											<div class="row mb-3">
-												<div class="col-6">
-													<label for="edad" class="form-label fw-bold">Edad</label>
-													<div class="input-group">
-														<input type="number" class="form-control" id="edad" name="edad"
-															min="0" max="50" required placeholder="0">
-														<select class="form-select" id="unidadEdad" name="unidadEdad"
-															style="max-width: 120px;" required>
-															<option value="meses">Meses</option>
-															<option value="años" selected>Años</option>
-														</select>
-													</div>
-												</div>
-												<div class="col-6">
-													<label for="genero" class="form-label fw-bold">Género</label>
-													<select class="form-select" id="genero" name="genero">
-														<option value="M">Macho</option>
-														<option value="F">Hembra</option>
-														<option value="desconocido">Desconocido</option>
-													</select>
-												</div>
-											</div>
-
-											<div class="mb-3">
-												<label for="tamaño" class="form-label fw-bold">Tamaño</label>
-												<select class="form-select" id="tamaño" name="tamaño">
-													<option value="" selected disabled>Selecciona un tamaño</option>
-													<option value="pequeño">Pequeño</option>
-													<option value="mediano">Mediano</option>
-													<option value="grande">Grande</option>
-												</select>
-											</div>
-
-											<div class="mb-3">
-												<label for="descripcion" class="form-label fw-bold">Descripción</label>
-												<textarea class="form-control" id="descripcion" name="descripcion"
-													rows="4"
-													placeholder="Características, comportamiento, etc."></textarea>
-											</div>
-										</div>
-									</div>
-
-									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-											<i class="fas fa-times me-2"></i>Cancelar
-										</button>
-										<button type="submit" class="btn btn-primary">
-											<i class="fas fa-save me-2"></i>Guardar Mascota
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Modal para Editar Mascota - DOS COLUMNAS -->
-				<div class="modal fade" id="editPetModal" tabindex="-1" aria-labelledby="editPetModalLabel"
-					aria-hidden="true">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div class="modal-header bg-warning text-dark">
-								<h5 class="modal-title" id="editPetModalLabel"><i class="fas fa-edit me-2"></i>Editar
-									Mascota</h5>
-								<button type="button" class="btn-close" data-bs-dismiss="modal"
-									aria-label="Close"></button>
-							</div>
-							<div class="modal-body">
-								<form id="editPetForm" th:action="@{/usuarios/perfilusuario/actualizarMascota}"
-									method="post" enctype="multipart/form-data">
-									<input type="hidden" name="id" id="editMascotaId">
-									<input type="hidden" name="fotoActual" id="editMascotaFotoActual">
-
-									<div class="row g-3">
-										<!-- Columna Izquierda -->
-										<div class="col-md-6">
-											<div class="mb-3">
-												<label for="editNombre" class="form-label fw-bold">Nombre de la
-													Mascota</label>
-												<input type="text" class="form-control" id="editNombre" name="nombre"
-													required>
-											</div>
-
-											<div class="mb-3">
-												<label for="editEspecie" class="form-label fw-bold">Especie</label>
-												<select class="form-select" id="editEspecie" name="especie" required>
-													<option value="perro">Perro</option>
-													<option value="gato">Gato</option>
-													<option value="ave">Ave</option>
-													<option value="roedor">Roedor</option>
-													<option value="reptil">Reptil</option>
-													<option value="otro">Otro</option>
-												</select>
-											</div>
-
-											<div class="mb-3">
-												<label for="editRaza" class="form-label fw-bold">Raza</label>
-												<input type="text" class="form-control" id="editRaza" name="raza">
-											</div>
-
-											<div class="mb-3">
-												<label for="editFotoFile" class="form-label fw-bold">Cambiar
-													Foto</label>
-												<input class="form-control" type="file" id="editFotoFile"
-													name="fotoFile" accept="image/*">
-												<div class="form-text">La foto actual se mantendrá si no subes una nueva
-												</div>
-											</div>
-										</div>
-
-										<!-- Columna Derecha -->
-										<div class="col-md-6">
-											<div class="row mb-3">
-												<div class="col-6">
-													<label for="editEdad" class="form-label fw-bold">Edad</label>
-													<div class="input-group">
-														<input type="number" class="form-control" id="editEdad"
-															name="edad" min="0" max="50" required>
-														<select class="form-select" id="editUnidadEdad"
-															name="unidadEdad" style="max-width: 120px;" required>
-															<option value="meses">Meses</option>
-															<option value="años">Años</option>
-														</select>
-													</div>
-												</div>
-												<div class="col-6">
-													<label for="editGenero" class="form-label fw-bold">Género</label>
-													<select class="form-select" id="editGenero" name="genero">
-														<option value="M">Macho</option>
-														<option value="F">Hembra</option>
-														<option value="desconocido">Desconocido</option>
-													</select>
-												</div>
-											</div>
-
-											<div class="mb-3">
-												<label for="editTamaño" class="form-label fw-bold">Tamaño</label>
-												<select class="form-select" id="editTamaño" name="tamaño">
-													<option value="pequeño">Pequeño</option>
-													<option value="mediano">Mediano</option>
-													<option value="grande">Grande</option>
-												</select>
-											</div>
-
-											<div class="mb-3">
-												<label for="editDescripcion"
-													class="form-label fw-bold">Descripción</label>
-												<textarea class="form-control" id="editDescripcion" name="descripcion"
-													rows="4"></textarea>
-											</div>
-										</div>
-									</div>
-
-									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-											<i class="fas fa-times me-2"></i>Cancelar
-										</button>
-										<button type="submit" class="btn btn-warning">
-											<i class="fas fa-save me-2"></i>Guardar Cambios
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Modal para detalles de compra -->
-				<div class="modal fade" id="purchaseDetailsModal" tabindex="-1" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">Detalles de Compra</h5>
-								<button type="button" class="btn-close" data-bs-dismiss="modal"
-									aria-label="Close"></button>
-							</div>
-							<div class="modal-body" id="purchase-details-content">
-								<!-- Los detalles de la compra se cargarán aquí -->
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Modal para detalles de cita -->
-				<div class="modal fade" id="appointmentDetailsModal" tabindex="-1" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">Detalles de Cita</h5>
-								<button type="button" class="btn-close" data-bs-dismiss="modal"
-									aria-label="Close"></button>
-							</div>
-							<div class="modal-body" id="appointment-details-content">
-								<!-- Los detalles de la cita se cargarán aquí -->
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Bootstrap JS Bundle with Popper -->
-				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-				<!-- jQuery -->
-				<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-				<!-- JS Personalizado -->
-				<script th:src="@{/assets/JS/JS-Usuario.js}"></script>
 			</main>
 		</div>
 	</div>
+
+	<!-- ========== MODALES ========== -->
+
+	<!-- Modal para agregar mascota -->
+	<div class="modal fade" id="addPetModal" tabindex="-1" aria-labelledby="addPetModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addPetModalLabel">
+						<i class="fas fa-plus-circle me-2"></i>Agregar Nueva Mascota
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form th:action="@{/usuarios/perfilusuario/agregarMascota}" method="post" th:object="${mascota}"
+						enctype="multipart/form-data">
+						<input type="hidden" id="idUsuario" name="idUsuario" th:value="${idUsuarioActual}">
+
+						<div class="row g-3">
+							<!-- Columna Izquierda -->
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="nombre" class="form-label fw-bold">Nombre de la Mascota</label>
+									<input type="text" class="form-control" id="nombre" name="nombre" required
+										placeholder="Ej: Max, Luna">
+								</div>
+
+								<div class="mb-3">
+									<label for="especie" class="form-label fw-bold">Especie</label>
+									<select class="form-select" id="especie" name="especie" required>
+										<option value="" selected disabled>Selecciona una especie</option>
+										<option value="perro">Perro</option>
+										<option value="gato">Gato</option>
+										<option value="ave">Ave</option>
+										<option value="roedor">Roedor</option>
+										<option value="reptil">Reptil</option>
+										<option value="otro">Otro</option>
+									</select>
+								</div>
+
+								<div class="mb-3">
+									<label for="raza" class="form-label fw-bold">Raza</label>
+									<input type="text" class="form-control" id="raza" name="raza"
+										placeholder="Ej: Labrador, Siames">
+								</div>
+
+								<div class="mb-3">
+									<label for="fotoFile" class="form-label fw-bold">Foto de la Mascota</label>
+									<input class="form-control" type="file" id="fotoFile" name="fotoFile"
+										accept="image/*">
+									<div class="form-text">Formatos: JPG, PNG, GIF. Máx: 5MB</div>
+								</div>
+							</div>
+
+							<!-- Columna Derecha -->
+							<div class="col-md-6">
+								<div class="row mb-3">
+									<div class="col-6">
+										<label for="edad" class="form-label fw-bold">Edad</label>
+										<div class="input-group">
+											<input type="number" class="form-control" id="edad" name="edad" min="0"
+												max="50" required placeholder="0">
+											<select class="form-select" id="unidadEdad" name="unidadEdad"
+												style="max-width: 120px;" required>
+												<option value="meses">Meses</option>
+												<option value="años" selected>Años</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-6">
+										<label for="genero" class="form-label fw-bold">Género</label>
+										<select class="form-select" id="genero" name="genero">
+											<option value="M">Macho</option>
+											<option value="F">Hembra</option>
+											<option value="desconocido">Desconocido</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="mb-3">
+									<label for="tamaño" class="form-label fw-bold">Tamaño</label>
+									<select class="form-select" id="tamaño" name="tamaño">
+										<option value="" selected disabled>Selecciona un tamaño</option>
+										<option value="pequeño">Pequeño</option>
+										<option value="mediano">Mediano</option>
+										<option value="grande">Grande</option>
+									</select>
+								</div>
+
+								<div class="mb-3">
+									<label for="descripcion" class="form-label fw-bold">Descripción</label>
+									<textarea class="form-control" id="descripcion" name="descripcion" rows="4"
+										placeholder="Características, comportamiento, etc."></textarea>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+								<i class="fas fa-times me-2"></i>Cancelar
+							</button>
+							<button type="submit" class="btn btn-primary">
+								<i class="fas fa-save me-2"></i>Guardar Mascota
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal para Editar Mascota -->
+	<div class="modal fade" id="editPetModal" tabindex="-1" aria-labelledby="editPetModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editPetModalLabel">
+						<i class="fas fa-edit me-2"></i>Editar Mascota
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="editPetForm" th:action="@{/usuarios/perfilusuario/actualizarMascota}" method="post"
+						enctype="multipart/form-data">
+						<input type="hidden" name="id" id="editMascotaId">
+						<input type="hidden" name="fotoActual" id="editMascotaFotoActual">
+
+						<div class="row g-3">
+							<!-- Columna Izquierda -->
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label for="editNombre" class="form-label fw-bold">Nombre de la Mascota</label>
+									<input type="text" class="form-control" id="editNombre" name="nombre" required>
+								</div>
+
+								<div class="mb-3">
+									<label for="editEspecie" class="form-label fw-bold">Especie</label>
+									<select class="form-select" id="editEspecie" name="especie" required>
+										<option value="perro">Perro</option>
+										<option value="gato">Gato</option>
+										<option value="ave">Ave</option>
+										<option value="roedor">Roedor</option>
+										<option value="reptil">Reptil</option>
+										<option value="otro">Otro</option>
+									</select>
+								</div>
+
+								<div class="mb-3">
+									<label for="editRaza" class="form-label fw-bold">Raza</label>
+									<input type="text" class="form-control" id="editRaza" name="raza">
+								</div>
+
+								<div class="mb-3">
+									<label for="editFotoFile" class="form-label fw-bold">Cambiar Foto</label>
+									<input class="form-control" type="file" id="editFotoFile" name="fotoFile"
+										accept="image/*">
+									<div class="form-text">La foto actual se mantendrá si no subes una nueva</div>
+								</div>
+							</div>
+
+							<!-- Columna Derecha -->
+							<div class="col-md-6">
+								<div class="row mb-3">
+									<div class="col-6">
+										<label for="editEdad" class="form-label fw-bold">Edad</label>
+										<div class="input-group">
+											<input type="number" class="form-control" id="editEdad" name="edad" min="0"
+												max="50" required>
+											<select class="form-select" id="editUnidadEdad" name="unidadEdad"
+												style="max-width: 120px;" required>
+												<option value="meses">Meses</option>
+												<option value="años">Años</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-6">
+										<label for="editGenero" class="form-label fw-bold">Género</label>
+										<select class="form-select" id="editGenero" name="genero">
+											<option value="M">Macho</option>
+											<option value="F">Hembra</option>
+											<option value="desconocido">Desconocido</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="mb-3">
+									<label for="editTamaño" class="form-label fw-bold">Tamaño</label>
+									<select class="form-select" id="editTamaño" name="tamaño">
+										<option value="pequeño">Pequeño</option>
+										<option value="mediano">Mediano</option>
+										<option value="grande">Grande</option>
+									</select>
+								</div>
+
+								<div class="mb-3">
+									<label for="editDescripcion" class="form-label fw-bold">Descripción</label>
+									<textarea class="form-control" id="editDescripcion" name="descripcion"
+										rows="4"></textarea>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+								<i class="fas fa-times me-2"></i>Cancelar
+							</button>
+							<button type="submit" class="btn btn-primary">
+								<i class="fas fa-save me-2"></i>Guardar Cambios
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal para detalles de compra -->
+	<div class="modal fade" id="purchaseDetailsModal" tabindex="-1" aria-labelledby="purchaseDetailsModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="purchaseDetailsModalLabel">Detalles de Compra</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" id="purchase-details-content">
+					<!-- Los detalles de la compra se cargarán aquí -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal para detalles de cita -->
+	<div class="modal fade" id="appointmentDetailsModal" tabindex="-1" aria-labelledby="appointmentDetailsModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="appointmentDetailsModalLabel">Detalles de Cita</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" id="appointment-details-content">
+					<!-- Los detalles de la cita se cargarán aquí -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bootstrap JS Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- JS Personalizado -->
+	<script th:src="@{/assets/JS/JS-Usuario.js}"></script>
 </body>
 
 </html>
