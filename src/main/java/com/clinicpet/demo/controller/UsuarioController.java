@@ -399,6 +399,12 @@ public class UsuarioController {
 		}
 	}
 
+	// redireccion cambiar contraseña
+	@GetMapping("/recovery")
+	public String recovery() {
+		return "RecuperarContrasena/recovery";
+	}
+
 //redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {

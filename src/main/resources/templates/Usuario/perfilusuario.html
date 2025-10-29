@@ -20,6 +20,8 @@
 		rel="stylesheet">
 	<!-- CSS Personalizado -->
 	<link rel="stylesheet" th:href="@{/assets/CSS/Estilos-Usuario.css}">
+	<link rel="icon" th:href="@{/assets/IMG/logo.png}" type="image/png">
+
 </head>
 
 <body>
@@ -479,11 +481,10 @@
 										</div>
 										<div class="card-body text-center">
 											<p class="text-muted mb-3">
-												Cambia tu contraseña regularmente para mantener tu cuenta segura.
-											</p>
-											<button class="btn btn-warning btn-lg px-4" id="change-password-btn">
+												Cambia tu contraseña regularmente para mantener tu cuenta segura.</p>
+											<a th:href="@{/usuarios/recovery}" class="btn btn-warning btn-lg px-4">
 												<i class="fas fa-lock me-2"></i>Cambiar Contraseña
-											</button>
+											</a>
 										</div>
 									</div>
 								</div>

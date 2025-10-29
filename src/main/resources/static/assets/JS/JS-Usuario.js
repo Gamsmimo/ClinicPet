@@ -1426,4 +1426,42 @@ function showAlert(message, type) {
 	}, 5000);
 }
 
+// Función para manejar el cierre de sesión
+function handleLogout() {
+	if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+		// Aquí puedes agregar lógica adicional antes de redirigir
+		// Por ejemplo, limpiar localStorage, hacer logout en API, etc.
+
+		// Limpiar datos de sesión si es necesario
+		localStorage.removeItem('userToken');
+		sessionStorage.clear();
+
+		// Redirigir al index
+		window.location.href = '/usuarios/index';
+	}
+}
+
+// Modificar el evento del enlace de cerrar sesión en el sidebar
+document.addEventListener('DOMContentLoaded', function() {
+	// ... código existente ...
+
+	// Agregar evento al enlace de cerrar sesión en el sidebar
+	const logoutLink = document.querySelector('.sidebar .nav-link.text-danger');
+	if (logoutLink) {
+		logoutLink.addEventListener('click', function(e) {
+			e.preventDefault();
+			handleLogout();
+		});
+	}
+
+	// También mantener el enlace de cerrar sesión en el header
+	const headerLogoutLink = document.querySelector('.custom-logout-link');
+	if (headerLogoutLink) {
+		headerLogoutLink.addEventListener('click', function(e) {
+			e.preventDefault();
+			handleLogout();
+		});
+	}
+});
+
 
