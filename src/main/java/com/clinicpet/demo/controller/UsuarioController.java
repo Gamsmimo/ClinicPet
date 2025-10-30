@@ -405,6 +405,11 @@ public class UsuarioController {
 		return "RecuperarContrasena/recovery";
 	}
 
+	@GetMapping("/tienda")
+	public String tienda() {
+		return "Tienda/tienda";
+	}
+
 //redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {

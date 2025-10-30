@@ -1,389 +1,663 @@
-/* JS/JS-Tienda.js - versión consolidada y robusta
-- Funciones que el HTML puede llamar inline están expuestas en window (redirigir..., abrirModal, cerrarModal)
-*/
+// ===== FUNCIONALIDAD DE MODO OSCURO/CLARO =====
+const themeToggle = document.getElementById("themeToggle");
+const htmlElement = document.documentElement;
 
-// ---------- Funciones globales que tu HTML podría tener como onclick ----------
-window.abrirModal = function () {
-    const m = document.getElementById('modalemergencias');
-    if (!m) return;
-    m.style.display = 'block';
-    m.classList.add('show');
-    m.setAttribute('aria-hidden', 'false');
+// Verificar si hay un tema guardado
+const savedTheme = localStorage.getItem("theme") || "light";
+htmlElement.setAttribute("data-theme", savedTheme);
+themeToggle.checked = savedTheme === "dark";
+
+// Event listener para cambiar el tema
+themeToggle.addEventListener("change", function() {
+	if (this.checked) {
+		htmlElement.setAttribute("data-theme", "dark");
+		localStorage.setItem("theme", "dark");
+	} else {
+		htmlElement.setAttribute("data-theme", "light");
+		localStorage.setItem("theme", "light");
+	}
+});
+
+// Funcionalidad del carrusel
+let currentSlide = 0;
+let slideInterval;
+
+function initCarousel() {
+	const slides = document.querySelectorAll(".carousel-slide");
+	const indicators = document.querySelectorAll(".indicator");
+
+	slides.forEach((slide, index) => {
+		slide.classList.toggle("active", index === currentSlide);
+	});
+
+	indicators.forEach((indicator, index) => {
+		indicator.classList.toggle("active", index === currentSlide);
+	});
+
+	startAutoSlide();
+}
+
+function nextSlide() {
+	const slides = document.querySelectorAll(".carousel-slide");
+	const indicators = document.querySelectorAll(".indicator");
+
+	currentSlide = (currentSlide + 1) % slides.length;
+
+	slides.forEach((slide, index) => {
+		slide.classList.toggle("active", index === currentSlide);
+	});
+
+	indicators.forEach((indicator, index) => {
+		indicator.classList.toggle("active", index === currentSlide);
+	});
+
+	resetAutoSlide();
+}
+
+function prevSlide() {
+	const slides = document.querySelectorAll(".carousel-slide");
+	const indicators = document.querySelectorAll(".indicator");
+
+	currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+
+	slides.forEach((slide, index) => {
+		slide.classList.toggle("active", index === currentSlide);
+	});
+
+	indicators.forEach((indicator, index) => {
+		indicator.classList.toggle("active", index === currentSlide);
+	});
+
+	resetAutoSlide();
+}
+
+function goToSlide(slideIndex) {
+	currentSlide = slideIndex;
+	initCarousel();
+	resetAutoSlide();
+}
+
+function startAutoSlide() {
+	slideInterval = setInterval(nextSlide, 3000);
+}
+
+function resetAutoSlide() {
+	clearInterval(slideInterval);
+	startAutoSlide();
+}
+
+function pauseCarousel() {
+	clearInterval(slideInterval);
+}
+
+function resumeCarousel() {
+	startAutoSlide();
+}
+
+// Datos de productos ampliados
+const products = {
+	food: [
+		{
+			id: 1,
+			name: "Alimento Premium para Perros",
+			description:
+				"Alimento balanceado para perros adultos de todas las razas. Con proteínas de alta calidad.",
+			price: 24.99,
+			image: "concentrado",
+			featured: true,
+			pet: "dog",
+			rating: 5,
+		},
+		{
+			id: 2,
+			name: "Alimento para Gatos Sensibles",
+			description:
+				"Fórmula especial para gatos con estómagos sensibles. Sin granos ni colorantes artificiales.",
+			price: 19.99,
+			image: "comidaparagato",
+			featured: true,
+			pet: "cat",
+			rating: 4,
+		},
+		{
+			id: 3,
+			name: "Snacks para Perros",
+			description:
+				"Deliciosos snacks para perro, bajos en calorías y con vitaminas esenciales.",
+			price: 9.99,
+			image: "snackperro",
+			featured: false,
+			pet: "dog",
+			rating: 5,
+		},
+		{
+			id: 4,
+			name: "Alimento para Aves",
+			description:
+				"Mezcla de semillas y granos para aves domésticas. Rico en nutrientes esenciales.",
+			price: 8.49,
+			image: "pajaros",
+			featured: false,
+			pet: "bird",
+			rating: 4,
+		},
+		{
+			id: 13,
+			name: "Comida Orgánica para Gatos",
+			description:
+				"Ingredientes 100% naturales y orgánicos para gatos exigentes.",
+			price: 29.99,
+			image: "comidaparagato",
+			featured: true,
+			pet: "cat",
+			rating: 5,
+		},
+		{
+			id: 14,
+			name: "Galletas Dentales Perros",
+			description: "Snacks que ayudan a mantener los dientes limpios y sanos.",
+			price: 12.99,
+			image: "snackperro",
+			featured: false,
+			pet: "dog",
+			rating: 4,
+		},
+	],
+	accessories: [
+		{
+			id: 5,
+			name: "Collar Ajustable",
+			description:
+				"Collar de nylon resistente con hebilla de seguridad y ajuste personalizado.",
+			price: 12.99,
+			image: "collar",
+			featured: false,
+			pet: "dog",
+			rating: 4,
+		},
+		{
+			id: 6,
+			name: "Juguete para Gatos",
+			description:
+				"Varita con plumas para estimular el instinto de caza de tu gato. Ideal para juego interactivo.",
+			price: 7.99,
+			image: "juguetegato",
+			featured: true,
+			pet: "cat",
+			rating: 5,
+		},
+		{
+			id: 7,
+			name: "Cama para Mascotas",
+			description:
+				"Cama suave y cómoda con base antideslizante. Disponible en varios tamaños.",
+			price: 29.99,
+			image: "camaperro",
+			featured: true,
+			pet: "dog",
+			rating: 5,
+		},
+		{
+			id: 8,
+			name: "Arnés Paseo Seguro",
+			description:
+				"Arnés ergonómico con correa incluida para paseos cómodos y seguros.",
+			price: 18.5,
+			image: "arnes",
+			featured: false,
+			pet: "dog",
+			rating: 4,
+		},
+		{
+			id: 15,
+			name: "Rascador para Gatos",
+			description:
+				"Torre rascadora con múltiples niveles y juguetes colgantes.",
+			price: 45.99,
+			image: "juguetegato",
+			featured: true,
+			pet: "cat",
+			rating: 5,
+		},
+		{
+			id: 16,
+			name: "Transportadora Premium",
+			description: "Transportadora espaciosa y ventilada para viajes seguros.",
+			price: 39.99,
+			image: "collar",
+			featured: false,
+			pet: "all",
+			rating: 4,
+		},
+	],
+	medicine: [
+		{
+			id: 9,
+			name: "Antiparasitario",
+			description:
+				"Tabletas antiparasitarias para perros y gatos. Protege contra parásitos internos.",
+			price: 14.95,
+			image: "antiparasitario",
+			featured: false,
+			pet: "all",
+			rating: 5,
+		},
+		{
+			id: 10,
+			name: "Shampoo Medicado",
+			description:
+				"Shampoo para mascotas con problemas dermatológicos. Calma la piel irritada.",
+			price: 11.25,
+			image: "shampoo",
+			featured: true,
+			pet: "all",
+			rating: 4,
+		},
+		{
+			id: 11,
+			name: "Suplemento Articular",
+			description:
+				"Suplemento con glucosamina para la salud articular de perros y gatos.",
+			price: 22.75,
+			image: "suplemento",
+			featured: true,
+			pet: "all",
+			rating: 5,
+		},
+		{
+			id: 12,
+			name: "Gotas para Oídos",
+			description:
+				"Solución limpiadora para prevenir infecciones y mantener los oídos saludables.",
+			price: 9.99,
+			image: "gotas",
+			featured: false,
+			pet: "all",
+			rating: 4,
+		},
+		{
+			id: 17,
+			name: "Vitaminas Multifuncionales",
+			description: "Complejo vitamínico para fortalecer el sistema inmune.",
+			price: 18.99,
+			image: "suplemento",
+			featured: false,
+			pet: "all",
+			rating: 5,
+		},
+		{
+			id: 18,
+			name: "Spray Antiparasitario",
+			description: "Protección externa contra pulgas y garrapatas.",
+			price: 16.5,
+			image: "antiparasitario",
+			featured: false,
+			pet: "all",
+			rating: 4,
+		},
+	],
 };
 
-window.cerrarModal = function () {
-    const m = document.getElementById('modalemergencias');
-    if (!m) return;
-    m.style.display = 'none';
-    m.classList.remove('show');
-    m.setAttribute('aria-hidden', 'true');
-};
+let cart = [];
+let currentFilter = { category: "all", pet: "all", sort: "featured" };
 
-window.redirigirWhatsApp = function () {
-    const numero = "573222473652";
-    const mensaje = encodeURIComponent("Hola, necesito una cita de emergencia para mi mascota");
-    window.open(`https://wa.me/${numero}?text=${mensaje}`, '_blank');
-};
+// Funciones de renderizado
+function createProductCard(product) {
+	const stars = '<i class="fas fa-star star"></i>'.repeat(product.rating);
+	const badge = product.featured
+		? '<div class="product-badge">⭐ Destacado</div>'
+		: "";
 
-window.redirigirWhatsApp2 = function () {
-    const numero = "573222473652";
-    const mensaje = encodeURIComponent("Hola, necesito primeros auxilios para mi mascota");
-    window.open(`https://wa.me/${numero}?text=${mensaje}`, '_blank');
-};
-
-window.redirigirVideollamada = function () {
-    const enlace = "https://meet.google.com/abc-defg-hij";
-    window.open(enlace, '_blank');
-};
-
-// ---------- Código principal (se ejecuta cuando DOM está listo) ----------
-document.addEventListener('DOMContentLoaded', () => {
-    /* ---------- Modal Emergencias ---------- */
-    const btnEmergencias = document.getElementById('emergencias');
-    const modalEmerg = document.getElementById('modalemergencias');
-    const closeBtn = modalEmerg ? (modalEmerg.querySelector('.close') || document.getElementById('cerrarEmergencias')) : null;
-
-    if (btnEmergencias) btnEmergencias.addEventListener('click', window.abrirModal);
-    if (closeBtn) closeBtn.addEventListener('click', window.cerrarModal);
-
-    // Cerrar si clickeas fuera
-    window.addEventListener('click', (e) => {
-        if (modalEmerg && e.target === modalEmerg) window.cerrarModal();
-    });
-    // Cerrar con Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') window.cerrarModal();
-    });
-
-    /* ---------- Calendario flotante ---------- */
-    const calendarButton = document.getElementById('calendarButton');
-    const calendarPopup = document.getElementById('calendarPopup');
-    const prevMonthBtn = document.getElementById('prevMonth');
-    const nextMonthBtn = document.getElementById('nextMonth');
-    const todayBtn = document.getElementById('todayBtn');
-    const agendarCitaBtn = document.getElementById('agendarCitaBtn');
-    const currentMonthYear = document.getElementById('currentMonthYear');
-    const calendarDays = document.getElementById('calendarDays');
-
-    let currentDate = new Date();
-    let selectedDate = new Date();
-
-    function renderCalendar() {
-        if (!calendarDays || !currentMonthYear) return;
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-
-        currentMonthYear.textContent = currentDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDay = firstDay.getDay();
-
-        calendarDays.innerHTML = '';
-
-        // prev month days
-        const prevMonthLastDay = new Date(year, month, 0).getDate();
-        for (let i = 0; i < startingDay; i++) {
-            const d = document.createElement('div');
-            d.className = 'calendar-day other-month';
-            d.textContent = prevMonthLastDay - startingDay + i + 1;
-            calendarDays.appendChild(d);
-        }
-
-        // current month
-        const today = new Date();
-        for (let i = 1; i <= daysInMonth; i++) {
-            const d = document.createElement('div');
-            d.className = 'calendar-day';
-            d.textContent = i;
-
-            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                d.classList.add('current-day');
-            }
-
-            if (i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
-                d.style.backgroundColor = 'var(--verde-suave)';
-                d.style.fontWeight = '700';
-            }
-
-            d.addEventListener('click', () => {
-                selectedDate = new Date(year, month, i);
-                renderCalendar();
-            });
-
-            calendarDays.appendChild(d);
-        }
-
-        // next month filler
-        const cells = startingDay + daysInMonth;
-        const daysToShow = cells % 7 === 0 ? 0 : 7 - (cells % 7);
-        for (let i = 1; i <= daysToShow; i++) {
-            const d = document.createElement('div');
-            d.className = 'calendar-day other-month';
-            d.textContent = i;
-            calendarDays.appendChild(d);
-        }
-    }
-
-    if (calendarButton && calendarPopup) {
-        calendarButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            calendarPopup.classList.toggle('active');
-            renderCalendar();
-        });
-
-        calendarPopup.addEventListener('click', (e) => e.stopPropagation());
-        document.addEventListener('click', () => calendarPopup.classList.remove('active'));
-
-        if (prevMonthBtn) prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
-        if (nextMonthBtn) nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-        if (todayBtn) todayBtn.addEventListener('click', () => { currentDate = new Date(); selectedDate = new Date(); renderCalendar(); });
-
-        if (agendarCitaBtn) {
-            agendarCitaBtn.addEventListener('click', () => {
-                const formattedDate = selectedDate.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                const phoneNumber = "573204767864";
-                const message = `¡Hola! Quiero agendar una cita para mi mascota el día ${formattedDate}. Por favor confírmame disponibilidad.`;
-                window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
-                calendarPopup.classList.remove('active');
-            });
-        }
-
-        renderCalendar();
-    }
-
-    /* ---------- Productos y Carrito ---------- */
-    const products = {
-        food: [
-            { id: 1, name: "Alimento Premium para Perros", description: "Alimento balanceado para perros adultos de todas las razas. Con proteínas de alta calidad.", price: 24.99, image: "concentrado" },
-            { id: 2, name: "Alimento para Gatos Sensibles", description: "Fórmula especial para gatos con estómagos sensibles. Sin granos ni colorantes artificiales.", price: 19.99, image: "comidaparagato" },
-            { id: 3, name: "Snacks para Perros", description: "Deliciosos snacks para perro, bajos en calorías y con vitaminas esenciales.", price: 9.99, image: "snackperro" },
-            { id: 4, name: "Alimento para Aves", description: "Mezcla de semillas y granos para aves domésticas. Rico en nutrientes esenciales.", price: 8.49, image: "pajaros" }
-        ],
-        accessories: [
-            { id: 5, name: "Collar Ajustable", description: "Collar de nylon resistente con hebilla de seguridad y ajuste personalizado.", price: 12.99, image: "collar" },
-            { id: 6, name: "Juguete para Gatos", description: "Varita con plumas para estimular el instinto de caza de tu gato. Ideal para juego interactivo.", price: 7.99, image: "juguetegato" },
-            { id: 7, name: "Cama para Mascotas", description: "Cama suave y cómoda con base antideslizante. Disponible en varios tamaños.", price: 29.99, image: "camaperro" },
-            { id: 8, name: "Arnés Paseo Seguro", description: "Arnés ergonómico con correa incluida para paseos cómodos y seguros.", price: 18.50, image: "arnes" }
-        ],
-        medicine: [
-            { id: 9, name: "Antiparasitario", description: "Tabletas antiparasitarias para perros y gatos. Protege contra parásitos internos.", price: 14.95, image: "antiparasitario" },
-            { id: 10, name: "Shampoo Medicado", description: "Shampoo para mascotas con problemas dermatológicos. Calma la piel irritada.", price: 11.25, image: "shampoo" },
-            { id: 11, name: "Suplemento Articular", description: "Suplemento con glucosamina para la salud articular de perros y gatos.", price: 22.75, image: "suplemento" },
-            { id: 12, name: "Gotas para Oídos", description: "Solución limpiadora para prevenir infecciones y mantener los oídos saludables.", price: 9.99, image: "gotas" }
-        ]
-    };
-
-    let cart = [];
-
-    // DOM refs carrito/productos
-    const foodProductsContainer = document.getElementById('foodProducts');
-    const accessoryProductsContainer = document.getElementById('accessoryProducts');
-    const medicineProductsContainer = document.getElementById('medicineProducts');
-    const cartItemsContainer = document.getElementById('cartItems');
-    const cartCountElement = document.querySelector('.cart-count');
-    const subtotalElement = document.getElementById('subtotal');
-    const totalElement = document.getElementById('total');
-    const checkoutBtn = document.querySelector('.checkout-btn');
-
-    const shoppingCart = document.getElementById('shoppingCart');
-    const cartBtn = document.getElementById('cartBtn');
-
-    if (cartBtn && shoppingCart) {
-        cartBtn.addEventListener('click', () => shoppingCart.classList.toggle('show'));
-    }
-
-    function createProductCard(product, category) {
-        const categoryName = category === 'food' ? 'Alimento' : (category === 'accessories' ? 'Accesorio' : 'Medicamento');
-        return `
-      <div class="product-card">
-        <div class="product-image">
-          <img src="img/${product.image}.png" alt="${product.name}" class="product-img">
+	return `
+        <div class="product-card" data-category="${getCategoryByProductId(
+		product.id
+	)}" data-pet="${product.pet}">
+            ${badge}
+            <div class="product-image">
+                <img src="img/${product.image}.png" alt="${product.name}">
+            </div>
+            <div class="product-info">
+                <div class="product-category">${getCategoryName(
+		product.id
+	)}</div>
+                <h3 class="product-name">${product.name}</h3>
+                <div class="product-rating">${stars}</div>
+                <p class="product-description">${product.description}</p>
+                <div class="product-bottom">
+                    <div class="product-price">$${product.price.toFixed(
+		2
+	)}</div>
+                    <button class="add-to-cart" onclick="addToCart(${product.id
+		})">
+                        <i class="fas fa-cart-plus"></i> Añadir
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="product-info">
-          <div class="product-category">${categoryName}</div>
-          <h3 class="product-name">${product.name}</h3>
-          <p class="product-description">${product.description}</p>
-          <div class="product-bottom">
-            <div class="product-price">$${product.price.toFixed(2)}</div>
-            <button class="add-to-cart" data-id="${product.id}" data-category="${category}">
-              <i class="fas fa-cart-plus"></i> Añadir
-            </button>
-          </div>
-        </div>
-      </div>
     `;
-    }
+}
 
-    function renderProducts() {
-        if (foodProductsContainer) {
-            foodProductsContainer.innerHTML = '';
-            products.food.forEach(p => foodProductsContainer.insertAdjacentHTML('beforeend', createProductCard(p, 'food')));
-        }
-        if (accessoryProductsContainer) {
-            accessoryProductsContainer.innerHTML = '';
-            products.accessories.forEach(p => accessoryProductsContainer.insertAdjacentHTML('beforeend', createProductCard(p, 'accessories')));
-        }
-        if (medicineProductsContainer) {
-            medicineProductsContainer.innerHTML = '';
-            products.medicine.forEach(p => medicineProductsContainer.insertAdjacentHTML('beforeend', createProductCard(p, 'medicine')));
-        }
+function getCategoryByProductId(id) {
+	if (id <= 4 || (id >= 13 && id <= 14)) return "food";
+	if ((id >= 5 && id <= 8) || (id >= 15 && id <= 16)) return "accessories";
+	return "medicine";
+}
 
-        // bind add-to-cart safely (use event.currentTarget)
-        document.querySelectorAll('.add-to-cart').forEach(btn => {
-            btn.addEventListener('click', addToCart);
-        });
-    }
+function getCategoryName(id) {
+	const cat = getCategoryByProductId(id);
+	if (cat === "food") return "Alimento";
+	if (cat === "accessories") return "Accesorio";
+	return "Medicamento";
+}
 
-    function findProductById(id) {
-        return products.food.concat(products.accessories, products.medicine).find(p => p.id === id);
-    }
+function getAllProducts() {
+	return [...products.food, ...products.accessories, ...products.medicine];
+}
 
-    function addToCart(event) {
-        const btn = event.currentTarget || event.target.closest('.add-to-cart');
-        if (!btn) return;
-        const productId = parseInt(btn.dataset.id, 10);
-        const product = findProductById(productId);
-        if (!product) return;
+function renderProducts() {
+	const allProducts = getAllProducts();
+	const featured = allProducts.filter((p) => p.featured);
 
-        const existing = cart.find(i => i.id === product.id);
-        if (existing) existing.quantity += 1;
-        else cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 });
+	// Productos destacados (siempre mostrar todos los destacados)
+	document.getElementById("featuredProducts").innerHTML = featured
+		.map(createProductCard)
+		.join("");
 
-        updateCart();
+	// Todos los productos (filtrados)
+	let filtered = filterProducts(allProducts);
 
-        // feedback
-        const original = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i> Añadido';
-        btn.disabled = true;
-        setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 1200);
-    }
+	// Si no hay productos filtrados, mostrar mensaje
+	if (filtered.length === 0) {
+		document.getElementById("allProducts").innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                <div style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 style="color: #666; margin-bottom: 10px;">No se encontraron productos</h3>
+                <p style="color: #999;">Intenta con otros filtros o categorías</p>
+            </div>
+        `;
+	} else {
+		document.getElementById("allProducts").innerHTML = filtered
+			.map(createProductCard)
+			.join("");
+	}
+}
 
-    function createCartItem(item) {
-        return `
-      <div class="cart-item" data-id="${item.id}">
-        <div class="cart-item-image"><img src="img/${item.image}.png" alt="${item.name}"></div>
-        <div class="cart-item-details">
-          <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-price">$${item.price.toFixed(2)}</div>
-          <div class="cart-item-controls">
-            <button class="quantity-btn decrease-quantity" data-id="${item.id}">-</button>
-            <span class="quantity-display">${item.quantity}</span>
-            <button class="quantity-btn increase-quantity" data-id="${item.id}">+</button>
-            <button class="remove-item" data-id="${item.id }"> <i class="bi bi-trash-fill" style="font-size: 20px;"></i></button>
-          </div>
-        </div>
-      </div>`;
-    }
+function filterProducts(products) {
+	let filtered = products;
 
-    function updateCart() {
-        // contador
-        const totalItems = cart.reduce((t, it) => t + it.quantity, 0);
-        if (cartCountElement) cartCountElement.textContent = totalItems;
+	// Filtro de categoría
+	if (currentFilter.category !== "all") {
+		filtered = filtered.filter(
+			(p) => getCategoryByProductId(p.id) === currentFilter.category
+		);
+	}
 
-        if (!cartItemsContainer) return;
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<div class="empty-cart-message">Tu carrito está vacío</div>';
-        } else {
-            cartItemsContainer.innerHTML = '';
-            cart.forEach(item => cartItemsContainer.insertAdjacentHTML('beforeend', createCartItem(item)));
+	// Filtro de mascota
+	if (currentFilter.pet !== "all") {
+		filtered = filtered.filter(
+			(p) => p.pet === currentFilter.pet || p.pet === "all"
+		);
+	}
 
-            // bind controls
-            cartItemsContainer.querySelectorAll('.decrease-quantity').forEach(b => b.addEventListener('click', decreaseQuantity));
-            cartItemsContainer.querySelectorAll('.increase-quantity').forEach(b => b.addEventListener('click', increaseQuantity));
-            cartItemsContainer.querySelectorAll('.remove-item').forEach(b => b.addEventListener('click', removeItem));
-        }
+	// Ordenamiento
+	if (currentFilter.sort === "price-low") {
+		filtered.sort((a, b) => a.price - b.price);
+	} else if (currentFilter.sort === "price-high") {
+		filtered.sort((a, b) => b.price - a.price);
+	} else if (currentFilter.sort === "name") {
+		filtered.sort((a, b) => a.name.localeCompare(b.name));
+	}
 
-        updateSummary();
-    }
+	return filtered;
+}
 
-    function updateSummary() {
-        const subtotal = cart.reduce((s, it) => s + it.price * it.quantity, 0);
-        const discount = 0;
-        const total = subtotal - discount;
-        if (subtotalElement) subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
-        if (totalElement) totalElement.textContent = `$${total.toFixed(2)}`;
-    }
+// Carrito
+function addToCart(productId) {
+	const product = getAllProducts().find((p) => p.id === productId);
+	if (!product) return;
 
-    function decreaseQuantity(e) {
-        const id = parseInt((e.currentTarget || e.target).dataset.id, 10);
-        const item = cart.find(i => i.id === id);
-        if (!item) return;
-        item.quantity -= 1;
-        if (item.quantity <= 0) cart = cart.filter(i => i.id !== id);
-        updateCart();
-    }
+	const existing = cart.find((item) => item.id === productId);
+	if (existing) {
+		existing.quantity++;
+	} else {
+		cart.push({ ...product, quantity: 1 });
+	}
 
-    function increaseQuantity(e) {
-        const id = parseInt((e.currentTarget || e.target).dataset.id, 10);
-        const item = cart.find(i => i.id === id);
-        if (!item) return;
-        item.quantity += 1;
-        updateCart();
-    }
+	updateCart();
+	// Sin alerta, solo actualiza el carrito visualmente
+}
 
-    function removeItem(e) {
-        const el = e.currentTarget || e.target.closest('.remove-item');
-        const id = parseInt(el.dataset.id, 10);
-        cart = cart.filter(i => i.id !== id);
-        updateCart();
-    }
+function removeFromCart(productId) {
+	cart = cart.filter((item) => item.id !== productId);
+	updateCart();
+}
 
-    function checkout() {
-        if (!cart.length) { alert('Tu carrito está vacío. Añade productos antes de pagar.'); return; }
-        const total = cart.reduce((s, it) => s + it.price * it.quantity, 0);
-        const discount = total * 0.1;
-        const finalTotal = total - discount;
-        alert(`¡Gracias por tu compra!\nTotal: $${finalTotal.toFixed(2)}\nTu pedido ha sido procesado.`);
-        cart = [];
-        updateCart();
-    }
+function updateQuantity(productId, change) {
+	const item = cart.find((i) => i.id === productId);
+	if (!item) return;
 
-    if (checkoutBtn) checkoutBtn.addEventListener('click', checkout);
+	item.quantity += change;
+	if (item.quantity <= 0) {
+		removeFromCart(productId);
+	} else {
+		updateCart();
+	}
+}
 
-    // inicia
-    renderProducts();
-    updateCart();
+function updateCart() {
+	const badge = document.getElementById("cartBadge");
+	const itemsContainer = document.getElementById("cartItems");
+	const subtotalEl = document.getElementById("subtotal");
+	const totalEl = document.getElementById("total");
 
-    /* ---------- Menú hamburguesa ---------- */
-    const hamburgerBtn = document.querySelector('.hamburger-btn');
-    const menuContent = document.querySelector('.menu-content');
-    if (hamburgerBtn && menuContent) {
-        hamburgerBtn.addEventListener('click', () => menuContent.classList.toggle('active'));
-        document.addEventListener('click', (e) => {
-            if (!menuContent.contains(e.target) && !hamburgerBtn.contains(e.target) && menuContent.classList.contains('active')) {
-                menuContent.classList.remove('active');
-            }
-        });
-    }
+	// Actualizar badge
+	const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+	badge.textContent = totalItems;
 
-    /* ---------- Búsqueda (vanilla) ---------- */
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const term = searchInput.value.trim().toLowerCase();
-                if (!term) return;
-                // buscar en texto visible de la página
-                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-                let node;
-                let found = null;
-                while ((node = walker.nextNode())) {
-                    if (node.nodeValue.toLowerCase().includes(term)) { found = node; break; }
-                }
-                if (found) {
-                    const el = found.parentElement;
-                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    el.style.transition = 'background 0.6s';
-                    const prevBg = el.style.backgroundColor;
-                    el.style.backgroundColor = 'rgba(255,255,0,0.35)';
-                    setTimeout(() => el.style.backgroundColor = prevBg, 1600);
-                } else {
-                    alert('No se encontraron resultados para: ' + term);
-                }
-            }
-        });
-    }
+	// Renderizar items
+	if (cart.length === 0) {
+		itemsContainer.innerHTML = `
+            <div class="empty-cart-message">
+                <div class="empty-cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <p>Tu carrito está vacío</p>
+                <p style="font-size: 0.9rem; color: #999;">¡Agrega productos para empezar!</p>
+            </div>
+        `;
+	} else {
+		itemsContainer.innerHTML = cart
+			.map(
+				(item) => `
+            <div class="cart-item">
+                <div class="cart-item-image">
+                    <img src="img/${item.image}.png" alt="${item.name}">
+                </div>
+                <div class="cart-item-details">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                    <div class="cart-item-controls">
+                        <button class="quantity-btn" onclick="updateQuantity(${item.id
+					}, -1)">-</button>
+                        <span class="quantity-display">${item.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity(${item.id
+					}, 1)">+</button>
+                        <button class="remove-item" onclick="removeFromCart(${item.id
+					})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `
+			)
+			.join("");
+	}
 
-}); // end DOMContentLoaded
+	// Actualizar totales
+	const subtotal = cart.reduce(
+		(sum, item) => sum + item.price * item.quantity,
+		0
+	);
+	subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+	totalEl.textContent = `$${subtotal.toFixed(2)}`;
+}
+
+function showNotification(message) {
+	// Función removida - no se usan alertas
+	console.log(message);
+}
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", () => {
+	// Inicializar carrusel
+	initCarousel();
+
+	// Renderizar productos iniciales
+	renderProducts();
+
+	// Carrito
+	document.getElementById("openCart").addEventListener("click", () => {
+		document.getElementById("cartSidebar").classList.add("active");
+		document.getElementById("cartOverlay").classList.add("active");
+	});
+
+	document
+		.getElementById("closeCart")
+		.addEventListener("click", closeCartSidebar);
+	document
+		.getElementById("cartOverlay")
+		.addEventListener("click", closeCartSidebar);
+
+	function closeCartSidebar() {
+		document.getElementById("cartSidebar").classList.remove("active");
+		document.getElementById("cartOverlay").classList.remove("active");
+	}
+
+	// Checkout
+	document.getElementById("checkoutBtn").addEventListener("click", () => {
+		if (cart.length === 0) {
+			alert("Tu carrito está vacío");
+			return;
+		}
+		const total = cart.reduce(
+			(sum, item) => sum + item.price * item.quantity,
+			0
+		);
+		alert(`¡Gracias por tu compra!\nTotal: $${total.toFixed(2)}`);
+		cart = [];
+		updateCart();
+		closeCartSidebar();
+	});
+
+	// ===== FUNCIONALIDAD DEL BOTÓN DE FILTRAR (SIN ALERTAS) =====
+	document.getElementById("filtrar").addEventListener("click", () => {
+		// Obtener valores de los filtros
+		const categoryValue = document.getElementById("categoryFilter").value;
+		const sortValue = document.getElementById("sortFilter").value;
+
+		// Actualizar el objeto de filtros
+		currentFilter.category = categoryValue;
+		currentFilter.sort = sortValue;
+
+		// Renderizar productos con los nuevos filtros
+		renderProducts();
+
+		// Scroll suave a la sección de productos
+		document.getElementById("allProducts").scrollIntoView({
+			behavior: "smooth",
+			block: "start",
+		});
+	});
+
+	// Filtros en tiempo real (opcional - ya los tenías pero mejoro la integración)
+	document.getElementById("categoryFilter").addEventListener("change", (e) => {
+		currentFilter.category = e.target.value;
+		// No renderizamos aquí, esperamos al botón
+	});
+
+	document.getElementById("sortFilter").addEventListener("change", (e) => {
+		currentFilter.sort = e.target.value;
+		// No renderizamos aquí, esperamos al botón
+	});
+
+	// Filtros de mascota (si los tienes en el HTML)
+	document.querySelectorAll(".filter-pill").forEach((pill) => {
+		pill.addEventListener("click", function() {
+			document
+				.querySelectorAll(".filter-pill")
+				.forEach((p) => p.classList.remove("active"));
+			this.classList.add("active");
+			currentFilter.pet = this.dataset.pet;
+			renderProducts();
+		});
+	});
+
+	// Menú hamburguesa
+	const hamburgerBtn = document.querySelector(".hamburger-btn");
+	const menuContent = document.querySelector(".menu-content");
+
+	hamburgerBtn.addEventListener("click", () => {
+		menuContent.classList.toggle("active");
+	});
+
+	document.addEventListener("click", (e) => {
+		if (!menuContent.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+			menuContent.classList.remove("active");
+		}
+	});
+
+	// Funcionalidad del calendario
+	const calendarButton = document.getElementById("calendarButton");
+	const calendarPopup = document.getElementById("calendarPopup");
+
+	if (calendarButton && calendarPopup) {
+		calendarButton.addEventListener("click", (e) => {
+			e.stopPropagation();
+			calendarPopup.classList.toggle("active");
+		});
+
+		document.addEventListener("click", (e) => {
+			if (
+				!calendarPopup.contains(e.target) &&
+				!calendarButton.contains(e.target)
+			) {
+				calendarPopup.classList.remove("active");
+			}
+		});
+	}
+
+	// Modal emergencias
+	const btnEmergencias = document.getElementById("emergencias");
+	const modalEmergencias = document.getElementById("modalemergencias");
+
+	if (btnEmergencias && modalEmergencias) {
+		btnEmergencias.addEventListener("click", () => {
+			modalEmergencias.style.display = "block";
+		});
+	}
+});
+
+// Función para cerrar modal de emergencias
+function cerrarModal() {
+	document.getElementById("modalemergencias").style.display = "none";
+}
+
+// Funciones de redirección para emergencias
+function redirigirVideollamada() {
+	alert("Redirigiendo a videollamada...");
+	// window.location.href = 'tu-url-videollamada';
+}
+
+function redirigirWhatsApp() {
+	window.open("https://wa.me/1234567890", "_blank");
+}
+
+function redirigirWhatsApp2() {
+	window.open(
+		"https://wa.me/1234567890?text=Necesito%20primeros%20auxilios",
+		"_blank"
+	);
+}
