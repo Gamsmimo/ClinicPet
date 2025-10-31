@@ -66,12 +66,14 @@ public class UsuarioController {
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
 
 					// ✅ REDIRIGIR SEGÚN ROL
-					if (usuario.getRol().getId() == 2) { // Veterinario
+					Integer rolId = usuario.getRol().getId();
+
+					if (rolId == 3) { // Administrador
+						return "redirect:/admin";
+					} else if (rolId == 2) { // Veterinario
 						return "redirect:/perfil-veterinario";
-
-					} else { // Usuario normal
-
-						return "redirect:/usuarios/inicio"; // coincide con mapeo /usuarios/inicio
+					} else { // Usuario normal (rol 1)
+						return "redirect:/usuarios/inicio";
 					}
 				}
 			}
