@@ -17,14 +17,17 @@ public class InventarioServiceImplement implements IInventarioService {
 	private IInventarioRepository inventarioRepository;
 
 	@Override
-	public Inventario guardarInventario(Inventario inventario) {
-		// TODO Auto-generated method stub
-		validarInventario(inventario);
-
-		// actualizar la fecha de actualizacion automaticamente
-		inventario.setFechaActualizacion(LocalDate.now());
-		return inventarioRepository.save(inventario);
-	}
+	 public Inventario guardarInventario(Inventario inventario) {
+		System.out.println("💾 Guardando inventario en BD...");
+	    System.out.println("📦 Datos a guardar - Producto ID: " + inventario.getProducto().getId());
+	    System.out.println("📦 Datos a guardar - Veterinaria ID: " + inventario.getVeterinaria().getId());
+	    System.out.println("📦 Datos a guardar - Cantidad: " + inventario.getCantidadDisponible());
+	    
+	    Inventario guardado = inventarioRepository.save(inventario);
+	    
+	    System.out.println("✅ Inventario guardado con ID: " + guardado.getId());
+	    return guardado;
+    }
 
 	@Override
 	public List<Inventario> obtenerTodoElInventario() {
@@ -50,7 +53,10 @@ public class InventarioServiceImplement implements IInventarioService {
 	@Override
 	public List<Inventario> obtenerInventarioPorVeterinaria(Integer veterinariaId) {
 		// TODO Auto-generated method stub
-		return inventarioRepository.findByVeterinaria_Id(veterinariaId);
+		   System.out.println("🔍 Buscando inventario para veterinaria ID: " + veterinariaId);
+		    List<Inventario> inventarios = inventarioRepository.findByVeterinaria_Id(veterinariaId);
+		    System.out.println("📊 Inventarios encontrados: " + inventarios.size());
+		    return inventarios;
 	}
 
 	@Override
@@ -60,10 +66,14 @@ public class InventarioServiceImplement implements IInventarioService {
 	}
 
 	@Override
-	public Inventario obtenerInventarioPorVeterinariaYProducto(Integer veterinariaId, Integer productoId) {
-		// TODO Auto-generated method stub
-		return (Inventario) inventarioRepository.findByVeterinaria_IdAndProducto_Id(veterinariaId, productoId);
-	}
+	 public Inventario obtenerInventarioPorVeterinariaYProducto(Integer veterinariaId, Integer productoId) {
+        System.out.println("🔍 Buscando inventario - Veterinaria: " + veterinariaId + ", Producto: " + productoId);
+        
+        List<Inventario> resultados = inventarioRepository.findByVeterinaria_IdAndProducto_Id(veterinariaId, productoId);
+        System.out.println("📊 Resultados encontrados: " + resultados.size());
+        
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
 
 	@Override
 	public List<Inventario> obtenerProductosConStockBajo(Integer cantidadMinima) {
@@ -123,27 +133,6 @@ public class InventarioServiceImplement implements IInventarioService {
 		return inventarioRepository.save(inventario);
 	}
 
-	private void validarInventario(Inventario inventario) {
-		if (inventario.getCantidadDisponible() == null || inventario.getCantidadDisponible() < 0) {
-			throw new IllegalArgumentException("La cantidad disponible no puede ser negativa");
-		}
-		if (inventario.getVeterinaria() == null) {
-			throw new IllegalArgumentException("La veterinaria es obligatoria");
-		}
-		if (inventario.getProducto() == null) {
-			throw new IllegalArgumentException("El producto es obligatorio");
-		}
-		// validar que no existan registros para vla misma veterinaria y producto
-		if (inventario.getId() == null) {
-			List<Inventario> existentes = inventarioRepository.findByVeterinaria_IdAndProducto_Id(
-					inventario.getVeterinaria().getId(), inventario.getProducto().getId());
-
-			if (!existentes.isEmpty()) {
-				throw new IllegalStateException(
-						"Ya existente un registro de inventario para este producto en esta vewterinaria");
-			}
-		}
-	}
 
 	public List<Inventario> obtenerProductosAgotados() {
 		return obtenerProductosConStockBajo(1);

@@ -29,5 +29,9 @@ public interface IProductoService {
 	boolean existeProductoPorNombre(String nombre);
 
 	long contarTotalProductos();
+	
+	Optional<Producto> buscarPorNombreYCategoria(String nombre, String categoria);
+
+	Producto actualizarProducto(Producto producto);
 
 }

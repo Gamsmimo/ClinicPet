@@ -9,8 +9,10 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,42 +72,72 @@ public class PerfilVeterinarioController {
 	// ==================== VISTA PRINCIPAL ====================
 	@GetMapping
 	public String mostrarPerfilVeterinario(HttpSession session, Model model) {
-		System.out.println("🔍 Accediendo a vista principal del veterinario");
+	    System.out.println("🔍 Accediendo a vista principal del veterinario");
 
-		// ✅ USAR SESIÓN
-		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
-		if (usuarioLogueado == null) {
-			System.out.println("❌ Usuario no autenticado - Redirigiendo al login");
-			return "redirect:/usuarios/iniciarsesion";
-		}
+	    // ✅ USAR SESIÓN
+	    Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+	    if (usuarioLogueado == null) {
+	        System.out.println("❌ Usuario no autenticado - Redirigiendo al login");
+	        return "redirect:/usuarios/iniciarsesion";
+	    }
 
-		// Verificar si es veterinario
-		if (usuarioLogueado.getRol().getId() != 2) {
-			System.out.println("❌ Usuario no tiene rol de veterinario");
-			return "redirect:/acceso-denegado";
-		}
+	    // Verificar si es veterinario
+	    if (usuarioLogueado.getRol().getId() != 2) {
+	        System.out.println("❌ Usuario no tiene rol de veterinario");
+	        return "redirect:/acceso-denegado";
+	    }
 
-		String correo = usuarioLogueado.getCorreo();
-		System.out.println("📧 Buscando perfil para: " + correo);
+	    String correo = usuarioLogueado.getCorreo();
+	    System.out.println("📧 Buscando perfil para: " + correo);
 
-		// Buscar perfil veterinario
-		Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
+	    // Buscar perfil veterinario
+	    Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
 
-		if (perfilOpt.isPresent()) {
-			model.addAttribute("perfilVeterinario", perfilOpt.get());
-			System.out.println("✅ Perfil veterinario encontrado para: " + correo);
-		} else {
-			System.out.println("❌ ERROR: Veterinario sin perfil en BD: " + correo);
-			model.addAttribute("error", "Error: Perfil de veterinario no encontrado.");
-		}
+	    if (perfilOpt.isPresent()) {
+	        model.addAttribute("perfilVeterinario", perfilOpt.get());
+	        System.out.println("✅ Perfil veterinario encontrado para: " + correo);
+	    } else {
+	        System.out.println("❌ ERROR: Veterinario sin perfil en BD: " + correo);
+	        model.addAttribute("error", "Error: Perfil de veterinario no encontrado.");
+	    }
 
-		// 🔹 Cargar mascotas (MANTENIDO)
-		List<Mascota> mascotas = mascotaService.listarMascotas();
-		System.out.println("🐾 Mascotas encontradas: " + mascotas.size());
-		model.addAttribute("mascotas", mascotas);
+	    // 🔹 Cargar mascotas (MANTENIDO)
+	    List<Mascota> mascotas = mascotaService.listarMascotas();
+	    System.out.println("🐾 Mascotas encontradas: " + mascotas.size());
+	    model.addAttribute("mascotas", mascotas);
 
-		return "perfil-veterinario/perfil-veterinario";
+	    // 🔹 🔹 🔹 NUEVO: CARGAR PRODUCTOS PARA PET SHOP 🔹 🔹 🔹
+	    try {
+	        System.out.println("🛍️ Cargando productos para Pet Shop...");
+	        List<Producto> productos = productoService.obtenerTodosLosProductos();
+	        System.out.println("📦 Productos encontrados: " + productos.size());
+	        
+	        // Obtener inventario
+	        List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(1);
+	        System.out.println("📊 Registros de inventario: " + inventarios.size());
+	        
+	        // Crear mapa de inventario
+	        Map<Integer, Inventario> inventarioPorProducto = new HashMap<>();
+	        for (Inventario inventario : inventarios) {
+	            if (inventario.getProducto() != null) {
+	                inventarioPorProducto.put(inventario.getProducto().getId(), inventario);
+	            }
+	        }
+	        
+	        model.addAttribute("productos", productos);
+	        model.addAttribute("inventarioPorProducto", inventarioPorProducto);
+	        System.out.println("✅ Pet Shop cargado correctamente");
+	        
+	    } catch (Exception e) {
+	        System.out.println("❌ Error cargando Pet Shop: " + e.getMessage());
+	        model.addAttribute("productos", new ArrayList<>());
+	        model.addAttribute("inventarioPorProducto", new HashMap<>());
+	    }
+
+	    return "perfil-veterinario/perfil-veterinario";
 	}
+	
+	
 
 	// ==================== OTRAS SECCIONES (PLACEHOLDERS) ====================
 	@GetMapping("/inicio")
@@ -128,10 +160,39 @@ public class PerfilVeterinarioController {
 		return "perfil-veterinario/adopciones";
 	}
 
-	@GetMapping("/pet-shop")
-	public String petShop() {
-		return "perfil-veterinario/pet-shop";
-	}
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	// ==================== SECCION CONFIGURACION ====================
 
@@ -410,82 +471,198 @@ public class PerfilVeterinarioController {
 	
 	
 
-	// MODAL DE AGREGAR PRODUCTO!!!!!!!!!!!!!!1
+	// MODAL DE AGREGAR PRODUCTO!!!!!!!!!!!!!!
 	@PostMapping("/producto/guardar")
-	public String guardarProducto(@ModelAttribute Producto producto, 
-	                             @RequestParam("fileImagen") MultipartFile imagen,
-	                             @RequestParam("cantidadDisponible") Integer cantidadDisponible,
-	                             @RequestParam("idveterinaria") Integer idVeterinaria, 
-	                             Model model) {
+	public String guardarProducto(
+	        @RequestParam("nombre") String nombre,
+	        @RequestParam("precio") Double precio,
+	        @RequestParam("categoria") String categoria,
+	        @RequestParam("descripcion") String descripcion,
+	        @RequestParam("fileImagen") MultipartFile imagen,
+	        @RequestParam("cantidadDisponible") Integer cantidadDisponible,
+	        @RequestParam("idveterinaria") Integer idVeterinaria, // Hacerlo REQUERIDO
+	        Model model) {
 
-	    // Validaciones básicas
-	    if (cantidadDisponible == null || cantidadDisponible < 0) {
-	        cantidadDisponible = 0;
-	    }
-
-	    // 1. Guardar la imagen
-	    if (!imagen.isEmpty()) {
-	        try {
-	            // Usar la ruta configurada en tu clase ConfigUploads
-	            String uploadsDir = System.getProperty("user.dir") + "/uploads/";
-	            String nombreArchivo = System.currentTimeMillis() + "_" + 
-	                Paths.get(imagen.getOriginalFilename()).getFileName().toString();
-	            
-	            Path rutaCompleta = Paths.get(uploadsDir + nombreArchivo);
-	            Files.createDirectories(rutaCompleta.getParent());
-	            imagen.transferTo(rutaCompleta.toFile());
-	            
-	            producto.setImagen("/uploads/" + nombreArchivo); // Ruta relativa para acceso web
-	            
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            // Puedes manejar el error como prefieras
-	            producto.setImagen(null);
+	    try {
+	        System.out.println("=== INICIANDO GUARDAR PRODUCTO ===");
+	        System.out.println("🔍 ID Veterinaria recibido: " + idVeterinaria);
+	        
+	        // VALIDACIÓN BÁSICA
+	        if (idVeterinaria == null || idVeterinaria <= 0) {
+	            throw new RuntimeException("ID de veterinaria inválido: " + idVeterinaria);
 	        }
+	        
+	        if (cantidadDisponible == null || cantidadDisponible < 0) {
+	            cantidadDisponible = 0;
+	        }
+
+	        System.out.println("📝 Datos recibidos - Veterinaria: " + idVeterinaria + ", Cantidad: " + cantidadDisponible);
+
+	      
+	        
+	        // 1. Crear y guardar el producto
+	        
+	        System.out.println("🔍 Buscando producto existente...");
+
+	        Producto productoGuardado;
+	        Optional<Producto> productoExistente = productoService.buscarPorNombreYCategoria(nombre.trim(), categoria);
+
+	        if (productoExistente.isPresent()) {
+	            // ✅ PRODUCTO EXISTENTE - ACTUALIZARLO con los nuevos datos
+	            productoGuardado = productoExistente.get();
+	            System.out.println("📦 Producto existente encontrado, ID: " + productoGuardado.getId());
+	            
+	            // ACTUALIZAR los campos que pueden cambiar
+	            productoGuardado.setPrecio(precio); // ✅ Actualizar precio
+	            productoGuardado.setDescripcion(descripcion != null ? descripcion.trim() : ""); // ✅ Actualizar descripción
+	            
+	            // ACTUALIZAR imagen solo si se subió una nueva
+	            if (imagen != null && !imagen.isEmpty()) {
+	                try {
+	                    String uploadsDir = System.getProperty("user.dir") + "/uploads/";
+	                    String nombreOriginal = imagen.getOriginalFilename();
+	                    String extension = nombreOriginal.contains(".") ? 
+	                        nombreOriginal.substring(nombreOriginal.lastIndexOf(".")) : "";
+	                    
+	                    String nombreArchivo = System.currentTimeMillis() + "_" + 
+	                        (nombre.replaceAll("[^a-zA-Z0-9]", "_").toLowerCase()) + extension;
+	                    
+	                    Path rutaCompleta = Paths.get(uploadsDir + nombreArchivo);
+	                    Files.createDirectories(rutaCompleta.getParent());
+	                    imagen.transferTo(rutaCompleta.toFile());
+	                    
+	                    productoGuardado.setImagen("/uploads/" + nombreArchivo); // ✅ Actualizar imagen
+	                    System.out.println("🖼️ Nueva imagen guardada: " + productoGuardado.getImagen());
+	                    
+	                } catch (IOException e) {
+	                    System.err.println("❌ Error al guardar nueva imagen: " + e.getMessage());
+	                }
+	            } else {
+	                System.out.println("📷 No se subió nueva imagen, se mantiene la anterior");
+	            }
+	            
+	            // Guardar los cambios del producto actualizado
+	            productoGuardado = productoService.actualizarProducto(productoGuardado);
+	            System.out.println("🔄 Producto actualizado - Precio: " + productoGuardado.getPrecio());
+	            
+	        } else {
+	            // 🆕 PRODUCTO NUEVO - Crearlo (tu código actual)
+	            System.out.println("🆕 Creando nuevo producto...");
+	            Producto producto = new Producto();
+	            producto.setNombre(nombre.trim());
+	            producto.setPrecio(precio);
+	            producto.setCategoria(categoria);
+	            producto.setDescripcion(descripcion != null ? descripcion.trim() : "");
+
+	            // Guardar imagen (tu código actual)
+	            if (imagen != null && !imagen.isEmpty()) {
+	                try {
+	                    String uploadsDir = System.getProperty("user.dir") + "/uploads/";
+	                    String nombreOriginal = imagen.getOriginalFilename();
+	                    String extension = nombreOriginal.contains(".") ? 
+	                        nombreOriginal.substring(nombreOriginal.lastIndexOf(".")) : "";
+	                    
+	                    String nombreArchivo = System.currentTimeMillis() + "_" + 
+	                        (nombre.replaceAll("[^a-zA-Z0-9]", "_").toLowerCase()) + extension;
+	                    
+	                    Path rutaCompleta = Paths.get(uploadsDir + nombreArchivo);
+	                    Files.createDirectories(rutaCompleta.getParent());
+	                    imagen.transferTo(rutaCompleta.toFile());
+	                    
+	                    producto.setImagen("/uploads/" + nombreArchivo);
+	                    System.out.println("🖼️ Imagen guardada: " + producto.getImagen());
+	                    
+	                } catch (IOException e) {
+	                    System.err.println("❌ Error al guardar imagen: " + e.getMessage());
+	                }
+	            }
+
+	            productoGuardado = productoService.crearProducto(producto);
+	            System.out.println("✅ Nuevo producto guardado con ID: " + productoGuardado.getId());
+	        }
+
+	        // 2. Obtener veterinaria de la base de datos (tu código actual)
+	        System.out.println("🔍 Buscando veterinaria en BD con ID: " + idVeterinaria);
+	        Veterinaria veterinaria = veterinariaService.obtenerPorId(idVeterinaria)
+	                .orElseThrow(() -> new RuntimeException("Veterinaria no encontrada en BD con ID: " + idVeterinaria));
+	        System.out.println("✅ Veterinaria encontrada: " + veterinaria.getNombre());
+
+	        // 3. GESTIÓN DE INVENTARIO (tu código actual corregido)
+	        System.out.println("🔄 Procesando inventario...");
+
+	     // Buscar inventario existente para ESTE producto en ESTA veterinaria
+	     Inventario inventarioExistente = inventarioService.obtenerInventarioPorVeterinariaYProducto(
+	             idVeterinaria, productoGuardado.getId());
+
+	     Inventario inventario;
+
+	     if (inventarioExistente != null) {
+	         System.out.println("📦 Inventario existente encontrado, ID: " + inventarioExistente.getId());
+	         System.out.println("📦 Producto: " + inventarioExistente.getProducto().getNombre());
+	         System.out.println("📦 Cantidad actual: " + inventarioExistente.getCantidadDisponible());
+	         System.out.println("📦 Nueva cantidad a agregar: " + cantidadDisponible);
+	         
+	         // ✅ USAR EL MÉTODO DEL SERVICE PARA AGREGAR STOCK
+	         inventario = inventarioService.agregarStock(inventarioExistente.getId(), cantidadDisponible);
+	         System.out.println("🔄 Stock actualizado - Nueva cantidad: " + inventario.getCantidadDisponible());
+	     } else {
+	         System.out.println("🆕 Creando NUEVO registro de inventario...");
+	         
+	         inventario = new Inventario();
+	         inventario.setProducto(productoGuardado);
+	         inventario.setVeterinaria(veterinaria);
+	         inventario.setCantidadDisponible(cantidadDisponible);
+	         inventario.setFechaActualizacion(LocalDate.now());
+	         inventario.actualizarEstado();
+	         
+	         System.out.println("📊 Antes de guardar - Producto ID: " + inventario.getProducto().getId());
+	         System.out.println("📊 Antes de guardar - Veterinaria ID: " + inventario.getVeterinaria().getId());
+	         System.out.println("📊 Antes de guardar - Cantidad: " + inventario.getCantidadDisponible());
+	         
+	         try {
+	             Inventario inventarioGuardado = inventarioService.guardarInventario(inventario);
+	             
+	             if (inventarioGuardado != null && inventarioGuardado.getId() != null) {
+	                 System.out.println("✅ NUEVO inventario guardado con ID: " + inventarioGuardado.getId());
+	                 inventario = inventarioGuardado;
+	             } else {
+	                 throw new RuntimeException("El inventario no se guardó correctamente - ID es null");
+	             }
+	             
+	         } catch (Exception e) {
+	             System.err.println("💥 ERROR CRÍTICO al guardar inventario: " + e.getMessage());
+	             e.printStackTrace();
+	             throw new RuntimeException("Error al guardar en inventario: " + e.getMessage(), e);
+	         }
+	     }
+
+	        // 4. VERIFICACIÓN FINAL
+	        System.out.println("=== VERIFICACIÓN FINAL ===");
+	        System.out.println("🔍 Producto ID: " + productoGuardado.getId());
+	        System.out.println("🔍 Veterinaria ID: " + idVeterinaria);
+	        System.out.println("🔍 Inventario ID: " + inventario.getId());
+	        System.out.println("🔍 Cantidad en inventario: " + inventario.getCantidadDisponible());
+	        System.out.println("🔍 Estado: " + inventario.getEstado());
+
+	        System.out.println("🎉 PROCESO COMPLETADO EXITOSAMENTE");
+	        return "redirect:/perfil-veterinario?success=true";
+
+	    } catch (Exception e) {
+	        System.err.println("💥 ERROR CRÍTICO al guardar producto: " + e.getMessage());
+	        e.printStackTrace();
+	        return "redirect:/perfil-veterinario?error=" + e.getMessage();
 	    }
-
-	    // 2. Guardar el producto PRIMERO para obtener el ID
-	    Producto productoGuardado = productoService.crearProducto(producto);
-	    
-	    // Verificar que el producto se guardó correctamente
-	    if (productoGuardado == null || productoGuardado.getId() == null) {
-	        throw new RuntimeException("Error al guardar el producto");
-	    }
-
-	    // 3. Buscar la veterinaria
-	    Veterinaria veterinaria = veterinariaService.obtenerPorId(idVeterinaria)
-	            .orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
-
-	    // 4. Verificar si ya existe inventario para este producto y veterinaria
-	    Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(
-	            idVeterinaria, productoGuardado.getId());
-
-	    if (inventario != null) {
-	        // Si existe, actualizar el stock
-	        inventario.agregarStock(cantidadDisponible);
-	    } else {
-	        // Si no existe, crear nuevo registro de inventario
-	        inventario = new Inventario();
-	        inventario.setProducto(productoGuardado);
-	        inventario.setVeterinaria(veterinaria);
-	        inventario.setCantidadDisponible(cantidadDisponible);
-	        inventario.setFechaActualizacion(LocalDate.now()); // Fecha actual
-	        inventario.actualizarEstado(); // Asumiendo que este método setea el estado según cantidad
-	    }
-
-	    // 5. Guardar el inventario
-	    inventarioService.guardarInventario(inventario);
-
-	    return "redirect:/perfil-veterinario";
 	}
+
+
+
 	
 	
 	
 	
 	
 	
-	
-	
+
 	
 	
 	

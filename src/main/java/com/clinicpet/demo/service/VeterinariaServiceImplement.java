@@ -62,8 +62,7 @@ public class VeterinariaServiceImplement implements IVeterinariaService {
 
 	@Override
 	public Optional<Veterinaria> obtenerPorId(Integer id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+	    return repo.findById(id);
 	}
 
 	@Override

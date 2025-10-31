@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,16 @@ public class ProductoServiceImplement implements IProductoService {
     @Override
     @Transactional(readOnly = true)
     public List<Producto> obtenerTodosLosProductos() {
-        return productoRepository.findAll();
+        System.out.println("🔥 🔥 🔥 PRODUCTO SERVICE EJECUTADO 🔥 🔥 🔥");
+        
+        try {
+            List<Producto> productos = productoRepository.findAll();
+            System.out.println("🎉 Productos en BD: " + productos.size());
+            return productos;
+        } catch (Exception e) {
+            System.out.println("💥 Error en servicio: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     @Override
@@ -98,4 +108,20 @@ public class ProductoServiceImplement implements IProductoService {
     public long contarTotalProductos() {
         return productoRepository.count();
     }
+
+	@Override
+	public Optional<Producto> buscarPorNombreYCategoria(String nombre, String categoria) {
+		// TODO Auto-generated method stub
+	    return productoRepository.findByNombreAndCategoria(nombre, categoria);
+
+	}
+
+	@Override
+	public Producto actualizarProducto(Producto producto) {
+	    // Verificar que el producto existe
+	    if (!productoRepository.existsById(producto.getId())) {
+	        throw new RuntimeException("Producto no encontrado con ID: " + producto.getId());
+	    }
+	    return productoRepository.save(producto);
+	}
 }
