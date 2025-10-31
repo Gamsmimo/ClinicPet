@@ -415,7 +415,7 @@
 								</span>
 							</div>
 							<div class="product-actions">
-								<button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
+								<button class="btn btn-sm btn-primary" onclick="openModal('edit-product')"><i class="fas fa-edit"></i></button>
 								<button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
 							</div>
 						</div>
@@ -471,7 +471,7 @@
 										<div>
 											<input type="file" name="foto" id="inputFoto" accept="image/jpeg,image/png"
 												class="form-control" style="max-width: 300px;">
-											<small class="form-text text-muted">Formatos: JPG, PNG (Max. 2MB)</small>
+											<small class="form-text text-muted">Formatos: JPG, PNG (Max. 10MB)</small>
 										</div>
 									</div>
 								</div>
@@ -711,9 +711,9 @@
 		</form>
 	</div>
 
+	
 	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
 	<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
-
 	<!-- Modal Agregar Producto -->
 	<div class="modal" id="new-product-modal">
 		<form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data"
@@ -723,11 +723,8 @@
 				<button type="button" class="btn-close-modal" onclick="closeModal()">
 					<i class="fas fa-times"></i>
 				</button>
-<<<<<<< HEAD
 			</div>
-=======
 
->>>>>>> 416b4b7167d2f61947bc11820a7cbdb57dcdebac
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-md-6 mb-3">
@@ -767,10 +764,6 @@
 					<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
 					<!-- CAMPO OCULTO CON VALOR FIJO PARA PRUEBAS -->
 					<input type="hidden" name="idveterinaria" id="idveterinaria-input" value="1">
-<<<<<<< HEAD
-
-=======
->>>>>>> 416b4b7167d2f61947bc11820a7cbdb57dcdebac
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -888,6 +881,67 @@
 	</div>
 
 	<!-- Más modales... -->
+	
+	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
+		<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
+		<!-- Modal Editar Producto -->
+		<div class="modal" id="edit-product-modal">
+		    <form th:action="@{/perfil-veterinario/producto/actualizar/{id}}" 
+		          method="post" enctype="multipart/form-data" id="form-producto-editar">
+		        <div class="modal-header">
+		            <h3><i class="fa-solid fa-pen-to-square"></i> Editar Producto</h3>
+		            <button type="button" class="btn-close-modal" onclick="closeModal()">
+		                <i class="fas fa-times"></i>
+		            </button>
+		        </div>
+		        <div class="modal-body">
+		            <div class="row">
+		                <div class="col-md-6 mb-3">
+		                    <label class="form-label" for="edit-nombre">Nombre *</label>
+		                    <input type="text" id="edit-nombre" name="nombre" class="form-control" required>
+		                </div>
+		                <div class="col-md-6 mb-3">
+		                    <label class="form-label" for="edit-precio">Precio *</label>
+		                    <input type="number" id="edit-precio" name="precio" step="0.001" min="0" class="form-control" required>
+		                </div>
+		                <div class="col-md-6 mb-3">
+		                    <label for="edit-cantidadDisponible" class="form-label">Cantidad *</label>
+		                    <input type="number" id="edit-cantidadDisponible" name="cantidadDisponible" class="form-control" min="0" required>
+		                </div>
+		                <div class="col-md-6 mb-3">
+		                    <label for="edit-categoria" class="form-label">Categoría *</label>
+		                    <select id="edit-categoria" name="categoria" class="form-select" required>
+		                        <option value="">Seleccionar categoría</option>
+		                        <option value="Alimentos">Alimentos</option>
+		                        <option value="Medicamentos">Medicamentos</option>
+		                        <option value="Juguetes">Juguetes</option>
+		                        <option value="Accesorios">Accesorios</option>
+		                    </select>
+		                </div>
+		            </div>
+		            <div class="mb-3">
+		                <label class="form-label" for="edit-descripcion">Descripción *</label>
+		                <textarea id="edit-descripcion" name="descripcion" class="form-control" rows="3" required></textarea>
+		            </div>
+		            <div class="mb-3">
+		                <label class="form-label" for="edit-imagen">Imagen del Producto</label>
+		                <input type="file" id="edit-imagen" name="imagen" class="form-control" accept="image/*">
+		                <small class="text-muted">Dejar vacío para mantener la imagen actual</small>
+		                <!-- Vista previa de imagen actual -->
+		                <div class="mt-2">
+		                    <img id="preview-imagen-actual" src="" alt="Imagen actual" style="max-width: 200px; display: none;">
+		                </div>
+		            </div>
+		            <!-- Campo oculto para idveterinaria -->
+		            <input type="hidden" name="idveterinaria" value="1">
+		        </div>
+		        <div class="modal-footer">
+		            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+		            <button type="submit" class="btn btn-primary">Actualizar Producto</button>
+		        </div>
+		    </form>
+		</div>
+
 
 	<!-- Scripts -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -968,7 +1022,7 @@
 			if (!file) return;
 
 			// Validación frontend
-			if (file.size > 2 * 1024 * 1024) {
+			if (file.size > 10 * 1024 * 1024) {
 				alert('❌ La imagen no debe superar 2MB');
 				this.value = '';
 				return;
