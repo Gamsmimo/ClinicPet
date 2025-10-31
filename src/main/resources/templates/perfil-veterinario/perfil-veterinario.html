@@ -716,7 +716,6 @@
 
 	<!-- Modal Agregar Producto -->
 	<div class="modal" id="new-product-modal">
-<<<<<<< HEAD
 		<form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data"
 			id="form-producto">
 			<div class="modal-header">
@@ -724,18 +723,10 @@
 				<button type="button" class="btn-close-modal" onclick="closeModal()">
 					<i class="fas fa-times"></i>
 				</button>
-=======
-		<form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data">
-			<div class="modal-header">
-				<h3><i class="fas fa-box-open"></i> Agregar Producto</h3>
-				<button type="button" class="btn-close-modal" onclick="closeModal()"><i
-						class="fas fa-times"></i></button>
->>>>>>> 153bf6441ae61b34b16c87eb1e31e16bf460ead1
-			</div>
+
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-md-6 mb-3">
-<<<<<<< HEAD
 						<label class="form-label" for="nombre">Nombre *</label>
 						<input type="text" id="nombre" name="nombre" placeholder="Nombre del producto"
 							class="form-control" required minlength="2">
@@ -753,24 +744,6 @@
 					</div>
 					<div class="col-md-6 mb-3">
 						<label for="categoria" class="form-label">Categoría *</label>
-=======
-						<label class="form-label" for="nombre">Nombre</label>
-						<input type="text" id="nombre" name="nombre" placeholder="Nombre" class="form-control" required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="precio">Precio</label>
-						<input type="number" id="precio" name="precio" step="0.001" min="0" placeholder="0.000"
-							class="form-control" required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label for="cantidadDisponible" class="form-label">Cantidad</label>
-						<input type="number" id="cantidadDisponible" name="cantidadDisponible" class="form-control"
-							min="0" required>
-						<small class="text-muted">Número de unidades que ingresan al stock</small>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label for="categoria" class="form-label">Categoría</label>
->>>>>>> 153bf6441ae61b34b16c87eb1e31e16bf460ead1
 						<select id="categoria" name="categoria" class="form-select" required>
 							<option value="">Seleccionar categoría</option>
 							<option value="Alimentos">Alimentos</option>
@@ -781,7 +754,6 @@
 					</div>
 				</div>
 				<div class="mb-3">
-<<<<<<< HEAD
 					<label class="form-label" for="descripcion">Descripción *</label>
 					<textarea id="descripcion" name="descripcion" class="form-control" rows="3"
 						placeholder="Descripción del producto" required></textarea>
@@ -791,24 +763,12 @@
 					<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
 					<!-- CAMPO OCULTO CON VALOR FIJO PARA PRUEBAS -->
 					<input type="hidden" name="idveterinaria" id="idveterinaria-input" value="1">
-=======
-					<label class="form-label" for="descripcion">Descripción</label>
-					<textarea id="descripcion" name="descripcion" class="form-control" rows="3" required></textarea>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="imagen">Imagen del Producto</label>
-					<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
-					<input type="hidden" name="idveterinaria" th:value="${idVeterinaria}">
->>>>>>> 153bf6441ae61b34b16c87eb1e31e16bf460ead1
 				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-<<<<<<< HEAD
 				<button type="submit" class="btn btn-primary" id="btn-guardar">Guardar</button>
-=======
-				<button type="submit" class="btn btn-primary">Guardar</button>
->>>>>>> 153bf6441ae61b34b16c87eb1e31e16bf460ead1
+
 			</div>
 		</form>
 	</div>
