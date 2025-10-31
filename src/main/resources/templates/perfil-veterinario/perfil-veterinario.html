@@ -346,90 +346,90 @@
 				</div>
 			</section>
 
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			<!-- Sección Pet Shop -->
-						<section id="petshop" class="content-section">
-							<div class="section-header">
-								<h2><i class="fas fa-shopping-bag"></i> Pet Shop</h2>
-								<button class="btn btn-primary" onclick="openModal('new-product')">
-									<i class="fas fa-plus"></i> Agregar producto
-								</button>
-							</div>
 
-							<div class="product-filters">
-								<div class="row">
-									<div class="col-md-3">
-										<label>Categoría</label>
-										<select class="form-select">
-											<option>Todas las categorías</option>
-											<option>Alimentos</option>
-											<option>Medicamentos</option>
-											<option>Juguetes</option>
-											<option>Accesorios</option>
-										</select>
-									</div>
-									<div class="col-md-3">
-										<label>Estado</label>
-										<select class="form-select">
-											<option>Todos</option>
-											<option>Disponible</option>
-											<option>Agotado</option>
-										</select>
-									</div>
-								</div>
-							</div>
-			    <div class="product-grid">
-			        <div th:each="producto : ${productos}" class="product-card">
-			            <div th:classappend="${inventarioPorProducto[producto.id]?.estado == 'disponible'} ? 
-			                                'product-badge featured' : 'product-badge out-of-stock'" 
-			                 class="product-badge"
-			                 th:text="${inventarioPorProducto[producto.id]?.estado ?: 'No disponible'}">
-			                Disponible
-			            </div>
-			            
-			            <div class="product-image">
-			                <img th:src="@{${producto.imagen}}" th:alt="${producto.nombre}">
-			            </div>
-			            
-			            <div class="product-info">
-			                <h5 th:text="${producto.nombre}">Nombre producto</h5>
-			                <p class="product-description" th:text="${producto.descripcion}">Descripción</p>
-			                <div class="product-meta">
-			                    <span class="price" th:text="${#strings.concat('$', #numbers.formatDecimal
+
+
+
+
+
+
+
+
+
+
+			<!-- Sección Pet Shop -->
+			<section id="petshop" class="content-section">
+				<div class="section-header">
+					<h2><i class="fas fa-shopping-bag"></i> Pet Shop</h2>
+					<button class="btn btn-primary" onclick="openModal('new-product')">
+						<i class="fas fa-plus"></i> Agregar producto
+					</button>
+				</div>
+
+				<div class="product-filters">
+					<div class="row">
+						<div class="col-md-3">
+							<label>Categoría</label>
+							<select class="form-select">
+								<option>Todas las categorías</option>
+								<option>Alimentos</option>
+								<option>Medicamentos</option>
+								<option>Juguetes</option>
+								<option>Accesorios</option>
+							</select>
+						</div>
+						<div class="col-md-3">
+							<label>Estado</label>
+							<select class="form-select">
+								<option>Todos</option>
+								<option>Disponible</option>
+								<option>Agotado</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="product-grid">
+					<div th:each="producto : ${productos}" class="product-card">
+						<div th:classappend="${inventarioPorProducto[producto.id]?.estado == 'disponible'} ? 
+			                                'product-badge featured' : 'product-badge out-of-stock'" class="product-badge"
+							th:text="${inventarioPorProducto[producto.id]?.estado ?: 'No disponible'}">
+							Disponible
+						</div>
+
+						<div class="product-image">
+							<img th:src="@{${producto.imagen}}" th:alt="${producto.nombre}">
+						</div>
+
+						<div class="product-info">
+							<h5 th:text="${producto.nombre}">Nombre producto</h5>
+							<p class="product-description" th:text="${producto.descripcion}">Descripción</p>
+							<div class="product-meta">
+								<span class="price" th:text="${#strings.concat('$', #numbers.formatDecimal
 																			(producto.precio, 0, 'POINT', 0, 'POINT'))}">$0.000</span>
-			                    <span class="stock">
-			                        <i class="fas fa-box"></i> 
-			                        <span th:text="${(inventarioPorProducto[producto.id]?.cantidadDisponible ?: 0) + ' unidades'}">
-			                            0 unidades
-			                        </span>
-			                    </span>
-			                </div>
-			                <div class="product-actions">
-			                    <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-			                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-			                </div>
-			            </div>
-			        </div>
-			    </div>
+								<span class="stock">
+									<i class="fas fa-box"></i>
+									<span
+										th:text="${(inventarioPorProducto[producto.id]?.cantidadDisponible ?: 0) + ' unidades'}">
+										0 unidades
+									</span>
+								</span>
+							</div>
+							<div class="product-actions">
+								<button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
+								<button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
 			</section>
 
-			
-			
-			
-			
-			
-			
-			
+
+
+
+
+
+
+
 
 			<!-- Sección Configuración -->
 			<section id="configuracion" class="content-section">
@@ -723,7 +723,11 @@
 				<button type="button" class="btn-close-modal" onclick="closeModal()">
 					<i class="fas fa-times"></i>
 				</button>
+<<<<<<< HEAD
+			</div>
+=======
 
+>>>>>>> 416b4b7167d2f61947bc11820a7cbdb57dcdebac
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-md-6 mb-3">
@@ -763,6 +767,10 @@
 					<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
 					<!-- CAMPO OCULTO CON VALOR FIJO PARA PRUEBAS -->
 					<input type="hidden" name="idveterinaria" id="idveterinaria-input" value="1">
+<<<<<<< HEAD
+
+=======
+>>>>>>> 416b4b7167d2f61947bc11820a7cbdb57dcdebac
 				</div>
 			</div>
 			<div class="modal-footer">
