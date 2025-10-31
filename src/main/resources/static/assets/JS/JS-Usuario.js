@@ -1063,7 +1063,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //Script para eliminar mascota
-<<<<<<< HEAD
 
 // Variable global para almacenar el archivo temporal
 let currentPhotoFile = null;
@@ -1177,8 +1176,6 @@ async function saveProfilePicture() {
 	}
 }
 
-=======
->>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
 function eliminarMascota(id) {
 	if (confirm('¿Estás seguro de que quieres eliminar esta mascota?')) {
 		fetch('/usuarios/perfilusuario/eliminarmascota/' + id, {
@@ -1206,7 +1203,6 @@ function eliminarMascota(id) {
 }
 
 
-<<<<<<< HEAD
 // Funciones para manejar la foto de perfil
 function previewProfilePicture(input) {
 	if (input.files && input.files[0]) {
@@ -1429,6 +1425,43 @@ function showAlert(message, type) {
 		}
 	}, 5000);
 }
-=======
->>>>>>> 37753e4888d2b994ec002e62ae88d141d42d0788
+
+// Función para manejar el cierre de sesión
+function handleLogout() {
+	if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+		// Aquí puedes agregar lógica adicional antes de redirigir
+		// Por ejemplo, limpiar localStorage, hacer logout en API, etc.
+
+		// Limpiar datos de sesión si es necesario
+		localStorage.removeItem('userToken');
+		sessionStorage.clear();
+
+		// Redirigir al index
+		window.location.href = '/usuarios/index';
+	}
+}
+
+// Modificar el evento del enlace de cerrar sesión en el sidebar
+document.addEventListener('DOMContentLoaded', function() {
+	// ... código existente ...
+
+	// Agregar evento al enlace de cerrar sesión en el sidebar
+	const logoutLink = document.querySelector('.sidebar .nav-link.text-danger');
+	if (logoutLink) {
+		logoutLink.addEventListener('click', function(e) {
+			e.preventDefault();
+			handleLogout();
+		});
+	}
+
+	// También mantener el enlace de cerrar sesión en el header
+	const headerLogoutLink = document.querySelector('.custom-logout-link');
+	if (headerLogoutLink) {
+		headerLogoutLink.addEventListener('click', function(e) {
+			e.preventDefault();
+			handleLogout();
+		});
+	}
+});
+
 
