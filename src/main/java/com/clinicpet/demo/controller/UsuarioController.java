@@ -412,6 +412,11 @@ public class UsuarioController {
 		return "Tienda/tienda";
 	}
 
+	@GetMapping("/adopcion")
+	public String adopcion() {
+		return "Adopcion/adopcion";
+	}
+
 //redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {
