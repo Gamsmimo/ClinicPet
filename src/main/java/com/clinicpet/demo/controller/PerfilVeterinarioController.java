@@ -21,9 +21,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -236,7 +238,7 @@ public class PerfilVeterinarioController {
 				// En tu método del controller, reemplaza esta parte:
 				if (fotoFile != null && !fotoFile.isEmpty()) {
 				    // Validaciones de foto
-				    if (fotoFile.getSize() > 2 * 1024 * 1024) {
+				    if (fotoFile.getSize() > 10 * 1024 * 1024) {
 				        redirectAttributes.addFlashAttribute("error", "La imagen no debe superar 2MB");
 				        return "redirect:/perfil-veterinario";
 				    }
@@ -663,6 +665,142 @@ public class PerfilVeterinarioController {
 	
 	
 
+	
+	@GetMapping("/producto/datos/{idProducto}")
+	@ResponseBody
+	public Map<String, Object> obtenerDatosProducto(@PathVariable Integer idProducto) {
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    try {
+	        System.out.println("🔍 Obteniendo datos del producto ID: " + idProducto);
+	        
+	        Optional<Producto> productoOpt = productoService.obtenerProductoPorId(idProducto);
+	        if (productoOpt.isPresent()) {
+	            Producto producto = productoOpt.get();
+	            
+	            // Buscar inventario (usa el idVeterinaria que necesites, aquí uso 1 como ejemplo)
+	            Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(1, idProducto);
+	            
+	            response.put("id", producto.getId());
+	            response.put("nombre", producto.getNombre());
+	            response.put("descripcion", producto.getDescripcion());
+	            response.put("precio", producto.getPrecio());
+	            response.put("categoria", producto.getCategoria());
+	            response.put("imagen", producto.getImagen());
+	            response.put("cantidadDisponible", inventario != null ? inventario.getCantidadDisponible() : 0);
+	            
+	            System.out.println("✅ Datos cargados para producto: " + producto.getNombre());
+	        } else {
+	            response.put("error", "Producto no encontrado");
+	            System.err.println("❌ Producto no encontrado ID: " + idProducto);
+	        }
+	    } catch (Exception e) {
+	        response.put("error", "Error: " + e.getMessage());
+	        System.err.println("💥 Error al obtener datos del producto: " + e.getMessage());
+	    }
+	    
+	    return response;
+	}
+	
+	
+	
+	
+	@PostMapping("/producto/actualizar/{idProducto}")
+	public String actualizarProducto(
+	        @PathVariable Integer idProducto,
+	        @RequestParam String nombre,
+	        @RequestParam Double precio,
+	        @RequestParam String categoria,
+	        @RequestParam String descripcion,
+	        @RequestParam Integer cantidadDisponible,
+	        @RequestParam(required = false) MultipartFile imagen,
+	        @RequestParam Integer idveterinaria) {
+	    
+	    try {
+	        System.out.println("🔄 Actualizando producto ID: " + idProducto);
+	        
+	        // Verificar que el producto existe
+	        Optional<Producto> productoExistenteOpt = productoService.obtenerProductoPorId(idProducto);
+	        if (productoExistenteOpt.isEmpty()) {
+	            throw new RuntimeException("Producto no encontrado con ID: " + idProducto);
+	        }
+	        
+	        Producto producto = productoExistenteOpt.get();
+	        
+	        // Actualizar campos del producto
+	        producto.setNombre(nombre.trim());
+	        producto.setPrecio(precio);
+	        producto.setCategoria(categoria);
+	        producto.setDescripcion(descripcion != null ? descripcion.trim() : "");
+	        
+	        // Actualizar imagen solo si se subió una nueva
+	        if (imagen != null && !imagen.isEmpty()) {
+	            try {
+	                String uploadsDir = System.getProperty("user.dir") + "/uploads/";
+	                String nombreOriginal = imagen.getOriginalFilename();
+	                String extension = nombreOriginal.contains(".") ? 
+	                    nombreOriginal.substring(nombreOriginal.lastIndexOf(".")) : "";
+	                
+	                String nombreArchivo = System.currentTimeMillis() + "_" + 
+	                    (nombre.replaceAll("[^a-zA-Z0-9]", "_").toLowerCase()) + extension;
+	                
+	                Path rutaCompleta = Paths.get(uploadsDir + nombreArchivo);
+	                Files.createDirectories(rutaCompleta.getParent());
+	                imagen.transferTo(rutaCompleta.toFile());
+	                
+	                producto.setImagen("/uploads/" + nombreArchivo);
+	                System.out.println("🖼️ Nueva imagen guardada: " + producto.getImagen());
+	                
+	            } catch (IOException e) {
+	                System.err.println("❌ Error al guardar nueva imagen: " + e.getMessage());
+	            }
+	        }
+	        
+	        // Guardar producto actualizado
+	        Producto productoActualizado = productoService.actualizarProducto(producto);
+	        System.out.println("✅ Producto actualizado: " + productoActualizado.getNombre());
+	        
+	        // Actualizar inventario
+	        Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(idveterinaria, idProducto);
+	        if (inventario != null) {
+	            inventario.setCantidadDisponible(cantidadDisponible);
+	            inventario.setFechaActualizacion(LocalDate.now());
+	            inventario.actualizarEstado();
+	            inventarioService.guardarInventario(inventario);
+	            System.out.println("📦 Inventario actualizado - Cantidad: " + cantidadDisponible);
+	        } else {
+	            // Crear nuevo registro de inventario si no existe
+	            Veterinaria veterinaria = veterinariaService.obtenerPorId(idveterinaria)
+	                    .orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
+	            
+	            Inventario nuevoInventario = new Inventario();
+	            nuevoInventario.setProducto(productoActualizado);
+	            nuevoInventario.setVeterinaria(veterinaria);
+	            nuevoInventario.setCantidadDisponible(cantidadDisponible);
+	            nuevoInventario.setFechaActualizacion(LocalDate.now());
+	            nuevoInventario.actualizarEstado();
+	            
+	            inventarioService.guardarInventario(nuevoInventario);
+	            System.out.println("📦 Nuevo inventario creado - Cantidad: " + cantidadDisponible);
+	        }
+	        
+	        System.out.println("🎉 Producto actualizado exitosamente");
+	        return "redirect:/perfil-veterinario?success=Producto actualizado correctamente";
+	        
+	    } catch (Exception e) {
+	        System.err.println("💥 Error al actualizar producto: " + e.getMessage());
+	        e.printStackTrace();
+	        return "redirect:/perfil-veterinario?error=" + e.getMessage();
+	    }
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
