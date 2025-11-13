@@ -1466,38 +1466,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== MODO OSCURO/CLARO ===== 
 (function() {
-	// Esperar a que el DOM esté listo
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initTheme);
-	} else {
-		initTheme();
-	}
 
-	function initTheme() {
-		const themeToggle = document.getElementById('themeToggle');
-		const htmlElement = document.documentElement;
-
-		if (!themeToggle) {
-			console.error('Toggle de tema no encontrado');
-			return;
-		}
-
-		// Establecer tema por defecto (claro)
-		htmlElement.setAttribute('data-theme', 'light');
-		themeToggle.checked = false;
-
-		// Escuchar cambios en el toggle
-		themeToggle.addEventListener('change', function() {
-			if (this.checked) {
-				htmlElement.setAttribute('data-theme', 'dark');
-				console.log('Tema oscuro activado');
-			} else {
-				htmlElement.setAttribute('data-theme', 'light');
-				console.log('Tema claro activado');
-			}
-		});
-
-		console.log('Sistema de temas inicializado correctamente');
-	}
+    // Esperar a que el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTheme);
+    } else {
+        initTheme();
+    }
+    
+    function initTheme() {
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        
+        if (!themeToggle) {
+            console.error('Toggle de tema no encontrado');
+            return;
+        }
+        
+        // Establecer tema por defecto (claro)
+        htmlElement.setAttribute('data-theme', 'light');
+        themeToggle.checked = false;
+        
+        // Escuchar cambios en el toggle
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                htmlElement.setAttribute('data-theme', 'dark');
+                console.log('Tema oscuro activado');
+            } else {
+                htmlElement.setAttribute('data-theme', 'light');
+                console.log('Tema claro activado');
+            }
+        });
+        
+        console.log('Sistema de temas inicializado correctamente');
+    }
 })();
+
 

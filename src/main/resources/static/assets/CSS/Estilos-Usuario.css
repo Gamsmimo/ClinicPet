@@ -12,11 +12,13 @@
 	--shadow-medium: 0 3px 15px rgba(0, 0, 0, 0.1);
 	--shadow-strong: 0 6px 25px rgba(0, 0, 0, 0.12);
 
+
 	/* Variables dinámicas para tema */
 	--bg-body: #ffffff;
 	--bg-card: #ffffff;
 	--text-primary: #000000;
 	--text-secondary: #6c757d;
+
 	--border-color: #252525;
 	--sidebar-gradient-start: #d6e4f0;
 	--sidebar-gradient-end: #e1f0d6;
@@ -1022,6 +1024,7 @@ body {
 	display: none;
 }
 
+
 .theme-toggle-checkbox:checked~.theme-toggle-label .moon-icon {
 	display: none;
 }
@@ -1241,6 +1244,7 @@ body {
 [data-theme="dark"] .section-header h2 {
 	color: var(--text-primary);
 }
+
 
 [data-theme="dark"] h1,
 [data-theme="dark"] h2,
