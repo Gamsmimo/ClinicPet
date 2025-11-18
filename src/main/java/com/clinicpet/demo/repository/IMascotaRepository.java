@@ -20,6 +20,8 @@ public interface IMascotaRepository extends JpaRepository<Mascota, Integer> {
 
 	// Sin cambios: Método derivado
 	List<Mascota> findByEspecie(String especie);
+	
+	List<Mascota> findByUsuarioId(Integer usuarioId);
 
 	@Modifying
 	@Transactional
