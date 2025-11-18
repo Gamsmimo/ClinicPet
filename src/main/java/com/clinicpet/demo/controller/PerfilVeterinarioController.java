@@ -140,7 +140,6 @@ public class PerfilVeterinarioController {
 	}
 	
 	
-
 	// ==================== OTRAS SECCIONES (PLACEHOLDERS) ====================
 	@GetMapping("/inicio")
 	public String inicio() {
@@ -161,40 +160,6 @@ public class PerfilVeterinarioController {
 	public String adopciones() {
 		return "perfil-veterinario/adopciones";
 	}
-
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 	// ==================== SECCION CONFIGURACION ====================
 
@@ -348,11 +313,6 @@ public class PerfilVeterinarioController {
 	}
 	
 	
-	
-	
-	
-	
-	
 
     @PostMapping("/change-password")
     public String changePassword(
@@ -415,15 +375,6 @@ public class PerfilVeterinarioController {
             return "perfil-veterinario";
         }
     }
-
-
-	
-	
-	
-	
-	
-	
-	
 
 	// MODAL CITA!!!!!!!!!!!!!
 	@GetMapping("/perfil-veterinario")
@@ -656,15 +607,6 @@ public class PerfilVeterinarioController {
 	    }
 	}
 
-
-
-	
-	
-	
-	
-	
-	
-
 	
 	@GetMapping("/producto/datos/{idProducto}")
 	@ResponseBody
@@ -794,20 +736,8 @@ public class PerfilVeterinarioController {
 	    }
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
+	
 	// MODAL EMERGENCIA!!!!!!!!!!!!!!!!
 	@PostMapping("/emergencia/guardar")
 	public String guardarEmergencia(@RequestParam("mascotaId") Integer mascotaId,
