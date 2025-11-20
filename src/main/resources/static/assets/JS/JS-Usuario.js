@@ -1,30 +1,13 @@
-// ===== CONFIGURACIÓN INICIAL =====
-// ID del usuario actual inyectado desde Thymeleaf
 const currentUserId = document.getElementById('current-user-id') ? document.getElementById('current-user-id').value : null;
-
-// Variable global para almacenar el archivo de foto
 let currentPhotoFile = null;
 
-console.log('✅ Usuario ID cargado:', currentUserId);
-
 $(document).ready(function() {
-	// --- CONFIGURACIÓN INICIAL Y DATOS DEL USUARIO ---
-	// En una aplicación real, el ID del usuario logueado se obtendría de la sesión
-	// o de un token JWT. Para este ejemplo, lo obtenemos de un campo oculto en el HTML.
-	// Asegúrate de que tu HTML tenga: <input type="hidden" id="current-user-id" th:value="${idUsuarioActual}">
-	// URL base de tu API REST (ajusta el puerto si es necesario)
 	const API_BASE_URL = 'http://localhost:8080/api';
 
 	// Función para inicializar la aplicación
 	initApp();
 
 	function initApp() {
-		// Cargar datos del usuario (nombre) - Esto debería venir del backend
-		// Por ahora, si no tienes un endpoint para obtener el usuario, puedes dejarlo estático
-		// o implementarlo. Asumimos que el nombre del usuario se cargará dinámicamente.
-		// $('#username').text("Cargando...");
-		// $('#username-header').text("Cargando...");
-
 		// Configurar menú hamburguesa
 		$('.navbar-toggler').click(function() {
 			$('#sidebar').toggleClass('active');
@@ -92,10 +75,6 @@ $(document).ready(function() {
 			$('#addPetModal').modal('show');
 		});
 
-		// El botón de guardar mascota ahora es un submit de formulario tradicional,
-		// por lo que no necesita un manejador de click en JS para enviar los datos.
-		// La función addNewPet() ya no es necesaria para el envío.
-
 		$('#new-appointment-btn').click(function() {
 			// Redirigir a WhatsApp para agendar cita
 			window.open('https://wa.me/573204767864?text=Hola,%20me%20gustaría%20agendar%20una%20cita', '_blank');
@@ -103,21 +82,16 @@ $(document).ready(function() {
 
 		$('#go-to-shop-btn').click(function() {
 			alert('Redirigiendo a la tienda en línea...');
-			// Aquí podrías redirigir a una URL real de tu tienda
-			// window.location.href = '/tienda';
 		});
 
 		$('#delete-account-btn').click(function() {
 			$('#confirmDeleteModal').modal('show');
 		});
 
-		// Enviar formulario de perfil (AJAX o tradicional, dependiendo de tu implementación)
-		// Enviar formulario de perfil usando el envío tradicional del navegador
 		$('#profile-form').off('submit');
 
-		// Enviar formulario de contraseña (AJAX o tradicional)
 		$('#password-form').submit(function(e) {
-			e.preventDefault(); // Prevenir el envío tradicional
+			e.preventDefault();
 			changePassword();
 		});
 
@@ -149,11 +123,6 @@ $(document).ready(function() {
 			confirmDeleteModal.hide();
 		});
 	}
-
-	// --- MANEJO DE FOTO DE PERFIL (AJAX) ---
-	// Las funciones de foto están definidas fuera de $(document).ready)
-
-	// --- FUNCIONES PARA CARGAR DATOS DESDE EL BACKEND ---
 
 	// Función para cargar el resumen rápido del dashboard
 	async function loadQuickSummary() {
@@ -875,11 +844,7 @@ function handleLogout() {
 	}
 }
 
-// Modificar el evento del enlace de cerrar sesión en el sidebar
 document.addEventListener('DOMContentLoaded', function() {
-	// ... código existente ...
-
-	// Agregar evento al enlace de cerrar sesión en el sidebar
 	const logoutLink = document.querySelector('.sidebar .nav-link.text-danger');
 	if (logoutLink) {
 		logoutLink.addEventListener('click', function(e) {
@@ -888,7 +853,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 
-	// También mantener el enlace de cerrar sesión en el header
 	const headerLogoutLink = document.querySelector('.custom-logout-link');
 	if (headerLogoutLink) {
 		headerLogoutLink.addEventListener('click', function(e) {
@@ -898,11 +862,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 });
 
-// ===== FUNCIONES DE FOTO DE PERFIL (UNIFICADAS) =====
-
-/**
- * Vista previa de la foto de perfil
- */
 window.previewProfilePicture = function(input) {
 	const file = input.files && input.files[0];
 	if (!file) return;
@@ -939,9 +898,6 @@ window.previewProfilePicture = function(input) {
 	reader.readAsDataURL(file);
 };
 
-/**
- * Guardar foto de perfil
- */
 window.saveProfilePicture = async function() {
 	if (!currentPhotoFile) {
 		alert('No hay ninguna imagen para guardar.');
@@ -1030,9 +986,6 @@ window.saveProfilePicture = async function() {
 	}
 };
 
-/**
- * Eliminar foto de perfil
- */
 window.removeProfilePicture = async function() {
 	if (!confirm('¿Estás seguro de que deseas eliminar tu foto de perfil?')) {
 		return;
@@ -1074,9 +1027,6 @@ window.removeProfilePicture = async function() {
 	}
 };
 
-/**
- * Cancelar cambios de foto
- */
 window.cancelProfilePicture = function() {
 	const input = document.getElementById('profile-picture-input');
 	const previewContainer = document.getElementById('new-picture-preview');
@@ -1087,7 +1037,6 @@ window.cancelProfilePicture = function() {
 	currentPhotoFile = null;
 };
 
-// ===== MODO OSCURO/CLARO ===== 
 (function() {
 
 	// Esperar a que el DOM esté listo
@@ -1126,16 +1075,26 @@ window.cancelProfilePicture = function() {
 })();
 
 function cargarSidebar() {
-	fetch(`/usuario/buscar/${usuarioId}`)
-		.then(r => r.json())
+	if (!currentUserId) {
+		console.warn('No se pudo cargar el sidebar: currentUserId no está definido');
+		return;
+	}
+
+	fetch(`/usuario/buscar/${currentUserId}`)
+		.then(r => {
+			if (!r.ok) {
+				throw new Error(`Error HTTP: ${r.status}`);
+			}
+			return r.json();
+		})
 		.then(u => {
-			document.getElementById("sidebarNombre").innerText = u.nombres;
-			document.getElementById("sidebarFoto").src =
-				u.imagen ? `/${u.imagen}` : "/img/default.png";
-		});
+			const sidebarNombre = document.getElementById("sidebarNombre");
+			const sidebarFoto = document.getElementById("sidebarFoto");
+
+			if (sidebarNombre) sidebarNombre.innerText = u.nombres || 'Usuario';
+			if (sidebarFoto) sidebarFoto.src = u.imagen ? `/${u.imagen}` : "/img/default.png";
+		})
+		.catch(error => console.error('Error al cargar el sidebar:', error));
 }
 
 cargarSidebar();
-
-
-
