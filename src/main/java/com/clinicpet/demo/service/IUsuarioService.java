@@ -3,6 +3,7 @@ package com.clinicpet.demo.service;
 import com.clinicpet.demo.model.Usuario;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface IUsuarioService {
 
@@ -58,5 +59,7 @@ public interface IUsuarioService {
 	void eliminarFotoPerfil(Long usuarioId);
 
 	void actualizarFotoPerfil(Long usuarioId, String rutaFoto);
+
+	String guardarFoto(Long usuarioId, MultipartFile foto);
 
 }

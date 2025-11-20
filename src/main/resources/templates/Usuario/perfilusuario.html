@@ -33,7 +33,8 @@
 				<div class="sidebar-header">
 					<h3 class="text-center">Clinic Pet</h3>
 					<div class="user-profile text-center">
-						<img th:src="@{/assets/IMG/humano.jpg}" alt="Foto de perfil" class="rounded-circle mb-2">
+						<img th:src="${usuarioLogueado.imagen != null} ? ${usuarioLogueado.imagen} : @{/assets/IMG/humano.jpg}"
+							alt="Foto de perfil" class="rounded-circle mb-2" id="sidebar-profile-picture">
 						<h5 id="username" th:text="${usuarioLogueado.nombres + ' ' + usuarioLogueado.apellidos}"></h5>
 						<p class="text-muted">Dueño de mascotas</p>
 					</div>
@@ -84,18 +85,19 @@
 			<!-- Toggle Modo Oscuro/Claro (FUERA de los modales) -->
 			<div class="theme-toggle-container">
 
-			    <input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
-			    <label for="themeToggle" class="theme-toggle-label">
-			        <div class="toggle-circle">
-			            <i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
-			            <i class="bi bi-sun-fill toggle-icon sun-icon"></i>
-			        </div>
-			    </label>
+				<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
+				<label for="themeToggle" class="theme-toggle-label">
+					<div class="toggle-circle">
+						<i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
+						<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
+					</div>
+				</label>
 			</div>
 
 
 			<!-- Contenido Principal -->
 			<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+				<input type="hidden" id="current-user-id" th:value="${idUsuarioActual}">
 				<!-- Flash Messages (Success/Error post-agregar) -->
 				<div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
 					<i class="fas fa-check-circle me-2"></i><span th:text="${success}">Mascota agregada!</span>
@@ -354,8 +356,8 @@
 										<div class="col-md-4 col-lg-3">
 											<div class="text-center">
 												<div class="mb-3">
-													<img th:src="@{/assets/IMG/humano.jpg}" alt="Foto de perfil"
-														class="rounded-circle img-fluid"
+													<img th:src="${usuarioLogueado.imagen != null} ? ${usuarioLogueado.imagen} : @{/assets/IMG/humano.jpg}"
+														alt="Foto de perfil" class="rounded-circle img-fluid"
 														style="width: 150px; height: 150px; object-fit: cover; border: 4px solid var(--pastel-blue);"
 														id="current-profile-picture">
 												</div>

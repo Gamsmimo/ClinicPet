@@ -106,10 +106,8 @@ $(document).ready(function() {
 		});
 
 		// Enviar formulario de perfil (AJAX o tradicional, dependiendo de tu implementación)
-		$('#profile-form').submit(function(e) {
-			e.preventDefault(); // Prevenir el envío tradicional
-			saveProfile();
-		});
+		// Enviar formulario de perfil usando el envío tradicional del navegador
+		$('#profile-form').off('submit');
 
 		// Enviar formulario de contraseña (AJAX o tradicional)
 		$('#password-form').submit(function(e) {
@@ -145,6 +143,135 @@ $(document).ready(function() {
 			confirmDeleteModal.hide();
 		});
 	}
+
+    // --- MANEJO DE FOTO DE PERFIL (AJAX) ---
+
+    window.previewProfilePicture = function(input) {
+        const file = input.files && input.files[0];
+        if (!file) return;
+
+        const maxSize = parseInt(input.getAttribute('data-max-size') || '5242880', 10);
+        if (file.size > maxSize) {
+            alert('La imagen excede el tamaño máximo permitido.');
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewContainer = document.getElementById('new-picture-preview');
+            const previewImg = document.getElementById('picture-preview');
+            if (previewImg) {
+                previewImg.src = e.target.result;
+            }
+            if (previewContainer) {
+                previewContainer.style.display = 'block';
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.saveProfilePicture = async function() {
+        const input = document.getElementById('profile-picture-input');
+        if (!input || !input.files || !input.files[0]) {
+            alert('Selecciona una imagen primero.');
+            return;
+        }
+        if (!currentUserId) {
+            alert('No se pudo determinar el usuario actual.');
+            return;
+        }
+
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async function(e) {
+            const base64Data = e.target.result;
+
+            try {
+                const response = await fetch('/usuarios/perfilusuario/actualizarFotoPerfil', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fotoPerfil: base64Data,
+                        usuarioId: currentUserId
+                    })
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (response.ok) {
+                    // Actualizar imágenes en el perfil y en el sidebar si existen
+                    const mainImg = document.getElementById('current-profile-picture');
+                    const sidebarImg = document.getElementById('sidebar-profile-picture');
+                    if (mainImg) mainImg.src = base64Data;
+                    if (sidebarImg) sidebarImg.src = base64Data;
+
+                    alert(data.mensaje || 'Foto actualizada correctamente');
+                    cancelProfilePicture();
+                } else {
+                    alert(data.error || 'Error al actualizar la foto de perfil');
+                }
+            } catch (err) {
+                console.error('Error al actualizar la foto de perfil:', err);
+                alert('Error al actualizar la foto de perfil');
+            }
+        };
+
+        reader.readAsDataURL(file);
+    };
+
+    window.removeProfilePicture = async function() {
+        if (!currentUserId) {
+            alert('No se pudo determinar el usuario actual.');
+            return;
+        }
+
+        if (!confirm('¿Seguro que deseas eliminar tu foto de perfil?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/usuarios/perfilusuario/eliminarFotoPerfil', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    usuarioId: currentUserId
+                })
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (response.ok) {
+                const defaultSrc = '/assets/IMG/humano.jpg';
+                const mainImg = document.getElementById('current-profile-picture');
+                const sidebarImg = document.getElementById('sidebar-profile-picture');
+                if (mainImg) mainImg.src = defaultSrc;
+                if (sidebarImg) sidebarImg.src = defaultSrc;
+
+                alert(data.mensaje || 'Foto eliminada correctamente');
+                cancelProfilePicture();
+            } else {
+                alert(data.error || 'Error al eliminar la foto de perfil');
+            }
+        } catch (err) {
+            console.error('Error al eliminar la foto de perfil:', err);
+            alert('Error al eliminar la foto de perfil');
+        }
+    };
+
+    window.cancelProfilePicture = function() {
+        const input = document.getElementById('profile-picture-input');
+        const previewContainer = document.getElementById('new-picture-preview');
+        const previewImg = document.getElementById('picture-preview');
+        if (input) input.value = '';
+        if (previewImg) previewImg.src = '';
+        if (previewContainer) previewContainer.style.display = 'none';
+    };
 
 	// --- FUNCIONES PARA CARGAR DATOS DESDE EL BACKEND ---
 
@@ -1501,5 +1628,18 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Sistema de temas inicializado correctamente');
     }
 })();
+
+function cargarSidebar() {
+    fetch(`/usuario/buscar/${usuarioId}`)
+        .then(r => r.json())
+        .then(u => {
+            document.getElementById("sidebarNombre").innerText = u.nombres;
+            document.getElementById("sidebarFoto").src =
+                u.imagen ? `/${u.imagen}` : "/img/default.png";
+        });
+}
+
+cargarSidebar();
+
 
 
