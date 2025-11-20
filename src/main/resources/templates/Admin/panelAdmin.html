@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>ClinicPet - Panel Administrador</title>
+	<title>HelpYourPet - Panel Administrador</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 	<link rel="stylesheet" th:href="@{/assets/CSS/CSS-Admin.css}">
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -14,9 +14,9 @@
 	<!-- Header -->
 	<header class="header">
 		<div class="logo-container">
-			<img th:src="@{/assets/IMG/logo.png}" alt="Logo ClinicPet" class="logo-img">
+			<img th:src="@{/assets/IMG/logo.png}" alt="Logo HelpYourPet" class="logo-img">
 			<div class="logo-text">
-				<h1>ClinicPet</h1>
+				<h1>HelpYourPet</h1>
 				<span>Panel Administrador</span>
 			</div>
 		</div>
@@ -41,6 +41,8 @@
 				<li><a href="#" class="nav-link" data-section="users">Gestión de Usuarios</a></li>
 				<li><a href="#" class="nav-link" data-section="pets">Gestión de Mascotas</a></li>
 				<li><a href="#" class="nav-link" data-section="vets">Gestión Veterinaria</a></li>
+				<li><a href="#" class="nav-link" data-section="settings">Configuración General</a></li>
+				<li><a href="#" class="nav-link" data-section="security">Control y Seguridad</a></li>
 				<li><a href="#" class="nav-link" data-section="profile">Perfil Administrador</a></li>
 			</ul>
 		</nav>
@@ -125,45 +127,251 @@
 				</table>
 			</section>
 
+			<!-- Gestión de Mascotas -->
+			<section id="pets" class="content-section">
+				<h2>Gestión de Mascotas</h2>
+				<div class="tabs">
+					<button class="tab-btn active" data-tab="pets-tab">Mascotas Registradas</button>
+					<button class="tab-btn" data-tab="abuse-tab">Reportes de Maltrato</button>
+				</div>
+
+				<div class="tab-content active" id="pets-tab">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Nombre</th>
+								<th>Especie</th>
+								<th>Raza</th>
+								<th>Dueño</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody id="tablaMascotas">
+							<tr th:each="m : ${mascotas}">
+								<td th:text="${m.id}">1</td>
+								<td th:text="${m.nombre}">Toby</td>
+								<td th:text="${m.especie}">Canino</td>
+								<td th:text="${m.raza}">Labrador</td>
+								<td th:text="${m.usuario.nombres + ' ' + m.usuario.apellidos}">Dueño</td>
+								<td>
+									<button class="btn-action" th:onclick="'verMascota('+${m.id}+')'">Ver</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="tab-content" id="abuse-tab">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Fecha</th>
+								<th>Descripción</th>
+								<th>Ubicación</th>
+								<th>Estado</th>
+								<th>Autoridad Asignada</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>15/10/2023</td>
+								<td>Perro abandonado en parque central</td>
+								<td>Parque Central, Ciudad</td>
+								<td><span class="status pending">Pendiente</span></td>
+								<td><span class="authority-assigned">-</span></td>
+								<td>
+									<div class="authority-dropdown">
+										<select class="authority-select" data-report-id="1">
+											<option value="">Seleccionar autoridad...</option>
+											<option value="policia">Policía Nacional</option>
+											<option value="seguridad-animal">Seguridad Animal</option>
+											<option value="defensa-animal">Defensa Animal Municipal</option>
+											<option value="ambiental">Policía Ambiental</option>
+											<option value="fiscalia">Fiscalía</option>
+										</select>
+										<button class="btn-action btn-assign" data-report-id="1">Asignar</button>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>16/10/2023</td>
+								<td>Gato maltratado en residencias</td>
+								<td>Calle 45 #12-34</td>
+								<td><span class="status pending">Pendiente</span></td>
+								<td><span class="authority-assigned">-</span></td>
+								<td>
+									<div class="authority-dropdown">
+										<select class="authority-select" data-report-id="2">
+											<option value="">Seleccionar autoridad...</option>
+											<option value="policia">Policía Nacional</option>
+											<option value="seguridad-animal">Seguridad Animal</option>
+											<option value="defensa-animal">Defensa Animal Municipal</option>
+											<option value="ambiental">Policía Ambiental</option>
+											<option value="fiscalia">Fiscalía</option>
+										</select>
+										<button class="btn-action btn-assign" data-report-id="2">Asignar</button>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
 			<!-- Gestión Veterinaria -->
 			<section id="vets" class="content-section">
 				<h2>Gestión Veterinaria</h2>
-				<table class="data-table">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Nombre</th>
-							<th>Tipo</th>
-							<th>Contacto</th>
-							<th>Estado</th>
-							<th>Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- Veterinarias -->
-						<tr th:each="veterinaria : ${veterinarias}">
-							<td th:text="${veterinaria.id}">1</td>
-							<td th:text="${veterinaria.nombre}">Veterinaria</td>
-							<td>Veterinaria</td>
-							<td th:text="${veterinaria.telefono}">Teléfono</td>
-							<td>
-								<span th:if="${veterinaria.estado == 'Activa'}" class="status active">Activa</span>
-								<span th:unless="${veterinaria.estado == 'Activa'}"
-									class="status inactive">Desactivada</span>
-							</td>
-							<td>
-								<button class="btn-action"
-									th:onclick="'verVeterinaria('+${veterinaria.id}+')'">Ver</button>
-								<form th:action="@{/admin/veterinaria/cambiar-estado/} + ${veterinaria.id}"
-									method="post" style="display:inline;">
-									<input type="hidden" name="estado" th:value="${veterinaria.estado != 'Activa'}" />
-									<button type="submit" class="btn-action"
-										th:classappend="${veterinaria.estado == 'Activa'} ? 'btn-inactivate' : 'btn-activate'"
-										th:text="${veterinaria.estado == 'Activa'} ? 'Desactivar' : 'Activar'"></button>
-								</form>
-						</tr>
-					</tbody>
-				</table>
+				<div class="tabs">
+					<button class="tab-btn active" data-tab="clinics-vet-tab">Clínicas y Veterinarios</button>
+					<button class="tab-btn" data-tab="reviews-tab">Calificaciones y Comentarios</button>
+				</div>
+
+				<div class="tab-content active" id="clinics-vet-tab">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Nombre</th>
+								<th>Tipo</th>
+								<th>Contacto</th>
+								<th>Estado</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- Veterinarias -->
+							<tr th:each="veterinaria : ${veterinarias}">
+								<td th:text="${veterinaria.id}">1</td>
+								<td th:text="${veterinaria.nombre}">Veterinaria</td>
+								<td>Veterinaria</td>
+								<td th:text="${veterinaria.telefono}">Teléfono</td>
+								<td>
+									<span th:if="${veterinaria.estado == 'Activa'}" class="status active">Activa</span>
+									<span th:unless="${veterinaria.estado == 'Activa'}"
+										class="status inactive">Desactivada</span>
+								</td>
+								<td>
+									<button class="btn-action"
+										th:onclick="'verVeterinaria('+${veterinaria.id}+')'">Ver</button>
+									<form th:action="@{/admin/veterinaria/cambiar-estado/} + ${veterinaria.id}"
+										method="post" style="display:inline;">
+										<input type="hidden" name="estado"
+											th:value="${veterinaria.estado != 'Activa'}" />
+										<button type="submit" class="btn-action"
+											th:classappend="${veterinaria.estado == 'Activa'} ? 'btn-inactivate' : 'btn-activate'"
+											th:text="${veterinaria.estado == 'Activa'} ? 'Desactivar' : 'Activar'"></button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="tab-content" id="reviews-tab">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Usuario</th>
+								<th>Veterinaria/Veterinario</th>
+								<th>Calificación</th>
+								<th>Comentario</th>
+								<th>Estado</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Ana García</td>
+								<td>Veterinaria Central</td>
+								<td>5/5</td>
+								<td>Excelente servicio</td>
+								<td><span class="status approved">Aprobado</span></td>
+								<td>
+									<button class="btn-action">Editar</button>
+									<button class="btn-action btn-reject">Rechazar</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<!-- Configuración General -->
+			<section id="settings" class="content-section">
+				<h2>Configuración General del Sistema</h2>
+				<div class="settings-options">
+					<div class="setting-item">
+						<h3>Gestión de Permisos por Rol</h3>
+						<button class="btn-action">Configurar</button>
+					</div>
+					<div class="setting-item">
+						<h3>Políticas de Privacidad y Términos de Uso</h3>
+						<button class="btn-action">Editar</button>
+					</div>
+					<div class="setting-item">
+						<h3>Copias de Seguridad y Restauración</h3>
+						<button class="btn-action">Programar</button>
+					</div>
+					<div class="setting-item">
+						<h3>Configuración de Idioma y Moneda</h3>
+						<button class="btn-action">Configurar</button>
+					</div>
+				</div>
+			</section>
+
+			<!-- Control y Seguridad -->
+			<section id="security" class="content-section">
+				<h2>Zona de Control y Seguridad</h2>
+				<div class="tabs">
+					<button class="tab-btn active" data-tab="suspicious-tab">Actividades Sospechosas</button>
+					<button class="tab-btn" data-tab="legal-tab">Solicitudes Legales</button>
+				</div>
+				<div class="tab-content active" id="suspicious-tab">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Fecha</th>
+								<th>Usuario</th>
+								<th>Actividad</th>
+								<th>Nivel de Riesgo</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>16/10/2023</td>
+								<td>user123</td>
+								<td>Múltiples intentos de login fallidos</td>
+								<td><span class="status medium">Medio</span></td>
+								<td><button class="btn-action">Investigar</button></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="tab-content" id="legal-tab">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Fecha</th>
+								<th>Tipo</th>
+								<th>Descripción</th>
+								<th>Estado</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>14/10/2023</td>
+								<td>Denuncia</td>
+								<td>Uso indebido de datos personales</td>
+								<td><span class="status pending">Pendiente</span></td>
+								<td><button class="btn-action">Revisar</button></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</section>
 
 			<!-- Perfil Administrador -->
@@ -172,11 +380,28 @@
 				<div class="profile-container">
 					<div class="profile-header">
 						<div class="profile-image-section">
-							<form id="fotoForm" th:action="@{/admin/perfil/imagen}" method="post"
-								enctype="multipart/form-data">
-								<input type="file" name="imagen" accept=".jpg,.jpeg,.png" class="btn-icon"
-									onchange="this.form.submit()">
-							</form>
+							<div class="image-upload-container">
+								<img th:if="${admin.imagen}" th:src="@{${admin.imagen}}" alt="Foto de perfil"
+									class="profile-large" id="profileImage">
+								<div th:unless="${admin.imagen}" class="profile-image-placeholder" id="profileImage">
+									<i class="bi bi-person-circle"></i>
+								</div>
+
+								<form th:action="@{/admin/perfil/imagen}" method="post" enctype="multipart/form-data"
+									id="imageUploadForm">
+									<div class="file-upload-wrapper">
+										<input type="file" name="imagen" id="fileInput" accept="image/*"
+											class="file-input" required>
+										<label for="fileInput" class="file-upload-btn">
+											<i class="bi bi-cloud-arrow-up"></i> 
+										</label>
+										<span class="file-name" id="fileName"></span>
+									</div>
+									<button type="submit" class="btn-upload">
+										<i class="bi bi-upload"></i> Subir Imagen
+									</button>
+								</form>
+							</div>
 						</div>
 						<div class="profile-info">
 							<h3>Información Personal</h3>
@@ -185,55 +410,19 @@
 									<label>Nombre:</label>
 									<span th:text="${admin.nombres}">Administrador</span>
 								</div>
-								<div class="info-item">
-									<label>Apellidos:</label>
-									<span th:text="${admin.apellidos}">Principal</span>
-								</div>
+								
 								<div class="info-item">
 									<label>Email:</label>
-									<span th:text="${admin.correo}">admin@clinicpet.com</span>
+									<span th:text="${admin.correo}">admin@HelpYourPet.com</span>
 								</div>
 								<div class="info-item">
 									<label>Teléfono:</label>
 									<span th:text="${admin.telefono}">+57 300 123 4567</span>
 								</div>
-								<div class="info-item">
-									<label>Cédula:</label>
-									<span th:text="${admin.cedula}">123456789</span>
-								</div>
 							</div>
 							<button class="btn-primary" onclick="abrirModal('profileModal')">Editar Información</button>
 						</div>
 					</div>
-				</div>
-			</section>
-			<!-- Gestión de Mascotas -->
-			<section id="pets" class="content-section">
-				<h2>Gestión de Mascotas</h2>
-				<table class="data-table">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Nombre</th>
-							<th>Especie</th>
-							<th>Raza</th>
-							<th>Dueño</th>
-							<th>Acciones</th>
-						</tr>
-					</thead>
-					<tbody id="tablaMascotas">
-						<tr th:each="m : ${mascotas}">
-							<td th:text="${m.id}">1</td>
-							<td th:text="${m.nombre}">Toby</td>
-							<td th:text="${m.especie}">Canino</td>
-							<td th:text="${m.raza}">Labrador</td>
-							<td th:text="${m.usuario.nombres + ' ' + m.usuario.apellidos}">Dueño</td>
-							<td>
-								<button class="btn-action" th:onclick="'verMascota('+${m.id}+')'">Ver</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
 			</section>
 		</div>
 	</main>
@@ -243,20 +432,10 @@
 		<div class="modal-content">
 			<span class="close" onclick="cerrarModal('profileModal')">&times;</span>
 			<h2>Editar Perfil</h2>
-			<div class="profile-image-section">
-				<h5>Cambiar foto de perfil</h5>
-				<form id="fotoForm" th:action="@{/admin/perfil/imagen}" method="post" enctype="multipart/form-data">
-					<input type="file" name="imagen" accept=".jpg,.jpeg,.png" onchange="this.form.submit()">
-				</form>
-			</div>
 			<form id="profileForm" th:action="@{/admin/perfil/editar}" method="post">
 				<div class="form-group">
 					<label for="profileName">Nombres:</label>
 					<input type="text" id="profileName" name="nombres" th:value="${admin.nombres}" required>
-				</div>
-				<div class="form-group">
-					<label for="profileApellidos">Apellidos:</label>
-					<input type="text" id="profileApellidos" name="apellidos" th:value="${admin.apellidos}" required>
 				</div>
 				<div class="form-group">
 					<label for="profileEmail">Email:</label>
@@ -328,6 +507,13 @@
 					<label for="vetExperiencia">Experiencia (años):</label>
 					<input type="number" id="vetExperiencia" name="experiencia" required min="0">
 				</div>
+				<div class="form-group">
+					<label for="vetClinic">Veterinaria Asociada:</label>
+					<select id="vetClinic" name="veterinariaId">
+						<option value="">Seleccionar Veterinaria</option>
+						<option th:each="vet : ${veterinarias}" th:value="${vet.id}" th:text="${vet.nombre}"></option>
+					</select>
+				</div>
 				<button type="submit" class="btn-primary">Registrar Veterinario</button>
 			</form>
 		</div>
@@ -369,6 +555,10 @@
 						placeholder="Descripción de servicios..."></textarea>
 				</div>
 				<div class="form-group">
+					<label for="clinicServices">Servicios Ofrecidos:</label>
+					<textarea id="clinicServices" name="servicios" rows="3"></textarea>
+				</div>
+				<div class="form-group">
 					<label for="clinicEstado">Estado:</label>
 					<select id="clinicEstado" name="estado">
 						<option value="Activa">Activa</option>
@@ -379,7 +569,8 @@
 			</form>
 		</div>
 	</div>
-	<!-- Modal genérico -->
+
+	<!-- Modal genérico para detalles -->
 	<div id="detalleModal" class="modal">
 		<div class="modal-content">
 			<span class="close" onclick="cerrarModal('detalleModal')">&times;</span>
