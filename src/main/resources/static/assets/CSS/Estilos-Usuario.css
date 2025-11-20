@@ -12,12 +12,14 @@
 	--shadow-medium: 0 3px 15px rgba(0, 0, 0, 0.1);
 	--shadow-strong: 0 6px 25px rgba(0, 0, 0, 0.12);
 
-/* Variables dinámicas para tema */
+
+	/* Variables dinámicas para tema */
 	--bg-body: #ffffff;
 	--bg-card: #ffffff;
 	--text-primary: #000000;
 	--text-secondary: #6c757d;
-	--border-color:#252525;
+
+	--border-color: #252525;
 	--sidebar-gradient-start: #d6e4f0;
 	--sidebar-gradient-end: #e1f0d6;
 	--card-hover-bg: #869ccf5a;
@@ -1022,11 +1024,12 @@ body {
 	display: none;
 }
 
-.theme-toggle-checkbox:checked ~ .theme-toggle-label .moon-icon {
+
+.theme-toggle-checkbox:checked~.theme-toggle-label .moon-icon {
 	display: none;
 }
 
-.theme-toggle-checkbox:checked ~ .theme-toggle-label .sun-icon {
+.theme-toggle-checkbox:checked~.theme-toggle-label .sun-icon {
 	display: block;
 }
 
@@ -1242,11 +1245,12 @@ body {
 	color: var(--text-primary);
 }
 
-[data-theme="dark"] h1, 
-[data-theme="dark"] h2, 
-[data-theme="dark"] h3, 
-[data-theme="dark"] h4, 
-[data-theme="dark"] h5, 
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
 [data-theme="dark"] h6 {
 	color: var(--text-primary);
 }

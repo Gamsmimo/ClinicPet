@@ -1466,6 +1466,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== MODO OSCURO/CLARO ===== 
 (function() {
+
     // Esperar a que el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initTheme);
