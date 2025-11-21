@@ -9,7 +9,9 @@ import com.clinicpet.demo.repository.IRolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -329,15 +331,77 @@ public class UsuarioServiceImplement implements IUsuarioService {
 	}
 
 	@Override
-	public void eliminarFotoPerfil(Long usuarioId) {
-		// TODO Auto-generated method stub
+	public void actualizarFotoPerfil(Long usuarioId, String rutaFoto) {
+		Usuario usuario = usuarioRepository.findById(usuarioId.intValue()).orElse(null);
+		if (usuario == null) {
+			return;
+		}
 
+		try {
+			if (usuario.getImagen() != null && !usuario.getImagen().isEmpty()
+					&& !usuario.getImagen().equals(rutaFoto)) {
+				File fotoAnterior = new File(usuario.getImagen());
+				if (fotoAnterior.exists()) {
+					fotoAnterior.delete();
+				}
+			}
+
+			usuario.setImagen(rutaFoto);
+			usuarioRepository.save(usuario);
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error actualizando la foto de perfil: " + e.getMessage());
+		}
 	}
 
 	@Override
-	public void actualizarFotoPerfil(Long usuarioId, String rutaFoto) {
-		// TODO Auto-generated method stub
+	public String guardarFoto(Long usuarioId, MultipartFile foto) {
 
+		try {
+			String carpeta = "uploads/usuarios/";
+			File directory = new File(carpeta);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+
+			String nombreArchivo = usuarioId + "_" + foto.getOriginalFilename();
+			String ruta = carpeta + nombreArchivo;
+
+			File archivoDestino = new File(ruta);
+			foto.transferTo(archivoDestino);
+
+			Usuario usuario = usuarioRepository.findById(usuarioId.intValue()).get();
+			usuario.setImagen(ruta);
+			usuarioRepository.save(usuario);
+
+			return ruta;
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error guardando la foto: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void eliminarFotoPerfil(Long usuarioId) {
+
+		Usuario usuario = usuarioRepository.findById(usuarioId.intValue()).orElse(null);
+		if (usuario == null)
+			return;
+
+		try {
+			if (usuario.getImagen() != null) {
+				File fotoFile = new File(usuario.getImagen());
+				if (fotoFile.exists()) {
+					fotoFile.delete();
+				}
+			}
+
+			usuario.setImagen(null);
+			usuarioRepository.save(usuario);
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error eliminando la foto: " + e.getMessage());
+		}
 	}
 
 }

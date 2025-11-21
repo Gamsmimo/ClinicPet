@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -400,6 +401,69 @@ public class UsuarioController {
 			throw new RuntimeException("Error al guardar la imagen: " + e.getMessage(), e);
 		}
 	}
+
+	@PostMapping("/usuario/{id}/foto")
+	public ResponseEntity<?> actualizarFoto(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+
+		try {
+			String ruta = usuarioService.guardarFoto(id, file);
+			return ResponseEntity.ok(ruta);
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Error al subir la imagen");
+		}
+	}
+	
+	@DeleteMapping("/usuario/{id}/foto")
+	public ResponseEntity<?> eliminarFoto(@PathVariable Long id) {
+	    usuarioService.eliminarFotoPerfil(id);
+	    return ResponseEntity.ok("Foto eliminada");
+	}
+	
+	@PostMapping("/perfilusuario/actualizarInfoPersonal")
+	public String actualizarInfoPersonal(@ModelAttribute("usuarioLogueado") Usuario usuarioForm,
+			HttpSession session, RedirectAttributes redirectAttributes) {
+
+		Usuario usuarioSession = (Usuario) session.getAttribute("usuarioLogueado");
+		if (usuarioSession == null) {
+			return "redirect:/usuarios/iniciarsesion";
+		}
+
+		try {
+			Usuario actualizado = usuarioService.actualizarUsuario(usuarioForm.getId(), usuarioForm);
+
+			if (actualizado != null) {
+				session.setAttribute("usuarioLogueado", actualizado);
+				redirectAttributes.addFlashAttribute("success", "Información de perfil actualizada correctamente");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "No se encontró el usuario para actualizar");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar la información: " + e.getMessage());
+		}
+
+		return "redirect:/usuarios/perfilusuario";
+	}
+	
+	@PutMapping("/usuario/actualizar/{id}")
+	public ResponseEntity<Usuario> actualizarUsuario(
+	        @PathVariable Integer id,
+	        @RequestBody Usuario usuarioActualizado) {
+
+	    Usuario u = usuarioService.actualizarUsuario(id, usuarioActualizado);
+	    return ResponseEntity.ok(u);
+	}
+	
+	@PutMapping("/usuario/{id}/password")
+	public ResponseEntity<?> actualizarPassword(
+	        @PathVariable Integer id,
+	        @RequestBody String nuevaPassword) {
+
+	    usuarioService.actualizarPassword(id, nuevaPassword);
+	    return ResponseEntity.ok("Contraseña actualizada");
+	}
+
+
+
 
 	// redireccion cambiar contraseña
 	@GetMapping("/recovery")
