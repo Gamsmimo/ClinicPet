@@ -25,13 +25,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,28 +37,25 @@ import java.util.Optional;
 @RequestMapping("/admin")
 public class PerfilAdminController {
 
-	private final VeterinariaServiceImplement veterinariaServiceImplement;
+	// ==========================
+	// INYECCIONES
+	// ==========================
 
+	private final VeterinariaServiceImplement veterinariaServiceImplement;
 	private final HistoriaClinicaServiceImplement historiaClinicaServiceImplement;
 
 	@Autowired
 	private IPerfilAdminService adminService;
-
 	@Autowired
 	private IUsuarioRepository usuarioRepo;
-
 	@Autowired
 	private IMascotaRepository mascotaRepo;
-
 	@Autowired
 	private IRolRepository rolRepository;
-
 	@Autowired
 	private IPerfilVeterinarioRepository veterinarioRepo;
-
 	@Autowired
 	private IVeterinariaRepository veterinariaRepo;
-
 	@Autowired
 	private IReporteDeMaltratoRepository reporteRepo;
 
@@ -70,19 +65,56 @@ public class PerfilAdminController {
 		this.veterinariaServiceImplement = veterinariaServiceImplement;
 	}
 
+
+	// ==========================
+	// PANEL PRINCIPAL
+	// ==========================
+
 	@GetMapping
-	public String mostrarPanelAdmin(Model model, HttpSession session) {
+	public String mostrarPanelAdmin(Model model, HttpSession session,
+			@RequestParam(required = false) Integer verUsuario, @RequestParam(required = false) Integer verMascota,
+			@RequestParam(required = false) Integer verVeterinario,
+			@RequestParam(required = false) Integer verVeterinaria) {
+
 		try {
 			System.out.println("Accediendo a /admin - Cargando datos desde BD");
 
 			PerfilAdmin admin = obtenerAdminLogueado(session);
 			model.addAttribute("admin", admin);
 
-			// CARGAR TODOS LOS DATOS ACTUALIZADOS DESDE BD
 			cargarDatosDashboard(model);
 			cargarUsuariosParaVista(model);
 			cargarVeterinariasParaVista(model);
 			cargarMascotasParaVista(model);
+			
+
+			if (verUsuario != null) {
+				usuarioRepo.findById(verUsuario).ifPresent(u -> {
+					model.addAttribute("detalleUsuario", u);
+					model.addAttribute("mostrarModal", "usuario");
+				});
+			}
+
+			if (verMascota != null) {
+				mascotaRepo.findById(verMascota).ifPresent(m -> {
+					model.addAttribute("detalleMascota", m);
+					model.addAttribute("mostrarModal", "mascota");
+				});
+			}
+
+			if (verVeterinario != null) {
+				veterinarioRepo.findById(verVeterinario).ifPresent(v -> {
+					model.addAttribute("detalleVeterinario", v);
+					model.addAttribute("mostrarModal", "veterinario");
+				});
+			}
+
+			if (verVeterinaria != null) {
+				veterinariaRepo.findById(verVeterinaria).ifPresent(v -> {
+					model.addAttribute("detalleVeterinaria", v);
+					model.addAttribute("mostrarModal", "veterinaria");
+				});
+			}
 
 			System.out.println("Datos cargados correctamente desde BD");
 			return "admin/panelAdmin";
@@ -95,14 +127,18 @@ public class PerfilAdminController {
 		}
 	}
 
-	// MÉTODO PARA REGISTRAR VETERINARIOS
+	// ==========================
+	// REGISTROS
+	// ==========================
+
 	@PostMapping("/veterinarios/registrar")
 	public String registrarVeterinario(@RequestParam String nombres, @RequestParam String apellidos,
 			@RequestParam Integer edad, @RequestParam String correo, @RequestParam String telefono,
 			@RequestParam String especialidad, @RequestParam String tarjetaProfesional,
 			@RequestParam String experiencia, @RequestParam String password, @RequestParam String tipoDocumento,
 			@RequestParam String numDocumento, @RequestParam String direccion, HttpSession session,
-			RedirectAttributes redirectAttributes1) {
+			RedirectAttributes redirectAttributes) {
+
 		if (!verificarSesionAdmin(session)) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
@@ -110,28 +146,22 @@ public class PerfilAdminController {
 		try {
 			System.out.println("REGISTRANDO VETERINARIO EN BD: " + nombres + " " + apellidos);
 
-			// Verificar si el correo ya existe
 			if (usuarioRepo.existsByCorreo(correo)) {
-				redirectAttributes1.addFlashAttribute("error", "El correo ya está registrado");
+				redirectAttributes.addFlashAttribute("error", "El correo ya está registrado");
 				return "redirect:/admin#users";
 			}
-			
-			if (usuarioRepo.existsByNumDocumento(numDocumento)) {
-				redirectAttributes1.addFlashAttribute("error", "El numero de documento ya está registrado");
-				return "redirect:/admin#users";
-			}
-			
-			
-			
 
-			// Buscar rol VETERINARIO
+			if (usuarioRepo.existsByNumDocumento(numDocumento)) {
+				redirectAttributes.addFlashAttribute("error", "El numero de documento ya está registrado");
+				return "redirect:/admin#users";
+			}
+
 			Optional<Rol> rolOpt = rolRepository.findById(2);
 			if (rolOpt.isEmpty()) {
-				redirectAttributes1.addFlashAttribute("error", "Rol VETERINARIO no encontrado");
+				redirectAttributes.addFlashAttribute("error", "Rol VETERINARIO no encontrado");
 				return "redirect:/admin#users";
 			}
 
-			// Crear veterinario TODOS LOS CAMPOS OBLIGATORIOS
 			Usuario usuario = new Usuario();
 			usuario.setNombres(nombres);
 			usuario.setApellidos(apellidos);
@@ -145,11 +175,8 @@ public class PerfilAdminController {
 			usuario.setActivo(true);
 			usuario.setRol(rolOpt.get());
 
-			// Guardar usuario en BD
 			Usuario usuarioGuardado = usuarioRepo.save(usuario);
-			System.out.println("USUARIO GUARDADO EN BD CON ID: " + usuarioGuardado.getId());
 
-			// Crear perfil veterinario
 			PerfilVeterinario veterinario = new PerfilVeterinario();
 			veterinario.setUsuario(usuarioGuardado);
 			veterinario.setEspecialidad(especialidad);
@@ -158,32 +185,28 @@ public class PerfilAdminController {
 			veterinario.setEstado(true);
 
 			veterinarioRepo.save(veterinario);
-			System.out.println("VETERINARIO GUARDADO EN BD: " + nombres + " " + apellidos);
 
-			redirectAttributes1.addFlashAttribute("mensaje", "Veterinario registrado correctamente");
+			redirectAttributes.addFlashAttribute("mensaje", "Veterinario registrado correctamente");
 
 		} catch (Exception e) {
-			System.out.println(" ERROR AL REGISTRAR VETERINARIO EN BD: " + e.getMessage());
 			e.printStackTrace();
-			redirectAttributes1.addFlashAttribute("error", "Error al registrar veterinario: " + e.getMessage());
+			redirectAttributes.addFlashAttribute("error", "Error al registrar veterinario: " + e.getMessage());
 		}
 
 		return "redirect:/admin#users";
 	}
 
-	// MÉTODO PARA REGISTRAR VETERINARIAS
 	@PostMapping("/veterinarias/registrar")
 	public String registrarVeterinaria(@RequestParam String nombre, @RequestParam String rut,
 			@RequestParam String direccion, @RequestParam String telefono, @RequestParam String correo,
 			@RequestParam String horario, @RequestParam String descripcion, @RequestParam String estado,
 			HttpSession session, RedirectAttributes redirectAttributes) {
+
 		if (!verificarSesionAdmin(session)) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
-		try {
-			System.out.println("REGISTRANDO VETERINARIA EN BD: " + nombre);
 
-			// Crear veterinaria
+		try {
 			Veterinaria veterinaria = new Veterinaria();
 			veterinaria.setNombre(nombre);
 			veterinaria.setRut(rut);
@@ -194,27 +217,29 @@ public class PerfilAdminController {
 			veterinaria.setDescripcion(descripcion);
 			veterinaria.setEstado(estado);
 
-			// guardar en BD
 			veterinariaRepo.save(veterinaria);
 
-			System.out.println("VETERINARIA GUARDADA EN BD: " + nombre);
 			redirectAttributes.addFlashAttribute("mensaje", "Veterinaria registrada correctamente");
 
 		} catch (Exception e) {
-			System.out.println(" ERROR AL REGISTRAR VETERINARIA EN BD: " + e.getMessage());
 			redirectAttributes.addFlashAttribute("error", "Error al registrar veterinaria: " + e.getMessage());
 		}
+
 		return "redirect:/admin#vets";
 	}
 
-	// MÉTODO PARA ACTUALIZAR PERFIL ADMIN
+	// ==========================
+	// PERFIL ADMIN
+	// ==========================
+
 	@PostMapping("/perfil/editar")
-	public String guardarPerfil(@RequestParam String nombres,
-			@RequestParam String correo, @RequestParam String telefono, HttpSession session,
-			RedirectAttributes redirectAttributes) {
+	public String guardarPerfil(@RequestParam String nombres, @RequestParam String correo,
+			@RequestParam String telefono, HttpSession session, RedirectAttributes redirectAttributes) {
+
 		if (!verificarSesionAdmin(session)) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
+
 		try {
 			Optional<PerfilAdmin> adminOptional = adminService.buscarPorId(1);
 
@@ -224,196 +249,107 @@ public class PerfilAdminController {
 				adminActual.setCorreo(correo);
 				adminActual.setTelefono(telefono);
 
-				// Guardar en BD
 				adminService.guardar(adminActual);
 
-				System.out.println("PERFIL ADMIN ACTUALIZADO EN BD");
 				redirectAttributes.addFlashAttribute("mensaje", "Perfil actualizado correctamente");
 			} else {
 				redirectAttributes.addFlashAttribute("error", "Administrador no encontrado");
 			}
 
 		} catch (Exception e) {
-			System.out.println(" Error al guardar perfil en BD: " + e.getMessage());
 			redirectAttributes.addFlashAttribute("error", "Error al actualizar el perfil");
 		}
+
 		return "redirect:/admin#profile";
 	}
 
-	// MÉTODO PARA SUBIR IMAGEN
 	@PostMapping("/perfil/imagen")
 	public String subirImagen(@RequestParam("imagen") MultipartFile archivoImagen, HttpSession session,
 			RedirectAttributes redirectAttributes) {
+
 		if (!verificarSesionAdmin(session)) {
 			return "redirect:/usuarios/iniciarsesion";
 		}
+
 		try {
-			// Verificar que el archivo no esté vacío
 			if (archivoImagen.isEmpty()) {
 				redirectAttributes.addFlashAttribute("error", "El archivo está vacío");
 				return "redirect:/admin#profile";
 			}
 
-			// Obtener el tipo de contenido y verificar que sea una imagen
 			String contentType = archivoImagen.getContentType();
 			if (contentType == null || !contentType.startsWith("image/")) {
 				redirectAttributes.addFlashAttribute("error", "El archivo debe ser una imagen (JPG, PNG, etc.)");
 				return "redirect:/admin#profile";
 			}
 
-			// Obtener el usuario logueado
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 			Optional<PerfilAdmin> adminOpt = adminService.buscarPorUsuarioId(usuarioLogueado.getId());
 
-			if (!adminOpt.isPresent()) {
+			if (adminOpt.isEmpty()) {
 				redirectAttributes.addFlashAttribute("error", "Perfil de administrador no encontrado");
 				return "redirect:/admin#profile";
 			}
 
 			PerfilAdmin admin = adminOpt.get();
 
-			// Obtener la ruta base de la aplicación
 			String uploadsDir = System.getProperty("user.dir") + "/uploads/";
 			File uploadDir = new File(uploadsDir);
 
-			// Crear el directorio si no existe
-			if (!uploadDir.exists()) {
+			if (!uploadDir.exists())
 				uploadDir.mkdirs();
-			}
 
-			// Generar un nombre único para el archivo
 			String originalFilename = archivoImagen.getOriginalFilename();
 			String fileExtension = originalFilename != null
 					? originalFilename.substring(originalFilename.lastIndexOf("."))
 					: ".jpg";
+
 			String newFilename = "admin_" + admin.getId() + "_" + System.currentTimeMillis() + fileExtension;
 
-			// Ruta relativa para guardar en la base de datos
 			String relativePath = "/uploads/" + newFilename;
-
-			// Ruta completa para guardar el archivo
 			String filePath = uploadsDir + newFilename;
 
-			// Guardar el archivo
 			File dest = new File(filePath);
 			archivoImagen.transferTo(dest);
 
-			// Actualizar la ruta de la imagen en la base de datos
 			admin.setImagen(relativePath);
 			adminService.guardar(admin);
 
-			// Actualizar la imagen en la sesión
 			admin = adminService.buscarPorId(admin.getId()).orElseThrow();
 			session.setAttribute("admin", admin);
 
 			redirectAttributes.addFlashAttribute("mensaje", "Imagen actualizada correctamente");
 
 		} catch (IOException e) {
-			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("error", "Error al guardar la imagen: " + e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("error", "Error inesperado: " + e.getMessage());
 		}
 
 		return "redirect:/admin#profile";
 	}
 
-	// MÉTODO PARA CARGAR DATOS DESDE LA BASE DE DATOS
-	private void cargarUsuariosParaVista(Model model) {
-		List<Usuario> usuarios = usuarioRepo.findAll().stream()
-				.filter(u -> !"admin@clinicpet.com".equalsIgnoreCase(u.getCorreo())).toList();
-		model.addAttribute("usuarios", usuarios);
-		System.out.println("✅ " + usuarios.size() + " usuarios cargados desde BD");
-	}
+	// ==========================
+	// LISTADOS
+	// ==========================
 
-	private void cargarVeterinariasParaVista(Model model) {
-		List<Veterinaria> veterinarias = veterinariaRepo.findAll();
-		model.addAttribute("veterinarias", veterinarias);
-		System.out.println("✅ " + veterinarias.size() + " veterinarias cargadas desde BD");
-	}
-
-	private void cargarVeterinariosParaVista(Model model) {
-		List<PerfilVeterinario> veterinarios = veterinarioRepo.findAll();
-		model.addAttribute("veterinarios", veterinarios);
-		System.out.println("✅ " + veterinarios.size() + " veterinarios cargados desde BD");
-	}
-
-	private void cargarDatosDashboard(Model model) {
-		model.addAttribute("totalUsuarios", usuarioRepo.count());
-		model.addAttribute("totalMascotas", mascotaRepo.count());
-		model.addAttribute("totalVeterinarias", veterinariaRepo.count());
-		model.addAttribute("totalReportes", reporteRepo.count());
-
-		System.out.println("📊 Dashboard - Usuarios: " + usuarioRepo.count() + ", Mascotas: " + mascotaRepo.count()
-				+ ", Veterinarias: " + veterinariaRepo.count());
-	}
-
-	private PerfilAdmin obtenerAdminLogueado(HttpSession session) {
-		try {
-			// Obtener usuario de sesión
-			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
-
-			if (usuarioLogueado == null || usuarioLogueado.getRol().getId() != 3) {
-				throw new RuntimeException("Usuario no autorizado");
-			}
-
-			// Buscar perfil admin por usuario_id
-			Optional<PerfilAdmin> adminOpt = adminService.buscarPorUsuarioId(usuarioLogueado.getId());
-
-			if (adminOpt.isPresent()) {
-				return adminOpt.get();
-			} else {
-				throw new RuntimeException("Perfil admin no encontrado");
-			}
-
-		} catch (Exception e) {
-			System.out.println("❌ Error al obtener admin: " + e.getMessage());
-			throw new RuntimeException("Error de autenticación");
-		}
-	}
-
-	// Lista para la vista gestión de Mascotas
 	@GetMapping("/mascotas")
 	public String verGestionMascotas(Model model) {
-		cargarDatosDashboard(model); // por si quieres los contadores
+		cargarDatosDashboard(model);
 		model.addAttribute("mascotas", mascotaRepo.findAll());
-		return "admin/panelAdmin :: #mascotas"; // fragmento Thymeleaf
+		return "admin/panelAdmin :: #mascotas";
 	}
 
-	private void cargarMascotasParaVista(Model model) {
-		List<Mascota> mascotas = mascotaRepo.findAll();
-		model.addAttribute("mascotas", mascotas);
-		System.out.println("mascotas cargadas: " + mascotas.size());
-	}
+	// ==========================
+	// CAMBIAR ESTADOS
+	// ==========================
 
-	// metodo para boton ver detalles
-	// usuario
-	@GetMapping("/usuario/{id}")
-	@ResponseBody
-	public Usuario detalleUsuario(@PathVariable Integer id) {
-		return usuarioRepo.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-	}
-
-	// veterinario
-	@GetMapping("/veterinario/{id}")
-	@ResponseBody
-	public PerfilVeterinario detalleVeterinario(@PathVariable Integer id) {
-		return veterinarioRepo.findById(id).orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
-	}
-
-	// veterinaria
-	@GetMapping("/veterinaria/{id}")
-	@ResponseBody
-	public Veterinaria detalleVeterinaria(@PathVariable Integer id) {
-		return veterinariaRepo.findById(id).orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
-	}
-
-	// metodo para activar y desactivar
 	@PostMapping("/usuario/cambiar-estado/{id}")
 	public String cambiarEstadoUsuario(@PathVariable Integer id, @RequestParam boolean activo,
 			RedirectAttributes redirectAttributes) {
+
 		Optional<Usuario> opt = usuarioRepo.findById(id);
+
 		if (opt.isPresent()) {
 			Usuario u = opt.get();
 			u.setActivo(activo);
@@ -422,34 +358,89 @@ public class PerfilAdminController {
 		} else {
 			redirectAttributes.addFlashAttribute("error", "Usuario no encontrado");
 		}
+
 		return "redirect:/admin#users";
 	}
 
 	@PostMapping("/veterinaria/cambiar-estado/{id}")
 	public String cambiarEstadoVeterinaria(@PathVariable Integer id, @RequestParam boolean estado,
 			RedirectAttributes redirectAttributes) {
+
 		Optional<Veterinaria> opt = veterinariaRepo.findById(id);
+
 		if (opt.isPresent()) {
 			Veterinaria v = opt.get();
 			v.setEstado(estado ? "Activa" : "Inactiva");
 			veterinariaRepo.save(v);
+
 			redirectAttributes.addFlashAttribute("mensaje", "Veterinaria " + (estado ? "activada" : "desactivada"));
 		} else {
 			redirectAttributes.addFlashAttribute("error", "Veterinaria no encontrada");
 		}
+
 		return "redirect:/admin#vets";
 	}
 
-	// de lo de login
+	// ==========================
+	// UTILIDADES PRIVADAS
+	// ==========================
+
+	private void cargarUsuariosParaVista(Model model) {
+		List<Usuario> usuarios = usuarioRepo.findAll().stream()
+				.filter(u -> !"admin@helpyourpet.com".equalsIgnoreCase(u.getCorreo())).toList();
+
+		model.addAttribute("usuarios", usuarios);
+		System.out.println("✓ " + usuarios.size() + " usuarios cargados desde BD");
+	}
+
+	private void cargarVeterinariasParaVista(Model model) {
+		List<Veterinaria> veterinarias = veterinariaRepo.findAll();
+		model.addAttribute("veterinarias", veterinarias);
+		System.out.println("✓ " + veterinarias.size() + " veterinarias cargadas desde BD");
+	}
+
+	private void cargarVeterinariosParaVista(Model model) {
+		List<PerfilVeterinario> veterinarios = veterinarioRepo.findAll();
+		model.addAttribute("veterinarios", veterinarios);
+		System.out.println("✓ " + veterinarios.size() + " veterinarios cargados desde BD");
+	}
+
+	private void cargarMascotasParaVista(Model model) {
+		List<Mascota> mascotas = mascotaRepo.findAll();
+		model.addAttribute("mascotas", mascotas);
+		System.out.println("mascotas cargadas: " + mascotas.size());
+	}
+
+	private void cargarDatosDashboard(Model model) {
+		model.addAttribute("totalUsuarios", usuarioRepo.count());
+		model.addAttribute("totalMascotas", mascotaRepo.count());
+		model.addAttribute("totalVeterinarias", veterinariaRepo.count());
+		model.addAttribute("totalReportes", reporteRepo.count());
+	}
+
+	private PerfilAdmin obtenerAdminLogueado(HttpSession session) {
+		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+
+		if (usuarioLogueado == null || usuarioLogueado.getRol().getId() != 3) {
+			throw new RuntimeException("Usuario no autorizado");
+		}
+
+		return adminService.buscarPorUsuarioId(usuarioLogueado.getId())
+				.orElseThrow(() -> new RuntimeException("Perfil admin no encontrado"));
+	}
+
 	private boolean verificarSesionAdmin(HttpSession session) {
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		return usuarioLogueado != null && usuarioLogueado.getRol().getId() == 3;
 	}
 
-	// CERRAR SESIÓN
+	// ==========================
+	// LOGOUT
+	// ==========================
+
 	@GetMapping("/logout")
 	public String cerrarSesion(HttpSession session, RedirectAttributes redirectAttributes) {
-		session.invalidate(); // Destruye la sesión
+		session.invalidate();
 		redirectAttributes.addFlashAttribute("mensaje", "Sesión cerrada correctamente");
 		return "redirect:/usuarios/iniciarsesion";
 	}
