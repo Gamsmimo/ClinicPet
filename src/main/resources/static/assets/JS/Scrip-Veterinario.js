@@ -118,6 +118,70 @@ function closeModal() {
 	document.body.style.overflow = '';
 }
 
+// Cargar datos en modal de edición de producto
+function openEditProductModal(productId) {
+	// Obtener ID de veterinaria desde el div oculto (si existe)
+	const vetDataDiv = document.getElementById('veterinaria-data');
+	const veterinariaId = vetDataDiv ? vetDataDiv.getAttribute('data-id') : '1';
+
+	fetch(`/perfil-veterinario/producto/datos/${productId}`)
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				console.error(data.error);
+				alert(data.error);
+				return;
+			}
+
+			// Referencias a los campos del formulario
+			const nombreInput = document.getElementById('edit-nombre');
+			const precioInput = document.getElementById('edit-precio');
+			const cantidadInput = document.getElementById('edit-cantidadDisponible');
+			const categoriaSelect = document.getElementById('edit-categoria');
+			const descripcionInput = document.getElementById('edit-descripcion');
+			const imagenPreview = document.getElementById('preview-imagen-actual');
+			const formEditar = document.getElementById('form-producto-editar');
+			const inputVet = formEditar.querySelector('input[name="idveterinaria"]');
+
+			// Cargar valores en el formulario
+			nombreInput.value = data.nombre || '';
+			nombreInput.readOnly = true; // Nombre no editable
+
+			precioInput.value = data.precio != null ? data.precio : '';
+
+			cantidadInput.value = data.cantidadDisponible != null ? data.cantidadDisponible : '';
+
+			categoriaSelect.value = data.categoria || '';
+			categoriaSelect.disabled = true; // Categoría no editable
+
+			descripcionInput.value = data.descripcion || '';
+
+			// Imagen actual
+			if (data.imagen) {
+				imagenPreview.src = data.imagen;
+				imagenPreview.style.display = 'block';
+			} else {
+				imagenPreview.src = '';
+				imagenPreview.style.display = 'none';
+			}
+
+			// Ajustar action del formulario para incluir el ID de producto
+			formEditar.action = `/perfil-veterinario/producto/actualizar/${productId}`;
+
+			// Ajustar idveterinaria
+			if (inputVet) {
+				inputVet.value = veterinariaId;
+			}
+
+			// Abrir modal reutilizando la función existente
+			openModal('edit-product');
+		})
+		.catch(error => {
+			console.error('Error al cargar datos del producto:', error);
+			alert('Error al cargar datos del producto');
+		});
+}
+
 // Cerrar modal al hacer clic fuera
 document.getElementById('modal-overlay').addEventListener('click', closeModal);
 
@@ -214,7 +278,73 @@ document.addEventListener('DOMContentLoaded', () => {
 	setTimeout(() => {
 		document.querySelector('.vet-name').textContent = 'Dr. Pérez';
 	}, 500);
-});
+
+	// Filtros dinámicos de Pet Shop
+	const filtroCategoria = document.getElementById('filtro-categoria');
+	const filtroEstado = document.getElementById('filtro-estado');
+	if (filtroCategoria && filtroEstado) {
+		const aplicarFiltros = () => {
+			const categoria = filtroCategoria.value;
+			const estado = filtroEstado.value;
+			const params = new URLSearchParams();
+			if (categoria) params.append('categoria', categoria);
+			if (estado) params.append('estado', estado);
+			
+			fetch(`/perfil-veterinario/productos/filtrar?${params.toString()}`)
+				.then(res => res.json())
+				.then(data => {
+					if (data.error) {
+						console.error(data.error);
+						return;
+					}
+					const grid = document.querySelector('.product-grid');
+					if (!grid) return;
+					
+					grid.innerHTML = '';
+					(data.productos || []).forEach(p => {
+						const estadoInv = (p.estado || '').toLowerCase();
+						const badgeClass = estadoInv === 'disponible' ? 'product-badge featured' : 'product-badge out-of-stock';
+						const estadoTexto = p.estado || 'No disponible';
+						const cantidadTexto = (p.cantidadDisponible != null ? p.cantidadDisponible : 0) + ' unidades';
+						const precioFormateado = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(p.precio || 0);
+						
+						const card = document.createElement('div');
+						card.className = 'product-card';
+						card.innerHTML = `
+							<div class="${badgeClass}">${estadoTexto}</div>
+							<div class="product-image">
+								<img src="${p.imagen || ''}" alt="${p.nombre || ''}">
+							</div>
+							<div class="product-info">
+								<h5>${p.nombre || ''}</h5>
+								<p class="product-description">${p.descripcion || ''}</p>
+								<div class="product-meta">
+									<span class="price">${precioFormateado}</span>
+									<span class="stock">
+										<i class="fas fa-box"></i>
+										<span>${cantidadTexto}</span>
+									</span>
+								</div>
+								<div class="product-actions">
+									<button class="btn btn-sm btn-primary" onclick="openEditProductModal(${p.id})"><i class="fas fa-edit"></i></button>
+									<form action="/perfil-veterinario/producto/eliminar/${p.id}" method="post" style="display:inline;">
+										<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este producto?');">
+											<i class="fas fa-trash"></i>
+										</button>
+									</form>
+								</div>
+							</div>
+						`;
+						grid.appendChild(card);
+					});
+				})
+				.catch(err => console.error('Error al aplicar filtros:', err));
+		};
+		
+		filtroCategoria.addEventListener('change', aplicarFiltros);
+		filtroEstado.addEventListener('change', aplicarFiltros);
+	}
+	});
 
 // Funciones para las citas
 function startAppointment(appointmentId) {

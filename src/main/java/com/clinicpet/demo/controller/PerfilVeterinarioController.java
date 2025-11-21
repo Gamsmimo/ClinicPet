@@ -73,7 +73,9 @@ public class PerfilVeterinarioController {
 
 	// ==================== VISTA PRINCIPAL ====================
 	@GetMapping
-	public String mostrarPerfilVeterinario(HttpSession session, Model model) {
+	public String mostrarPerfilVeterinario(HttpSession session, Model model,
+	        @RequestParam(required = false) String categoria,
+	        @RequestParam(required = false) String estado) {
 	    System.out.println("🔍 Accediendo a vista principal del veterinario");
 
 	    // ✅ USAR SESIÓN
@@ -126,9 +128,40 @@ public class PerfilVeterinarioController {
 	            }
 	        }
 	        
-	        model.addAttribute("productos", productos);
+	        // Aplicar filtros de categoría y estado si vienen en la petición
+	        List<Producto> productosFiltrados = new ArrayList<>();
+	        for (Producto p : productos) {
+	            boolean coincide = true;
+	            
+	            // Filtro por categoría (ignora "Todas las categorías" o vacío)
+	            if (categoria != null && !categoria.isEmpty() && !"Todas las categorías".equalsIgnoreCase(categoria)) {
+	                if (p.getCategoria() == null || !p.getCategoria().equalsIgnoreCase(categoria)) {
+	                    coincide = false;
+	                }
+	            }
+	            
+	            // Filtro por estado (ignora "Todos" o vacío)
+	            if (coincide && estado != null && !estado.isEmpty() && !"Todos".equalsIgnoreCase(estado)) {
+	                Inventario inv = inventarioPorProducto.get(p.getId());
+	                String estadoInv = (inv != null && inv.getEstado() != null) ? inv.getEstado() : "agotado";
+	                
+	                if ("Disponible".equalsIgnoreCase(estado) && !"disponible".equalsIgnoreCase(estadoInv)) {
+	                    coincide = false;
+	                } else if ("Agotado".equalsIgnoreCase(estado) && "disponible".equalsIgnoreCase(estadoInv)) {
+	                    coincide = false;
+	                }
+	            }
+	            
+	            if (coincide) {
+	                productosFiltrados.add(p);
+	            }
+	        }
+	        
+	        model.addAttribute("productos", productosFiltrados);
 	        model.addAttribute("inventarioPorProducto", inventarioPorProducto);
-	        System.out.println("✅ Pet Shop cargado correctamente");
+	        model.addAttribute("categoriaSeleccionada", categoria);
+	        model.addAttribute("estadoSeleccionado", estado);
+	        System.out.println("✅ Pet Shop cargado correctamente con filtros aplicados");
 	        
 	    } catch (Exception e) {
 	        System.out.println("❌ Error cargando Pet Shop: " + e.getMessage());
@@ -139,6 +172,67 @@ public class PerfilVeterinarioController {
 	    return "perfil-veterinario/perfil-veterinario";
 	}
 	
+	@GetMapping("/productos/filtrar")
+	@ResponseBody
+	public Map<String, Object> filtrarProductos(
+	        @RequestParam(required = false) String categoria,
+	        @RequestParam(required = false) String estado) {
+	    Map<String, Object> response = new HashMap<>();
+	    try {
+	        System.out.println("🔍 Filtro AJAX - categoria: " + categoria + ", estado: " + estado);
+	        
+	        List<Producto> productos = productoService.obtenerTodosLosProductos();
+	        List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(1);
+	        Map<Integer, Inventario> inventarioPorProducto = new HashMap<>();
+	        for (Inventario inventario : inventarios) {
+	            if (inventario.getProducto() != null) {
+	                inventarioPorProducto.put(inventario.getProducto().getId(), inventario);
+	            }
+	        }
+	        
+	        List<Map<String, Object>> listaFiltrada = new ArrayList<>();
+	        for (Producto p : productos) {
+	            boolean coincide = true;
+	            
+	            if (categoria != null && !categoria.isEmpty() && !"Todas las categorías".equalsIgnoreCase(categoria)) {
+	                if (p.getCategoria() == null || !p.getCategoria().equalsIgnoreCase(categoria)) {
+	                    coincide = false;
+	                }
+	            }
+	            
+	            Inventario inv = inventarioPorProducto.get(p.getId());
+	            String estadoInv = (inv != null && inv.getEstado() != null) ? inv.getEstado() : "agotado";
+	            
+	            if (coincide && estado != null && !estado.isEmpty() && !"Todos".equalsIgnoreCase(estado)) {
+	                if ("Disponible".equalsIgnoreCase(estado) && !"disponible".equalsIgnoreCase(estadoInv)) {
+	                    coincide = false;
+	                } else if ("Agotado".equalsIgnoreCase(estado) && "disponible".equalsIgnoreCase(estadoInv)) {
+	                    coincide = false;
+	                }
+	            }
+	            
+	            if (coincide) {
+	                Map<String, Object> item = new HashMap<>();
+	                item.put("id", p.getId());
+	                item.put("nombre", p.getNombre());
+	                item.put("descripcion", p.getDescripcion());
+	                item.put("precio", p.getPrecio());
+	                item.put("categoria", p.getCategoria());
+	                item.put("imagen", p.getImagen());
+	                item.put("cantidadDisponible", inv != null ? inv.getCantidadDisponible() : 0);
+	                item.put("estado", estadoInv);
+	                listaFiltrada.add(item);
+	            }
+	        }
+	        
+	        response.put("productos", listaFiltrada);
+	        System.out.println("✅ Filtro AJAX - productos retornados: " + listaFiltrada.size());
+	    } catch (Exception e) {
+	        System.err.println("💥 Error en filtro AJAX: " + e.getMessage());
+	        response.put("error", e.getMessage());
+	    }
+	    return response;
+	}
 	
 	// ==================== OTRAS SECCIONES (PLACEHOLDERS) ====================
 	@GetMapping("/inicio")
@@ -385,43 +479,6 @@ public class PerfilVeterinarioController {
 		return "perfil-veterinario/perfil-veterinario"; // tu vista que tiene el modal
 	}
 
-	@PostMapping("/cita/guardar")
-	public String guardarCita(@RequestParam("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
-			@RequestParam("hora") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
-			@RequestParam("motivo") String motivo, @RequestParam("mascota.id") Integer mascotaId) {
-
-		Cita cita = new Cita();
-		cita.setFechaHora(LocalDateTime.of(fecha, hora));
-		cita.setMotivo(motivo);
-
-		// Asignar la mascota
-		Mascota mascota = mascotaService.buscarMascotaPorId(mascotaId)
-				.orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada con id: " + mascotaId));
-
-		cita.setMascota(mascota);
-
-		// Asignar el veterinario logueado
-		PerfilVeterinario vet = obtenerVeterinarioLogueado(); // Método que devuelve el vet logueado
-		cita.setVeterinario(vet);
-
-		citaService.guardarCita(cita);
-
-		return "perfil-veterinario/perfil-veterinario";
-	}
-
-	private PerfilVeterinario obtenerVeterinarioLogueado() {
-		Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
-		if (usuario == null) {
-			throw new IllegalStateException("No hay usuario logueado");
-		}
-		return perfilVeterinarioService.buscarPorUsuarioId(usuario.getId())
-				.orElseThrow(() -> new IllegalArgumentException("Perfil veterinario no encontrado"));
-	}
-	
-	
-	
-	
-	
 	
 
 	// MODAL DE AGREGAR PRODUCTO!!!!!!!!!!!!!!
@@ -644,15 +701,13 @@ public class PerfilVeterinarioController {
 	    return response;
 	}
 	
-	
-	
-	
+
 	@PostMapping("/producto/actualizar/{idProducto}")
 	public String actualizarProducto(
 	        @PathVariable Integer idProducto,
 	        @RequestParam String nombre,
 	        @RequestParam Double precio,
-	        @RequestParam String categoria,
+	        @RequestParam(required = false) String categoria,
 	        @RequestParam String descripcion,
 	        @RequestParam Integer cantidadDisponible,
 	        @RequestParam(required = false) MultipartFile imagen,
@@ -669,10 +724,9 @@ public class PerfilVeterinarioController {
 	        
 	        Producto producto = productoExistenteOpt.get();
 	        
-	        // Actualizar campos del producto
-	        producto.setNombre(nombre.trim());
+	        // Actualizar SOLO los campos permitidos
+	        // Nombre y categoría NO se tocan para mantenerlos inmutables
 	        producto.setPrecio(precio);
-	        producto.setCategoria(categoria);
 	        producto.setDescripcion(descripcion != null ? descripcion.trim() : "");
 	        
 	        // Actualizar imagen solo si se subió una nueva
@@ -737,37 +791,29 @@ public class PerfilVeterinarioController {
 	}
 	
 
-	
-	// MODAL EMERGENCIA!!!!!!!!!!!!!!!!
-	@PostMapping("/emergencia/guardar")
-	public String guardarEmergencia(@RequestParam("mascotaId") Integer mascotaId,
-			@RequestParam("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
-			@RequestParam("hora") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora,
-			@RequestParam("tipo") String tipo, @RequestParam("descripcion") String descripcion,
-			@RequestParam("veterinariaId") Integer veterinariaId, @RequestParam("veterinarioId") Integer veterinarioId,
-			RedirectAttributes redirectAttributes) {
-
-		Mascota mascota = mascotaService.buscarMascotaPorId(mascotaId)
-				.orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
-
-		Veterinaria veterinaria = veterinariaService.obtenerPorId(veterinariaId)
-				.orElseThrow(() -> new RuntimeException("Veterinaria no encontrada"));
-
-		PerfilVeterinario veterinario = perfilVeterinarioService.buscarPorId(veterinarioId)
-				.orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
-
-		Emergencia emergencia = new Emergencia();
-		emergencia.setMascota(mascota);
-		emergencia.setVeterinaria(veterinaria);
-		emergencia.setVeterinario(veterinario);
-		emergencia.setTipo(tipo);
-		emergencia.setDescripcion(descripcion);
-		emergencia.setFechayhora(LocalDateTime.of(fecha, hora));
-
-		emergenciaService.guardarEmergencia(emergencia);
-
-		redirectAttributes.addFlashAttribute("mensaje", "Emergencia registrada con éxito");
-		return "redirect:/perfil-veterinario";
+	@PostMapping("/producto/eliminar/{idProducto}")
+	public String eliminarProducto(@PathVariable Integer idProducto, RedirectAttributes redirectAttributes) {
+	    try {
+	        System.out.println("🗑️ Eliminando producto ID: " + idProducto);
+	        
+	        // Eliminar registros de inventario asociados al producto
+	        List<Inventario> inventarios = inventarioService.obtenerInventarioPorProducto(idProducto);
+	        for (Inventario inv : inventarios) {
+	            System.out.println("🗑️ Eliminando inventario ID: " + inv.getId());
+	            inventarioService.eliminarInventario(inv.getId());
+	        }
+	        
+	        // Eliminar el producto
+	        productoService.eliminarProducto(idProducto);
+	        System.out.println("✅ Producto eliminado correctamente");
+	        redirectAttributes.addFlashAttribute("success", "Producto eliminado correctamente");
+	    } catch (Exception e) {
+	        System.err.println("💥 Error al eliminar producto: " + e.getMessage());
+	        redirectAttributes.addFlashAttribute("error", "Error al eliminar producto: " + e.getMessage());
+	    }
+	    
+	    return "redirect:/perfil-veterinario";
 	}
-
+	
+	
 }
