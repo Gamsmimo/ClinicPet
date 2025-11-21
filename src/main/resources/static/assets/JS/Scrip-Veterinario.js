@@ -99,6 +99,10 @@ function loadPetInfo(petId) {
 	// En una aplicación real, harías una petición AJAX aquí
 }
 
+
+
+
+
 // Funciones para los modales
 function openModal(modalId) {
 	const modal = document.getElementById(`${modalId}-modal`);
@@ -398,3 +402,239 @@ function completeAppointment(appointmentId) {
 		console.log('Sistema de temas inicializado correctamente');
 	}
 })();
+
+
+/* ========== HISTORIA CLÍNICA - JAVASCRIPT ========== */
+
+// Variables globales
+let hcRecords = [createEmptyHCRecord()];
+let hcCurrentIdx = 0;
+let hcIsEditing = false;
+
+// Elementos del DOM
+const hcEditBtn = document.getElementById('hcEditBtn');
+const hcSaveBtn = document.getElementById('hcSaveBtn');
+const hcNewBtn = document.getElementById('hcNewBtn');
+const hcPrintBtn = document.getElementById('hcPrintBtn');
+const hcPrevBtn = document.getElementById('hcPrevBtn');
+const hcNextBtn = document.getElementById('hcNextBtn');
+const hcPhotoContainer = document.getElementById('hcPetPhotoContainer');
+const hcDropZone = document.getElementById('hcDropZone');
+const hcFileInput = document.getElementById('hcFileInput');
+const hcAttachmentPreview = document.getElementById('hcAttachmentPreview');
+
+// Crear registro vacío
+function createEmptyHCRecord() {
+    return {
+        fields: Array(16).fill(''),
+        photo: null,
+        attachments: [],
+        date: new Date().toISOString().split('T')[0]
+    };
+}
+
+// Guardar registro actual
+function saveCurrentHCRecord() {
+    const inputs = document.querySelectorAll('.hc-editable');
+    const fieldsArray = Array.from(inputs).slice(0, -1).map(input => input.value);
+    hcRecords[hcCurrentIdx].fields = fieldsArray;
+    hcRecords[hcCurrentIdx].date = document.getElementById('hcRegistrationDate').value;
+}
+
+// Cargar registro
+function loadHCRecord(idx) {
+    const record = hcRecords[idx];
+    const inputs = document.querySelectorAll('.hc-editable');
+    
+    record.fields.forEach((value, i) => {
+        if (inputs[i]) {
+            inputs[i].value = value;
+        }
+    });
+    
+    document.getElementById('hcRegistrationDate').value = record.date;
+    document.getElementById('hcNumber').textContent = String(idx + 1).padStart(3, '0');
+    
+    // Foto de mascota
+    if (record.photo) {
+        hcPhotoContainer.innerHTML = `<img src="${record.photo}">`;
+    } else {
+        hcPhotoContainer.innerHTML = '<i class="fa-solid fa-camera"></i>';
+    }
+    hcPhotoContainer.innerHTML += '<input type="file" id="hcPhotoInput" accept="image/*" style="display:none">';
+    
+    // Anexos
+    hcAttachmentPreview.innerHTML = '';
+    record.attachments.forEach((src, i) => {
+        const div = document.createElement('div');
+        div.className = 'hc-attachment-item';
+        div.innerHTML = `
+            <img src="${src}">
+            <button class="hc-remove" data-idx="${i}"><i class="fa-solid fa-xmark"></i></button>
+        `;
+        hcAttachmentPreview.appendChild(div);
+    });
+    
+    updateHCPagination();
+}
+
+// Actualizar paginación
+function updateHCPagination() {
+    document.getElementById('hcCurrentPage').textContent = hcCurrentIdx + 1;
+    document.getElementById('hcTotalPages').textContent = hcRecords.length;
+    
+    hcPrevBtn.disabled = hcCurrentIdx === 0;
+    hcNextBtn.disabled = hcCurrentIdx === hcRecords.length - 1;
+    
+    // Dots de paginación
+    const dotsContainer = document.getElementById('hcPageDots');
+    dotsContainer.innerHTML = '';
+    
+    hcRecords.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'hc-dot' + (i === hcCurrentIdx ? ' active' : '');
+        dot.onclick = () => goToHCPage(i);
+        dotsContainer.appendChild(dot);
+    });
+}
+
+// Ir a página específica
+function goToHCPage(idx) {
+    if (hcIsEditing) {
+        swal("Atención", "Guarde los cambios antes de cambiar de página", "warning");
+        return;
+    }
+    saveCurrentHCRecord();
+    hcCurrentIdx = idx;
+    loadHCRecord(idx);
+}
+
+// Event Listeners
+hcEditBtn.addEventListener('click', function() {
+    hcIsEditing = true;
+    document.querySelectorAll('.hc-editable').forEach(el => el.disabled = false);
+    hcEditBtn.style.display = 'none';
+    hcSaveBtn.style.display = 'flex';
+    swal("Modo Edición", "Puede modificar la historia clínica", "info");
+});
+
+hcSaveBtn.addEventListener('click', function() {
+    hcIsEditing = false;
+    document.querySelectorAll('.hc-editable').forEach(el => el.disabled = true);
+    hcSaveBtn.style.display = 'none';
+    hcEditBtn.style.display = 'flex';
+    saveCurrentHCRecord();
+    swal("¡Guardado!", "Historia clínica guardada correctamente", "success");
+});
+
+hcNewBtn.addEventListener('click', function() {
+    if (hcIsEditing) {
+        swal("Atención", "Guarde los cambios primero", "warning");
+        return;
+    }
+    saveCurrentHCRecord();
+    hcRecords.push(createEmptyHCRecord());
+    hcCurrentIdx = hcRecords.length - 1;
+    loadHCRecord(hcCurrentIdx);
+    swal("Nueva Historia", "Se ha creado una nueva historia clínica", "success");
+});
+
+hcPrintBtn.addEventListener('click', function() {
+    window.print();
+});
+
+hcPrevBtn.addEventListener('click', function() {
+    goToHCPage(hcCurrentIdx - 1);
+});
+
+hcNextBtn.addEventListener('click', function() {
+    goToHCPage(hcCurrentIdx + 1);
+});
+
+// Foto de mascota
+hcPhotoContainer.addEventListener('click', function() {
+    const photoInput = document.getElementById('hcPhotoInput');
+    if (photoInput && hcIsEditing) {
+        photoInput.click();
+    }
+});
+
+document.addEventListener('change', function(e) {
+    if (e.target.id === 'hcPhotoInput' && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            hcRecords[hcCurrentIdx].photo = ev.target.result;
+            hcPhotoContainer.innerHTML = `
+                <img src="${ev.target.result}">
+                <input type="file" id="hcPhotoInput" accept="image/*" style="display:none">
+            `;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+});
+
+// Drag and drop para anexos
+hcDropZone.addEventListener('click', function() {
+    hcFileInput.click();
+});
+
+hcDropZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    hcDropZone.style.borderColor = 'var(--hc-teal)';
+    hcDropZone.style.background = 'var(--hc-mint)';
+});
+
+hcDropZone.addEventListener('dragleave', function() {
+    hcDropZone.style.borderColor = 'var(--hc-mint-light)';
+    hcDropZone.style.background = '#f8fcfb';
+});
+
+hcDropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    hcDropZone.style.borderColor = 'var(--hc-mint-light)';
+    hcDropZone.style.background = '#f8fcfb';
+    handleHCFiles(e.dataTransfer.files);
+});
+
+hcFileInput.addEventListener('change', function(e) {
+    handleHCFiles(e.target.files);
+});
+
+// Manejar archivos
+function handleHCFiles(files) {
+    Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                hcRecords[hcCurrentIdx].attachments.push(ev.target.result);
+                loadHCRecord(hcCurrentIdx);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    if (files.length > 0) {
+        swal("Archivos Adjuntados", `Se han agregado ${files.length} archivo(s)`, "success");
+    }
+}
+
+// Eliminar anexos
+hcAttachmentPreview.addEventListener('click', function(e) {
+    const removeBtn = e.target.closest('.hc-remove');
+    if (removeBtn) {
+        const idx = parseInt(removeBtn.dataset.idx);
+        hcRecords[hcCurrentIdx].attachments.splice(idx, 1);
+        loadHCRecord(hcCurrentIdx);
+        swal("Eliminado", "Archivo eliminado correctamente", "info");
+    }
+});
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    loadHCRecord(0);
+});
+
+// Si el DOM ya está cargado
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    loadHCRecord(0);
+}
