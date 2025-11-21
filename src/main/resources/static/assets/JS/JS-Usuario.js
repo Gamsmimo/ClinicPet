@@ -866,9 +866,14 @@ window.previewProfilePicture = function(input) {
 	const file = input.files && input.files[0];
 	if (!file) return;
 
-	const maxSize = parseInt(input.getAttribute('data-max-size') || '5242880', 10);
+	const maxSizeMB = 10; // 10 MB
+	const maxSizeBytes = maxSizeMB * 1024 * 1024; // Convertir a bytes
+	const maxSizeInput = input.getAttribute('data-max-size');
+	const maxSize = maxSizeInput ? parseInt(maxSizeInput, 10) : maxSizeBytes;
+	
 	if (file.size > maxSize) {
-		alert('La imagen excede el tamaño máximo permitido.');
+		const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+		alert(`La imagen (${fileSizeMB}MB) excede el tamaño máximo permitido de ${maxSizeMB}MB.`);
 		input.value = '';
 		return;
 	}

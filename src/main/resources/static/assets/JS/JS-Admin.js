@@ -6,6 +6,12 @@ const fileName = document.getElementById('fileName');
 const profileImage = document.getElementById('profileImage');
 const form = document.getElementById('imageUploadForm');
 const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+console.log('✅ Panel administrador inicializado');
+setupNavigation();
+setupModals();
+setupFormValidation();
+setupAuthorityAssignment();
+setupTabs();
 
 // ===== MANEJO DE SUBIDA DE IMAGEN =====
 if (fileInput && fileName) {
@@ -352,6 +358,39 @@ function setupAuthorityAssignment() {
 		}
 	});
 }
+
+// ===== CONFIGURACIÓN DE TABS =====
+function setupTabs() {
+	document.querySelectorAll('.tab-btn').forEach(button => {
+		button.addEventListener('click', function() {
+			// Obtener el contenedor padre de tabs
+			const tabsContainer = this.closest('.tabs').parentElement;
+
+			// Remover clase active de todos los botones en este contenedor
+			tabsContainer.querySelectorAll('.tab-btn').forEach(btn =>
+				btn.classList.remove('active')
+			);
+
+			// Agregar clase active al botón clickeado
+			this.classList.add('active');
+
+			// Obtener el ID del tab a mostrar
+			const tabId = this.getAttribute('data-tab');
+
+			// Ocultar todos los tab-content en este contenedor
+			tabsContainer.querySelectorAll('.tab-content').forEach(content =>
+				content.classList.remove('active')
+			);
+
+			// Mostrar el tab-content correspondiente
+			const targetTab = document.getElementById(tabId);
+			if (targetTab) {
+				targetTab.classList.add('active');
+			}
+		});
+	});
+}
+
 
 // ===== EXPONER FUNCIONES AL HTML =====
 window.abrirModal = abrirModal;
