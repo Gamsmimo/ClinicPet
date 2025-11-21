@@ -8,7 +8,7 @@
 
 	<!-- Bootstrap 5 (SIN Thymeleaf - como en el que SÍ funciona) -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	
+
 	<!-- Bootstrap Icons -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
@@ -55,14 +55,14 @@
 					<span>Configuración</span></a></li>
 		</ul>
 	</nav>
-	
+
 	<!-- Toggle Modo Oscuro/Claro -->
 	<div class="theme-toggle-container">
-	    <input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
-	    <label for="themeToggle" class="theme-toggle-label">
-	        <i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
-	        <i class="bi bi-sun-fill toggle-icon sun-icon"></i>
-	    </label>
+		<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
+		<label for="themeToggle" class="theme-toggle-label">
+			<i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
+			<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
+		</label>
 	</div>
 
 	<!-- Contenido Principal -->
@@ -368,26 +368,30 @@
 				</div>
 
 				<div class="product-filters">
-					<div class="row">
+					<form class="row" th:action="@{/perfil-veterinario}" method="get">
 						<div class="col-md-3">
 							<label>Categoría</label>
-							<select class="form-select">
-								<option>Todas las categorías</option>
-								<option>Alimentos</option>
-								<option>Medicamentos</option>
-								<option>Juguetes</option>
-								<option>Accesorios</option>
+							<select class="form-select" name="categoria" id="filtro-categoria">
+								<option value="" th:selected="${categoriaSeleccionada == null or #strings.isEmpty(categoriaSeleccionada)}">
+									Todas las categorías
+								</option>
+								<option value="Alimentos" th:selected="${categoriaSeleccionada == 'Alimentos'}">Alimentos</option>
+								<option value="Medicamentos" th:selected="${categoriaSeleccionada == 'Medicamentos'}">Medicamentos</option>
+								<option value="Juguetes" th:selected="${categoriaSeleccionada == 'Juguetes'}">Juguetes</option>
+								<option value="Accesorios" th:selected="${categoriaSeleccionada == 'Accesorios'}">Accesorios</option>
 							</select>
 						</div>
 						<div class="col-md-3">
 							<label>Estado</label>
-							<select class="form-select">
-								<option>Todos</option>
-								<option>Disponible</option>
-								<option>Agotado</option>
+							<select class="form-select" name="estado" id="filtro-estado">
+								<option value="" th:selected="${estadoSeleccionado == null or #strings.isEmpty(estadoSeleccionado)}">
+									Todos
+								</option>
+								<option value="Disponible" th:selected="${estadoSeleccionado == 'Disponible'}">Disponible</option>
+								<option value="Agotado" th:selected="${estadoSeleccionado == 'Agotado'}">Agotado</option>
 							</select>
 						</div>
-					</div>
+					</form>
 				</div>
 				<div class="product-grid">
 					<div th:each="producto : ${productos}" class="product-card">
@@ -416,8 +420,16 @@
 								</span>
 							</div>
 							<div class="product-actions">
-								<button class="btn btn-sm btn-primary" onclick="openModal('edit-product')"><i class="fas fa-edit"></i></button>
-								<button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+								<button class="btn btn-sm btn-primary"
+									th:onclick="|openEditProductModal(${producto.id})|"><i
+										class="fas fa-edit"></i></button>
+								<form th:action="@{/perfil-veterinario/producto/eliminar/{id}(id=${producto.id})}"
+									method="post" style="display:inline;">
+									<button type="submit" class="btn btn-sm btn-danger"
+										onclick="return confirm('¿Seguro que deseas eliminar este producto?');">
+										<i class="fas fa-trash"></i>
+									</button>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -571,35 +583,7 @@
 							</div>
 							<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
 						</form>
-						<h5>Seguridad de la cuenta</h5>
 
-						<!-- Mensajes de éxito/error -->
-						<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-							<span th:text="${success}"></span>
-							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-						</div>
-						<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-							<span th:text="${error}"></span>
-							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-						</div>
-						<form th:action="@{/perfil-veterinario/change-password}" method="post">
-							<div class="mb-3">
-								<label class="form-label">Contraseña actual</label>
-								<input type="password" class="form-control" id="currentPassword" name="currentPassword"
-									placeholder="Ingresa tu contraseña actual" required>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Nueva contraseña</label>
-								<input type="password" class="form-control" id="newPassword" name="newPassword"
-									placeholder="Ingresa tu nueva contraseña" required>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Confirmar nueva contraseña</label>
-								<input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-									placeholder="Confirma tu nueva contraseña" required>
-							</div>
-							<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
-						</form>
 					</div>
 				</div>
 
@@ -705,7 +689,7 @@
 		</form>
 	</div>
 
-	
+
 	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
 	<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
 	<!-- Modal Agregar Producto -->
@@ -876,66 +860,70 @@
 	</div>
 
 	<!-- Más modales... -->
-	
+
 	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
-		<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
-		<!-- Modal Editar Producto -->
-		<div class="modal" id="edit-product-modal">
-		    <form th:action="@{/perfil-veterinario/producto/actualizar/{id}}" 
-		          method="post" enctype="multipart/form-data" id="form-producto-editar">
-		        <div class="modal-header">
-		            <h3><i class="fa-solid fa-pen-to-square"></i> Editar Producto</h3>
-		            <button type="button" class="btn-close-modal" onclick="closeModal()">
-		                <i class="fas fa-times"></i>
-		            </button>
-		        </div>
-		        <div class="modal-body">
-		            <div class="row">
-		                <div class="col-md-6 mb-3">
-		                    <label class="form-label" for="edit-nombre">Nombre *</label>
-		                    <input type="text" id="edit-nombre" name="nombre" class="form-control" required>
-		                </div>
-		                <div class="col-md-6 mb-3">
-		                    <label class="form-label" for="edit-precio">Precio *</label>
-		                    <input type="number" id="edit-precio" name="precio" step="0.001" min="0" class="form-control" required>
-		                </div>
-		                <div class="col-md-6 mb-3">
-		                    <label for="edit-cantidadDisponible" class="form-label">Cantidad *</label>
-		                    <input type="number" id="edit-cantidadDisponible" name="cantidadDisponible" class="form-control" min="0" required>
-		                </div>
-		                <div class="col-md-6 mb-3">
-		                    <label for="edit-categoria" class="form-label">Categoría *</label>
-		                    <select id="edit-categoria" name="categoria" class="form-select" required>
-		                        <option value="">Seleccionar categoría</option>
-		                        <option value="Alimentos">Alimentos</option>
-		                        <option value="Medicamentos">Medicamentos</option>
-		                        <option value="Juguetes">Juguetes</option>
-		                        <option value="Accesorios">Accesorios</option>
-		                    </select>
-		                </div>
-		            </div>
-		            <div class="mb-3">
-		                <label class="form-label" for="edit-descripcion">Descripción *</label>
-		                <textarea id="edit-descripcion" name="descripcion" class="form-control" rows="3" required></textarea>
-		            </div>
-		            <div class="mb-3">
-		                <label class="form-label" for="edit-imagen">Imagen del Producto</label>
-		                <input type="file" id="edit-imagen" name="imagen" class="form-control" accept="image/*">
-		                <small class="text-muted">Dejar vacío para mantener la imagen actual</small>
-		                <!-- Vista previa de imagen actual -->
-		                <div class="mt-2">
-		                    <img id="preview-imagen-actual" src="" alt="Imagen actual" style="max-width: 200px; display: none;">
-		                </div>
-		            </div>
-		            <!-- Campo oculto para idveterinaria -->
-		            <input type="hidden" name="idveterinaria" value="1">
-		        </div>
-		        <div class="modal-footer">
-		            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-		            <button type="submit" class="btn btn-primary">Actualizar Producto</button>
-		        </div>
-		    </form>
-		</div>
+	<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
+	<!-- Modal Editar Producto -->
+	<div class="modal" id="edit-product-modal">
+		<form th:action="@{/perfil-veterinario/producto/actualizar/{id}}" method="post" enctype="multipart/form-data"
+			id="form-producto-editar">
+			<div class="modal-header">
+				<h3><i class="fa-solid fa-pen-to-square"></i> Editar Producto</h3>
+				<button type="button" class="btn-close-modal" onclick="closeModal()">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="edit-nombre">Nombre *</label>
+						<input type="text" id="edit-nombre" name="nombre" class="form-control" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="edit-precio">Precio *</label>
+						<input type="number" id="edit-precio" name="precio" step="0.001" min="0" class="form-control"
+							required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="edit-cantidadDisponible" class="form-label">Cantidad *</label>
+						<input type="number" id="edit-cantidadDisponible" name="cantidadDisponible" class="form-control"
+							min="0" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="edit-categoria" class="form-label">Categoría *</label>
+						<select id="edit-categoria" name="categoria" class="form-select" required>
+							<option value="">Seleccionar categoría</option>
+							<option value="Alimentos">Alimentos</option>
+							<option value="Medicamentos">Medicamentos</option>
+							<option value="Juguetes">Juguetes</option>
+							<option value="Accesorios">Accesorios</option>
+						</select>
+					</div>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="edit-descripcion">Descripción *</label>
+					<textarea id="edit-descripcion" name="descripcion" class="form-control" rows="3"
+						required></textarea>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="edit-imagen">Imagen del Producto</label>
+					<input type="file" id="edit-imagen" name="imagen" class="form-control" accept="image/*">
+					<small class="text-muted">Dejar vacío para mantener la imagen actual</small>
+					<!-- Vista previa de imagen actual -->
+					<div class="mt-2">
+						<img id="preview-imagen-actual" src="" alt="Imagen actual"
+							style="max-width: 200px; display: none;">
+					</div>
+				</div>
+				<!-- Campo oculto para idveterinaria -->
+				<input type="hidden" name="idveterinaria" value="1">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+				<button type="submit" class="btn btn-primary">Actualizar Producto</button>
+			</div>
+		</form>
+	</div>
 
 
 	<!-- Scripts -->
