@@ -81,7 +81,7 @@
 			</section>
 
 			<!-- Gestión de Usuarios -->
-			<section id="users" class="content-section">
+			<section id="users" class="content-section" th:classappend="${seccionActiva == 'users'} ? 'active' : ''">
 				<h2>Gestión de Usuarios</h2>
 				<div class="section-actions">
 					<button class="btn-primary" onclick="abrirModal('vetModal')">Registrar Veterinario</button>
@@ -113,7 +113,7 @@
 								<span th:unless="${usuario.activo}" class="status inactive">Desactivado</span>
 							</td>
 							<td>
-								<button class="btn-action" th:onclick="'verUsuario('+${usuario.id}+')'">Ver</button>
+								<a th:href="@{/admin(verUsuario=${usuario.id})}" class="btn-action">Ver</a>
 								<form th:action="@{/admin/usuario/cambiar-estado/} + ${usuario.id}" method="post"
 									style="display:inline;">
 									<input type="hidden" name="activo" th:value="${!usuario.activo}" />
@@ -128,7 +128,7 @@
 			</section>
 
 			<!-- Gestión de Mascotas -->
-			<section id="pets" class="content-section">
+			<section id="pets" class="content-section" th:classappend="${seccionActiva == 'pets'} ? 'active' : ''">
 				<h2>Gestión de Mascotas</h2>
 				<div class="tabs">
 					<button class="tab-btn active" data-tab="pets-tab">Mascotas Registradas</button>
@@ -155,7 +155,7 @@
 								<td th:text="${m.raza}">Labrador</td>
 								<td th:text="${m.usuario.nombres + ' ' + m.usuario.apellidos}">Dueño</td>
 								<td>
-									<button class="btn-action" th:onclick="'verMascota('+${m.id}+')'">Ver</button>
+									<a th:href="@{/admin(verMascota=${m.id})}" class="btn-action">Ver</a>
 								</td>
 							</tr>
 						</tbody>
@@ -221,8 +221,9 @@
 			</section>
 
 			<!-- Gestión Veterinaria -->
-			<section id="vets" class="content-section">
+			<section id="vets" class="content-section" th:classappend="${seccionActiva == 'vets'} ? 'active' : ''">
 				<h2>Gestión Veterinaria</h2>
+
 				<div class="tabs">
 					<button class="tab-btn active" data-tab="clinics-vet-tab">Clínicas y Veterinarios</button>
 					<button class="tab-btn" data-tab="reviews-tab">Calificaciones y Comentarios</button>
@@ -240,8 +241,8 @@
 								<th>Acciones</th>
 							</tr>
 						</thead>
+
 						<tbody>
-							<!-- Veterinarias -->
 							<tr th:each="veterinaria : ${veterinarias}">
 								<td th:text="${veterinaria.id}">1</td>
 								<td th:text="${veterinaria.nombre}">Veterinaria</td>
@@ -253,15 +254,15 @@
 										class="status inactive">Desactivada</span>
 								</td>
 								<td>
-									<button class="btn-action"
-										th:onclick="'verVeterinaria('+${veterinaria.id}+')'">Ver</button>
+									<a th:href="@{/admin(verVeterinaria=${veterinaria.id})}" class="btn-action">Ver</a>
 									<form th:action="@{/admin/veterinaria/cambiar-estado/} + ${veterinaria.id}"
 										method="post" style="display:inline;">
 										<input type="hidden" name="estado"
 											th:value="${veterinaria.estado != 'Activa'}" />
 										<button type="submit" class="btn-action"
 											th:classappend="${veterinaria.estado == 'Activa'} ? 'btn-inactivate' : 'btn-activate'"
-											th:text="${veterinaria.estado == 'Activa'} ? 'Desactivar' : 'Activar'"></button>
+											th:text="${veterinaria.estado == 'Activa'} ? 'Desactivar' : 'Activar'">
+										</button>
 									</form>
 								</td>
 							</tr>
@@ -293,13 +294,25 @@
 									<button class="btn-action btn-reject">Rechazar</button>
 								</td>
 							</tr>
+							<tr>
+								<td>Carlos Rodríguez</td>
+								<td>Clínica PetCare</td>
+								<td>4/5</td>
+								<td>Muy buen trato con mi mascota</td>
+								<td><span class="status approved">Aprobado</span></td>
+								<td>
+									<button class="btn-action">Editar</button>
+									<button class="btn-action btn-reject">Rechazar</button>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
 			</section>
 
 			<!-- Configuración General -->
-			<section id="settings" class="content-section">
+			<section id="settings" class="content-section"
+				th:classappend="${seccionActiva == 'settings'} ? 'active' : ''">
 				<h2>Configuración General del Sistema</h2>
 				<div class="settings-options">
 					<div class="setting-item">
@@ -322,7 +335,8 @@
 			</section>
 
 			<!-- Control y Seguridad -->
-			<section id="security" class="content-section">
+			<section id="security" class="content-section"
+				th:classappend="${seccionActiva == 'security'} ? 'active' : ''">
 				<h2>Zona de Control y Seguridad</h2>
 				<div class="tabs">
 					<button class="tab-btn active" data-tab="suspicious-tab">Actividades Sospechosas</button>
@@ -375,7 +389,8 @@
 			</section>
 
 			<!-- Perfil Administrador -->
-			<section id="profile" class="content-section">
+			<section id="profile" class="content-section"
+				th:classappend="${seccionActiva == 'profile'} ? 'active' : ''">
 				<h2>Perfil Administrador</h2>
 				<div class="profile-container">
 					<div class="profile-header">
@@ -393,7 +408,7 @@
 										<input type="file" name="imagen" id="fileInput" accept="image/*"
 											class="file-input" required>
 										<label for="fileInput" class="file-upload-btn">
-											<i class="bi bi-cloud-arrow-up"></i> 
+											<i class="bi bi-cloud-arrow-up"></i>
 										</label>
 										<span class="file-name" id="fileName"></span>
 									</div>
@@ -410,7 +425,7 @@
 									<label>Nombre:</label>
 									<span th:text="${admin.nombres}">Administrador</span>
 								</div>
-								
+
 								<div class="info-item">
 									<label>Email:</label>
 									<span th:text="${admin.correo}">admin@HelpYourPet.com</span>
@@ -420,9 +435,11 @@
 									<span th:text="${admin.telefono}">+57 300 123 4567</span>
 								</div>
 							</div>
-							<button class="btn-primary" onclick="abrirModal('profileModal')">Editar Información</button>
+							<button class="btn-primary" onclick="abrirModal('profileModal')">Editar
+								Información</button>
 						</div>
 					</div>
+				</div>
 			</section>
 		</div>
 	</main>
@@ -570,12 +587,149 @@
 		</div>
 	</div>
 
-	<!-- Modal genérico para detalles -->
-	<div id="detalleModal" class="modal">
-		<div class="modal-content">
-			<span class="close" onclick="cerrarModal('detalleModal')">&times;</span>
-			<h2 id="modalTitulo">Detalles</h2>
-			<div id="modalCuerpo"></div>
+	<!-- 	MODALES PARA LOS DETALLES -->
+	<!-- Modal Detalle Usuario -->
+	<div id="detalleUsuarioModal" class="modal"
+		th:style="${mostrarModal == 'usuario'} ? 'display: flex;' : 'display: none;'">
+		<div class="modal-content" th:if="${detalleUsuario != null}">
+			<a th:href="@{/admin(seccion='users')}" class="close">&times;</a>
+			<h2>Detalles de Usuario</h2>
+			<div style="display: grid; gap: 1rem;">
+				<div style="text-align: center; margin-bottom: 1rem;">
+					<img th:if="${detalleUsuario.imagen}" th:src="${detalleUsuario.imagen}" alt="Foto de perfil"
+						style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 3px solid var(--primary-color);" />
+					<img th:unless="${detalleUsuario.imagen}" src="https://via.placeholder.com/150?text=Sin+Foto"
+						alt="Sin foto"
+						style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 3px solid var(--primary-color);" />
+				</div>
+				<p><strong>Nombre Completo:</strong> <span
+						th:text="${detalleUsuario.nombres + ' ' + detalleUsuario.apellidos}">N/A</span></p>
+				<p><strong>Correo:</strong> <span th:text="${detalleUsuario.correo}">N/A</span></p>
+				<p><strong>Teléfono:</strong> <span th:text="${detalleUsuario.telefono}">N/A</span></p>
+				<p><strong>Edad:</strong> <span th:text="${detalleUsuario.edad}">N/A</span> años</p>
+				<p><strong>Tipo Documento:</strong> <span th:text="${detalleUsuario.tipoDocumento}">N/A</span></p>
+				<p><strong>Número Documento:</strong> <span th:text="${detalleUsuario.numDocumento}">N/A</span></p>
+				<p><strong>Dirección:</strong> <span th:text="${detalleUsuario.direccion}">N/A</span></p>
+				<p><strong>Rol:</strong> <span th:text="${detalleUsuario.rol?.nombre}">N/A</span></p>
+				<p><strong>Estado:</strong>
+					<span th:if="${detalleUsuario.activo}" class="status active">Activo</span>
+					<span th:unless="${detalleUsuario.activo}" class="status inactive">Inactivo</span>
+				</p>
+			</div>
+			<a th:href="@{/admin#users}" class="btn-primary"
+				style="margin-top: 1rem; display: inline-block; text-decoration: none; text-align: center;">Cerrar</a>
+		</div>
+	</div>
+
+	<!-- Modal Detalle Mascota -->
+	<div id="detalleMascotaModal" class="modal"
+		th:style="${mostrarModal == 'mascota'} ? 'display: flex;' : 'display: none;'">
+		<div class="modal-content" th:if="${detalleMascota != null}">
+			<a th:href="@{/admin#pets}" class="close">&times;</a>
+			<h2>Detalles de Mascota</h2>
+			<div style="display: grid; gap: 1rem;">
+				<div style="text-align: center; margin-bottom: 1rem;">
+					<img th:if="${detalleMascota.foto}" th:src="${detalleMascota.foto}" alt="Foto de mascota"
+						style="width: 200px; height: 200px; object-fit: cover; border-radius: 12px; border: 3px solid var(--primary-color);" />
+					<img th:unless="${detalleMascota.foto}" src="https://via.placeholder.com/200?text=Sin+Foto"
+						alt="Sin foto"
+						style="width: 200px; height: 200px; object-fit: cover; border-radius: 12px; border: 3px solid var(--primary-color);" />
+				</div>
+				<p><strong>Nombre:</strong> <span th:text="${detalleMascota.nombre}">N/A</span></p>
+				<p><strong>Especie:</strong> <span th:text="${detalleMascota.especie}">N/A</span></p>
+				<p><strong>Raza:</strong> <span th:text="${detalleMascota.raza}">N/A</span></p>
+				<p><strong>Edad:</strong> <span th:text="${detalleMascota.edad}">N/A</span> años</p>
+				<p><strong>Género:</strong> <span th:text="${detalleMascota.genero}">N/A</span></p>
+				<p><strong>Tamaño:</strong> <span th:text="${detalleMascota.tamaño}">N/A</span></p>
+				<p><strong>Peso:</strong> <span th:text="${detalleMascota.peso}">N/A</span> kg</p>
+				<p><strong>Color:</strong> <span th:text="${detalleMascota.color}">N/A</span></p>
+				<p><strong>Descripción:</strong> <span th:text="${detalleMascota.descripcion}">N/A</span></p>
+				<p><strong>Dueño:</strong> <span
+						th:text="${detalleMascota.usuario.nombres + ' ' + detalleMascota.usuario.apellidos}">N/A</span>
+				</p>
+				<p><strong>Correo Dueño:</strong> <span th:text="${detalleMascota.usuario.correo}">N/A</span></p>
+				<p><strong>Teléfono Dueño:</strong> <span th:text="${detalleMascota.usuario.telefono}">N/A</span></p>
+			</div>
+			<a th:href="@{/admin#pets}" class="btn-primary"
+				style="margin-top: 1rem; display: inline-block; text-decoration: none; text-align: center;">Cerrar</a>
+		</div>
+	</div>
+
+	<!-- Modal Detalle Veterinario -->
+	<div id="detalleVeterinarioModal" class="modal"
+		th:style="${mostrarModal == 'veterinario'} ? 'display: flex;' : 'display: none;'">
+		<div class="modal-content" th:if="${detalleVeterinario != null}">
+			<a th:href="@{/admin#vets}" class="close">&times;</a>
+			<h2>Detalles de Veterinario</h2>
+			<div style="display: grid; gap: 1rem;">
+				<h3
+					style="color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+					Información Personal</h3>
+				<p><strong>Nombre Completo:</strong> <span
+						th:text="${detalleVeterinario.usuario.nombres + ' ' + detalleVeterinario.usuario.apellidos}">N/A</span>
+				</p>
+				<p><strong>Edad:</strong> <span th:text="${detalleVeterinario.usuario.edad}">N/A</span> años</p>
+				<p><strong>Tipo Documento:</strong> <span
+						th:text="${detalleVeterinario.usuario.tipoDocumento}">N/A</span></p>
+				<p><strong>Número Documento:</strong> <span
+						th:text="${detalleVeterinario.usuario.numDocumento}">N/A</span></p>
+				<p><strong>Dirección:</strong> <span th:text="${detalleVeterinario.usuario.direccion}">N/A</span></p>
+
+				<h3
+					style="color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem;">
+					Contacto</h3>
+				<p><strong>Teléfono:</strong> <span th:text="${detalleVeterinario.usuario.telefono}">N/A</span></p>
+				<p><strong>Correo:</strong> <span th:text="${detalleVeterinario.usuario.correo}">N/A</span></p>
+
+				<h3
+					style="color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem;">
+					Información Profesional</h3>
+				<p><strong>Especialidad:</strong> <span th:text="${detalleVeterinario.especialidad}">N/A</span></p>
+				<p><strong>Tarjeta Profesional:</strong> <span
+						th:text="${detalleVeterinario.tarjetaProfesional}">N/A</span></p>
+				<p><strong>Experiencia:</strong> <span th:text="${detalleVeterinario.experiencia}">N/A</span> años</p>
+				<p><strong>Estado:</strong>
+					<span th:if="${detalleVeterinario.estado}" class="status active">Activo</span>
+					<span th:unless="${detalleVeterinario.estado}" class="status inactive">Inactivo</span>
+				</p>
+			</div>
+			<a th:href="@{/admin#vets}" class="btn-primary"
+				style="margin-top: 1rem; display: inline-block; text-decoration: none; text-align: center;">Cerrar</a>
+		</div>
+	</div>
+
+	<!-- Modal Detalle Veterinaria -->
+	<div id="detalleVeterinariaModal" class="modal"
+		th:style="${mostrarModal == 'veterinaria'} ? 'display: flex;' : 'display: none;'">
+		<div class="modal-content" th:if="${detalleVeterinaria != null}">
+			<a th:href="@{/admin#vets}" class="close">&times;</a>
+			<h2>Detalles de Veterinaria</h2>
+			<div style="display: grid; gap: 1rem;">
+				<h3
+					style="color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+					Información General</h3>
+				<p><strong>Nombre:</strong> <span th:text="${detalleVeterinaria.nombre}">N/A</span></p>
+				<p><strong>RUT:</strong> <span th:text="${detalleVeterinaria.rut}">N/A</span></p>
+				<p><strong>Estado:</strong>
+					<span th:if="${detalleVeterinaria.estado == 'Activa'}" class="status active">Activa</span>
+					<span th:unless="${detalleVeterinaria.estado == 'Activa'}" class="status inactive">Inactiva</span>
+				</p>
+
+				<h3
+					style="color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem;">
+					Ubicación y Contacto</h3>
+				<p><strong>Dirección:</strong> <span th:text="${detalleVeterinaria.direccion}">N/A</span></p>
+				<p><strong>Teléfono:</strong> <span th:text="${detalleVeterinaria.telefono}">N/A</span></p>
+				<p><strong>Correo:</strong> <span th:text="${detalleVeterinaria.correo}">N/A</span></p>
+
+				<h3
+					style="color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem;">
+					Información de Servicio</h3>
+				<p><strong>Horario:</strong> <span th:text="${detalleVeterinaria.horario}">N/A</span></p>
+				<p><strong>Descripción:</strong> <span th:text="${detalleVeterinaria.descripcion}">N/A</span></p>
+			</div>
+			<a th:href="@{/admin#vets}" class="btn-primary"
+				style="margin-top: 1rem; display: inline-block; text-decoration: none; text-align: center;">Cerrar</a>
 		</div>
 	</div>
 
