@@ -376,9 +376,9 @@ public class UsuarioController {
 			// Decodificar Base64
 			byte[] imageBytes = Base64.getDecoder().decode(imageString);
 
-			// Validar tamaño (2MB máximo)
-			if (imageBytes.length > 2 * 1024 * 1024) {
-				throw new RuntimeException("La imagen excede el tamaño máximo permitido de 2MB");
+			// Validar tamaño (10MB máximo)
+			if (imageBytes.length > 10 * 1024 * 1024) {
+				throw new RuntimeException("La imagen excede el tamaño máximo permitido de 10MB");
 			}
 
 			// Crear directorio si no existe
@@ -412,16 +412,16 @@ public class UsuarioController {
 			return ResponseEntity.status(500).body("Error al subir la imagen");
 		}
 	}
-	
+
 	@DeleteMapping("/usuario/{id}/foto")
 	public ResponseEntity<?> eliminarFoto(@PathVariable Long id) {
-	    usuarioService.eliminarFotoPerfil(id);
-	    return ResponseEntity.ok("Foto eliminada");
+		usuarioService.eliminarFotoPerfil(id);
+		return ResponseEntity.ok("Foto eliminada");
 	}
-	
+
 	@PostMapping("/perfilusuario/actualizarInfoPersonal")
-	public String actualizarInfoPersonal(@ModelAttribute("usuarioLogueado") Usuario usuarioForm,
-			HttpSession session, RedirectAttributes redirectAttributes) {
+	public String actualizarInfoPersonal(@ModelAttribute("usuarioLogueado") Usuario usuarioForm, HttpSession session,
+			RedirectAttributes redirectAttributes) {
 
 		Usuario usuarioSession = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioSession == null) {
@@ -443,42 +443,26 @@ public class UsuarioController {
 
 		return "redirect:/usuarios/perfilusuario";
 	}
-	
+
 	@PutMapping("/usuario/actualizar/{id}")
-	public ResponseEntity<Usuario> actualizarUsuario(
-	        @PathVariable Integer id,
-	        @RequestBody Usuario usuarioActualizado) {
+	public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Integer id,
+			@RequestBody Usuario usuarioActualizado) {
 
-	    Usuario u = usuarioService.actualizarUsuario(id, usuarioActualizado);
-	    return ResponseEntity.ok(u);
+		Usuario u = usuarioService.actualizarUsuario(id, usuarioActualizado);
+		return ResponseEntity.ok(u);
 	}
-	
+
 	@PutMapping("/usuario/{id}/password")
-	public ResponseEntity<?> actualizarPassword(
-	        @PathVariable Integer id,
-	        @RequestBody String nuevaPassword) {
+	public ResponseEntity<?> actualizarPassword(@PathVariable Integer id, @RequestBody String nuevaPassword) {
 
-	    usuarioService.actualizarPassword(id, nuevaPassword);
-	    return ResponseEntity.ok("Contraseña actualizada");
+		usuarioService.actualizarPassword(id, nuevaPassword);
+		return ResponseEntity.ok("Contraseña actualizada");
 	}
-
-
-
 
 	// redireccion cambiar contraseña
 	@GetMapping("/recovery")
 	public String recovery() {
 		return "RecuperarContrasena/recovery";
-	}
-
-	@GetMapping("/tienda")
-	public String tienda() {
-		return "Tienda/tienda";
-	}
-
-	@GetMapping("/adopcion")
-	public String adopcion() {
-		return "Adopcion/adopcion";
 	}
 
 //redireccion al cerrar sesion
