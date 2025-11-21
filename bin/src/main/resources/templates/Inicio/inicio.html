@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-
-<html lang="es" xmlns:th="http://thymeLeaf.org">
+<html lang="es">
 
 <head>
-    <meta charset=" UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLINIC PET</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fredoka:wght@300..700&display=swap"
-	rel="stylesheet">
-<link
-	href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Fredoka:wght@300..700&display=swap"
-	rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>HelpYourPet</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fredoka:wght@300..700&display=swap"
+		rel="stylesheet">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Fredoka:wght@300..700&display=swap"
+		rel="stylesheet">
 
-<link rel="stylesheet" href="CSS/Estilos-Inicio.css">
-<link rel="icon" href="IMG/logo.png" type="image/png">
+	<link rel="stylesheet" th:href="@{/assets/CSS/Estilos-Inicio.css}">
+	<link rel="icon" th:href="@{/assets/IMG/logo.png}" type="image/png">
+</head>
 
 <body>
 
@@ -28,9 +30,9 @@
 			<!-- Logo y nombre -->
 			<div class="brand-section">
 				<div class="logo">
-
+					<img th:src="@{/assets/IMG/logo.png}" alt="logo" class="logo">
 				</div>
-				<span class="brand-name">CLINIC PET</span>
+				<span class="brand-name">HelpYourPet</span>
 			</div>
 
 			<!-- Buscador -->
@@ -45,58 +47,22 @@
 				<!-- Botones principales -->
 				<div class="botones-finales">
 					<div class="nav-buttons">
-						<button class="nav-button btn-petshop">
-							<a href="Tienda.html"> <i class="fas fa-shop"></i> PetShop</a>
-						</button>
-						<button class="nav-button">
-							<a href="Adopciones.html"> <i class="fas fa-dog"></i> Adopciones</a>
-						</button>
 						<button class="nav-button" id="emergencias">
 							<i class="fas fa-ambulance"></i> Emergencias
 						</button>
 
-						<!-- Botón Calendario -->
-						<div class="position-relative">
-							<button class="btn-calendar" id="calendarButton">
-								<i class="far fa-calendar-alt"></i>
-							</button>
-
-							<!-- Popup del Calendario -->
-							<div class="calendar-popup" id="calendarPopup">
-								<div class="calendar-header">
-									<h6 class="calendar-title mb-0" id="currentMonthYear">Junio 2023</h6>
-									<div>
-										<button class="btn btn-sm btn-outline-secondary" id="prevMonth"><i
-												class="fas fa-chevron-left"></i></button>
-										<button class="btn btn-sm btn-outline-secondary" id="nextMonth"><i
-												class="fas fa-chevron-right"></i></button>
-									</div>
+						<!-- Toggle Modo Oscuro/Claro -->
+						<div class="theme-toggle-container">
+							<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
+							<label for="themeToggle" class="theme-toggle-label">
+								<div class="toggle-circle">
+									<i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
+									<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
 								</div>
-
-								<div class="calendar-grid mb-2">
-									<div class="calendar-day-header">Dom</div>
-									<div class="calendar-day-header">Lun</div>
-									<div class="calendar-day-header">Mar</div>
-									<div class="calendar-day-header">Mié</div>
-									<div class="calendar-day-header">Jue</div>
-									<div class="calendar-day-header">Vie</div>
-									<div class="calendar-day-header">Sáb</div>
-								</div>
-
-								<div class="calendar-grid" id="calendarDays"></div>
-
-								<div class="d-flex justify-content-between mt-3">
-									<button class="btn btn-sm btn-outline-primary" id="todayBtn">Hoy</button>
-									<button class="btn btn-sm btn-agendar text-white" id="agendarCitaBtn">
-										<i class="fab fa-whatsapp me-1"></i> Agendar Cita
-									</button>
-								</div>
-							</div>
+							</label>
 						</div>
 					</div>
 				</div>
-
-
 				<!-- Menú Hamburguesa -->
 				<div class="hamburger-menu">
 					<button class="hamburger-btn">
@@ -104,27 +70,40 @@
 					</button>
 					<div class="menu-content">
 						<div class="menu-item">
-
-							<a href="Usuario.html"> <i class="fas fa-user-plus"></i>
+							<a th:href="@{/usuarios/perfilusuario}" style="text-decoration: none;"> <i
+									class="fas fa-user-plus"></i>
 								<span>Perfil</span></a>
 						</div>
 						<div class="menu-item">
-							<a href="Reporte.html"> <i class="fas fa-clinic-medical"></i>
+							<a th:href="@{/usuarios/tienda}" style="text-decoration: none;"> <i class="fas fa-shop"></i>
+								<span>PetShop</span></a>
+						</div>
+						<div class="menu-item">
+							<a th:href="@{/usuarios/adopcion}" style="text-decoration: none;"> <i
+									class="fas fa-dog"></i>
+								<span>Adopciones</span></a>
+						</div>
+						<div class="menu-item">
+							<a href="Reporte.html" style="text-decoration: none;"> <i class="fas fa-clinic-medical"></i>
 								<span>Reporte Maltrato</span></a>
 						</div>
 						<div class="menu-item">
-							<i class="fas fa-star"></i>
-							<a href="Calificaciones.html"><span>Calificaciones</span></a>
+							<a href="Calificaciones.html" style="text-decoration: none;"><i
+									class="fas fa-star"></i><span>Calificaciones</span></a>
 						</div>
 						<div class="menu-item">
-							<a href="sobrenosotros.html"> <i class="fas fa-users"></i>
+							<a href="sobrenosotros.html" style="text-decoration: none;"> <i class="fas fa-users"></i>
 								<span>Acerca de Nosotros</span></a>
+						</div>
+						<div class="menu-item">
+							<a th:href="@{/usuarios/index}" style="text-decoration: none;"> <i
+									class="fas fa-arrow-right"></i>
+								<span>Cerrar Sesión</span></a>
 						</div>
 					</div>
 				</div>
 			</div>
 	</nav>
-
 
 	<body>
 		<!-- Modal Emergencias -->
@@ -173,13 +152,12 @@
 			</div>
 		</div>
 
-
 		<!-- Hero Section -->
 		<section class="hero" id="inicio">
 			<div class="container">
-				<h1><strong>¡BIENVENIDO A CLINIC PET!</strong></h1>
-				<p>Una mascota no es solo un animal, es un miembro más de la familia</p>
-				<a href="servicios.html" class="btn btn-hero">Conoce Nuestros Servicios</class=></a>
+				<h1><strong>¡BIENVENIDO A HelpYourPet!</strong></h1>
+				<p>Cuidamos de quienes hacen tu vida más feliz.</p>
+				<button onclick="abrirServicios()" class="btn btn-hero">Conoce Nuestros Servicios</button>
 			</div>
 		</section>
 
@@ -220,7 +198,7 @@
 							y servicios que garanticen una vida larga y feliz para tu mascota.</p>
 					</div>
 					<div class="intro-img">
-						<img src="IMG/imagenH.png" alt="Niña abrazando a su perro">
+						<img th:src="@{/assets/IMG/imagenH.png}" alt="Niña abrazando a su perro">
 					</div>
 				</div>
 			</div>
@@ -235,7 +213,8 @@
 				<div class="row">
 					<div class="col-md-6 col-lg-3 mb-4">
 						<div class="card card-consejo">
-							<img src="IMG/Alimetacion.png" class="card-img-top" alt="Alimentación saludable">
+							<img th:src="@{/assets/IMG/Alimetacion.png}" class="card-img-top"
+								alt="Alimentación saludable">
 							<div class="card-body">
 								<h5 class="card-title">Alimentación Saludable</h5>
 								<p class="card-text">Proporciónale una dieta equilibrada y acorde a su especie, edad y
@@ -250,7 +229,7 @@
 					</div>
 					<div class="col-md-6 col-lg-3 mb-4">
 						<div class="card card-consejo">
-							<img src="IMG/agua.png" class="card-img-top" alt="Agua Fresca">
+							<img th:src="@{/assets/IMG/agua.png}" class="card-img-top" alt="Agua Fresca">
 							<div class="card-body">
 								<h5 class="card-title">Agua fresca siempre disponible</h5>
 								<p class="card-text">Asegúrate de que tu mascota tenga acceso constante a agua limpia y
@@ -261,7 +240,7 @@
 					</div>
 					<div class="col-md-6 col-lg-3 mb-4">
 						<div class="card card-consejo">
-							<img src="IMG/ejercicioM.png" class="card-img-top" alt="Ejercicio diario">
+							<img th:src="@{/assets/IMG/ejercicioM.png}" class="card-img-top" alt="Ejercicio diario">
 							<div class="card-body">
 								<h5 class="card-title">Ejercicio Diario</h5>
 								<p class="card-text">Proporciónale momentos de juego y ejercicio diario para evitar el
@@ -274,7 +253,7 @@
 					</div>
 					<div class="col-md-6 col-lg-3 mb-4">
 						<div class="card card-consejo">
-							<img src="IMG/Chequeo.png" class="card-img-top" alt="Visitas al veterinario">
+							<img th:src="@{/assets/IMG/Chequeo.png}" class="card-img-top" alt="Visitas al veterinario">
 							<div class="card-body">
 								<h5 class="card-title">Chequeos Regulares</h5>
 								<p class="card-text">Lleva a tu mascota a chequeos regulares, cumple con el calendario
@@ -287,7 +266,7 @@
 					</div>
 					<div class="col-md-6 col-lg-3 mb-4">
 						<div class="card card-consejo">
-							<img src="IMG/Higiene.png" class="card-img-top" alt="Higiene y Aseo">
+							<img th:src="@{/assets/IMG/Higiene.png}" class="card-img-top" alt="Higiene y Aseo">
 							<div class="card-body">
 								<h5 class="card-title">Higiene y Aseo</h5>
 								<p class="card-text">Baña a tu mascota con la frecuencia adecuada, mantén limpios sus
@@ -301,7 +280,8 @@
 					</div>
 					<div class="col-md-6 col-lg-3 mb-4">
 						<div class="card card-consejo">
-							<img src="IMG/Esterilizacion.png" class="card-img-top" alt="Esterilización o Castración">
+							<img th:src="@{/assets/IMG/Esterilizacion.png}" class="card-img-top"
+								alt="Esterilización o Castración">
 							<div class="card-body">
 								<h5 class="card-title">Esterilización o Castración</h5>
 								<p class="card-text">Consulta con el veterinario si este procedimiento es adecuado.
@@ -312,7 +292,8 @@
 					</div>
 					<div class="col-md-6 col-lg-3 mb-4">
 						<div class="card card-consejo">
-							<img src="IMG/Humanizar.png" class="card-img-top" alt="No Humanices en Exceso">
+							<img th:src="@{/assets/IMG/Humanizar.png}" class="card-img-top"
+								alt="No Humanices en Exceso">
 							<div class="card-body">
 								<h5 class="card-title">No Humanices En Exceso</h5>
 								<p class="card-text">Trata a tu mascota con cariño, pero respeta su naturaleza animal.
@@ -323,7 +304,7 @@
 					</div>
 					<div class="col-md-6 col-lg-3 mb-4">
 						<div class="card card-consejo">
-							<img src="IMG/Respeto.png" class="card-img-top" alt="Respeto y paciencia">
+							<img th:src="@{/assets/IMG/Respeto.png}" class="card-img-top" alt="Respeto y paciencia">
 							<div class="card-body">
 								<h5 class="card-title">Respeto y Paciencia</h5>
 								<p class="card-text">Recuerda que cada animal tiene su personalidad. Respeta sus
@@ -334,7 +315,6 @@
 					</div>
 				</div>
 			</div>
-
 		</section>
 
 
@@ -436,7 +416,7 @@
 				<div class="owl-carousel owl-theme">
 					<div class="item">
 						<div class="vet-card">
-							<img src="IMG/veterinaria1.png" class="vet-img" alt="Dra. Laura Martínez">
+							<img th:src="@{/assets/IMG/veterinaria1.png}" class="vet-img" alt="Dra. Laura Martínez">
 							<div class="vet-info">
 								<h4 class="vet-name">Dra. Laura Martínez</h4>
 								<div class="vet-rating">
@@ -455,7 +435,7 @@
 					</div>
 					<div class="item">
 						<div class="vet-card">
-							<img src="IMG/veterinario1.png" class="vet-img" alt="Dr. Carlos Rodríguez">
+							<img th:src="@{/assets/IMG/veterinario1.png}" class="vet-img" alt="Dr. Carlos Rodríguez">
 							<div class="vet-info">
 								<h4 class="vet-name">Dr. Carlos Rodríguez</h4>
 								<div class="vet-rating">
@@ -474,7 +454,7 @@
 					</div>
 					<div class="item">
 						<div class="vet-card">
-							<img src="IMG/veterinaria2.png" class="vet-img" alt="Dra. Sofía Vargas">
+							<img th:src="@{/assets/IMG/veterinaria2.png}" class="vet-img" alt="Dra. Sofía Vargas">
 							<div class="vet-info">
 								<h4 class="vet-name">Dra. Sofía Vargas</h4>
 								<div class="vet-rating">
@@ -493,7 +473,7 @@
 					</div>
 					<div class="item">
 						<div class="vet-card">
-							<img src="IMG/veterinario2 (2).png" class="vet-img" alt="Dr. Javier Ramírez">
+							<img th:src="@{/assets/IMG/veterinario2 (2).png}" class="vet-img" alt="Dr. Javier Ramírez">
 							<div class="vet-info">
 								<h4 class="vet-name">Dr. Javier Ramírez</h4>
 								<div class="vet-rating">
@@ -512,7 +492,7 @@
 					</div>
 					<div class="item">
 						<div class="vet-card">
-							<img src="IMG/veterinaria3.png" class="vet-img" alt="Dra. Ana Gómez">
+							<img th:src="@{/assets/IMG/veterinaria3.png}" class="vet-img" alt="Dra. Ana Gómez">
 							<div class="vet-info">
 								<h4 class="vet-name">Dra. Ana Gómez</h4>
 								<div class="vet-rating">
@@ -542,7 +522,7 @@
 				<div class="row">
 					<div class="col-md-4 mb-4">
 						<div class="eventos">
-							<img src="IMG/Desparasitacion1.png" class="card-img-top" alt="Campaña">
+							<img th:src="@{/assets/IMG/Desparasitacion1.png}" class="card-img-top" alt="Campaña">
 							<h4 class="card-title">Jornada de Desparasitación</h4>
 							<p class="card-text">Julio 10-15, 2025 - Desparasitación interna y externa con descuento del
 								30%. Protege
@@ -553,7 +533,7 @@
 
 					<div class="col-md-4 mb-4">
 						<div class="eventos">
-							<img src="IMG/CampañaE2.png" class="card-img-top" alt="Campaña">
+							<img th:src="@{/assets/IMG/CampañaE2.png}" class="card-img-top" alt="Campaña">
 							<h4 class="card-title">Campaña de Esterilización</h4>
 							<p class="card-text">Junio 15-30, 2025 - Precios especiales en esterilización para perros y
 								gatos.
@@ -564,7 +544,7 @@
 
 					<div class="col-md-4 mb-4">
 						<div class="eventos">
-							<img src="IMG/Desparasitacion2.png" class="card-img-top" alt="Campaña">
+							<img th:src="@{/assets/IMG/Desparasitacion2.png}" class="card-img-top" alt="Campaña">
 							<h4 class="card-title">Jornada de Desparasitación</h4>
 							<p class="card-text">Agosto 15-25, 2025 - 40% de descuento en tratamientos contra pulgas,
 								garrapatas y
@@ -596,7 +576,7 @@
 					</div>
 					<div class="col-lg-4 mb-4">
 						<div class="info-container">
-							<h3 class="mb-4">CLINIC PET Duitama</h3>
+							<h3 class="mb-4">HelpYourPet Duitama</h3>
 							<div class="info-item">
 								<div class="info-icon">
 									<i class="fas fa-map-marker-alt"></i>
@@ -648,13 +628,199 @@
 
 		</a>
 
+		<!-- Modal de SERVICIOS -->
+		<div id="serviciosModal" class="modal-servicios">
+			<div class="modal-servicios-content">
+				<span class="close-servicios" onclick="cerrarServicios()">&times;</span>
+
+				<h2 class="modal-servicios-title">Nuestros Servicios</h2>
+
+				<!-- Software Features -->
+				<section class="servicios-section">
+					<h3>Funcionalidades Principales</h3>
+					<div class="servicios-grid">
+						<!-- Card 1 -->
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-file-medical"></i>
+							</div>
+							<h4>Historias Clínicas Digitales</h4>
+							<ul>
+								<li>Historial médico completo</li>
+								<li>Registro de vacunas</li>
+								<li>Alergias y condiciones</li>
+								<li>Archivos multimedia</li>
+								<li>Acceso remoto seguro</li>
+							</ul>
+						</div>
+
+						<!-- Card 2 -->
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-calendar-check"></i>
+							</div>
+							<h4>Agenda Inteligente</h4>
+							<ul>
+								<li>Reservas online 24/7</li>
+								<li>Recordatorios automáticos</li>
+								<li>Calendario por veterinario</li>
+								<li>Confirmación de citas</li>
+								<li>Videoconsultas integradas</li>
+							</ul>
+						</div>
+
+						<!-- Card 4 -->
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-cash-register"></i>
+							</div>
+							<h4>Punto de Venta</h4>
+							<ul>
+								<li>Facturación electrónica</li>
+								<li>Control de inventario</li>
+								<li>Múltiples métodos de pago</li>
+								<li>Reportes de ventas</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+
+				<!-- Medical Services -->
+				<section class="servicios-section">
+					<h3>Servicios Médicos</h3>
+					<div class="servicios-grid">
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-heartbeat"></i>
+							</div>
+							<h4>Medicina Preventiva</h4>
+							<ul>
+								<li>Exámenes de bienestar</li>
+								<li>Programas de vacunación</li>
+								<li>Control de parásitos</li>
+								<li>Nutrición y dieta</li>
+								<li>Chequeos geriátricos</li>
+							</ul>
+						</div>
+
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-bone"></i>
+							</div>
+							<h4>Cirugías</h4>
+							<ul>
+								<li>Esterilización/castración</li>
+								<li>Cirugía dental</li>
+								<li>Procedimientos ortopédicos</li>
+								<li>Cirugía de tejidos blandos</li>
+								<li>Cirugía reconstructiva</li>
+							</ul>
+						</div>
+
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-eye"></i>
+							</div>
+							<h4>Diagnóstico Avanzado</h4>
+							<ul>
+								<li>Radiografía digital</li>
+								<li>Ecografía</li>
+								<li>Endoscopia</li>
+								<li>Análisis de laboratorio</li>
+								<li>Electrocardiograma</li>
+							</ul>
+
+						</div>
+
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-ambulance"></i>
+							</div>
+							<h4>Urgencias 24/7</h4>
+							<ul>
+								<li>Atención inmediata</li>
+								<li>Hospitalización</li>
+								<li>Fluidoterapia</li>
+								<li>Monitoreo constante</li>
+								<li>Cuidados intensivos</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+
+				<!-- Grooming Services -->
+				<section class="servicios-section">
+					<h3>Estética y Bienestar</h3>
+					<div class="servicios-grid">
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-bath"></i>
+							</div>
+							<h4>Baño Profesional</h4>
+							<ul>
+								<li>Baño higiénico</li>
+								<li>Baño medicado</li>
+								<li>Tratamientos dermatológicos</li>
+								<li>Secado profesional</li>
+								<li>Control de olores</li>
+							</ul>
+
+						</div>
+
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-cut"></i>
+							</div>
+							<h4>Peluquería</h4>
+							<ul>
+								<li>Corte por raza</li>
+								<li>Arreglo estético</li>
+								<li>Deslanado</li>
+								<li>Corte sanitario</li>
+								<li>Estilizado creativo</li>
+							</ul>
+						</div>
+
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-spa"></i>
+							</div>
+							<h4>Spa Mascotas</h4>
+							<ul>
+								<li>Masajes relajantes</li>
+								<li>Aromaterapia</li>
+								<li>Tratamientos capilares</li>
+								<li>Terapia de relajación</li>
+								<li>Paquetes premium</li>
+							</ul>
+						</div>
+
+						<div class="servicio-card">
+							<div class="servicio-icon">
+								<i class="fas fa-paw"></i>
+							</div>
+							<h4>Cuidados Especiales</h4>
+							<ul>
+								<li>Limpieza dental</li>
+								<li>Corte de uñas</li>
+								<li>Limpieza de oídos</li>
+								<li>Extracción de garrapatas</li>
+								<li>Tratamiento antipulgas</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+
+			</div>
+		</div>
+
 		<!-- Footer -->
 		<footer class="footer">
 			<div class="container">
 				<div class="footer-logo">
-					<img src="IMG/logofotter.png" alt="logo">
+					<img th:src="@{/assets/IMG/logofotter.png}" alt="logo">
 				</div>
-				<div class="footer-brand">CLINIC PET</div>
+				<div class="footer-brand">HelpYourPet</div>
 				<div class="row">
 					<div class="col-lg-4 mb-5 mb-lg-0">
 						<p class="footer-lema">"Simplifica tu trabajo, mejora su salud"</p>
@@ -664,11 +830,16 @@
 							propietarios de mascotas a través <br> de un sistema eficiente, seguro y personalizado.
 						</p>
 						<div class="social-links mt-4">
-							<a href="#"><i class="fab fa-facebook-f"></i></a>
-							<a href="#"><i class="fab fa-instagram"></i></a>
-							<a href="#"><i class="fab fa-twitter"></i></a>
-							<a href="#"><i class="fab fa-youtube"></i></a>
-							<a href="#"><i class="fab fa-whatsapp"></i></a>
+							<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
+									class="fab fa-facebook-f"></i></a>
+							<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
+									class="fab fa-instagram"></i></a>
+							<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
+									class="fab fa-twitter"></i></a>
+							<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
+									class="fab fa-youtube"></i></a>
+							<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
+									class="fab fa-whatsapp"></i></a>
 						</div>
 					</div>
 
@@ -684,14 +855,14 @@
 
 				</div>
 				<div class="copyright">
-					<p>&copy; 2025 CLINIC PET. Todos los derechos reservados. Desarrollado en Duitama, Boyacá</p>
+					<p>&copy; 2025 HelpYourPet. Todos los derechos reservados. Desarrollado en Duitama, Boyacá</p>
 				</div>
 			</div>
 		</footer>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-		<script src="JS/Scrips-Home.js"></script>
+		<script th:src="@{/assets/JS/Scrips-Inicio.js}"></script>
 
 	</body>
 
