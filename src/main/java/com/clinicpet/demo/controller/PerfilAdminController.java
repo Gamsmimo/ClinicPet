@@ -404,6 +404,7 @@ public class PerfilAdminController {
 	public String cerrarSesion(HttpSession session, RedirectAttributes redirectAttributes) {
 		session.invalidate(); // Destruye la sesión
 		redirectAttributes.addFlashAttribute("mensaje", "Sesión cerrada correctamente");
-		return "redirect:/usuarios/iniciarsesion";
+		return "redirect:/"; // Redirige al index principal
 	}
+
 }

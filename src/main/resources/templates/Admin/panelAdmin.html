@@ -8,6 +8,40 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 	<link rel="stylesheet" th:href="@{/assets/CSS/CSS-Admin.css}">
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<style>
+		/* Estilos para el botón de cerrar sesión en el nav menu */
+		.logout-nav-btn {
+			background: linear-gradient(135deg, #dc3545, #c82333) !important;
+			color: white !important;
+			border-radius: 8px;
+			margin-top: 1rem;
+			border: 2px solid transparent;
+			transition: all 0.3s ease;
+		}
+
+		.logout-nav-btn:hover {
+			background: linear-gradient(135deg, #c82333, #a71e2a) !important;
+			border-color: #dc3545;
+			transform: translateX(5px);
+			box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+		}
+
+		.logout-nav-btn i {
+			margin-right: 0.5rem;
+			font-size: 1.1rem;
+		}
+
+		/* Separador visual antes del botón de cerrar sesión */
+		.logout-nav-btn::before {
+			content: '';
+			position: absolute;
+			top: -0.5rem;
+			left: 1rem;
+			right: 1rem;
+			height: 1px;
+			background: var(--border-color, #e0e0e0);
+		}
+	</style>
 </head>
 
 <body>
@@ -44,6 +78,10 @@
 				<li><a href="#" class="nav-link" data-section="settings">Configuración General</a></li>
 				<li><a href="#" class="nav-link" data-section="security">Control y Seguridad</a></li>
 				<li><a href="#" class="nav-link" data-section="profile">Perfil Administrador</a></li>
+				<li><a href="#" class="nav-link logout-nav-btn" onclick="cerrarSesion(event)">
+						<i class="bi bi-box-arrow-right"></i>
+						Cerrar Sesión
+					</a></li>
 			</ul>
 		</nav>
 
@@ -733,6 +771,41 @@
 		</div>
 	</div>
 
+	<script>
+		// Función para cerrar sesión
+		function cerrarSesion(event) {
+			// Prevenir comportamiento por defecto
+			if (event) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+			
+			Swal.fire({
+				title: '¿Cerrar sesión?',
+				text: '¿Estás seguro de que deseas cerrar la sesión?',
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#d33',
+				cancelButtonColor: '#3085d6',
+				confirmButtonText: 'Sí, cerrar sesión',
+				cancelButtonText: 'Cancelar'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					// Mostrar mensaje de despedida
+					Swal.fire({
+						title: 'Sesión cerrada',
+						text: 'Hasta pronto, administrador',
+						icon: 'success',
+						timer: 1500,
+						showConfirmButton: false
+					}).then(() => {
+						// Redirigir al logout del controlador
+						window.location.href = '/admin/logout';
+					});
+				}
+			});
+		}
+	</script>
 	<script th:src="@{/assets/JS/JS-Admin.js}"></script>
 </body>
 

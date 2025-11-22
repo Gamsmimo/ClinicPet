@@ -829,38 +829,7 @@ function showAlert(message, type) {
 	}, 5000);
 }
 
-// Función para manejar el cierre de sesión
-function handleLogout() {
-	if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-		// Aquí puedes agregar lógica adicional antes de redirigir
-		// Por ejemplo, limpiar localStorage, hacer logout en API, etc.
-
-		// Limpiar datos de sesión si es necesario
-		localStorage.removeItem('userToken');
-		sessionStorage.clear();
-
-		// Redirigir al index
-		window.location.href = '/usuarios/index';
-	}
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-	const logoutLink = document.querySelector('.sidebar .nav-link.text-danger');
-	if (logoutLink) {
-		logoutLink.addEventListener('click', function(e) {
-			e.preventDefault();
-			handleLogout();
-		});
-	}
-
-	const headerLogoutLink = document.querySelector('.custom-logout-link');
-	if (headerLogoutLink) {
-		headerLogoutLink.addEventListener('click', function(e) {
-			e.preventDefault();
-			handleLogout();
-		});
-	}
-});
+// Función handleLogout eliminada - ahora se usa cerrarSesionUsuario() con SweetAlert2
 
 window.previewProfilePicture = function(input) {
 	const file = input.files && input.files[0];

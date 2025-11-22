@@ -13,7 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Column; // Import básico para @Column
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "usuarios")
@@ -208,14 +208,7 @@ public class Usuario {
 		return "Usuario [id=" + id + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo
 				+ ", tipoDocumento=" + tipoDocumento + ", numDocumento=" + numDocumento + ", telefono=" + telefono
 				+ ", edad=" + edad + ", password=" + password + ", activo=" + activo + ", direccion=" + direccion
-				+ ", imagen=" + imagen + "]"; // Corregido:
-												// no
-												// muestra
-												// valor de
-												// password
-												// por
-												// seguridad
-												// básica
-	}
+				+ ", imagen=" + imagen + "]";
 
+	}
 }
