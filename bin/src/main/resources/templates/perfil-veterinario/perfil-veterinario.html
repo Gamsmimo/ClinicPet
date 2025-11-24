@@ -8,7 +8,7 @@
 
 	<!-- Bootstrap 5 (SIN Thymeleaf - como en el que SÍ funciona) -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	
+
 	<!-- Bootstrap Icons -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
@@ -18,6 +18,11 @@
 	<!-- Google Fonts (SIN Thymeleaf) -->
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
 		rel="stylesheet">
+
+	<!-- En el <head> -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+	<link rel="stylesheet" href="historia-clinica.css">
 
 	<!-- CSS Personalizado (CON Thymeleaf - como en el que SÍ funciona) -->
 	<link rel="stylesheet" th:href="@{/assets/CSS/Css-Veterinario.css}">
@@ -55,14 +60,14 @@
 					<span>Configuración</span></a></li>
 		</ul>
 	</nav>
-	
+
 	<!-- Toggle Modo Oscuro/Claro -->
 	<div class="theme-toggle-container">
-	    <input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
-	    <label for="themeToggle" class="theme-toggle-label">
-	        <i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
-	        <i class="bi bi-sun-fill toggle-icon sun-icon"></i>
-	    </label>
+		<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
+		<label for="themeToggle" class="theme-toggle-label">
+			<i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
+			<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
+		</label>
 	</div>
 
 	<!-- Contenido Principal -->
@@ -213,6 +218,9 @@
 				</div>
 			</section>
 
+
+
+
 			<!-- Sección Historias Clínicas -->
 			<section id="historias" class="content-section">
 				<div class="section-header">
@@ -229,88 +237,193 @@
 								<option>Luna (Siamesa)</option>
 							</select>
 						</div>
-
 					</div>
 				</div>
 
 				<div class="row">
-					<div class="col-md-8">
-						<div class="medical-history-container">
-							<div class="pet-profile-header">
-								<img src="IMG/golden.jpg" alt="Max">
-								<div>
-									<h3>Max</h3>
-									<p>Golden Retriever · Macho · 3 años</p>
-									<p>Dueño: Ana López · Tel: 555-1234</p>
+					<!-- Historia Clínica Card -->
+					<div class="col-12">
+						<div class="hc-main-card">
+							<!-- Header -->
+							<div class="hc-section">
+								<div class="hc-header">
+									<div class="hc-header-left">
+										<div class="hc-logo-title">
+											<i class="fa-solid fa-paw"></i>
+											<h3>Historia Clínica Veterinaria</h3>
+											<span class="hc-page-badge">HC-<span id="hcNumber">001</span></span>
+										</div>
+										<div class="hc-info-grid">
+											<div class="hc-info-box">
+												<h4><i class="fa-solid fa-user"></i> Dueño</h4>
+												<input type="text" class="hc-editable" placeholder="Nombre completo"
+													disabled>
+												<input type="text" class="hc-editable" placeholder="Teléfono" disabled>
+											</div>
+											<div class="hc-info-box">
+												<h4><i class="fa-solid fa-dog"></i> Mascota</h4>
+												<input type="text" class="hc-editable" placeholder="Nombre - Especie"
+													disabled>
+												<input type="text" class="hc-editable" placeholder="Raza, Edad"
+													disabled>
+											</div>
+											<div class="hc-info-box">
+												<h4><i class="fa-solid fa-user-doctor"></i> Veterinario</h4>
+												<input type="text" class="hc-editable" placeholder="Nombre" disabled>
+												<input type="text" class="hc-editable" placeholder="Cédula profesional"
+													disabled>
+											</div>
+											<div class="hc-info-box">
+												<h4><i class="fa-solid fa-hospital"></i> Veterinaria</h4>
+												<input type="text" class="hc-editable" placeholder="Nombre clínica"
+													disabled>
+												<input type="text" class="hc-editable" placeholder="Dirección" disabled>
+											</div>
+										</div>
+									</div>
+									<div class="hc-pet-photo" id="hcPetPhotoContainer">
+										<i class="fa-solid fa-camera"></i>
+										<input type="file" id="hcPhotoInput" accept="image/*" style="display:none">
+									</div>
 								</div>
 							</div>
 
-							<div class="medical-tabs">
-								<button class="tab-btn active" data-tab="general">Datos Generales</button>
-								<button class="tab-btn" data-tab="history">Historial</button>
-							</div>
-
-							<div class="tab-content active" id="general-tab">
-								<div class="row">
-									<div class="col-md-6">
-										<div class="info-card">
-											<h5>Información Básica</h5>
-											<ul>
-												<li><strong>Especie:</strong> Canino</li>
-												<li><strong>Raza:</strong> Golden Retriever</li>
-												<li><strong>Edad:</strong> 3 años</li>
-												<li><strong>Peso:</strong> 28 kg</li>
-												<li><strong>Color:</strong> Dorado</li>
-											</ul>
-										</div>
+							<!-- Motivo y Anamnesis -->
+							<div class="hc-section">
+								<div class="hc-two-cols">
+									<div>
+										<div class="hc-section-title"><i class="fa-solid fa-comment-medical"></i> Motivo
+											de Consulta</div>
+										<textarea class="hc-editable" disabled
+											placeholder="Ingrese el motivo de la consulta..."></textarea>
 									</div>
-									<div class="col-md-6">
-										<div class="info-card">
-											<h5>Datos del Dueño</h5>
-											<ul>
-												<li><strong>Nombre:</strong> Ana López</li>
-												<li><strong>Teléfono:</strong> 555-1234</li>
-												<li><strong>Email:</strong> ana.lopez@example.com</li>
-												<li><strong>Dirección:</strong> Calle Principal 123</li>
-											</ul>
-										</div>
+									<div>
+										<div class="hc-section-title"><i class="fa-solid fa-clipboard-list"></i>
+											Anamnesis</div>
+										<textarea class="hc-editable" disabled
+											placeholder="Historial y síntomas reportados..."></textarea>
 									</div>
-								</div>
-								<div class="info-card">
-									<h5>Notas Importantes</h5>
-									<p>Alergia a la penicilina. Requiere dieta especial por problemas digestivos.</p>
-								</div>
-								<div class="treatment-footer">
-									<button type="submit" class="btn btn-primary">Editar</button>
 								</div>
 							</div>
 
-							<div class="tab-content" id="history-tab">
-								<div class="timeline">
-									<div class="timeline-item">
-										<div class="timeline-date">15 Mar 2023</div>
-										<div class="timeline-content">
-											<h5>Control anual</h5>
-											<p>Examen físico completo. Todo normal. Peso estable.</p>
+							<!-- Examen Físico -->
+							<div class="hc-section">
+								<div class="hc-section-title"><i class="fa-solid fa-stethoscope"></i> Examen Físico
+								</div>
+								<div class="hc-vital-signs">
+									<div class="hc-vital-box">
+										<div class="hc-icon-circle hc-temp-icon"><i
+												class="fa-solid fa-temperature-three-quarters"></i></div>
+										<label>Temperatura (°C)</label>
+										<input type="number" step="0.1" class="hc-editable" placeholder="--" disabled>
+									</div>
+									<div class="hc-vital-box">
+										<div class="hc-icon-circle hc-heart-icon"><i
+												class="fa-solid fa-heart-pulse"></i></div>
+										<label>Frec. Cardíaca (lpm)</label>
+										<input type="number" class="hc-editable" placeholder="--" disabled>
+									</div>
+									<div class="hc-vital-box">
+										<div class="hc-icon-circle hc-resp-icon"><i class="fa-solid fa-lungs"></i></div>
+										<label>Frec. Respiratoria</label>
+										<input type="number" class="hc-editable" placeholder="--" disabled>
+									</div>
+									<div class="hc-vital-box">
+										<div class="hc-icon-circle hc-weight-icon"><i
+												class="fa-solid fa-weight-scale"></i></div>
+										<label>Peso Actual (kg)</label>
+										<input type="number" step="0.1" class="hc-editable" placeholder="--" disabled>
+									</div>
+									<div class="hc-vital-box">
+										<div class="hc-icon-circle hc-mucosa-icon"><i class="fa-solid fa-droplet"></i>
+										</div>
+										<label>Estado Mucosas</label>
+										<input type="text" class="hc-editable" placeholder="--" disabled>
+									</div>
+									<div class="hc-vital-box">
+										<div class="hc-icon-circle hc-body-icon"><i
+												class="fa-solid fa-chart-simple"></i></div>
+										<label>Condición Corporal</label>
+										<input type="text" class="hc-editable" placeholder="--" disabled>
+									</div>
+								</div>
+							</div>
 
-										</div>
+							<!-- Diagnóstico y Tratamiento -->
+							<div class="hc-section">
+								<div class="hc-two-cols">
+									<div>
+										<div class="hc-section-title"><i class="fa-solid fa-magnifying-glass-chart"></i>
+											Diagnóstico</div>
+										<textarea class="hc-editable" disabled
+											placeholder="Diagnóstico del paciente..."></textarea>
 									</div>
-									<div class="timeline-item">
-										<div class="timeline-date">10 Ene 2023</div>
-										<div class="timeline-content">
-											<h5>Problemas digestivos</h5>
-											<p>Diagnóstico: Gastritis. Tratamiento con omeprazol y dieta blanda por 5
-												días.</p>
+									<div>
+										<div class="hc-section-title"><i class="fa-solid fa-pills"></i> Tratamiento
 										</div>
-										<button type="submit" class="btn btn-primary">Editar</button>
+										<textarea class="hc-editable" disabled
+											placeholder="Tratamiento indicado..."></textarea>
 									</div>
-									<!-- Más historial... -->
+								</div>
+							</div>
+
+							<!-- Recomendaciones -->
+							<div class="hc-section">
+								<div class="hc-section-title"><i class="fa-solid fa-lightbulb"></i> Recomendaciones
+								</div>
+								<textarea class="hc-editable" disabled
+									placeholder="Recomendaciones para el propietario..."></textarea>
+							</div>
+
+							<!-- Anexos y Fecha -->
+							<div class="hc-section">
+								<div class="hc-two-cols">
+									<div>
+										<div class="hc-section-title"><i class="fa-solid fa-paperclip"></i> Anexos</div>
+										<div class="hc-attachments" id="hcDropZone">
+											<i class="fa-solid fa-cloud-arrow-up"></i>
+											<p>Clic o arrastre archivos<br><small>(Radiografías, imágenes)</small></p>
+											<input type="file" id="hcFileInput" multiple accept="image/*"
+												style="display:none">
+										</div>
+										<div class="hc-attachment-preview" id="hcAttachmentPreview"></div>
+									</div>
+									<div style="display:flex;flex-direction:column;justify-content:flex-start;">
+										<div class="hc-section-title"><i class="fa-solid fa-calendar-check"></i> Fecha
+											de Registro</div>
+										<input type="date" id="hcRegistrationDate" class="hc-editable" disabled>
+									</div>
+								</div>
+							</div>
+
+							<!-- Botones y Paginación -->
+							<div class="hc-section hc-section-last">
+								<div class="hc-buttons">
+									<button class="hc-btn hc-btn-edit" id="hcEditBtn"><i
+											class="fa-solid fa-pen-to-square"></i> Editar</button>
+									<button class="hc-btn hc-btn-save" id="hcSaveBtn" style="display:none"><i
+											class="fa-solid fa-floppy-disk"></i> Guardar</button>
+									<button class="hc-btn hc-btn-new" id="hcNewBtn"><i class="fa-solid fa-plus"></i>
+										Nueva HC</button>
+									<button class="hc-btn hc-btn-print" id="hcPrintBtn"><i
+											class="fa-solid fa-print"></i> Imprimir</button>
+								</div>
+								<div class="hc-pagination">
+									<button class="hc-page-btn" id="hcPrevBtn"><i
+											class="fa-solid fa-chevron-left"></i></button>
+									<div class="hc-page-dots" id="hcPageDots"></div>
+									<div class="hc-page-info">Página <span id="hcCurrentPage">1</span> de <span
+											id="hcTotalPages">1</span></div>
+									<button class="hc-page-btn" id="hcNextBtn"><i
+											class="fa-solid fa-chevron-right"></i></button>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</section>
+
+
 
 			<!-- Sección Adopciones -->
 			<section id="adopciones" class="content-section">
@@ -368,26 +481,38 @@
 				</div>
 
 				<div class="product-filters">
-					<div class="row">
+					<form class="row" th:action="@{/perfil-veterinario}" method="get">
 						<div class="col-md-3">
 							<label>Categoría</label>
-							<select class="form-select">
-								<option>Todas las categorías</option>
-								<option>Alimentos</option>
-								<option>Medicamentos</option>
-								<option>Juguetes</option>
-								<option>Accesorios</option>
+							<select class="form-select" name="categoria" id="filtro-categoria">
+								<option value=""
+									th:selected="${categoriaSeleccionada == null or #strings.isEmpty(categoriaSeleccionada)}">
+									Todas las categorías
+								</option>
+								<option value="Alimentos" th:selected="${categoriaSeleccionada == 'Alimentos'}">
+									Alimentos</option>
+								<option value="Medicamentos" th:selected="${categoriaSeleccionada == 'Medicamentos'}">
+									Medicamentos</option>
+								<option value="Juguetes" th:selected="${categoriaSeleccionada == 'Juguetes'}">Juguetes
+								</option>
+								<option value="Accesorios" th:selected="${categoriaSeleccionada == 'Accesorios'}">
+									Accesorios</option>
 							</select>
 						</div>
 						<div class="col-md-3">
 							<label>Estado</label>
-							<select class="form-select">
-								<option>Todos</option>
-								<option>Disponible</option>
-								<option>Agotado</option>
+							<select class="form-select" name="estado" id="filtro-estado">
+								<option value=""
+									th:selected="${estadoSeleccionado == null or #strings.isEmpty(estadoSeleccionado)}">
+									Todos
+								</option>
+								<option value="Disponible" th:selected="${estadoSeleccionado == 'Disponible'}">
+									Disponible</option>
+								<option value="Agotado" th:selected="${estadoSeleccionado == 'Agotado'}">Agotado
+								</option>
 							</select>
 						</div>
-					</div>
+					</form>
 				</div>
 				<div class="product-grid">
 					<div th:each="producto : ${productos}" class="product-card">
@@ -416,8 +541,16 @@
 								</span>
 							</div>
 							<div class="product-actions">
-								<button class="btn btn-sm btn-primary" onclick="openModal('edit-product')"><i class="fas fa-edit"></i></button>
-								<button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+								<button class="btn btn-sm btn-primary"
+									th:onclick="|openEditProductModal(${producto.id})|"><i
+										class="fas fa-edit"></i></button>
+								<form th:action="@{/perfil-veterinario/producto/eliminar/{id}(id=${producto.id})}"
+									method="post" style="display:inline;">
+									<button type="submit" class="btn btn-sm btn-danger"
+										onclick="return confirm('¿Seguro que deseas eliminar este producto?');">
+										<i class="fas fa-trash"></i>
+									</button>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -571,35 +704,7 @@
 							</div>
 							<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
 						</form>
-						<h5>Seguridad de la cuenta</h5>
 
-						<!-- Mensajes de éxito/error -->
-						<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-							<span th:text="${success}"></span>
-							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-						</div>
-						<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-							<span th:text="${error}"></span>
-							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-						</div>
-						<form th:action="@{/perfil-veterinario/change-password}" method="post">
-							<div class="mb-3">
-								<label class="form-label">Contraseña actual</label>
-								<input type="password" class="form-control" id="currentPassword" name="currentPassword"
-									placeholder="Ingresa tu contraseña actual" required>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Nueva contraseña</label>
-								<input type="password" class="form-control" id="newPassword" name="newPassword"
-									placeholder="Ingresa tu nueva contraseña" required>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Confirmar nueva contraseña</label>
-								<input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-									placeholder="Confirma tu nueva contraseña" required>
-							</div>
-							<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
-						</form>
 					</div>
 				</div>
 
@@ -705,7 +810,7 @@
 		</form>
 	</div>
 
-	
+
 	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
 	<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
 	<!-- Modal Agregar Producto -->
@@ -876,66 +981,70 @@
 	</div>
 
 	<!-- Más modales... -->
-	
+
 	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
-		<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
-		<!-- Modal Editar Producto -->
-		<div class="modal" id="edit-product-modal">
-		    <form th:action="@{/perfil-veterinario/producto/actualizar/{id}}" 
-		          method="post" enctype="multipart/form-data" id="form-producto-editar">
-		        <div class="modal-header">
-		            <h3><i class="fa-solid fa-pen-to-square"></i> Editar Producto</h3>
-		            <button type="button" class="btn-close-modal" onclick="closeModal()">
-		                <i class="fas fa-times"></i>
-		            </button>
-		        </div>
-		        <div class="modal-body">
-		            <div class="row">
-		                <div class="col-md-6 mb-3">
-		                    <label class="form-label" for="edit-nombre">Nombre *</label>
-		                    <input type="text" id="edit-nombre" name="nombre" class="form-control" required>
-		                </div>
-		                <div class="col-md-6 mb-3">
-		                    <label class="form-label" for="edit-precio">Precio *</label>
-		                    <input type="number" id="edit-precio" name="precio" step="0.001" min="0" class="form-control" required>
-		                </div>
-		                <div class="col-md-6 mb-3">
-		                    <label for="edit-cantidadDisponible" class="form-label">Cantidad *</label>
-		                    <input type="number" id="edit-cantidadDisponible" name="cantidadDisponible" class="form-control" min="0" required>
-		                </div>
-		                <div class="col-md-6 mb-3">
-		                    <label for="edit-categoria" class="form-label">Categoría *</label>
-		                    <select id="edit-categoria" name="categoria" class="form-select" required>
-		                        <option value="">Seleccionar categoría</option>
-		                        <option value="Alimentos">Alimentos</option>
-		                        <option value="Medicamentos">Medicamentos</option>
-		                        <option value="Juguetes">Juguetes</option>
-		                        <option value="Accesorios">Accesorios</option>
-		                    </select>
-		                </div>
-		            </div>
-		            <div class="mb-3">
-		                <label class="form-label" for="edit-descripcion">Descripción *</label>
-		                <textarea id="edit-descripcion" name="descripcion" class="form-control" rows="3" required></textarea>
-		            </div>
-		            <div class="mb-3">
-		                <label class="form-label" for="edit-imagen">Imagen del Producto</label>
-		                <input type="file" id="edit-imagen" name="imagen" class="form-control" accept="image/*">
-		                <small class="text-muted">Dejar vacío para mantener la imagen actual</small>
-		                <!-- Vista previa de imagen actual -->
-		                <div class="mt-2">
-		                    <img id="preview-imagen-actual" src="" alt="Imagen actual" style="max-width: 200px; display: none;">
-		                </div>
-		            </div>
-		            <!-- Campo oculto para idveterinaria -->
-		            <input type="hidden" name="idveterinaria" value="1">
-		        </div>
-		        <div class="modal-footer">
-		            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-		            <button type="submit" class="btn btn-primary">Actualizar Producto</button>
-		        </div>
-		    </form>
-		</div>
+	<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
+	<!-- Modal Editar Producto -->
+	<div class="modal" id="edit-product-modal">
+		<form th:action="@{/perfil-veterinario/producto/actualizar/{id}}" method="post" enctype="multipart/form-data"
+			id="form-producto-editar">
+			<div class="modal-header">
+				<h3><i class="fa-solid fa-pen-to-square"></i> Editar Producto</h3>
+				<button type="button" class="btn-close-modal" onclick="closeModal()">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="edit-nombre">Nombre *</label>
+						<input type="text" id="edit-nombre" name="nombre" class="form-control" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label class="form-label" for="edit-precio">Precio *</label>
+						<input type="number" id="edit-precio" name="precio" step="0.001" min="0" class="form-control"
+							required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="edit-cantidadDisponible" class="form-label">Cantidad *</label>
+						<input type="number" id="edit-cantidadDisponible" name="cantidadDisponible" class="form-control"
+							min="0" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="edit-categoria" class="form-label">Categoría *</label>
+						<select id="edit-categoria" name="categoria" class="form-select" required>
+							<option value="">Seleccionar categoría</option>
+							<option value="Alimentos">Alimentos</option>
+							<option value="Medicamentos">Medicamentos</option>
+							<option value="Juguetes">Juguetes</option>
+							<option value="Accesorios">Accesorios</option>
+						</select>
+					</div>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="edit-descripcion">Descripción *</label>
+					<textarea id="edit-descripcion" name="descripcion" class="form-control" rows="3"
+						required></textarea>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="edit-imagen">Imagen del Producto</label>
+					<input type="file" id="edit-imagen" name="imagen" class="form-control" accept="image/*">
+					<small class="text-muted">Dejar vacío para mantener la imagen actual</small>
+					<!-- Vista previa de imagen actual -->
+					<div class="mt-2">
+						<img id="preview-imagen-actual" src="" alt="Imagen actual"
+							style="max-width: 200px; display: none;">
+					</div>
+				</div>
+				<!-- Campo oculto para idveterinaria -->
+				<input type="hidden" name="idveterinaria" value="1">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+				<button type="submit" class="btn btn-primary">Actualizar Producto</button>
+			</div>
+		</form>
+	</div>
 
 
 	<!-- Scripts -->

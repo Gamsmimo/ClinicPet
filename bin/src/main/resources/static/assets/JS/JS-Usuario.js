@@ -1,24 +1,13 @@
+const currentUserId = document.getElementById('current-user-id') ? document.getElementById('current-user-id').value : null;
+let currentPhotoFile = null;
 
 $(document).ready(function() {
-	// --- CONFIGURACIÓN INICIAL Y DATOS DEL USUARIO ---
-	// En una aplicación real, el ID del usuario logueado se obtendría de la sesión
-	// o de un token JWT. Para este ejemplo, lo obtenemos de un campo oculto en el HTML.
-	// Asegúrate de que tu HTML tenga: <input type="hidden" id="current-user-id" th:value="${idUsuarioActual}">
-	//const currentUserId = $('#current-user-id').val();
-
-	// URL base de tu API REST (ajusta el puerto si es necesario)
 	const API_BASE_URL = 'http://localhost:8080/api';
 
 	// Función para inicializar la aplicación
 	initApp();
 
 	function initApp() {
-		// Cargar datos del usuario (nombre) - Esto debería venir del backend
-		// Por ahora, si no tienes un endpoint para obtener el usuario, puedes dejarlo estático
-		// o implementarlo. Asumimos que el nombre del usuario se cargará dinámicamente.
-		// $('#username').text("Cargando...");
-		// $('#username-header').text("Cargando...");
-
 		// Configurar menú hamburguesa
 		$('.navbar-toggler').click(function() {
 			$('#sidebar').toggleClass('active');
@@ -86,10 +75,6 @@ $(document).ready(function() {
 			$('#addPetModal').modal('show');
 		});
 
-		// El botón de guardar mascota ahora es un submit de formulario tradicional,
-		// por lo que no necesita un manejador de click en JS para enviar los datos.
-		// La función addNewPet() ya no es necesaria para el envío.
-
 		$('#new-appointment-btn').click(function() {
 			// Redirigir a WhatsApp para agendar cita
 			window.open('https://wa.me/573204767864?text=Hola,%20me%20gustaría%20agendar%20una%20cita', '_blank');
@@ -97,21 +82,16 @@ $(document).ready(function() {
 
 		$('#go-to-shop-btn').click(function() {
 			alert('Redirigiendo a la tienda en línea...');
-			// Aquí podrías redirigir a una URL real de tu tienda
-			// window.location.href = '/tienda';
 		});
 
 		$('#delete-account-btn').click(function() {
 			$('#confirmDeleteModal').modal('show');
 		});
 
-		// Enviar formulario de perfil (AJAX o tradicional, dependiendo de tu implementación)
-		// Enviar formulario de perfil usando el envío tradicional del navegador
 		$('#profile-form').off('submit');
 
-		// Enviar formulario de contraseña (AJAX o tradicional)
 		$('#password-form').submit(function(e) {
-			e.preventDefault(); // Prevenir el envío tradicional
+			e.preventDefault();
 			changePassword();
 		});
 
@@ -144,328 +124,26 @@ $(document).ready(function() {
 		});
 	}
 
-    // --- MANEJO DE FOTO DE PERFIL (AJAX) ---
-
-    window.previewProfilePicture = function(input) {
-        const file = input.files && input.files[0];
-        if (!file) return;
-
-        const maxSize = parseInt(input.getAttribute('data-max-size') || '5242880', 10);
-        if (file.size > maxSize) {
-            alert('La imagen excede el tamaño máximo permitido.');
-            input.value = '';
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const previewContainer = document.getElementById('new-picture-preview');
-            const previewImg = document.getElementById('picture-preview');
-            if (previewImg) {
-                previewImg.src = e.target.result;
-            }
-            if (previewContainer) {
-                previewContainer.style.display = 'block';
-            }
-        };
-        reader.readAsDataURL(file);
-    };
-
-    window.saveProfilePicture = async function() {
-        const input = document.getElementById('profile-picture-input');
-        if (!input || !input.files || !input.files[0]) {
-            alert('Selecciona una imagen primero.');
-            return;
-        }
-        if (!currentUserId) {
-            alert('No se pudo determinar el usuario actual.');
-            return;
-        }
-
-        const file = input.files[0];
-        const reader = new FileReader();
-
-        reader.onload = async function(e) {
-            const base64Data = e.target.result;
-
-            try {
-                const response = await fetch('/usuarios/perfilusuario/actualizarFotoPerfil', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        fotoPerfil: base64Data,
-                        usuarioId: currentUserId
-                    })
-                });
-
-                const data = await response.json().catch(() => ({}));
-
-                if (response.ok) {
-                    // Actualizar imágenes en el perfil y en el sidebar si existen
-                    const mainImg = document.getElementById('current-profile-picture');
-                    const sidebarImg = document.getElementById('sidebar-profile-picture');
-                    if (mainImg) mainImg.src = base64Data;
-                    if (sidebarImg) sidebarImg.src = base64Data;
-
-                    alert(data.mensaje || 'Foto actualizada correctamente');
-                    cancelProfilePicture();
-                } else {
-                    alert(data.error || 'Error al actualizar la foto de perfil');
-                }
-            } catch (err) {
-                console.error('Error al actualizar la foto de perfil:', err);
-                alert('Error al actualizar la foto de perfil');
-            }
-        };
-
-        reader.readAsDataURL(file);
-    };
-
-    window.removeProfilePicture = async function() {
-        if (!currentUserId) {
-            alert('No se pudo determinar el usuario actual.');
-            return;
-        }
-
-        if (!confirm('¿Seguro que deseas eliminar tu foto de perfil?')) {
-            return;
-        }
-
-        try {
-            const response = await fetch('/usuarios/perfilusuario/eliminarFotoPerfil', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    usuarioId: currentUserId
-                })
-            });
-
-            const data = await response.json().catch(() => ({}));
-
-            if (response.ok) {
-                const defaultSrc = '/assets/IMG/humano.jpg';
-                const mainImg = document.getElementById('current-profile-picture');
-                const sidebarImg = document.getElementById('sidebar-profile-picture');
-                if (mainImg) mainImg.src = defaultSrc;
-                if (sidebarImg) sidebarImg.src = defaultSrc;
-
-                alert(data.mensaje || 'Foto eliminada correctamente');
-                cancelProfilePicture();
-            } else {
-                alert(data.error || 'Error al eliminar la foto de perfil');
-            }
-        } catch (err) {
-            console.error('Error al eliminar la foto de perfil:', err);
-            alert('Error al eliminar la foto de perfil');
-        }
-    };
-
-    window.cancelProfilePicture = function() {
-        const input = document.getElementById('profile-picture-input');
-        const previewContainer = document.getElementById('new-picture-preview');
-        const previewImg = document.getElementById('picture-preview');
-        if (input) input.value = '';
-        if (previewImg) previewImg.src = '';
-        if (previewContainer) previewContainer.style.display = 'none';
-    };
-
-	// --- FUNCIONES PARA CARGAR DATOS DESDE EL BACKEND ---
-
 	// Función para cargar el resumen rápido del dashboard
 	async function loadQuickSummary() {
-		if (!currentUserId) return;
-
-		try {
-			const response = await fetch(`${API_BASE_URL}/usuarios/${currentUserId}/resumen`); // Asume un endpoint de resumen
-			if (!response.ok) {
-				if (response.status === 404) { // Usuario no encontrado
-					console.warn("Usuario no encontrado para el resumen.");
-					return;
-				}
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			const summaryData = await response.json();
-
-			// Actualizar nombre del usuario
-			$('#username').text(summaryData.userName || "Usuario");
-			$('#username-header').text(summaryData.userName ? summaryData.userName.split(' ')[0] : "Usuario");
-
-			// Actualizar próxima cita
-			if (summaryData.nextAppointment) {
-				$('#next-appointment').text(`${formatDate(summaryData.nextAppointment.date)}, ${summaryData.nextAppointment.time} - ${summaryData.nextAppointment.petName}: ${getReasonText(summaryData.nextAppointment.reason)}`);
-			} else {
-				$('#next-appointment').text('No hay citas próximas.');
-			}
-
-			// Actualizar estado de salud (asume que el resumen trae la mascota principal)
-			if (summaryData.mainPetHealth) {
-				$('#pet-health').text(`${summaryData.mainPetHealth.petName} - ${summaryData.mainPetHealth.status}`);
-			} else {
-				$('#pet-health').text('No hay mascotas registradas.');
-			}
-
-			// Actualizar última compra
-			if (summaryData.lastPurchase) {
-				$('#last-purchase').text(`${formatDate(summaryData.lastPurchase.date)} - ${summaryData.lastPurchase.productName} (${summaryData.lastPurchase.quantity} unidades)`);
-			} else {
-				$('#last-purchase').text('No hay compras recientes.');
-			}
-
-			// Actualizar recomendación
-			if (summaryData.vetRecommendation) {
-				$('#vet-recommendation').text(`Recordatorio: ${summaryData.vetRecommendation.description}`);
-			} else {
-				$('#vet-recommendation').text('No hay recomendaciones pendientes.');
-			}
-
-		} catch (error) {
-			console.error('Error al cargar el resumen rápido:', error);
-			// Fallback a datos por defecto o mensaje de error
-			$('#next-appointment').text('Error al cargar.');
-			$('#pet-health').text('Error al cargar.');
-			$('#last-purchase').text('Error al cargar.');
-			$('#vet-recommendation').text('Error al cargar.');
-		}
+		// Función deshabilitada - los datos se cargan desde Thymeleaf en el HTML
+		console.log('ℹ️ loadQuickSummary deshabilitada - datos cargados desde servidor');
 	}
 
 	// Función para cargar vista previa de mascotas
 	async function loadPetsPreview() {
-		if (!currentUserId) return;
-
-		try {
-			const response = await fetch(`${API_BASE_URL}/usuarios/${currentUserId}/mascotas`);
-			if (response.status === 204) { // No Content
-				$('#pets-preview').html('<p class="text-center">No tienes mascotas registradas aún.</p>');
-				return;
-			}
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			const pets = await response.json();
-
-			$('#pets-preview').empty();
-			if (pets.length === 0) {
-				$('#pets-preview').append('<p class="text-center">No tienes mascotas registradas aún.</p>');
-			} else {
-				pets.slice(0, 3).forEach(pet => {
-					$('#pets-preview').append(`
-                        <div class="col-md-4">
-                            <div class="pet-card">
-                                <img src="${pet.foto || 'https://via.placeholder.com/100'}" alt="${pet.nombre}" class="pet-img">
-                                <h5>${pet.nombre}</h5>
-                                <p>${capitalizeFirstLetter(pet.especie)} · ${pet.raza || 'Desconocida'} · ${pet.edad} años</p>
-                                <span class="pet-status ${getStatusClass(pet.estado)}">${pet.estado}</span>
-                            </div>
-                        </div>
-                    `);
-				});
-
-				if (pets.length > 3) {
-					$('#pets-preview').append(`
-                        <div class="col-md-4">
-                            <div class="pet-card text-center d-flex align-items-center justify-content-center" style="height: 100%;">
-                                <div>
-                                    <i class="fas fa-paw fa-3x mb-3"></i>
-                                    <h5>+${pets.length - 3} mascotas</h5>
-                                    <a href="#mascotas" class="btn btn-sm btn-outline-primary">Ver todas</a>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-				}
-			}
-		} catch (error) {
-			console.error('Error al cargar vista previa de mascotas:', error);
-			$('#pets-preview').html('<p class="text-center text-danger">Error al cargar las mascotas.</p>');
-		}
+		// Función deshabilitada - las mascotas se cargan desde Thymeleaf en el HTML
+		console.log('ℹ️ loadPetsPreview deshabilitada - datos cargados desde servidor');
 	}
 
 	// Función para cargar sección de mascotas (lista completa)
 	async function loadPetsSection() {
-		if (!currentUserId) return;
-
-		try {
-			const response = await fetch(`${API_BASE_URL}/usuarios/${currentUserId}/mascotas`);
-			if (response.status === 204) {
-				$('#pets-list').html('<p class="text-center">No tienes mascotas registradas aún. ¡Agrega una!</p>');
-				return;
-			}
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			const pets = await response.json();
-
-			$('#pets-list').empty();
-			if (pets.length === 0) {
-				$('#pets-list').append('<p class="text-center">No tienes mascotas registradas aún. ¡Agrega una!</p>');
-			} else {
-				pets.forEach(pet => {
-					$('#pets-list').append(`
-                        <div class="col-md-6 col-lg-4">
-                            <div class="card pet-card">
-                                <img src="${pet.foto || 'https://via.placeholder.com/150'}" class="card-img-top" alt="${pet.nombre}">
-                                <div class="card-body">
-                                    <h5 class="card-title">${pet.nombre}</h5>
-                                    <p class="card-text">
-                                        <strong>Especie:</strong> ${capitalizeFirstLetter(pet.especie)}<br>
-                                        <strong>Raza:</strong> ${pet.raza || 'Desconocida'}<br>
-                                        <strong>Edad:</strong> ${pet.edad} años<br>
-                                        <strong>Sexo:</strong> ${capitalizeFirstLetter(pet.genero)}
-                                    </p>
-                                    <span class="badge ${getStatusClass(pet.estado)} mb-3">${pet.estado}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-				});
-			}
-		} catch (error) {
-			console.error('Error al cargar la sección de mascotas:', error);
-			$('#pets-list').html('<p class="text-center text-danger">Error al cargar las mascotas.</p>');
-		}
+		console.log('ℹ️ loadPetsSection deshabilitada - datos cargados desde servidor');
 	}
 
 	// Función para cargar sección de historia clínica
 	async function loadMedicalHistorySection() {
-		if (!currentUserId) return;
-
-		try {
-			const response = await fetch(`${API_BASE_URL}/usuarios/${currentUserId}/mascotas`);
-			if (response.status === 204) {
-				$('#pet-dropdown').empty().append('<li><a class="dropdown-item" href="#">No hay mascotas</a></li>');
-				$('#no-pet-selected').show();
-				$('#pet-history').hide();
-				return;
-			}
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			const pets = await response.json();
-
-			$('#pet-dropdown').empty();
-			if (pets.length === 0) {
-				$('#pet-dropdown').append('<li><a class="dropdown-item" href="#">No hay mascotas</a></li>');
-				$('#no-pet-selected').show();
-				$('#pet-history').hide();
-			} else {
-				pets.forEach(pet => {
-					$('#pet-dropdown').append(`
-                        <li><a class="dropdown-item" href="#" onclick="window.showPetHistory(${pet.id})">${pet.nombre}</a></li>
-                    `);
-				});
-				// Mostrar la historia clínica de la primera mascota por defecto
-				window.showPetHistory(pets[0].id);
-			}
-		} catch (error) {
-			console.error('Error al cargar la sección de historia clínica:', error);
-			$('#pet-dropdown').empty().append('<li><a class="dropdown-item text-danger" href="#">Error al cargar</a></li>');
-			$('#no-pet-selected').show();
-			$('#pet-history').hide();
-		}
+		console.log('ℹ️ loadMedicalHistorySection deshabilitada - datos cargados desde servidor');
 	}
 
 	// Función para mostrar historia clínica de una mascota específica
@@ -967,125 +645,32 @@ $(document).ready(function() {
 	}
 
 	// Función para cargar sección de configuración
-	async function loadSettingsSection() {
-		if (!currentUserId) return;
+	function loadSettingsSection() {
+		// Los datos del usuario ya están cargados en el HTML por Thymeleaf
+		// No es necesario hacer una llamada AJAX ya que los datos vienen del servidor
+		console.log('✅ Sección de configuración cargada (datos del servidor)');
 
-		try {
-			const response = await fetch(`${API_BASE_URL}/usuarios/${currentUserId}`); // Asume un endpoint para obtener el usuario
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			const userData = await response.json();
-
-			// Precargar formularios con los datos del usuario
-			$('#profile-name').val(userData.nombre);
-			$('#profile-email').val(userData.correo);
-			$('#profile-phone').val(userData.telefono || '');
-			$('#profile-address').val(userData.direccion || '');
-
-			// Actualizar nombre en el sidebar y header
-			$('#username').text(userData.nombre);
-			$('#username-header').text(userData.nombre.split(' ')[0]);
-
-			// Configurar switches de notificaciones (asume que userData incluye preferencias)
-			$('#notif-appointments').prop('checked', userData.notifAppointments || true);
-			$('#notif-treatments').prop('checked', userData.notifTreatments || true);
-			$('#notif-products').prop('checked', userData.notifProducts || true);
-			$('#notif-news').prop('checked', userData.notifNews || true);
-
-		} catch (error) {
-			console.error('Error al cargar la sección de configuración:', error);
-			alert('Error al cargar la configuración del perfil.');
-		}
+		// Si necesitas cargar datos adicionales, puedes hacerlo aquí
+		// pero por ahora los datos del formulario ya están precargados por Thymeleaf
 	}
 
 	// --- FUNCIONES PARA ENVIAR DATOS AL BACKEND (AJAX) ---
 
 	// Función para guardar perfil (AJAX)
-	async function saveProfile() {
-		if (!currentUserId) return;
-
-		const name = $('#profile-name').val();
-		const email = $('#profile-email').val();
-		const phone = $('#profile-phone').val();
-		const address = $('#profile-address').val();
-
-		if (!name || !email) {
-			alert('Por favor completa los campos obligatorios: Nombre y Correo electrónico');
-			return;
-		}
-
-		try {
-			const response = await fetch(`${API_BASE_URL}/usuarios/${currentUserId}`, {
-				method: 'PUT', // O PATCH, dependiendo de tu API
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					nombre: name,
-					correo: email,
-					telefono: phone,
-					direccion: address
-				})
-			});
-
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-
-			const updatedUser = await response.json();
-			$('#username').text(updatedUser.nombre);
-			$('#username-header').text(updatedUser.nombre.split(' ')[0]);
-			alert('Perfil actualizado exitosamente');
-
-		} catch (error) {
-			console.error('Error al guardar el perfil:', error);
-			alert('Hubo un error al actualizar el perfil.');
-		}
+	// Nota: El formulario de perfil se envía directamente al servidor mediante POST tradicional
+	// No es necesario usar AJAX aquí ya que el formulario tiene th:action configurado
+	function saveProfile() {
+		// El formulario #profile-form se envía automáticamente al servidor
+		// mediante el botón submit del formulario
+		console.log('✅ Perfil guardado mediante formulario tradicional');
 	}
 
 	// Función para cambiar contraseña (AJAX)
-	async function changePassword() {
-		if (!currentUserId) return;
-
-		const currentPassword = $('#current-password').val();
-		const newPassword = $('#new-password').val();
-		const confirmPassword = $('#confirm-password').val();
-
-		if (!currentPassword || !newPassword || !confirmPassword) {
-			alert('Por favor completa todos los campos');
-			return;
-		}
-
-		if (newPassword !== confirmPassword) {
-			alert('Las contraseñas nuevas no coinciden');
-			return;
-		}
-
-		try {
-			const response = await fetch(`${API_BASE_URL}/usuarios/${currentUserId}/cambiar-password`, { // Asume un endpoint
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					currentPassword: currentPassword,
-					newPassword: newPassword
-				})
-			});
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-			}
-
-			$('#password-form')[0].reset();
-			alert('Contraseña cambiada exitosamente');
-
-		} catch (error) {
-			console.error('Error al cambiar la contraseña:', error);
-			alert('Hubo un error al cambiar la contraseña: ' + error.message);
-		}
+	// Nota: Esta función está deshabilitada porque el endpoint no existe
+	// Si necesitas cambiar contraseña, implementa el endpoint en el backend
+	function changePassword() {
+		console.log('⚠️ Función changePassword deshabilitada - endpoint no implementado');
+		alert('La función de cambio de contraseña será implementada próximamente.');
 	}
 
 	// --- FUNCIONES AUXILIARES ---
@@ -1158,23 +743,26 @@ document.addEventListener('DOMContentLoaded', function() {
 				.then(mascota => {
 					console.log("✅ Datos de mascota recibidos:", mascota);
 
-					// Rellenar campos del formulario
-					document.getElementById('editMascotaId').value = mascota.id || '';
-					document.getElementById('editNombre').value = mascota.nombre || '';
-					document.getElementById('editEspecie').value = mascota.especie || '';
-					document.getElementById('editRaza').value = mascota.raza || '';
-					document.getElementById('editEdad').value = mascota.edad || '';
-					document.getElementById('editGenero').value = mascota.genero || '';
-					document.getElementById('editTamaño').value = mascota.tamaño || '';
-					document.getElementById('editDescripcion').value = mascota.descripcion || '';
-					document.getElementById('editMascotaFotoActual').value = mascota.foto || '';
+					// Rellenar campos del formulario (con validación de existencia)
+					const setFieldValue = (id, value) => {
+						const element = document.getElementById(id);
+						if (element) {
+							element.value = value || '';
+						} else {
+							console.warn(`⚠️ Campo no encontrado: ${id}`);
+						}
+					};
 
-					// ✅ AGREGAR ESTA LÍNEA - Cargar unidad de edad
-					if (mascota.unidadEdad) {
-						document.getElementById('editUnidadEdad').value = mascota.unidadEdad;
-					} else {
-						document.getElementById('editUnidadEdad').value = 'años'; // Valor por defecto
-					}
+					setFieldValue('editMascotaId', mascota.id);
+					setFieldValue('editNombre', mascota.nombre);
+					setFieldValue('editEspecie', mascota.especie);
+					setFieldValue('editRaza', mascota.raza);
+					setFieldValue('editEdad', mascota.edad);
+					setFieldValue('editGenero', mascota.genero);
+					setFieldValue('editTamano', mascota.tamaño); // Sin tilde
+					setFieldValue('editDescripcion', mascota.descripcion);
+					setFieldValue('editMascotaFotoActual', mascota.foto);
+					setFieldValue('editUnidadEdad', mascota.unidadEdad || 'años');
 
 					console.log("🎯 Formulario llenado correctamente");
 				})
@@ -1190,118 +778,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //Script para eliminar mascota
-
-// Variable global para almacenar el archivo temporal
-let currentPhotoFile = null;
-
-// Función para previsualizar la imagen (manteniendo tu código original)
-function previewProfilePicture(input) {
-	if (input.files && input.files[0]) {
-		const file = input.files[0];
-		const maxSize = 5 * 1024 * 1024; // 5MB
-
-		// Validar tamaño del archivo
-		if (file.size > maxSize) {
-			alert('La imagen es demasiado grande. El tamaño máximo permitido es 5MB.');
-			input.value = '';
-			return;
-		}
-
-		// Validar tipo de archivo
-		const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-		if (!validTypes.includes(file.type)) {
-			alert('Formato de archivo no válido. Solo se permiten JPG, PNG y GIF.');
-			input.value = '';
-			return;
-		}
-
-		// Guardar el archivo en variable global
-		currentPhotoFile = file;
-
-		const reader = new FileReader();
-
-		reader.onload = function(e) {
-			// Mostrar vista previa
-			document.getElementById('picture-preview').src = e.target.result;
-			document.getElementById('new-picture-preview').style.display = 'block';
-
-			// Guardar datos de la imagen para enviar al servidor
-			document.getElementById('profile-picture-data').value = e.target.result;
-		}
-
-		reader.readAsDataURL(file);
-	}
-}
-
-// FUNCIÓN CORREGIDA - Ahora guarda la foto correctamente
-async function saveProfilePicture() {
-	if (!currentPhotoFile) {
-		alert('No hay ninguna imagen para guardar.');
-		return;
-	}
-
-	const userId = document.getElementById('current-user-id').value;
-	if (!userId) {
-		alert('Error: No se pudo identificar el usuario.');
-		return;
-	}
-
-	try {
-		// Mostrar indicador de carga en el botón
-		const saveButton = document.querySelector('#new-picture-preview .btn-success');
-		const originalText = saveButton.innerHTML;
-		saveButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Guardando...';
-		saveButton.disabled = true;
-
-		// Crear FormData para enviar el archivo correctamente
-		const formData = new FormData();
-		formData.append('fotoFile', currentPhotoFile);
-		formData.append('idUsuario', userId);
-
-		// Enviar al servidor usando FormData (correcto para archivos)
-		const response = await fetch('/usuarios/perfilusuario/actualizarFotoPerfil', {
-			method: 'POST',
-			body: formData
-			// NO incluir Content-Type header - FormData lo establece automáticamente con boundary
-		});
-
-		if (response.ok) {
-			const result = await response.json();
-
-			// Actualizar la imagen en la interfaz con la nueva URL
-			if (result.fotoUrl) {
-				document.getElementById('current-profile-picture').src = result.fotoUrl;
-			} else {
-				// Si no hay URL, usar el objeto local
-				document.getElementById('current-profile-picture').src =
-					URL.createObjectURL(currentPhotoFile);
-			}
-
-			// Ocultar vista previa y limpiar
-			document.getElementById('new-picture-preview').style.display = 'none';
-			document.getElementById('profile-picture-input').value = '';
-			document.getElementById('profile-picture-data').value = '';
-			currentPhotoFile = null;
-
-			showAlert('Foto de perfil actualizada correctamente.', 'success');
-
-		} else {
-			const errorText = await response.text();
-			throw new Error(errorText || 'Error del servidor al guardar la foto');
-		}
-
-	} catch (error) {
-		console.error('Error al guardar la foto:', error);
-		showAlert('Error al guardar la foto: ' + error.message, 'danger');
-	} finally {
-		// Restaurar el botón a su estado original
-		const saveButton = document.querySelector('#new-picture-preview .btn-success');
-		if (saveButton) {
-			saveButton.innerHTML = '<i class="fas fa-check me-1"></i>Guardar';
-			saveButton.disabled = false;
-		}
-	}
-}
 
 function eliminarMascota(id) {
 	if (confirm('¿Estás seguro de que quieres eliminar esta mascota?')) {
@@ -1329,206 +805,6 @@ function eliminarMascota(id) {
 	}
 }
 
-
-// Funciones para manejar la foto de perfil
-function previewProfilePicture(input) {
-	if (input.files && input.files[0]) {
-		const file = input.files[0];
-		const maxSize = input.getAttribute('data-max-size') || 2 * 1024 * 1024; // 2MB por defecto
-
-		// Validar tamaño del archivo
-		if (file.size > maxSize) {
-			alert('La imagen es demasiado grande. El tamaño máximo permitido es 2MB.');
-			input.value = '';
-			return;
-		}
-
-		// Validar tipo de archivo
-		const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-		if (!validTypes.includes(file.type)) {
-			alert('Formato de archivo no válido. Solo se permiten JPG, PNG, GIF y WebP.');
-			input.value = '';
-			return;
-		}
-
-		// Comprimir imagen antes de mostrar vista previa
-		compressImage(file, 800, 0.7, function(compressedDataUrl) {
-			// Mostrar vista previa
-			document.getElementById('picture-preview').src = compressedDataUrl;
-			document.getElementById('new-picture-preview').style.display = 'block';
-
-			// Guardar datos de la imagen comprimida
-			document.getElementById('profile-picture-data').value = compressedDataUrl;
-		});
-	}
-}
-
-// Función para comprimir imágenes
-function compressImage(file, maxWidth, quality, callback) {
-	const reader = new FileReader();
-
-	reader.onload = function(e) {
-		const img = new Image();
-
-		img.onload = function() {
-			const canvas = document.createElement('canvas');
-			let width = img.width;
-			let height = img.height;
-
-			// Redimensionar si es necesario
-			if (width > maxWidth) {
-				height = (height * maxWidth) / width;
-				width = maxWidth;
-			}
-
-			canvas.width = width;
-			canvas.height = height;
-
-			const ctx = canvas.getContext('2d');
-			ctx.drawImage(img, 0, 0, width, height);
-
-			// Convertir a formato WebP para mejor compresión
-			try {
-				const compressedDataUrl = canvas.toDataURL('image/webp', quality);
-				callback(compressedDataUrl);
-			} catch (e) {
-				// Fallback a JPEG si WebP no es soportado
-				const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-				callback(compressedDataUrl);
-			}
-		};
-
-		img.src = e.target.result;
-	};
-
-	reader.readAsDataURL(file);
-}
-
-// Función para calcular el tamaño de Base64 en bytes
-function getBase64Size(base64String) {
-	// Eliminar el prefijo data:image/...;base64,
-	const base64 = base64String.split(',')[1];
-	// Calcular tamaño en bytes
-	return (base64.length * 3) / 4 - (base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0);
-}
-
-function saveProfilePicture() {
-	const newPictureData = document.getElementById('profile-picture-data').value;
-
-	if (!newPictureData) {
-		alert('No hay ninguna imagen para guardar.');
-		return;
-	}
-
-	// Verificar tamaño después de compresión
-	const compressedSize = getBase64Size(newPictureData);
-	const maxSize = 2 * 1024 * 1024; // 2MB
-
-	if (compressedSize > maxSize) {
-		alert('La imagen comprimida sigue siendo demasiado grande. Intenta con una imagen de menor resolución.');
-		return;
-	}
-
-	console.log('Tamaño de imagen comprimida:', (compressedSize / 1024 / 1024).toFixed(2), 'MB');
-
-	// Aquí iría la lógica para enviar la imagen al servidor
-	updateProfilePictureOnServer(newPictureData);
-}
-
-// Función para enviar la imagen al servidor
-async function updateProfilePictureOnServer(imageData) {
-	try {
-		// Mostrar indicador de carga
-		showAlert('Guardando foto de perfil...', 'info');
-
-		// Enviar al servidor
-		const response = await fetch('/usuarios/perfilusuario/actualizarFotoPerfil', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-CSRF-TOKEN': getCsrfToken() // Si usas CSRF
-			},
-			body: JSON.stringify({
-				fotoPerfil: imageData,
-				usuarioId: document.getElementById('current-user-id').value
-			})
-		});
-
-		if (response.ok) {
-			// Actualizar imagen en la interfaz
-			document.getElementById('current-profile-picture').src = imageData;
-			document.getElementById('new-picture-preview').style.display = 'none';
-			document.getElementById('profile-picture-input').value = '';
-
-			showAlert('Foto de perfil actualizada correctamente.', 'success');
-		} else {
-			throw new Error('Error del servidor: ' + response.status);
-		}
-	} catch (error) {
-		console.error('Error al guardar la foto:', error);
-		showAlert('Error al guardar la foto. Intenta nuevamente.', 'danger');
-	}
-}
-
-// Función auxiliar para obtener token CSRF (si es necesario)
-function getCsrfToken() {
-	return document.querySelector('meta[name="_csrf"]')?.getAttribute('content') ||
-		document.querySelector('input[name="_csrf"]')?.value || '';
-}
-
-function removeProfilePicture() {
-	if (confirm('¿Estás seguro de que quieres eliminar tu foto de perfil?')) {
-		// Enviar solicitud al servidor para eliminar la foto
-		removeProfilePictureFromServer();
-	}
-}
-
-// Función para eliminar foto (mejorada)
-async function removeProfilePicture() {
-	if (!confirm('¿Estás seguro de que quieres eliminar tu foto de perfil?')) {
-		return;
-	}
-
-	const userId = document.getElementById('current-user-id').value;
-
-	try {
-		const response = await fetch('/usuarios/perfilusuario/eliminarFotoPerfil', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-			},
-			body: `idUsuario=${userId}`
-		});
-
-		if (response.ok) {
-			// Restablecer a imagen por defecto
-			document.getElementById('current-profile-picture').src = '/assets/IMG/humano.jpg';
-
-			// Limpiar cualquier vista previa activa
-			document.getElementById('new-picture-preview').style.display = 'none';
-			document.getElementById('profile-picture-input').value = '';
-			document.getElementById('profile-picture-data').value = '';
-			currentPhotoFile = null;
-
-			showAlert('Foto de perfil eliminada correctamente.', 'info');
-		} else {
-			throw new Error('Error del servidor al eliminar la foto');
-		}
-
-	} catch (error) {
-		console.error('Error al eliminar la foto:', error);
-		showAlert('Error al eliminar la foto: ' + error.message, 'danger');
-	}
-}
-
-// Función para cancelar (mejorada)
-function cancelProfilePicture() {
-	document.getElementById('new-picture-preview').style.display = 'none';
-	document.getElementById('profile-picture-input').value = '';
-	document.getElementById('profile-picture-data').value = '';
-	currentPhotoFile = null;
-}
-
 // Función para mostrar alertas (manteniendo tu código original)
 function showAlert(message, type) {
 	// Crear alerta Bootstrap
@@ -1553,93 +829,246 @@ function showAlert(message, type) {
 	}, 5000);
 }
 
-// Función para manejar el cierre de sesión
-function handleLogout() {
-	if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-		// Aquí puedes agregar lógica adicional antes de redirigir
-		// Por ejemplo, limpiar localStorage, hacer logout en API, etc.
+// Función handleLogout eliminada - ahora se usa cerrarSesionUsuario() con SweetAlert2
 
-		// Limpiar datos de sesión si es necesario
-		localStorage.removeItem('userToken');
-		sessionStorage.clear();
+window.previewProfilePicture = function(input) {
+	const file = input.files && input.files[0];
+	if (!file) return;
 
-		// Redirigir al index
-		window.location.href = '/usuarios/index';
+	const maxSizeMB = 10; // 10 MB
+	const maxSizeBytes = maxSizeMB * 1024 * 1024; // Convertir a bytes
+	const maxSizeInput = input.getAttribute('data-max-size');
+	const maxSize = maxSizeInput ? parseInt(maxSizeInput, 10) : maxSizeBytes;
+	
+	if (file.size > maxSize) {
+		const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+		alert(`La imagen (${fileSizeMB}MB) excede el tamaño máximo permitido de ${maxSizeMB}MB.`);
+		input.value = '';
+		return;
 	}
-}
 
-// Modificar el evento del enlace de cerrar sesión en el sidebar
-document.addEventListener('DOMContentLoaded', function() {
-	// ... código existente ...
+	// Validar tipo de archivo
+	const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+	if (!validTypes.includes(file.type)) {
+		alert('Formato de archivo no válido. Solo se permiten JPG, PNG, GIF y WebP.');
+		input.value = '';
+		return;
+	}
 
-	// Agregar evento al enlace de cerrar sesión en el sidebar
-	const logoutLink = document.querySelector('.sidebar .nav-link.text-danger');
-	if (logoutLink) {
-		logoutLink.addEventListener('click', function(e) {
-			e.preventDefault();
-			handleLogout();
+	// Guardar el archivo en variable global
+	currentPhotoFile = file;
+
+	const reader = new FileReader();
+	reader.onload = function(e) {
+		const previewContainer = document.getElementById('new-picture-preview');
+		const previewImg = document.getElementById('picture-preview');
+		if (previewImg) {
+			previewImg.src = e.target.result;
+		}
+		if (previewContainer) {
+			previewContainer.style.display = 'block';
+		}
+	};
+	reader.readAsDataURL(file);
+};
+
+window.saveProfilePicture = async function() {
+	if (!currentPhotoFile) {
+		alert('No hay ninguna imagen para guardar.');
+		return;
+	}
+
+	const userId = document.getElementById('current-user-id').value;
+	if (!userId) {
+		alert('Error: No se pudo identificar el usuario.');
+		return;
+	}
+
+	try {
+		// Mostrar indicador de carga
+		const saveButton = document.querySelector('#new-picture-preview .btn-success');
+		if (saveButton) {
+			saveButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Guardando...';
+			saveButton.disabled = true;
+		}
+
+		// Convertir archivo a Base64
+		const reader = new FileReader();
+		reader.onload = async function(e) {
+			try {
+				const base64String = e.target.result; // Enviar completo con prefijo data:image/...;base64,
+
+				console.log('📤 Enviando foto al servidor...');
+
+				// Enviar al servidor con JSON
+				const response = await fetch('/usuarios/perfilusuario/actualizarFotoPerfil', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						fotoPerfil: base64String,
+						usuarioId: userId
+					})
+				});
+
+				console.log('📡 Respuesta del servidor:', response.status);
+
+				if (response.ok) {
+					const result = await response.json();
+					console.log('✅ Respuesta:', result);
+
+					// Actualizar la imagen en la interfaz
+					const dataUrl = URL.createObjectURL(currentPhotoFile);
+					document.getElementById('current-profile-picture').src = dataUrl;
+					document.getElementById('sidebar-profile-picture').src = dataUrl;
+
+					// Limpiar
+					document.getElementById('new-picture-preview').style.display = 'none';
+					document.getElementById('profile-picture-input').value = '';
+					currentPhotoFile = null;
+
+					alert('✅ Foto de perfil actualizada correctamente.');
+				} else {
+					const errorText = await response.text();
+					console.error('❌ Error del servidor:', errorText);
+					throw new Error(errorText || 'Error del servidor');
+				}
+			} catch (error) {
+				console.error('❌ Error al guardar la foto:', error);
+				alert('❌ Error al guardar la foto: ' + error.message);
+			} finally {
+				// Restaurar botón
+				const saveButton = document.querySelector('#new-picture-preview .btn-success');
+				if (saveButton) {
+					saveButton.innerHTML = '<i class="fas fa-check me-1"></i>Guardar';
+					saveButton.disabled = false;
+				}
+			}
+		};
+		reader.readAsDataURL(currentPhotoFile);
+
+	} catch (error) {
+		console.error('Error al procesar la foto:', error);
+		alert('Error al procesar la foto: ' + error.message);
+		// Restaurar botón
+		const saveButton = document.querySelector('#new-picture-preview .btn-success');
+		if (saveButton) {
+			saveButton.innerHTML = '<i class="fas fa-check me-1"></i>Guardar';
+			saveButton.disabled = false;
+		}
+	}
+};
+
+window.removeProfilePicture = async function() {
+	if (!confirm('¿Estás seguro de que deseas eliminar tu foto de perfil?')) {
+		return;
+	}
+
+	const userId = document.getElementById('current-user-id').value;
+	if (!userId) {
+		alert('Error: No se pudo identificar el usuario.');
+		return;
+	}
+
+	try {
+		const response = await fetch('/usuarios/perfilusuario/eliminarFotoPerfil', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				usuarioId: userId
+			})
 		});
-	}
 
-	// También mantener el enlace de cerrar sesión en el header
-	const headerLogoutLink = document.querySelector('.custom-logout-link');
-	if (headerLogoutLink) {
-		headerLogoutLink.addEventListener('click', function(e) {
-			e.preventDefault();
-			handleLogout();
-		});
-	}
-});
+		if (response.ok) {
+			const defaultSrc = '/assets/IMG/humano.jpg';
+			document.getElementById('current-profile-picture').src = defaultSrc;
+			document.getElementById('sidebar-profile-picture').src = defaultSrc;
 
-// ===== MODO OSCURO/CLARO ===== 
+			document.getElementById('new-picture-preview').style.display = 'none';
+			document.getElementById('profile-picture-input').value = '';
+			currentPhotoFile = null;
+
+			showAlert('Foto de perfil eliminada correctamente.', 'info');
+		} else {
+			throw new Error('Error del servidor');
+		}
+	} catch (error) {
+		console.error('Error al eliminar la foto:', error);
+		showAlert('Error al eliminar la foto: ' + error.message, 'danger');
+	}
+};
+
+window.cancelProfilePicture = function() {
+	const input = document.getElementById('profile-picture-input');
+	const previewContainer = document.getElementById('new-picture-preview');
+	const previewImg = document.getElementById('picture-preview');
+	if (input) input.value = '';
+	if (previewImg) previewImg.src = '';
+	if (previewContainer) previewContainer.style.display = 'none';
+	currentPhotoFile = null;
+};
+
 (function() {
 
-    // Esperar a que el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initTheme);
-    } else {
-        initTheme();
-    }
-    
-    function initTheme() {
-        const themeToggle = document.getElementById('themeToggle');
-        const htmlElement = document.documentElement;
-        
-        if (!themeToggle) {
-            console.error('Toggle de tema no encontrado');
-            return;
-        }
-        
-        // Establecer tema por defecto (claro)
-        htmlElement.setAttribute('data-theme', 'light');
-        themeToggle.checked = false;
-        
-        // Escuchar cambios en el toggle
-        themeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                htmlElement.setAttribute('data-theme', 'dark');
-                console.log('Tema oscuro activado');
-            } else {
-                htmlElement.setAttribute('data-theme', 'light');
-                console.log('Tema claro activado');
-            }
-        });
-        
-        console.log('Sistema de temas inicializado correctamente');
-    }
+	// Esperar a que el DOM esté listo
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initTheme);
+	} else {
+		initTheme();
+	}
+
+	function initTheme() {
+		const themeToggle = document.getElementById('themeToggle');
+		const htmlElement = document.documentElement;
+
+		if (!themeToggle) {
+			console.error('Toggle de tema no encontrado');
+			return;
+		}
+
+		// Establecer tema por defecto (claro)
+		htmlElement.setAttribute('data-theme', 'light');
+		themeToggle.checked = false;
+
+		// Escuchar cambios en el toggle
+		themeToggle.addEventListener('change', function() {
+			if (this.checked) {
+				htmlElement.setAttribute('data-theme', 'dark');
+				console.log('Tema oscuro activado');
+			} else {
+				htmlElement.setAttribute('data-theme', 'light');
+				console.log('Tema claro activado');
+			}
+		});
+
+		console.log('Sistema de temas inicializado correctamente');
+	}
 })();
 
 function cargarSidebar() {
-    fetch(`/usuario/buscar/${usuarioId}`)
-        .then(r => r.json())
-        .then(u => {
-            document.getElementById("sidebarNombre").innerText = u.nombres;
-            document.getElementById("sidebarFoto").src =
-                u.imagen ? `/${u.imagen}` : "/img/default.png";
-        });
+	if (!currentUserId) {
+		console.warn('No se pudo cargar el sidebar: currentUserId no está definido');
+		return;
+	}
+
+	fetch(`/usuario/buscar/${currentUserId}`)
+		.then(r => {
+			if (!r.ok) {
+				throw new Error(`Error HTTP: ${r.status}`);
+			}
+			return r.json();
+		})
+		.then(u => {
+			const sidebarNombre = document.getElementById("sidebarNombre");
+			const sidebarFoto = document.getElementById("sidebarFoto");
+
+			if (sidebarNombre) sidebarNombre.innerText = u.nombres || 'Usuario';
+			if (sidebarFoto) sidebarFoto.src = u.imagen ? `/${u.imagen}` : "/img/default.png";
+		})
+		.catch(error => console.error('Error al cargar el sidebar:', error));
 }
 
 cargarSidebar();
-
-
-

@@ -586,6 +586,11 @@ a {
 	color: white;
 }
 
+
+
+
+
+
 /* Sección Historias Clínicas */
 
 .pet-list-container {
@@ -818,6 +823,540 @@ a {
 	display: flex;
 	justify-content: flex-end;
 }
+
+
+
+
+
+
+/* Sección HC */
+/* ========== HISTORIA CLÍNICA - ESTILOS ========== */
+
+/* Variables de colores */
+:root {
+    --hc-mint-light: #8DCDC7;
+    --hc-mint: #C6EEE6;
+    --hc-mint-pale: #B1E0DA;
+    --hc-sage: #679F9E;
+    --hc-blue-purple: #7289DA;
+    --hc-sky-blue: #99C6ED;
+    --hc-teal: #007DBF;
+    --hc-teal-dark: #1B4F61;
+    --hc-blue-light: #85CDE6;
+    --hc-cyan: #3FB8E0;
+    --hc-dark-slate: #3B5761;
+    --hc-slate: #318FAD;
+    --hc-gold: #E6BF77;
+    --hc-green-soft: #E0A332;
+    --hc-olive: #615132;
+    --hc-yellow: #E6C975;
+    --hc-tan: #AD546A;
+    --hc-coral: #E06E8B;
+    --hc-pink-light: #E6B5C1;
+    --hc-brown: #612F3C;
+}
+
+/* Card Principal */
+.hc-main-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(27, 79, 97, 0.12);
+    padding: 20px;
+    border-top: 5px solid var(--hc-teal);
+    margin-top: 20px;
+}
+
+/* Secciones */
+.hc-section {
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e8f4f2;
+}
+
+.hc-section-last {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Header */
+.hc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.hc-header-left {
+    flex: 1;
+    min-width: 280px;
+}
+
+.hc-logo-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.hc-logo-title i {
+    font-size: 26px;
+    color: var(--hc-teal);
+}
+
+.hc-logo-title h3 {
+    font-size: 18px;
+    color: var(--hc-teal-dark);
+    margin: 0;
+    font-weight: 600;
+}
+
+.hc-page-badge {
+    background: var(--hc-teal);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Grid de información */
+.hc-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    font-size: 11px;
+}
+
+.hc-info-box {
+    background: linear-gradient(135deg, var(--hc-mint-pale) 0%, var(--hc-mint) 100%);
+    padding: 10px;
+    border-radius: 10px;
+    border-left: 3px solid var(--hc-sage);
+}
+
+.hc-info-box h4 {
+    color: var(--hc-teal-dark);
+    font-size: 10px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+}
+
+.hc-info-box input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    color: var(--hc-dark-slate);
+    padding: 3px 0;
+    border-bottom: 1px dashed var(--hc-sage);
+}
+
+.hc-info-box input:disabled {
+    border-bottom: 1px dashed transparent;
+}
+
+.hc-info-box input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--hc-teal);
+}
+
+/* Foto de mascota */
+.hc-pet-photo {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    border: 3px solid var(--hc-mint-light);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--hc-mint);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hc-pet-photo:hover {
+    border-color: var(--hc-teal);
+    transform: scale(1.05);
+}
+
+.hc-pet-photo i {
+    font-size: 30px;
+    color: var(--hc-sage);
+}
+
+.hc-pet-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Títulos de sección */
+.hc-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--hc-teal);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.hc-section-title i {
+    color: var(--hc-slate);
+    font-size: 16px;
+}
+
+/* Inputs y Textareas */
+.hc-editable {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--hc-mint-light);
+    border-radius: 8px;
+    font-size: 13px;
+    background: #f8fcfb;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.hc-editable:focus {
+    outline: none;
+    border-color: var(--hc-teal);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(0, 125, 191, 0.1);
+}
+
+.hc-editable:disabled {
+    background: #fafcfb;
+    border-color: #e0ebe9;
+    cursor: default;
+}
+
+textarea.hc-editable {
+    min-height: 70px;
+    resize: vertical;
+}
+
+/* Layout dos columnas */
+.hc-two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Signos vitales */
+.hc-vital-signs {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+}
+
+.hc-vital-box {
+    background: white;
+    padding: 15px 10px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid var(--hc-mint-light);
+    transition: all 0.3s ease;
+}
+
+.hc-vital-box:hover {
+    border-color: var(--hc-teal);
+    box-shadow: 0 4px 15px rgba(0, 125, 191, 0.15);
+    transform: translateY(-2px);
+}
+
+.hc-icon-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+}
+
+.hc-icon-circle i {
+    font-size: 20px;
+    color: white;
+}
+
+.hc-vital-box label {
+    display: block;
+    font-size: 11px;
+    color: var(--hc-dark-slate);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.hc-vital-box input {
+    text-align: center;
+    font-weight: 600;
+    color: var(--hc-teal-dark);
+    font-size: 14px;
+    background: white;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.hc-vital-box input:focus {
+    outline: none;
+    border-color: var(--hc-teal);
+}
+
+/* Iconos de signos vitales */
+.hc-temp-icon {
+    background: linear-gradient(135deg, var(--hc-coral) 0%, var(--hc-tan) 100%);
+}
+
+.hc-heart-icon {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.hc-resp-icon {
+    background: linear-gradient(135deg, var(--hc-teal) 0%, var(--hc-slate) 100%);
+}
+
+.hc-weight-icon {
+    background: linear-gradient(135deg, var(--hc-sage) 0%, var(--hc-teal-dark) 100%);
+}
+
+.hc-mucosa-icon {
+    background: linear-gradient(135deg, var(--hc-tan) 0%, var(--hc-brown) 100%);
+}
+
+.hc-body-icon {
+    background: linear-gradient(135deg, var(--hc-green-soft) 0%, var(--hc-olive) 100%);
+}
+
+/* Botones */
+.hc-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.hc-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.hc-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.hc-btn-edit {
+    background: linear-gradient(135deg, var(--hc-slate) 0%, var(--hc-teal) 100%);
+    color: white;
+}
+
+.hc-btn-save {
+    background: linear-gradient(135deg, var(--hc-mint-light) 0%, var(--hc-sage) 100%);
+    color: white;
+}
+
+.hc-btn-print {
+    background: linear-gradient(135deg, var(--hc-gold) 0%, var(--hc-green-soft) 100%);
+    color: white;
+}
+
+.hc-btn-new {
+    background: linear-gradient(135deg, var(--hc-cyan) 0%, var(--hc-blue-purple) 100%);
+    color: white;
+}
+
+/* Anexos */
+.hc-attachments {
+    border: 2px dashed var(--hc-mint-light);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: #f8fcfb;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hc-attachments:hover {
+    border-color: var(--hc-teal);
+    background: var(--hc-mint);
+}
+
+.hc-attachments i {
+    font-size: 28px;
+    color: var(--hc-teal);
+}
+
+.hc-attachments p {
+    color: var(--hc-dark-slate);
+    font-size: 12px;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.hc-attachment-preview {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.hc-attachment-item {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid var(--hc-mint-light);
+}
+
+.hc-attachment-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hc-attachment-item .hc-remove {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background: var(--hc-coral);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.hc-attachment-item .hc-remove:hover {
+    background: var(--hc-brown);
+    transform: scale(1.1);
+}
+
+/* Paginación */
+.hc-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.hc-page-btn {
+    width: 38px;
+    height: 38px;
+    border: 2px solid var(--hc-teal);
+    background: white;
+    color: var(--hc-teal);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.hc-page-btn:hover:not(:disabled) {
+    background: var(--hc-teal);
+    color: white;
+}
+
+.hc-page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.hc-page-info {
+    background: var(--hc-teal);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.hc-page-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.hc-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--hc-mint-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hc-dot:hover {
+    background: var(--hc-slate);
+}
+
+.hc-dot.active {
+    background: var(--hc-teal);
+    transform: scale(1.3);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .hc-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .hc-vital-signs {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .hc-two-cols {
+        grid-template-columns: 1fr;
+    }
+    
+    .hc-vital-signs {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .hc-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .hc-header {
+        flex-direction: column-reverse;
+        align-items: center;
+    }
+    
+    .hc-pet-photo {
+        margin-bottom: 15px;
+    }
+}
+
+
 
 
 /* Sección Adopciones */
