@@ -92,13 +92,9 @@ body {
 }
 
 .user-profile {
-	padding: 15px 12px;
-	background-color: rgba(255, 255, 255, 0.85);
-	border-radius: 10px;
-	margin: 8px 12px 15px;
+	padding: 15px 12px 0;
+	margin: 8px 0 0;
 	text-align: center;
-	box-shadow: var(--shadow-light);
-	backdrop-filter: blur(5px);
 }
 
 .user-profile img {
@@ -281,6 +277,50 @@ body {
 .custom-logout-link i {
 	font-size: 1rem;
 	margin-right: 6px;
+}
+
+/* ===== BOTÓN VOLVER AL INICIO ===== */
+.btn-volver-inicio {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5rem;
+	width: 40px;
+	height: 40px;
+	background: linear-gradient(135deg, var(--primary-color), #6c7fd0);
+	color: white;
+	text-decoration: none;
+	border-radius: 50%;
+	font-family: 'Fredoka', sans-serif;
+	font-weight: 500;
+	font-size: 1.1rem;
+	box-shadow: var(--shadow-light);
+	transition: all 0.3s ease;
+	border: none;
+}
+
+.btn-volver-inicio:hover {
+	background: linear-gradient(135deg, #4f5fb0, #5c6fc4);
+	color: white;
+	transform: translateY(-2px) scale(1.05);
+	box-shadow: var(--shadow-medium);
+}
+
+.btn-volver-inicio i {
+	font-size: 1rem;
+}
+
+/* Modo oscuro para el botón */
+[data-theme="dark"] .btn-volver-inicio {
+	background: linear-gradient(135deg, #16213e, #1a365d);
+	color: #90bbfc;
+	border: 1px solid rgba(144, 187, 252, 0.3);
+}
+
+[data-theme="dark"] .btn-volver-inicio:hover {
+	background: linear-gradient(135deg, #1a365d, #16213e);
+	color: #b8d4ff;
+	border-color: rgba(144, 187, 252, 0.5);
 }
 
 /* ===== CONTENIDO PRINCIPAL - OPTIMIZADO ===== */
@@ -1060,10 +1100,6 @@ body {
 
 [data-theme="dark"] .sidebar-header h3 {
 	color: #90bbfc;
-}
-
-[data-theme="dark"] .user-profile {
-	background-color: rgba(15, 52, 96, 0.85);
 }
 
 [data-theme="dark"] .user-profile h5 {
