@@ -1,297 +1,37 @@
-// Toggle del menú hamburguesa
+// ===== FUNCIONALIDAD DE MODO OSCURO/CLARO =====
+const themeToggle = document.getElementById('themeToggle');
+const htmlElement = document.documentElement;
+
+const savedTheme = localStorage.getItem('theme') || 'light';
+if (savedTheme === 'dark') {
+	document.body.classList.add('dark-mode');
+	themeToggle.checked = true;
+}
+
+themeToggle.addEventListener('change', function() {
+	if (this.checked) {
+		htmlElement.setAttribute('data-theme', 'dark');
+		localStorage.setItem('theme', 'dark');
+	} else {
+		htmlElement.setAttribute('data-theme', 'light');
+		localStorage.setItem('theme', 'light');
+	}
+});
+
+// ===== MENÚ HAMBURGUESA =====
 document.querySelector('.hamburger-btn').addEventListener('click', function() {
 	document.querySelector('.menu-content').classList.toggle('active');
 });
 
-// Cerrar menú al hacer clic fuera de él
 document.addEventListener('click', function(event) {
 	const menu = document.querySelector('.menu-content');
 	const btn = document.querySelector('.hamburger-btn');
-
 	if (!menu.contains(event.target) && !btn.contains(event.target) && menu.classList.contains('active')) {
 		menu.classList.remove('active');
 	}
 });
 
-// Función de búsqueda
-document.addEventListener('DOMContentLoaded', function() {
-	const searchInput = document.getElementById('searchInput');
-	const searchResults = document.getElementById('searchResults');
-	let currentHighlights = [];
-
-	// Función para extraer texto alrededor de la coincidencia
-	function getTextExcerpt(text, query, radius = 30) {
-		const index = text.toLowerCase().indexOf(query.toLowerCase());
-		if (index === -1) return null;
-
-		const start = Math.max(0, index - radius);
-		const end = Math.min(text.length, index + query.length + radius);
-		let excerpt = text.substring(start, end);
-
-		// Añadir puntos suspensivos si no estamos al inicio/final
-		if (start > 0) excerpt = '...' + excerpt;
-		if (end < text.length) excerpt = excerpt + '...';
-
-		return excerpt;
-	}
-
-	// Función para resaltar texto en un string (sin modificar DOM)
-	function highlightText(text, query) {
-		const regex = new RegExp(escapeRegExp(query), 'gi');
-		return text.replace(regex, match => `<span class="highlight">${match}</span>`);
-	}
-
-	function searchContent(query) {
-		// Limpiar resultados anteriores
-		searchResults.innerHTML = '';
-		clearHighlights();
-
-		if (query.length < 2) {
-			searchResults.classList.remove('active');
-			return;
-		}
-
-		const searchableElements = document.querySelectorAll('[data-searchable]');
-		const results = [];
-		const regex = new RegExp(escapeRegExp(query), 'gi');
-
-		searchableElements.forEach(element => {
-			const text = element.textContent;
-			if (regex.test(text)) {
-				const excerpt = getTextExcerpt(text, query);
-				if (!excerpt) return;
-
-				const titleElement = element.querySelector('h2, h3');
-				const title = titleElement ? titleElement.textContent : 'Sección sin título';
-
-				results.push({
-					element,
-					title,
-					excerpt: highlightText(excerpt, query),
-					matches: text.match(regex).length
-				});
-			}
-		});
-
-		displayResults(results);
-	}
-
-	function displayResults(results) {
-		if (results.length === 0) {
-			const noResults = document.createElement('div');
-			noResults.className = 'search-result-item';
-			noResults.textContent = 'No se encontraron resultados';
-			searchResults.appendChild(noResults);
-		} else {
-			results.forEach(result => {
-				const resultItem = document.createElement('div');
-				resultItem.className = 'search-result-item';
-				resultItem.innerHTML = `
-                    <h6>${result.title} <small class="text-muted">(${result.matches} coincidencias)</small></h6>
-                    <p>${result.excerpt}</p>
-                `;
-
-				resultItem.addEventListener('click', function() {
-					result.element.scrollIntoView({
-						behavior: 'smooth',
-						block: 'center'
-					});
-
-					// Efecto temporal de resaltado
-					const originalBg = result.element.style.backgroundColor;
-					result.element.style.backgroundColor = 'var(--azul-pastel)';
-
-					setTimeout(() => {
-						result.element.style.backgroundColor = originalBg;
-					}, 2000);
-
-					searchResults.classList.remove('active');
-				});
-
-				searchResults.appendChild(resultItem);
-			});
-		}
-
-		searchResults.classList.toggle('active', results.length > 0);
-	}
-
-	function clearHighlights() {
-		// No necesitamos limpiar nada ya que no modificamos el DOM
-		currentHighlights = [];
-	}
-
-	function escapeRegExp(string) {
-		return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	}
-
-	// Event listeners
-	searchInput.addEventListener('input', function() {
-		searchContent(this.value.trim());
-	});
-
-	searchInput.addEventListener('focus', function() {
-		if (this.value.trim().length >= 2) {
-			searchResults.classList.add('active');
-		}
-	});
-
-	document.addEventListener('click', function(e) {
-		if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-			searchResults.classList.remove('active');
-		}
-	});
-
-	searchInput.addEventListener('keypress', function(e) {
-		if (e.key === 'Enter') {
-			const firstResult = searchResults.querySelector('.search-result-item');
-			if (firstResult) {
-				firstResult.click();
-			}
-		}
-	});
-});
-
-
-//calendario flotante
-
-document.addEventListener('DOMContentLoaded', function() {
-	const calendarButton = document.getElementById('calendarButton');
-	const calendarPopup = document.getElementById('calendarPopup');
-	const prevMonthBtn = document.getElementById('prevMonth');
-	const nextMonthBtn = document.getElementById('nextMonth');
-	const todayBtn = document.getElementById('todayBtn');
-	const agendarCitaBtn = document.getElementById('agendarCitaBtn');
-	const currentMonthYear = document.getElementById('currentMonthYear');
-	const calendarDays = document.getElementById('calendarDays');
-
-	let currentDate = new Date();
-	let selectedDate = new Date();
-
-	// Mostrar/ocultar calendario
-	calendarButton.addEventListener('click', function(e) {
-		e.stopPropagation();
-		calendarPopup.classList.toggle('active');
-		renderCalendar();
-	});
-
-	// Cerrar calendario al hacer clic fuera
-	document.addEventListener('click', function() {
-		calendarPopup.classList.remove('active');
-	});
-
-	calendarPopup.addEventListener('click', function(e) {
-		e.stopPropagation();
-	});
-
-	// Navegación del calendario
-	prevMonthBtn.addEventListener('click', function() {
-		currentDate.setMonth(currentDate.getMonth() - 1);
-		renderCalendar();
-	});
-
-	nextMonthBtn.addEventListener('click', function() {
-		currentDate.setMonth(currentDate.getMonth() + 1);
-		renderCalendar();
-	});
-
-	todayBtn.addEventListener('click', function() {
-		currentDate = new Date();
-		selectedDate = new Date();
-		renderCalendar();
-	});
-
-	// Agendar cita por WhatsApp
-	agendarCitaBtn.addEventListener('click', function() {
-		const formattedDate = selectedDate.toLocaleDateString('es-ES', {
-			weekday: 'long',
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		});
-
-		// Número de WhatsApp (reemplaza con el número real)
-		const phoneNumber = "573204767864"; // Ejemplo: número de Colombia
-
-		// Mensaje predefinido
-		const message = `¡Hola! Quiero agendar una cita para mi mascota el día ${formattedDate}. Por favor confírmame disponibilidad.`;
-
-		// Codificar el mensaje para URL
-		const encodedMessage = encodeURIComponent(message);
-
-		// Redirigir a WhatsApp
-		window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-
-		calendarPopup.classList.remove('active');
-	});
-
-	// Renderizar calendario
-	function renderCalendar() {
-		const year = currentDate.getFullYear();
-		const month = currentDate.getMonth();
-
-		currentMonthYear.textContent = currentDate.toLocaleDateString('es-ES', {
-			month: 'long',
-			year: 'numeric'
-		});
-
-		const firstDay = new Date(year, month, 1);
-		const lastDay = new Date(year, month + 1, 0);
-		const daysInMonth = lastDay.getDate();
-		const startingDay = firstDay.getDay();
-
-		calendarDays.innerHTML = '';
-
-		// Días del mes anterior
-		const prevMonthLastDay = new Date(year, month, 0).getDate();
-		for (let i = 0; i < startingDay; i++) {
-			const dayElement = document.createElement('div');
-			dayElement.className = 'calendar-day other-month';
-			dayElement.textContent = prevMonthLastDay - startingDay + i + 1;
-			calendarDays.appendChild(dayElement);
-		}
-
-		// Días del mes actual
-		const today = new Date();
-		for (let i = 1; i <= daysInMonth; i++) {
-			const dayElement = document.createElement('div');
-			dayElement.className = 'calendar-day';
-			dayElement.textContent = i;
-
-			// Marcar día actual
-			if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-				dayElement.classList.add('current-day');
-			}
-
-			// Marcar día seleccionado
-			if (i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
-				dayElement.style.backgroundColor = 'var(--verde-suave)';
-				dayElement.style.fontWeight = 'bold';
-			}
-
-			dayElement.addEventListener('click', function() {
-				selectedDate = new Date(year, month, i);
-				renderCalendar();
-			});
-
-			calendarDays.appendChild(dayElement);
-		}
-
-		// Días del siguiente mes
-		const daysToShow = 42 - (startingDay + daysInMonth);
-		for (let i = 1; i <= daysToShow; i++) {
-			const dayElement = document.createElement('div');
-			dayElement.className = 'calendar-day other-month';
-			dayElement.textContent = i;
-			calendarDays.appendChild(dayElement);
-		}
-	}
-
-	// Inicializar calendario
-	renderCalendar();
-});
-
-
-// Datos iniciales de mascotas (simulando una base de datos)
+// ===== DATOS DE MASCOTAS =====
 const mascotas = [
 	{
 		id: 1,
@@ -299,10 +39,10 @@ const mascotas = [
 		tipo: "perro",
 		raza: "Labrador",
 		edad: 2,
-		tamaño: "mediano",
+		tamanio: "mediano",
 		descripcion: "Max es un perro muy juguetón y cariñoso. Le encanta pasear y jugar con niños.",
-		foto: "img/max.jpg",
-		contacto: "3222473652" // Ahora usamos número de teléfono
+		foto: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400",
+		contacto: "3222473652"
 	},
 	{
 		id: 2,
@@ -310,20 +50,20 @@ const mascotas = [
 		tipo: "gato",
 		raza: "Siamés",
 		edad: 1,
-		tamaño: "pequeno",
+		tamanio: "pequeno",
 		descripcion: "Luna es una gata tranquila que disfruta de los mimos y dormir en lugares cálidos.",
-		foto: "img/Luna.webp",
+		foto: "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=400",
 		contacto: "5557654321"
 	},
 	{
 		id: 3,
 		nombre: "Copito",
 		tipo: "gato",
-		raza: "Siamés",
+		raza: "Persa",
 		edad: 2,
-		tamaño: "pequeno",
+		tamanio: "pequeno",
 		descripcion: "Copito es un gato tranquilo que le gusta jugar con estambre.",
-		foto: "img/Copito.png",
+		foto: "https://images.unsplash.com/photo-1573865526739-10c1d3a1b2e0?w=400",
 		contacto: "5557654321"
 	},
 	{
@@ -332,9 +72,9 @@ const mascotas = [
 		tipo: "perro",
 		raza: "Bulldog Francés",
 		edad: 2,
-		tamaño: "pequeño",
+		tamanio: "pequeno",
 		descripcion: "Rocky es tranquilo y muy leal, perfecto para vivir en apartamento.",
-		foto: "img/Rocky.jpg",
+		foto: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400",
 		contacto: "5552468101"
 	},
 	{
@@ -343,9 +83,9 @@ const mascotas = [
 		tipo: "gato",
 		raza: "Maine Coon",
 		edad: 2,
-		tamaño: "grande",
+		tamanio: "grande",
 		descripcion: "Tor es un gatito cariñoso y muy curioso, le encanta explorar la casa.",
-		foto: "img/Tor.jpg",
+		foto: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400",
 		contacto: "5557654321"
 	},
 	{
@@ -354,9 +94,9 @@ const mascotas = [
 		tipo: "gato",
 		raza: "Bengala",
 		edad: 1,
-		tamaño: "mediano",
+		tamanio: "mediano",
 		descripcion: "Mila es muy activa y le encanta trepar y jugar todo el día.",
-		foto: "img/Mila.jpg",
+		foto: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400",
 		contacto: "5551357913"
 	},
 	{
@@ -365,9 +105,9 @@ const mascotas = [
 		tipo: "perro",
 		raza: "Golden Retriever",
 		edad: 5,
-		tamaño: "grande",
+		tamanio: "grande",
 		descripcion: "Simba es un amoroso compañero que disfruta los paseos largos.",
-		foto: "img/Simba.jpg",
+		foto: "https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400",
 		contacto: "5553214567"
 	},
 	{
@@ -376,9 +116,9 @@ const mascotas = [
 		tipo: "gato",
 		raza: "Persa",
 		edad: 6,
-		tamaño: "mediano",
+		tamanio: "mediano",
 		descripcion: "Nina es calmada y elegante, ideal para hogares tranquilos.",
-		foto: "img/Nina.webp",
+		foto: "https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=400",
 		contacto: "5556547890"
 	},
 	{
@@ -387,14 +127,14 @@ const mascotas = [
 		tipo: "perro",
 		raza: "Beagle",
 		edad: 1,
-		tamaño: "mediano",
+		tamanio: "mediano",
 		descripcion: "Toby es curioso, alegre y se lleva bien con otros animales.",
-		foto: "img/Tobi.jpeg",
+		foto: "https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=400",
 		contacto: "5557778888"
-	},
+	}
 ];
 
-// Clase para manejar las mascotas
+// ===== GESTOR DE MASCOTAS =====
 class GestorMascotas {
 	constructor() {
 		this.mascotas = mascotas;
@@ -402,18 +142,18 @@ class GestorMascotas {
 		this.configurarEventos();
 	}
 
-	cargarMascotas(filtroTipo = 'todos', filtroTamaño = 'todos') {
+	cargarMascotas(filtroTipo = 'todos', filtroTamanio = 'todos') {
 		const listaMascotas = document.getElementById('lista-mascotas');
 		listaMascotas.innerHTML = '';
 
 		const mascotasFiltradas = this.mascotas.filter(mascota => {
 			const cumpleTipo = filtroTipo === 'todos' || mascota.tipo === filtroTipo;
-			const cumpletamaño = filtroTamaño === 'todos' || mascota.tamaño === filtroTamaño;
-			return cumpleTipo && cumpletamaño;
+			const cumpleTamanio = filtroTamanio === 'todos' || mascota.tamanio === filtroTamanio;
+			return cumpleTipo && cumpleTamanio;
 		});
 
 		if (mascotasFiltradas.length === 0) {
-			listaMascotas.innerHTML = '<p class="sin-resultados">No se encontraron mascotas con estos filtros.</p>';
+			listaMascotas.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">No se encontraron mascotas con estos filtros.</p>';
 			return;
 		}
 
@@ -438,38 +178,44 @@ class GestorMascotas {
 		const nombre = document.createElement('h3');
 		nombre.textContent = mascota.nombre;
 
+		const etiquetasContainer = document.createElement('div');
+		etiquetasContainer.className = 'etiquetas-container';
+
 		const tipo = document.createElement('span');
 		tipo.className = 'etiqueta etiqueta-tipo';
-		tipo.textContent = mascota.tipo === 'perro' ? 'Perro' : mascota.tipo === 'gato' ? 'Gato' : 'Otro';
+		tipo.textContent = mascota.tipo === 'perro' ? '🐕 Perro' : mascota.tipo === 'gato' ? '🐈 Gato' : '🐾 Otro';
 
-		const tamaño = document.createElement('span');
-		tamaño.className = 'etiqueta etiqueta-tamaño';
-		let tamañoTexto = '';
-		if (mascota.tamaño === 'pequeno') tamañoTexto = 'Pequeño';
-		else if (mascota.tamaño === 'mediano') tamañoTexto = 'Mediano';
-		else tamañoTexto = 'Grande';
-		tamaño.textContent = tamañoTexto;
+		const tamanio = document.createElement('span');
+		tamanio.className = 'etiqueta etiqueta-tamanio';
+		let tamanioTexto = '';
+		if (mascota.tamanio === 'pequeno') tamanioTexto = 'Pequeño';
+		else if (mascota.tamanio === 'mediano') tamanioTexto = 'Mediano';
+		else tamanioTexto = 'Grande';
+		tamanio.textContent = tamanioTexto;
 
 		const edad = document.createElement('span');
 		edad.className = 'etiqueta etiqueta-edad';
 		edad.textContent = `${mascota.edad} ${mascota.edad === 1 ? 'año' : 'años'}`;
 
+		etiquetasContainer.appendChild(tipo);
+		etiquetasContainer.appendChild(tamanio);
+		etiquetasContainer.appendChild(edad);
+
 		const raza = document.createElement('p');
 		raza.textContent = mascota.raza ? `Raza: ${mascota.raza}` : 'Raza: Mestizo';
+		raza.style.fontWeight = '600';
+		raza.style.marginBottom = '10px';
 
 		const descripcion = document.createElement('p');
 		descripcion.textContent = mascota.descripcion;
+		descripcion.style.fontSize = '0.95rem';
 
 		const botonAdoptar = document.createElement('a');
 		botonAdoptar.className = 'boton-adoptar';
-		botonAdoptar.href = `https://wa.me/${this.obtenerNumeroWhatsApp(mascota.contacto)}?text=${encodeURIComponent(`Hola, estoy interesado/a en adoptar a ${mascota.nombre}. Por favor, ¿podrías darme más información?`)}`;
-		botonAdoptar.target = '_blank';
-		botonAdoptar.textContent = '¡Quiero adoptar!';
+		botonAdoptar.innerHTML = '¡Ver Detalles!';
 
 		contenido.appendChild(nombre);
-		contenido.appendChild(tipo);
-		contenido.appendChild(tamaño);
-		contenido.appendChild(edad);
+		contenido.appendChild(etiquetasContainer);
 		contenido.appendChild(raza);
 		contenido.appendChild(descripcion);
 		contenido.appendChild(botonAdoptar);
@@ -480,103 +226,103 @@ class GestorMascotas {
 		return tarjeta;
 	}
 
-	obtenerNumeroWhatsApp(contacto) {
-		// Extraer solo los números del contacto
-		const soloNumeros = contacto.replace(/\D/g, '');
-
-		// Si ya tiene código de país, devolverlo
-		if (soloNumeros.length > 10) return soloNumeros;
-
-		// Código deL país (+57)
-		return '57' + soloNumeros;
-	}
-
 	agregarMascota(nuevaMascota) {
-		// Generar un ID único
-		nuevaMascota.id = this.mascotas.length > 0 ?
-			Math.max(...this.mascotas.map(m => m.id)) + 1 : 1;
-
+		nuevaMascota.id = this.mascotas.length > 0 ? Math.max(...this.mascotas.map(m => m.id)) + 1 : 1;
 		this.mascotas.unshift(nuevaMascota);
 		this.cargarMascotas();
-
-		// Mostrar mensaje de éxito
 		alert(`¡${nuevaMascota.nombre} ha sido publicado para adopción con éxito!`);
 	}
 
 	configurarEventos() {
-		// Filtrar mascotas
 		document.getElementById('filtrar').addEventListener('click', () => {
 			const tipo = document.getElementById('tipo-mascota').value;
-			const tamaño = document.getElementById('tamaño-mascota').value;
-			this.cargarMascotas(tipo, tamaño);
+			const tamanio = document.getElementById('tamanio-mascota').value;
+			this.cargarMascotas(tipo, tamanio);
 		});
 
-		// Formulario para dar en adopción
-		document.getElementById('formulario-mascota').addEventListener('submit', (e) => {
+		document.getElementById('submitBtn').addEventListener('click', (e) => {
 			e.preventDefault();
+
+			const form = document.getElementById('formulario-mascota');
+			if (!form.checkValidity()) {
+				form.reportValidity();
+				return;
+			}
+
+			const fotoInput = document.getElementById('foto');
+			let fotoURL = 'https://via.placeholder.com/300x200?text=Sin+imagen';
+
+			if (fotoInput.files && fotoInput.files[0]) {
+				fotoURL = URL.createObjectURL(fotoInput.files[0]);
+			}
 
 			const nuevaMascota = {
 				nombre: document.getElementById('nombre').value,
 				tipo: document.getElementById('tipo').value,
-				raza: document.getElementById('raza').value,
+				raza: document.getElementById('raza').value || 'Mestizo',
 				edad: parseInt(document.getElementById('edad').value) || 0,
-				tamaño: document.getElementById('tamaño').value,
+				tamanio: document.getElementById('tamanio').value,
 				descripcion: document.getElementById('descripcion').value,
-				foto: document.getElementById('foto').value || 'https://via.placeholder.com/300x200?text=Sin+imagen',
+				foto: fotoURL,
 				contacto: document.getElementById('contacto').value
 			};
 
 			this.agregarMascota(nuevaMascota);
-
-			// Limpiar formulario
-			e.target.reset();
-
-			// Desplazarse a la sección de mascotas
-			document.getElementById('adoptar').scrollIntoView({ behavior: 'smooth' });
-		});
-
-		// Smooth scrolling para los enlaces del menú
-		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-			anchor.addEventListener('click', function(e) {
-				e.preventDefault();
-				document.querySelector(this.getAttribute('href')).scrollIntoView({
-					behavior: 'smooth'
-				});
-			});
+			form.reset();
+			document.getElementById('fileName').textContent = 'Ningún archivo seleccionado';
+			document.getElementById('modalAdopcion').classList.remove('active');
 		});
 	}
 }
 
-// Inicializar la aplicación cuando el DOM esté listo
+// ===== MODAL =====
+document.getElementById('btnDarAdopcion').addEventListener('click', () => {
+	document.getElementById('modalAdopcion').classList.add('active');
+});
+
+document.getElementById('closeModal').addEventListener('click', () => {
+	document.getElementById('modalAdopcion').classList.remove('active');
+});
+
+document.getElementById('modalAdopcion').addEventListener('click', (e) => {
+	if (e.target.id === 'modalAdopcion') {
+		document.getElementById('modalAdopcion').classList.remove('active');
+	}
+});
+
+// ===== TIPO DE MASCOTA =====
+document.getElementById('tipo').addEventListener('change', function() {
+	const otroTipoGroup = document.getElementById('otroTipoGroup');
+	if (this.value === 'otro') {
+		otroTipoGroup.style.display = 'block';
+		document.getElementById('otroTipo').required = true;
+	} else {
+		otroTipoGroup.style.display = 'none';
+		document.getElementById('otroTipo').required = false;
+	}
+});
+
+// ===== ARCHIVO =====
+document.getElementById('foto').addEventListener('change', function() {
+	const fileName = this.files[0] ? this.files[0].name : 'Ningún archivo seleccionado';
+	document.getElementById('fileName').textContent = fileName;
+});
+
+// ===== INICIALIZAR =====
 document.addEventListener('DOMContentLoaded', () => {
 	new GestorMascotas();
 });
 
-// Función para abrir el modal
-function abrirModal() {
-	document.getElementById("modalConsejos").style.display = "block";
-}
+// ===== MOSTRAR BOTÓN DE VOLVER AL INICIO =====
+const btnInicio = document.querySelector('.btn-inicio');
 
-// Función para cerrar el modal
-function cerrarModal() {
-	document.getElementById("modalConsejos").style.display = "none";
-}
-
-// Event listener para el botón de consejos
-document.getElementById("Consejos").addEventListener("click", abrirModal);
-
-// Cerrar el modal al hacer clic fuera de él
-window.onclick = function(event) {
-	var modal = document.getElementById("modalConsejos");
-	if (event.target === modal) {
-		cerrarModal();
-	}
-};
-
-// Cerrar el modal con la tecla Escape
-document.addEventListener('keydown', function(event) {
-	if (event.key === 'Escape') {
-		cerrarModal();
+window.addEventListener('scroll', function() {
+	if (window.scrollY > 300) {
+		btnInicio.style.display = 'flex';
+	} else {
+		btnInicio.style.display = 'none';
 	}
 });
 
+// Ocultar al cargar la página
+btnInicio.style.display = 'none';
