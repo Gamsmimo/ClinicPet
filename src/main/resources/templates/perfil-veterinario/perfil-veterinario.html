@@ -21,11 +21,35 @@
 
 	<!-- En el <head> -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<link rel="stylesheet" href="historia-clinica.css">
 
 	<!-- CSS Personalizado (CON Thymeleaf - como en el que SÍ funciona) -->
 	<link rel="stylesheet" th:href="@{/assets/CSS/Css-Veterinario.css}">
+	<style>
+		/* Estilos personalizados para SweetAlert2 del veterinario */
+		.swal-popup-veterinario {
+			font-family: 'Poppins', sans-serif !important;
+			border-radius: 15px !important;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+		}
+
+		.swal-title-veterinario {
+			color: #2c3e50 !important;
+			font-weight: 600 !important;
+		}
+
+		.swal-content-veterinario {
+			color: #5a6c7d !important;
+		}
+
+		/* Efecto hover para el botón de cerrar sesión */
+		.logout-veterinario:hover {
+			background-color: rgba(220, 53, 69, 0.2) !important;
+			transform: translateX(5px);
+			transition: all 0.3s ease;
+		}
+	</style>
 </head>
 
 <body>
@@ -58,6 +82,13 @@
 					<span>Pet Shop</span></a></li>
 			<li><a href="#configuracion" class="menu-link" data-section="configuracion"><i class="fas fa-cog"></i>
 					<span>Configuración</span></a></li>
+			<!-- Separador y Cerrar Sesión -->
+			<li style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color, #e0e0e0);">
+				<a href="#" class="menu-link logout-veterinario" onclick="cerrarSesionVeterinario(event)" style="color: #dc3545; background: rgba(220, 53, 69, 0.1); border-radius: 8px; transition: all 0.3s ease;">
+					<i class="fas fa-sign-out-alt"></i>
+					<span>Cerrar Sesión</span>
+				</a>
+			</li>
 		</ul>
 	</nav>
 
@@ -80,20 +111,6 @@
 				<i class="fas fa-search"></i>
 			</div>
 			<div class="user-actions">
-				<div class="notifications" data-bs-toggle="modal" data-bs-target="#notificationsModal">
-					<i class="fas fa-bell"></i>
-					<span class="badge">3</span>
-				</div>
-
-				<div class="d-flex align-items-center">
-					<span class="navbar-text logout-text">
-						<a th:href="@{/usuarios/index}" class="custom-logout-link">
-							<i class="fas fa-sign-out-alt me-2"></i>
-							Cerrar Sesión
-						</a>
-					</span>
-				</div>
-			</div>
 			</div>
 		</header>
 
@@ -1187,6 +1204,53 @@
 				return false;
 			}
 		});
+	</script>
+
+	<script>
+		// Función para cerrar sesión del veterinario con confirmación
+		function cerrarSesionVeterinario(event) {
+			// Prevenir comportamiento por defecto
+			if (event) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+
+			Swal.fire({
+				title: '¿Cerrar sesión?',
+				text: '¿Estás seguro de que deseas cerrar la sesión?',
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#dc3545',
+				cancelButtonColor: '#6c757d',
+				confirmButtonText: 'Sí, cerrar sesión',
+				cancelButtonText: 'Cancelar',
+				background: '#fff',
+				customClass: {
+					popup: 'swal-popup-veterinario',
+					title: 'swal-title-veterinario',
+					content: 'swal-content-veterinario'
+				}
+			}).then((result) => {
+				if (result.isConfirmed) {
+					// Mostrar mensaje de despedida
+					Swal.fire({
+						title: 'Sesión cerrada',
+						text: 'Hasta pronto, Dr. Esperamos verte pronto cuidando a nuestras mascotas',
+						icon: 'success',
+						timer: 2000,
+						showConfirmButton: false,
+						background: '#fff',
+						customClass: {
+							popup: 'swal-popup-veterinario',
+							title: 'swal-title-veterinario'
+						}
+					}).then(() => {
+						// Redirigir al index
+						window.location.href = '/usuarios/index';
+					});
+				}
+			});
+		}
 	</script>
 </body>
 

@@ -379,11 +379,11 @@
 												</div>
 												<h6 class="mb-2">Foto de Perfil</h6>
 												<p class="text-muted small mb-3">
-													Formatos: JPG, PNG, GIF<br>Máx: 5MB
+													Formatos: JPG, PNG, GIF, WebP<br>Sin límite de tamaño
 												</p>
 												<div class="d-flex flex-column gap-2">
 													<input type="file" class="d-none" id="profile-picture-input"
-														accept="image/*" data-max-size="5242880"
+														accept="image/*"
 														onchange="previewProfilePicture(this)">
 													<button type="button" class="btn btn-outline-primary btn-sm"
 														onclick="document.getElementById('profile-picture-input').click()">
@@ -472,16 +472,12 @@
 														<label for="profile-tipoDocumento"
 															class="form-label fw-bold">Tipo
 															Documento</label>
-														<select class="form-select" id="profile-tipoDocumento"
-															th:field="*{tipoDocumento}">
-															<option value="">Selecciona tipo</option>
-															<option value="Cédula">Cédula</option>
-															<option value="Pasaporte">Pasaporte</option>
-															<option value="Tarjeta Identidad">Tarjeta de Identidad
-															</option>
-															<option value="Cédula Extranjería">Cédula de Extranjería
-															</option>
-														</select>
+														<input type="text" class="form-control" 
+															id="profile-tipoDocumento" 
+															th:value="${usuarioLogueado.tipoDocumento}"
+															readonly
+															style="background-color: #f8f9fa; cursor: not-allowed;"
+															placeholder="Tipo de documento">
 													</div>
 													<div class="col-md-6">
 														<label for="profile-numDocumento"
