@@ -121,11 +121,10 @@ public class UsuarioController {
 			// *** CORRECCIÓN BÁSICA: Llamar al service corregido (maneja rol y
 			// validaciones) ***
 			Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
-			redirectAttributes.addFlashAttribute("mensaje", "Usuario registrado con éxito");
+			redirectAttributes.addFlashAttribute("mensaje", "¡Registro exitoso! Bienvenido a HelpYourPet");
 
-			// *** CORRECCIÓN BÁSICA: Redirigir al INICIO (página principal) ***
-			return "IniciarSesion/iniciarsesion"; // Cambia "/" por tu ruta de inicio si es diferente (ej.
-													// "redirect:/home")
+			// *** CORRECCIÓN: Redirigir al INICIO (página principal) ***
+			return "redirect:/"; // Redirige a la página de inicio
 
 		} catch (RuntimeException e) {
 			// *** CORRECCIÓN BÁSICA: Usar la misma ruta con subcarpeta para consistencia
@@ -376,10 +375,8 @@ public class UsuarioController {
 			// Decodificar Base64
 			byte[] imageBytes = Base64.getDecoder().decode(imageString);
 
-			// Validar tamaño (10MB máximo)
-			if (imageBytes.length > 10 * 1024 * 1024) {
-				throw new RuntimeException("La imagen excede el tamaño máximo permitido de 10MB");
-			}
+			// Sin restricción de tamaño - permitir cualquier peso de imagen
+			System.out.println(" Procesando imagen de " + (imageBytes.length / (1024 * 1024)) + "MB");
 
 			// Crear directorio si no existe
 			String uploadDir = "uploads/profiles/";
@@ -465,7 +462,33 @@ public class UsuarioController {
 		return "RecuperarContrasena/recovery";
 	}
 
-//redireccion al cerrar sesion
+	// Endpoint para eliminar cuenta de usuario
+	@DeleteMapping("/perfilusuario/eliminarCuenta")
+	@ResponseBody
+	public ResponseEntity<?> eliminarCuenta(HttpSession session) {
+		try {
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(Map.of("error", "No hay usuario logueado"));
+			}
+
+			// Eliminar el usuario de la base de datos
+			usuarioService.eliminarUsuario(usuarioLogueado.getId());
+			
+			// Invalidar la sesión
+			session.invalidate();
+			
+			return ResponseEntity.ok()
+				.body(Map.of("mensaje", "Cuenta eliminada exitosamente"));
+				
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(Map.of("error", "Error al eliminar la cuenta: " + e.getMessage()));
+		}
+	}
+
+	//redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {
 		return "/index";

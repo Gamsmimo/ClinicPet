@@ -122,6 +122,13 @@ public class UsuarioServiceImplement implements IUsuarioService {
 					: usuario.getDireccion());
 			usuario.setPassword(usuarioActualizado.getPassword() != null ? usuarioActualizado.getPassword()
 					: usuario.getPassword());
+			
+			// ✅ AGREGAR: Actualizar edad y número de documento
+			usuario.setEdad(usuarioActualizado.getEdad() != null ? usuarioActualizado.getEdad() : usuario.getEdad());
+			usuario.setNumDocumento(usuarioActualizado.getNumDocumento() != null ? usuarioActualizado.getNumDocumento().trim() : usuario.getNumDocumento());
+			
+			// ⚠️ IMPORTANTE: NO actualizar tipoDocumento - mantener el original
+			// usuario.setTipoDocumento() - INTENCIONALMENTE OMITIDO para preservar el tipo original
 
 			// Asigna rol si se proporciona
 			if (usuarioActualizado.getRol() != null) {
