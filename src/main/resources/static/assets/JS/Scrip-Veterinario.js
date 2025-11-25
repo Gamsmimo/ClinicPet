@@ -283,6 +283,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.querySelector('.vet-name').textContent = 'Dr. Pérez';
 	}, 500);
 
+	// Asignar idveterinaria al formulario de AGREGAR producto desde el div oculto
+	const vetDataDiv = document.getElementById('veterinaria-data');
+	const veterinariaId = vetDataDiv ? vetDataDiv.getAttribute('data-id') : '1';
+	const formAgregar = document.getElementById('form-producto');
+	if (formAgregar) {
+		const inputVetAdd = formAgregar.querySelector('input[name="idveterinaria"]');
+		if (inputVetAdd && veterinariaId) {
+			inputVetAdd.value = veterinariaId;
+		}
+	}
+
 	// Filtros dinámicos de Pet Shop
 	const filtroCategoria = document.getElementById('filtro-categoria');
 	const filtroEstado = document.getElementById('filtro-estado');
@@ -348,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		filtroCategoria.addEventListener('change', aplicarFiltros);
 		filtroEstado.addEventListener('change', aplicarFiltros);
 	}
-	});
+});
 
 // Funciones para las citas
 function startAppointment(appointmentId) {
