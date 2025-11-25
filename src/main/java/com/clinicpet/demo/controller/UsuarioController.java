@@ -493,4 +493,12 @@ public class UsuarioController {
 	public String index() {
 		return "/index";
 	}
+	
+	//redireccion al cerrar sesion
+	@GetMapping("/tienda")
+	public String tienda() {
+		return "Tienda/tienda";
+	}
+
+
 }

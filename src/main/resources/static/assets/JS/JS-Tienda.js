@@ -510,13 +510,108 @@ function showNotification(message) {
 	console.log(message);
 }
 
-// Event Listeners
-document.addEventListener("DOMContentLoaded", () => {
+// ===== DATOS DE TIENDAS =====
+const stores = [
+	{
+		id: 1,
+		name: "PetShop Centro",
+		address: "Calle 19 #14-25, Centro",
+		phone: "+57 300 123 4567",
+		hours: "Lun-Sáb: 8AM-7PM",
+		featured: true
+	},
+	{
+		id: 2,
+		name: "PetShop Norte",
+		address: "Av. Boyacá #45-12, Norte",
+		phone: "+57 300 765 4321",
+		hours: "Lun-Dom: 9AM-8PM",
+		featured: false
+	},
+	{
+		id: 3,
+		name: "PetShop Sur",
+		address: "Carrera 15 #8-30, Sur",
+		phone: "+57 301 234 5678",
+		hours: "Lun-Sáb: 8AM-6PM",
+		featured: false
+	},
+	{
+		id: 4,
+		name: "PetShop Plaza",
+		address: "Centro Comercial Plaza, Local 205",
+		phone: "+57 302 987 6543",
+		hours: "Lun-Dom: 10AM-9PM",
+		featured: true
+	}
+];
+
+let selectedStore = null;
+
+// ===== FUNCIONES DE TIENDAS =====
+function renderStores() {
+	const storesGrid = document.getElementById('storesGrid');
+	
+	storesGrid.innerHTML = stores.map(store => `
+		<div class="store-card" onclick="selectStore(${store.id})">
+			${store.featured ? '<div class="store-badge">⭐ Destacada</div>' : ''}
+			<div class="store-card-image">
+				<i class="fas fa-store-alt"></i>
+			</div>
+			<div class="store-card-content">
+				<h3 class="store-card-name">${store.name}</h3>
+				<div class="store-card-info">
+					<div class="store-info-item">
+						<i class="fas fa-map-marker-alt"></i>
+						<span>${store.address}</span>
+					</div>
+					<div class="store-info-item">
+						<i class="fas fa-phone"></i>
+						<span>${store.phone}</span>
+					</div>
+					<div class="store-info-item">
+						<i class="fas fa-clock"></i>
+						<span>${store.hours}</span>
+					</div>
+				</div>
+				<button class="store-card-button">
+					<i class="fas fa-shopping-bag"></i>
+					Ver Productos
+				</button>
+			</div>
+		</div>
+	`).join('');
+}
+
+function selectStore(storeId) {
+	selectedStore = stores.find(s => s.id === storeId);
+	
+	// Ocultar selección de tiendas
+	document.getElementById('storeSelection').style.display = 'none';
+	
+	// Mostrar secciones de productos
+	document.getElementById('inicio').style.display = 'flex';
+	document.getElementById('benefitsSection').style.display = 'block';
+	document.getElementById('filtersSection').style.display = 'block';
+	document.getElementById('featuredSection').style.display = 'block';
+	document.getElementById('allProductsSection').style.display = 'block';
+	
 	// Inicializar carrusel
 	initCarousel();
-
-	// Renderizar productos iniciales
+	
+	// Renderizar productos
 	renderProducts();
+	
+	// Scroll suave al inicio
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+	
+	console.log(`Tienda seleccionada: ${selectedStore.name}`);
+}
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", () => {
+	// Renderizar tiendas al cargar
+	renderStores();
 
 	// Carrito
 	document.getElementById("openCart").addEventListener("click", () => {
