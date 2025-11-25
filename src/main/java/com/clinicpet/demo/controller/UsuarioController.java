@@ -469,26 +469,37 @@ public class UsuarioController {
 		try {
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 			if (usuarioLogueado == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(Map.of("error", "No hay usuario logueado"));
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "No hay usuario logueado"));
 			}
 
 			// Eliminar el usuario de la base de datos
 			usuarioService.eliminarUsuario(usuarioLogueado.getId());
-			
+
 			// Invalidar la sesión
 			session.invalidate();
-			
-			return ResponseEntity.ok()
-				.body(Map.of("mensaje", "Cuenta eliminada exitosamente"));
-				
+
+			return ResponseEntity.ok().body(Map.of("mensaje", "Cuenta eliminada exitosamente"));
+
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al eliminar la cuenta: " + e.getMessage()));
+					.body(Map.of("error", "Error al eliminar la cuenta: " + e.getMessage()));
 		}
 	}
 
-	//redireccion al cerrar sesion
+	// REDIRECCION PARA LA VISTA ADOPCIONES
+	@GetMapping("/adopcion")
+	public String mostrarAdopciones(HttpSession session, Model model) {
+
+		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+		if (usuarioLogueado == null) {
+			return "redirect:/usuarios/iniciarsesion";
+		}
+		model.addAttribute("usuarioLogueado", usuarioLogueado);
+
+		return "Adopciones/adopcion";
+	}
+
+	// redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {
 		return "/index";
