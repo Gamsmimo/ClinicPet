@@ -22,7 +22,7 @@
 	/* Variables dinámicas TEMA CLARO */
 	--bg-body: #FFFFFF;
 	--bg-card: #FFFFFF;
-	--card-header:  rgba(137, 168, 213, 0.08);
+	--card-header: rgba(137, 168, 213, 0.08);
 	--text-primary: #2C3E50;
 	--text-secondary: #6C757D;
 	--border-color: #E9ECEF;
@@ -58,6 +58,30 @@ body {
 	padding: 0;
 	line-height: 1.6;
 	font-size: 14px;
+	max-width: 100vw;
+	position: relative;
+}
+
+/* Prevenir scroll horizontal global */
+html {
+	overflow-x: hidden;
+	max-width: 100vw;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+/* Contenedores principales sin overflow */
+.container-fluid {
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+.row {
+	margin-left: 0;
+	margin-right: 0;
+	max-width: 100%;
 	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -79,6 +103,7 @@ body {
 
 .sidebar-header {
 	padding: 15px;
+
 	background-color: var(--card-header);
 	margin: 15px 12px 12px;
 	border-radius: 12px;
@@ -747,6 +772,149 @@ body {
 	font-size: 0.8rem;
 }
 
+/* ===== RESPONSIVE DESIGN - OPTIMIZADO MEJORADO ===== */
+
+/* Pantallas extra grandes (1920px+) */
+@media (min-width: 1920px) {
+	.main-content {
+		max-width: 100vw;
+		overflow-x: hidden;
+	}
+
+	.section-header {
+		padding: 1.5rem 2rem;
+	}
+
+	.card-body {
+		padding: 2rem;
+	}
+
+	#current-profile-picture {
+		width: 180px !important;
+		height: 180px !important;
+	}
+}
+
+/* Laptops grandes (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+	.main-content {
+		max-width: 100vw;
+		overflow-x: hidden;
+	}
+
+	.section-header {
+		padding: 1.2rem 1.5rem;
+	}
+
+	#current-profile-picture {
+		width: 150px !important;
+		height: 150px !important;
+	}
+}
+
+/* Laptops estándar (1200px - 1439px) */
+@media (min-width: 1200px) and (max-width: 1439px) {
+	.sidebar {
+		width: 240px;
+	}
+
+	.main-content {
+		margin-left: 240px;
+		max-width: 100vw;
+		overflow-x: hidden;
+	}
+
+	.section-header {
+		padding: 1rem 1.5rem;
+	}
+
+	.card-body {
+		padding: 1.5rem;
+	}
+
+	#current-profile-picture {
+		width: 130px !important;
+		height: 130px !important;
+	}
+
+	.form-control,
+	.form-select {
+		font-size: 0.9rem;
+	}
+}
+
+/* Tablets y laptops pequeños (992px - 1199px) */
+@media (max-width: 1199.98px) and (min-width: 992px) {
+	.sidebar {
+		width: 200px;
+	}
+
+	.main-content {
+		margin-left: 200px;
+		max-width: 100vw;
+		overflow-x: hidden;
+	}
+
+	.content-wrapper {
+		padding: 1rem;
+	}
+
+	.pets-grid {
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 1rem;
+	}
+
+	.section-header {
+		padding: 1rem;
+		flex-wrap: nowrap;
+	}
+
+	.section-header h1 {
+		font-size: 1.3rem;
+	}
+
+	.card-body {
+		padding: 1.2rem;
+	}
+
+	#current-profile-picture {
+		width: 120px !important;
+		height: 120px !important;
+	}
+
+	.col-md-4 {
+		flex: 0 0 35%;
+		max-width: 35%;
+	}
+
+	.col-md-8 {
+		flex: 0 0 65%;
+		max-width: 65%;
+	}
+}
+
+/* Tablets */
+@media (max-width: 991.98px) {
+	.sidebar {
+		width: 220px;
+	}
+
+	.main-content {
+		margin-left: 220px;
+	}
+
+	.content-wrapper {
+		padding: 1rem;
+	}
+
+	.pets-grid {
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		gap: 1rem;
+	}
+
+}
+
+/* Dispositivos móviles (hasta 767px) */
 .bg-success {
 	background-color: var(--secondary-color) !important;
 	color: #2C5530 !important;
@@ -883,180 +1051,926 @@ body {
 	.main-content {
 		margin-left: 0;
 		width: 100%;
+		max-width: 100vw;
+		overflow-x: hidden;
 	}
 
-	.theme-toggle-container {
-		bottom: 80px;
-		left: 15px;
+	.content-wrapper {
+		padding: 0.5rem;
+	}
+
+	.section-header {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.8rem 1rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.section-header h1 {
+		font-size: 1.1rem;
+		margin: 0;
 	}
 
 	.pets-grid {
 		grid-template-columns: 1fr;
+		gap: 0.8rem;
 	}
 
-	.section-header {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1rem;
+	.content-header {
+		padding: 0.6rem 0.8rem;
 	}
-}
 
-@media (min-width: 768px) and (max-width: 1199.98px) {
+	.card {
+		margin-bottom: 0.8rem;
+	}
+
+	.card-body {
+		padding: 0.8rem;
+	}
+
+	.card-header {
+		padding: 0.6rem 0.8rem;
+	}
+
+	.card-header h5 {
+		font-size: 0.95rem;
+	}
+
+	.sidebar-overlay.active {
+		display: block;
+
+		.theme-toggle-container {
+			bottom: 80px;
+			left: 15px;
+		}
+
+		.pets-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.section-header {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 1rem;
+		}
+
+		/* Foto de perfil más pequeña en móvil */
+		#current-profile-picture {
+			width: 100px !important;
+			height: 100px !important;
+		}
+
+		/* Formulario de perfil en móvil */
+		.col-md-4,
+		.col-md-8,
+		.col-md-6 {
+			flex: 0 0 100%;
+			max-width: 100%;
+		}
+
+		/* Espaciado entre campos del formulario */
+		.row.g-3 {
+			row-gap: 0.8rem !important;
+		}
+
+		.row.g-4 {
+			row-gap: 1rem !important;
+		}
+
+		/* Botones más compactos */
+		.btn-lg {
+			padding: 0.6rem 1.2rem;
+			font-size: 0.9rem;
+		}
+
+		.btn-sm {
+			padding: 0.4rem 0.8rem;
+			font-size: 0.8rem;
+		}
+
+		/* Inputs y labels más compactos */
+		.form-label {
+			font-size: 0.85rem;
+			margin-bottom: 0.3rem;
+		}
+
+		.form-control,
+		.form-select {
+			font-size: 0.85rem;
+			padding: 0.5rem 0.7rem;
+		}
+
+		/* Ajustar área de texto */
+		textarea.form-control {
+			min-height: 60px;
+		}
+	}
+
+	@media (min-width: 768px) and (max-width: 1199.98px) {
+		.sidebar {
+			width: 220px;
+		}
+
+		.main-content {
+			margin-left: 220px;
+		}
+
+		.pets-grid {
+			grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+		}
+	}
+
+	/* ===== SCROLLBAR PERSONALIZADO ===== */
+	::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: var(--bg-body);
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--primary-color);
+		border-radius: 5px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: #6A8EC9;
+	}
+
+	/* ===== SELECCIÓN DE TEXTO ===== */
+	::selection {
+		background-color: var(--primary-color);
+		color: white;
+	}
+
+	/* ===== EFECTOS ADICIONALES ===== */
+	.text-muted {
+		color: var(--text-secondary) !important;
+	}
+
+	strong,
+	.fw-bold {
+		color: var(--text-primary);
+	}
+
+	small,
+	.small {
+		color: var(--text-secondary);
+	}
+
+	/* ===== DROPDOWN ===== */
+	.dropdown-menu {
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-color);
+		border-radius: 8px;
+		box-shadow: var(--shadow-medium);
+	}
+
+	.dropdown-item {
+		color: var(--text-primary);
+		transition: all 0.2s ease;
+	}
+
+	.dropdown-item:hover {
+		background-color: var(--card-hover-bg);
+		color: var(--primary-color);
+	}
+
+	/* ===== TIMELINE (Historia Clínica) ===== */
+	.timeline {
+		position: relative;
+		padding-left: 2rem;
+	}
+
+	.timeline-item {
+		position: relative;
+		padding-bottom: 2rem;
+	}
+
+	.timeline-item::before {
+		content: '';
+		position: absolute;
+		left: -2rem;
+		top: 0;
+		width: 2px;
+		height: 100%;
+		background-color: var(--border-color);
+	}
+
+	.timeline-date {
+		font-weight: 600;
+		color: var(--primary-color);
+		font-size: 0.85rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.timeline-title {
+		font-weight: 600;
+		color: var(--text-primary);
+		margin-bottom: 0.5rem;
+	}
+
+	.timeline-content {
+		color: var(--text-secondary);
+		font-size: 0.9rem;
+	}
+
+	/* ===== UTILIDADES ===== */
+	.text-center {
+		text-align: center;
+	}
+
+	.mb-3 {
+		margin-bottom: 1rem;
+	}
+
+	.mb-4 {
+		margin-bottom: 1.5rem;
+	}
+
+	.mt-3 {
+		margin-top: 1rem;
+	}
+
+	.d-flex {
+		display: flex;
+	}
+
+	.justify-content-between {
+		justify-content: space-between;
+	}
+
+	.align-items-center {
+		align-items: center;
+	}
+
+	.w-100 {
+		width: 100%;
+	}
+
+	/* ===== ANIMACIONES ===== */
+	@keyframes slideIn {
+		from {
+			opacity: 0;
+			transform: translateX(-20px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
 	.sidebar {
-		width: 220px;
+		background: linear-gradient(135deg, var(--sidebar-gradient-start), var(--sidebar-gradient-end));
+		transition: background 0.3s ease;
 	}
 
-	.main-content {
-		margin-left: 220px;
+	[data-theme="dark"] .sidebar-header {
+		background-color: transparent;
 	}
 
-	.pets-grid {
-		grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-	}
-}
-
-/* ===== SCROLLBAR PERSONALIZADO ===== */
-::-webkit-scrollbar {
-	width: 10px;
-}
-
-::-webkit-scrollbar-track {
-	background: var(--bg-body);
-}
-
-::-webkit-scrollbar-thumb {
-	background: var(--primary-color);
-	border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-	background: #6A8EC9;
-}
-
-/* ===== SELECCIÓN DE TEXTO ===== */
-::selection {
-	background-color: var(--primary-color);
-	color: white;
-}
-
-/* ===== EFECTOS ADICIONALES ===== */
-.text-muted {
-	color: var(--text-secondary) !important;
-}
-
-strong,
-.fw-bold {
-	color: var(--text-primary);
-}
-
-small,
-.small {
-	color: var(--text-secondary);
-}
-
-/* ===== DROPDOWN ===== */
-.dropdown-menu {
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-color);
-	border-radius: 8px;
-	box-shadow: var(--shadow-medium);
-}
-
-.dropdown-item {
-	color: var(--text-primary);
-	transition: all 0.2s ease;
-}
-
-.dropdown-item:hover {
-	background-color: var(--card-hover-bg);
-	color: var(--primary-color);
-}
-
-/* ===== TIMELINE (Historia Clínica) ===== */
-.timeline {
-	position: relative;
-	padding-left: 2rem;
-}
-
-.timeline-item {
-	position: relative;
-	padding-bottom: 2rem;
-}
-
-.timeline-item::before {
-	content: '';
-	position: absolute;
-	left: -2rem;
-	top: 0;
-	width: 2px;
-	height: 100%;
-	background-color: var(--border-color);
-}
-
-.timeline-date {
-	font-weight: 600;
-	color: var(--primary-color);
-	font-size: 0.85rem;
-	margin-bottom: 0.5rem;
-}
-
-.timeline-title {
-	font-weight: 600;
-	color: var(--text-primary);
-	margin-bottom: 0.5rem;
-}
-
-.timeline-content {
-	color: var(--text-secondary);
-	font-size: 0.9rem;
-}
-
-/* ===== UTILIDADES ===== */
-.text-center {
-	text-align: center;
-}
-
-.mb-3 {
-	margin-bottom: 1rem;
-}
-
-.mb-4 {
-	margin-bottom: 1.5rem;
-}
-
-.mt-3 {
-	margin-top: 1rem;
-}
-
-.d-flex {
-	display: flex;
-}
-
-.justify-content-between {
-	justify-content: space-between;
-}
-
-.align-items-center {
-	align-items: center;
-}
-
-.w-100 {
-	width: 100%;
-}
-
-/* ===== ANIMACIONES ===== */
-@keyframes slideIn {
-	from {
-		opacity: 0;
-		transform: translateX(-20px);
+	[data-theme="dark"] .sidebar-header h3 {
+		color: #90bbfc;
 	}
 
-	to {
-		opacity: 1;
-		transform: translateX(0);
+	[data-theme="dark"] .user-profile h5 {
+		color: var(--text-primary);
 	}
-}
 
-.sidebar {
-	animation: slideIn 0.4s ease-out;
+	[data-theme="dark"] .user-profile p {
+		color: var(--text-secondary);
+	}
+
+	[data-theme="dark"] .nav-link {
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .nav-link:hover,
+	[data-theme="dark"] .nav-link.active {
+		background-color: rgba(144, 187, 252, 0.15);
+		color: #90bbfc;
+	}
+
+	.card {
+		background-color: var(--bg-card);
+		color: var(--text-primary);
+		transition: background-color 0.3s ease, color 0.3s ease;
+	}
+
+	[data-theme="dark"] .card-header {
+		background: linear-gradient(135deg, rgba(15, 52, 96, 0.95), rgba(22, 33, 62, 0.95));
+		border-bottom-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .card-header h5 {
+		color: var(--text-primary);
+	}
+
+	.pet-card {
+		background-color: var(--bg-card);
+		border-color: var(--border-color);
+		transition: background-color 0.3s ease;
+	}
+
+	[data-theme="dark"] .pet-image-container {
+		background: linear-gradient(135deg, #16213e, #1a365d);
+	}
+
+	[data-theme="dark"] .pet-name {
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .pet-detail {
+		color: var(--text-secondary);
+	}
+
+	.form-control,
+	.form-select {
+		background-color: var(--bg-card);
+		color: var(--text-primary);
+		border-color: var(--border-color);
+		transition: all 0.3s ease;
+	}
+
+	[data-theme="dark"] .form-control:focus,
+	[data-theme="dark"] .form-select:focus {
+		background-color: var(--bg-card);
+		color: var(--text-primary);
+		border-color: var(--primary-color);
+	}
+
+	[data-theme="dark"] .form-label {
+		color: var(--text-primary);
+	}
+
+	.modal-content {
+		background-color: var(--bg-card);
+		color: var(--text-primary);
+		transition: background-color 0.3s ease;
+	}
+
+	[data-theme="dark"] .modal-body {
+		background-color: var(--bg-card);
+	}
+
+	[data-theme="dark"] .table {
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .table tbody td {
+		border-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .table tbody tr:hover {
+		background-color: var(--card-hover-bg);
+	}
+
+	[data-theme="dark"] .content-header {
+		background: linear-gradient(135deg, rgba(15, 52, 96, 0.95), rgba(22, 33, 62, 0.95));
+		border-bottom-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .custom-logout-link {
+		background-color: rgba(15, 52, 96, 0.7);
+		color: var(--text-primary);
+		border-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .custom-logout-link:hover {
+		background-color: rgba(144, 187, 252, 0.2);
+	}
+
+	[data-theme="dark"] .section-header {
+		border-bottom-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .section-header h1 {
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .menu-toggle {
+		background-color: var(--bg-card);
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .btn-close {
+		filter: invert(1);
+	}
+
+	[data-theme="dark"] .notification-item {
+		background-color: rgba(15, 52, 96, 0.5);
+		border-bottom-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .notification-item h6 {
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .notification-item p {
+		color: var(--text-secondary);
+	}
+
+	/* Ajustes adicionales para navbar */
+	[data-theme="dark"] .navbar-light {
+		background-color: transparent !important;
+	}
+
+	[data-theme="dark"] .notification-icon i {
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .logout-text a {
+		color: var(--text-primary);
+	}
+
+
+
+	/* ===== MODO OSCURO - CORRECCIONES ADICIONALES ===== */
+
+	/* Fondo principal del body y contenedor */
+	[data-theme="dark"] body {
+		background-color: var(--bg-body);
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .main-content {
+		background-color: var(--bg-body);
+	}
+
+	[data-theme="dark"] .content-wrapper {
+		background-color: var(--bg-body);
+	}
+
+	[data-theme="dark"] .content-section {
+		background-color: var(--bg-body);
+		color: var(--text-primary);
+	}
+
+	/* Headers y títulos */
+	[data-theme="dark"] .section-header h1,
+	[data-theme="dark"] .section-header h2 {
+		color: var(--text-primary);
+	}
+
+
+	[data-theme="dark"] h1,
+	[data-theme="dark"] h2,
+	[data-theme="dark"] h3,
+	[data-theme="dark"] h4,
+	[data-theme="dark"] h5,
+	[data-theme="dark"] h6 {
+		color: var(--text-primary);
+	}
+
+	/* Textos generales */
+	[data-theme="dark"] p,
+	[data-theme="dark"] span,
+	[data-theme="dark"] label,
+	[data-theme="dark"] div {
+		color: var(--text-primary);
+	}
+
+	/* Cards específicas de mascotas */
+	[data-theme="dark"] .pet-card {
+		background-color: var(--bg-card);
+		border-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .pet-info {
+		background-color: var(--bg-card);
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .pet-name {
+		color: var(--text-primary) !important;
+	}
+
+	[data-theme="dark"] .pet-details {
+		color: var(--text-secondary);
+	}
+
+	[data-theme="dark"] .pet-detail {
+		color: var(--text-secondary) !important;
+	}
+
+	[data-theme="dark"] .pet-detail i {
+		color: #90bbfc;
+	}
+
+	/* Alertas */
+	[data-theme="dark"] .alert {
+		background-color: rgba(15, 52, 96, 0.5);
+		border-color: var(--border-color);
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .alert-info {
+		background-color: rgba(13, 110, 253, 0.15);
+		color: #90bbfc;
+		border-color: rgba(13, 110, 253, 0.3);
+	}
+
+	/* Grid de mascotas */
+	[data-theme="dark"] .pets-grid {
+		background-color: transparent;
+	}
+
+	/* Textos específicos */
+	[data-theme="dark"] .text-muted {
+		color: var(--text-secondary) !important;
+	}
+
+	[data-theme="dark"] .card-text {
+		color: var(--text-primary);
+	}
+
+	/* Badges */
+	[data-theme="dark"] .badge {
+		background-color: rgba(92, 111, 196, 0.3);
+		color: var(--text-primary);
+		border: 1px solid var(--border-color);
+	}
+
+	/* Contenedor principal */
+	[data-theme="dark"] .container-fluid {
+		background-color: var(--bg-body);
+	}
+
+	/* Row principal */
+	[data-theme="dark"] .row {
+		background-color: transparent;
+	}
+
+	/* Columnas */
+	[data-theme="dark"] .col-12,
+	[data-theme="dark"] .col-md-6,
+	[data-theme="dark"] .col-lg-3,
+	[data-theme="dark"] .col-md-8,
+	[data-theme="dark"] .col-lg-9 {
+		background-color: transparent;
+		color: var(--text-primary);
+	}
+
+	/* Iconos FontAwesome */
+	[data-theme="dark"] .fas,
+	[data-theme="dark"] .far,
+	[data-theme="dark"] .fab {
+		color: inherit;
+	}
+
+	/* Links */
+	[data-theme="dark"] a {
+		color: #90bbfc;
+	}
+
+	[data-theme="dark"] a:hover {
+		color: #b8d4ff;
+	}
+
+	/* Sidebar cerrar sesión */
+	[data-theme="dark"] .logout-sidebar {
+		color: #ff6b6b !important;
+	}
+
+	[data-theme="dark"] .logout-sidebar:hover {
+		background-color: rgba(255, 107, 107, 0.1);
+	}
+
+	/* Dropdown */
+	[data-theme="dark"] .dropdown-menu {
+		background-color: var(--bg-card);
+		border-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .dropdown-item {
+		color: var(--text-primary);
+	}
+
+	[data-theme="dark"] .dropdown-item:hover {
+		background-color: rgba(144, 187, 252, 0.15);
+		color: #90bbfc;
+	}
+
+	/* Tablas */
+	[data-theme="dark"] .table-responsive {
+		background-color: var(--bg-card);
+	}
+
+	[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+		background-color: rgba(255, 255, 255, 0.02);
+	}
+
+	[data-theme="dark"] .table-hover tbody tr:hover {
+		background-color: var(--card-hover-bg);
+	}
+
+	[data-theme="dark"] .table thead {
+		background: linear-gradient(135deg, #16213e, #1a365d);
+	}
+
+	/* Imagen de perfil container */
+	[data-theme="dark"] .user-profile img {
+		border-color: rgba(144, 187, 252, 0.3);
+	}
+
+	/* Botones outline en modo oscuro */
+	[data-theme="dark"] .btn-outline-primary {
+		color: #90bbfc;
+		border-color: #90bbfc;
+	}
+
+	[data-theme="dark"] .btn-outline-primary:hover {
+		background-color: #90bbfc;
+		color: #1a1a2e;
+	}
+
+	[data-theme="dark"] .btn-outline-secondary {
+		color: var(--text-secondary);
+		border-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .btn-outline-secondary:hover {
+		background-color: rgba(144, 187, 252, 0.15);
+		color: var(--text-primary);
+	}
+
+	/* Inputs en modo oscuro */
+	[data-theme="dark"] input::placeholder,
+	[data-theme="dark"] textarea::placeholder {
+		color: var(--text-secondary);
+		opacity: 0.6;
+	}
+
+	/* Strong y bold texts */
+	[data-theme="dark"] strong,
+	[data-theme="dark"] .fw-bold {
+		color: var(--text-primary);
+	}
+
+	/* Small text */
+	[data-theme="dark"] small,
+	[data-theme="dark"] .small {
+		color: var(--text-secondary);
+	}
+
+
+
+	/* ===== FIX COMPLETO - AGREGAR AL FINAL DEL CSS ===== */
+
+	/* ===== 1. FIX PARA TABLA DE MASCOTAS ===== */
+
+	/* MODO CLARO - Forzar texto negro en tabla */
+	.table,
+	.table tbody,
+	.table tbody tr,
+	.table tbody td,
+	.table td,
+	.table td strong,
+	.table td span {
+		color: #000000 !important;
+	}
+
+	.table thead th {
+		color: white !important;
+	}
+
+	.table tbody td {
+		background-color: white !important;
+	}
+
+	.table tbody tr:hover {
+		background-color: rgba(92, 111, 196, 0.05) !important;
+	}
+
+	.table tbody tr:hover td {
+		color: #000000 !important;
+	}
+
+	.table td img {
+		border: 1px solid #e9ecef;
+	}
+
+	.table .text-muted {
+		color: #6c757d !important;
+	}
+
+	/* MODO OSCURO - Sobrescribir para texto claro */
+	[data-theme="dark"] .table,
+	[data-theme="dark"] .table tbody,
+	[data-theme="dark"] .table tbody tr,
+	[data-theme="dark"] .table tbody td,
+	[data-theme="dark"] .table td,
+	[data-theme="dark"] .table td strong,
+	[data-theme="dark"] .table td span {
+		color: var(--text-primary) !important;
+		background-color: var(--bg-card) !important;
+	}
+
+	[data-theme="dark"] .table thead th {
+		color: var(--text-primary) !important;
+		background: linear-gradient(135deg, #16213e, #1a365d) !important;
+		border-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .table tbody td {
+		border-color: var(--border-color);
+	}
+
+	[data-theme="dark"] .table tbody tr:hover {
+		background-color: var(--card-hover-bg) !important;
+	}
+
+	[data-theme="dark"] .table tbody tr:hover td {
+		color: var(--text-primary) !important;
+	}
+
+	[data-theme="dark"] .table td img {
+		border: 1px solid var(--border-color);
+	}
+
+	[data-theme="dark"] .table .text-muted {
+		color: var(--text-secondary) !important;
+	}
+
+	[data-theme="dark"] .table-responsive {
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-color);
+	}
+
+	/* ===== 2. FIX PARA BOTÓN "CAMBIAR CONTRASEÑA" ===== */
+
+	/* Modo CLARO - Mantener texto oscuro en botón amarillo */
+	.btn-warning,
+	.btn-warning:hover,
+	.btn-warning:focus,
+	.btn-warning:active {
+		color: #000000 !important;
+		background-color: #ffc107 !important;
+		border-color: #ffc107 !important;
+	}
+
+	.btn-warning i {
+		color: #000000 !important;
+	}
+
+	/* Modo OSCURO - Mantener texto oscuro en botón amarillo */
+	[data-theme="dark"] .btn-warning,
+	[data-theme="dark"] .btn-warning:hover,
+	[data-theme="dark"] .btn-warning:focus,
+	[data-theme="dark"] .btn-warning:active {
+		color: #000000 !important;
+		background-color: #ffc107 !important;
+		border-color: #ffc107 !important;
+	}
+
+	[data-theme="dark"] .btn-warning i {
+		color: #000000 !important;
+	}
+
+	/* Asegurar que el link dentro del botón también sea oscuro */
+	.btn-warning a,
+	[data-theme="dark"] .btn-warning a {
+		color: #000000 !important;
+		text-decoration: none;
+	}
+
+	/* ===== 3. FIX PARA "ZONA DE PELIGRO" - HEADER ===== */
+
+	/* Modo CLARO - Texto negro en header de "Zona de Peligro" */
+	.card-header.bg-danger,
+	.bg-danger.text-white {
+		color: #000000 !important;
+		background-color: #dc3545 !important;
+	}
+
+	.card-header.bg-danger h5,
+	.card-header.bg-danger .mb-0,
+	.bg-danger h5 {
+		color: #000000 !important;
+	}
+
+	.card-header.bg-danger i {
+		color: #000000 !important;
+	}
+
+	/* Modo OSCURO - Texto blanco en header de "Zona de Peligro" */
+	[data-theme="dark"] .card-header.bg-danger,
+	[data-theme="dark"] .bg-danger.text-white {
+		color: white !important;
+		background-color: #dc3545 !important;
+	}
+
+	[data-theme="dark"] .card-header.bg-danger h5,
+	[data-theme="dark"] .card-header.bg-danger .mb-0,
+	[data-theme="dark"] .bg-danger h5 {
+		color: white !important;
+	}
+
+	[data-theme="dark"] .card-header.bg-danger i {
+		color: white !important;
+	}
+
+	/* ===== 4. FIX PARA CARD HEADER "SEGURIDAD" (AMARILLO) ===== */
+
+	/* Modo CLARO - Texto negro en header de "Seguridad" */
+	.card-header.bg-warning,
+	.bg-warning.text-dark {
+		color: #000000 !important;
+		background-color: #ffc107 !important;
+	}
+
+	.card-header.bg-warning h5,
+	.card-header.bg-warning .mb-0,
+	.bg-warning h5 {
+		color: #000000 !important;
+	}
+
+	.card-header.bg-warning i {
+		color: #000000 !important;
+	}
+
+	/* Modo OSCURO - Mantener texto negro en header de "Seguridad" */
+	[data-theme="dark"] .card-header.bg-warning,
+	[data-theme="dark"] .bg-warning.text-dark {
+		color: #000000 !important;
+		background-color: #ffc107 !important;
+	}
+
+	[data-theme="dark"] .card-header.bg-warning h5,
+	[data-theme="dark"] .card-header.bg-warning .mb-0,
+	[data-theme="dark"] .bg-warning h5 {
+		color: rgb(255, 255, 255) !important;
+	}
+
+	[data-theme="dark"] .card-header.bg-warning i {
+		color: rgb(255, 255, 255) !important;
+	}
+
+	/* ===== 5. FIX ADICIONAL - BOTONES DE ACCIÓN EN CONFIGURACIÓN ===== */
+
+	/* Asegurar que los botones mantengan sus colores correctos */
+	.btn-outline-danger {
+		color: #dc3545 !important;
+		border-color: #dc3545 !important;
+		background-color: transparent !important;
+	}
+
+	.btn-outline-danger:hover {
+		color: white !important;
+		background-color: #dc3545 !important;
+		border-color: #dc3545 !important;
+	}
+
+	[data-theme="dark"] .btn-outline-danger {
+		color: #ff6b6b !important;
+		border-color: #ff6b6b !important;
+		background-color: transparent !important;
+	}
+
+	[data-theme="dark"] .btn-outline-danger:hover {
+		color: white !important;
+		background-color: #ff6b6b !important;
+		border-color: #ff6b6b !important;
+	}
+
+	/* ===== 6. ELIMINAR ESTILOS CONFLICTIVOS PREVIOS ===== */
+
+	/* Anular cualquier regla genérica que esté afectando los cards de configuración */
+	[data-theme="dark"] .card-header.bg-danger *,
+	[data-theme="dark"] .card-header.bg-warning * {
+		color: inherit !important;
+	}
+
+	.card-header.bg-danger *,
+	.card-header.bg-warning * {
+		color: inherit !important;
+	}
+
+	/* ===== ESTILOS PERSONALIZADOS PARA SWEETALERT2 ===== */
+	.swal-popup-usuario {
+		font-family: 'Fredoka', sans-serif !important;
+		border-radius: 15px !important;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+	}
+
+	.swal-title-usuario {
+		color: #2c3e50 !important;
+		font-weight: 600 !important;
+	}
+
+	.swal-content-usuario {
+		color: #5a6c7d !important;
+	}
+
+	/* ===== EFECTO HOVER PARA CERRAR SESIÓN EN SIDEBAR ===== */
+	.logout-sidebar:hover {
+		background-color: rgba(220, 53, 69, 0.1) !important;
+		transform: translateX(5px);
+		transition: all 0.3s ease;
+		animation: slideIn 0.4s ease-out;
+	}
 }

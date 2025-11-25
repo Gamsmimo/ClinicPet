@@ -147,7 +147,8 @@ public class PerfilAdminController {
 			@RequestParam Integer edad, @RequestParam String correo, @RequestParam String telefono,
 			@RequestParam String especialidad, @RequestParam String tarjetaProfesional,
 			@RequestParam String experiencia, @RequestParam String password, @RequestParam String tipoDocumento,
-			@RequestParam String numDocumento, @RequestParam String direccion, HttpSession session,
+			@RequestParam String numDocumento, @RequestParam String direccion,
+			@RequestParam(required = false) Integer veterinariaId, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 
 		if (!verificarSesionAdmin(session)) {
@@ -194,6 +195,19 @@ public class PerfilAdminController {
 			veterinario.setTarjetaProfesional(tarjetaProfesional);
 			veterinario.setExperiencia(experiencia);
 			veterinario.setEstado(true);
+
+			// ✅ ASIGNAR VETERINARIA SI FUE SELECCIONADA
+			if (veterinariaId != null && veterinariaId > 0) {
+				Optional<Veterinaria> veterinariaOpt = veterinariaRepo.findById(veterinariaId);
+				if (veterinariaOpt.isPresent()) {
+					veterinario.setVeterinaria(veterinariaOpt.get());
+					System.out.println("✅ Veterinaria asignada: " + veterinariaOpt.get().getNombre());
+				} else {
+					System.out.println("⚠️ Veterinaria con ID " + veterinariaId + " no encontrada");
+				}
+			} else {
+				System.out.println("ℹ️ No se seleccionó veterinaria para este veterinario");
+			}
 
 			veterinarioRepo.save(veterinario);
 

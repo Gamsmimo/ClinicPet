@@ -211,21 +211,21 @@ function eliminarMascota(id) {
 				'Content-Type': 'application/json',
 			}
 		})
-		.then(response => {
-			console.log('Respuesta del servidor:', response.status);
-			if (response.ok) {
-				alert('Mascota eliminada exitosamente');
-				location.reload();
-			} else {
-				return response.text().then(errorMessage => {
-					alert('Error al eliminar la mascota: ' + errorMessage);
-				});
-			}
-		})
-		.catch(error => {
-			console.error('Error en la solicitud:', error);
-			alert('Error de conexión: ' + error.message);
-		});
+			.then(response => {
+				console.log('Respuesta del servidor:', response.status);
+				if (response.ok) {
+					alert('Mascota eliminada exitosamente');
+					location.reload();
+				} else {
+					return response.text().then(errorMessage => {
+						alert('Error al eliminar la mascota: ' + errorMessage);
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error en la solicitud:', error);
+				alert('Error de conexión: ' + error.message);
+			});
 	}
 }
 
