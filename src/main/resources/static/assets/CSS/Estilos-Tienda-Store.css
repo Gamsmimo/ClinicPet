@@ -1,3 +1,56 @@
+/* ===== BOTÓN VOLVER A TIENDAS - SOLO ICONO ===== */
+.btn-back-to-stores {
+	position: fixed;
+	bottom: 30px;
+	left: 30px;
+	background: #018099;
+	color: white;
+	border: none;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(1, 128, 153, 0.4);
+	transition: all 0.3s ease;
+	z-index: 999;
+}
+
+.btn-back-to-stores:hover {
+	background: #015f73;
+	transform: scale(1.1) translateX(-3px);
+	box-shadow: 0 6px 20px rgba(1, 128, 153, 0.6);
+}
+
+.btn-back-to-stores i {
+	font-size: 1.3rem;
+	transition: transform 0.3s ease;
+}
+
+.btn-back-to-stores:hover i {
+	transform: rotate(-15deg);
+}
+
+.btn-back-to-stores span {
+	display: none;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+	.btn-back-to-stores {
+		bottom: 20px;
+		left: 20px;
+		width: 45px;
+		height: 45px;
+	}
+	
+	.btn-back-to-stores i {
+		font-size: 1.1rem;
+	}
+}
+
 /* ===== SECCIÓN DE SELECCIÓN DE TIENDA ===== */
 .store-selection-section {
 	min-height: calc(100vh - 100px);

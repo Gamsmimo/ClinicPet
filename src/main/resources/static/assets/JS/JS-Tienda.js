@@ -511,76 +511,84 @@ function showNotification(message) {
 }
 
 // ===== DATOS DE TIENDAS =====
-const stores = [
-	{
-		id: 1,
-		name: "PetShop Centro",
-		address: "Calle 19 #14-25, Centro",
-		phone: "+57 300 123 4567",
-		hours: "Lun-Sáb: 8AM-7PM",
-		featured: true
-	},
-	{
-		id: 2,
-		name: "PetShop Norte",
-		address: "Av. Boyacá #45-12, Norte",
-		phone: "+57 300 765 4321",
-		hours: "Lun-Dom: 9AM-8PM",
-		featured: false
-	},
-	{
-		id: 3,
-		name: "PetShop Sur",
-		address: "Carrera 15 #8-30, Sur",
-		phone: "+57 301 234 5678",
-		hours: "Lun-Sáb: 8AM-6PM",
-		featured: false
-	},
-	{
-		id: 4,
-		name: "PetShop Plaza",
-		address: "Centro Comercial Plaza, Local 205",
-		phone: "+57 302 987 6543",
-		hours: "Lun-Dom: 10AM-9PM",
-		featured: true
-	}
-];
-
+let stores = [];
 let selectedStore = null;
 
 // ===== FUNCIONES DE TIENDAS =====
+async function loadStores() {
+	try {
+		const response = await fetch('/usuarios/api/veterinarias');
+		if (!response.ok) {
+			throw new Error('Error al cargar las tiendas');
+		}
+		stores = await response.json();
+		console.log('✅ Tiendas cargadas:', stores);
+		renderStores();
+	} catch (error) {
+		console.error('❌ Error al cargar tiendas:', error);
+		// Mostrar mensaje de error al usuario
+		const storesGrid = document.getElementById('storesGrid');
+		storesGrid.innerHTML = `
+			<div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+				<i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff6b6b; margin-bottom: 20px;"></i>
+				<h3 style="color: var(--text-color); margin-bottom: 10px;">Error al cargar las tiendas</h3>
+				<p style="color: var(--text-secondary);">Por favor, intenta recargar la página</p>
+				<button onclick="loadStores()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
+					<i class="fas fa-redo"></i> Reintentar
+				</button>
+			</div>
+		`;
+	}
+}
+
 function renderStores() {
 	const storesGrid = document.getElementById('storesGrid');
 	
-	storesGrid.innerHTML = stores.map(store => `
-		<div class="store-card" onclick="selectStore(${store.id})">
-			${store.featured ? '<div class="store-badge">⭐ Destacada</div>' : ''}
-			<div class="store-card-image">
-				<i class="fas fa-store-alt"></i>
+	if (!stores || stores.length === 0) {
+		storesGrid.innerHTML = `
+			<div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+				<i class="fas fa-store-slash" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 20px;"></i>
+				<h3 style="color: var(--text-color);">No hay tiendas disponibles</h3>
+				<p style="color: var(--text-secondary);">Por favor, contacta al administrador</p>
 			</div>
-			<div class="store-card-content">
-				<h3 class="store-card-name">${store.name}</h3>
-				<div class="store-card-info">
-					<div class="store-info-item">
-						<i class="fas fa-map-marker-alt"></i>
-						<span>${store.address}</span>
-					</div>
-					<div class="store-info-item">
-						<i class="fas fa-phone"></i>
-						<span>${store.phone}</span>
-					</div>
-					<div class="store-info-item">
-						<i class="fas fa-clock"></i>
-						<span>${store.hours}</span>
-					</div>
+		`;
+		return;
+	}
+	
+	storesGrid.innerHTML = stores.map(store => {
+		// Determinar si es destacada (puedes usar el campo 'estado' o agregar lógica personalizada)
+		const isFeatured = store.estado === 'Activo' || store.estado === 'activo';
+		
+		return `
+			<div class="store-card" onclick="selectStore(${store.id})">
+				${isFeatured ? '<div class="store-badge">⭐ Disponible</div>' : ''}
+				<div class="store-card-image">
+					<i class="fas fa-store-alt"></i>
 				</div>
-				<button class="store-card-button">
-					<i class="fas fa-shopping-bag"></i>
-					Ver Productos
-				</button>
+				<div class="store-card-content">
+					<h3 class="store-card-name">${store.nombre || 'Tienda'}</h3>
+					<div class="store-card-info">
+						<div class="store-info-item">
+							<i class="fas fa-map-marker-alt"></i>
+							<span>${store.direccion || 'Dirección no disponible'}</span>
+						</div>
+						<div class="store-info-item">
+							<i class="fas fa-phone"></i>
+							<span>${store.telefono || 'Teléfono no disponible'}</span>
+						</div>
+						<div class="store-info-item">
+							<i class="fas fa-clock"></i>
+							<span>${store.horario || 'Horario no disponible'}</span>
+						</div>
+					</div>
+					<button class="store-card-button">
+						<i class="fas fa-shopping-bag"></i>
+						Ver Productos
+					</button>
+				</div>
 			</div>
-		</div>
-	`).join('');
+		`;
+	}).join('');
 }
 
 function selectStore(storeId) {
@@ -588,6 +596,9 @@ function selectStore(storeId) {
 	
 	// Ocultar selección de tiendas
 	document.getElementById('storeSelection').style.display = 'none';
+	
+	// Mostrar botón de volver
+	document.getElementById('btnBackToStores').style.display = 'flex';
 	
 	// Mostrar secciones de productos
 	document.getElementById('inicio').style.display = 'flex';
@@ -605,13 +616,37 @@ function selectStore(storeId) {
 	// Scroll suave al inicio
 	window.scrollTo({ top: 0, behavior: 'smooth' });
 	
-	console.log(`Tienda seleccionada: ${selectedStore.name}`);
+	console.log(`Tienda seleccionada: ${selectedStore.nombre || selectedStore.name}`);
+}
+
+// Función para volver a la selección de tiendas
+function backToStoreSelection() {
+	// Ocultar botón de volver
+	document.getElementById('btnBackToStores').style.display = 'none';
+	
+	// Ocultar secciones de productos
+	document.getElementById('inicio').style.display = 'none';
+	document.getElementById('benefitsSection').style.display = 'none';
+	document.getElementById('filtersSection').style.display = 'none';
+	document.getElementById('featuredSection').style.display = 'none';
+	document.getElementById('allProductsSection').style.display = 'none';
+	
+	// Mostrar selección de tiendas
+	document.getElementById('storeSelection').style.display = 'block';
+	
+	// Limpiar tienda seleccionada
+	selectedStore = null;
+	
+	// Scroll suave al inicio
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+	
+	console.log('🔙 Volviendo a la selección de tiendas');
 }
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
-	// Renderizar tiendas al cargar
-	renderStores();
+	// Cargar tiendas desde la base de datos
+	loadStores();
 
 	// Carrito
 	document.getElementById("openCart").addEventListener("click", () => {
