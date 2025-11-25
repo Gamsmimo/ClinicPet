@@ -3,9 +3,11 @@ const themeToggleBtn = document.getElementById('themeToggle');
 const themeIcon = document.querySelector('.theme-icon');
 const fileInput = document.getElementById('fileInput');
 const fileName = document.getElementById('fileName');
-const profileImage = document.getElementById('profileImage');
+let profileImage = document.getElementById('profileImage');
 const form = document.getElementById('imageUploadForm');
 const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+
+// Inicialización se maneja en DOMContentLoaded
 
 // ===== MANEJO DE SUBIDA DE IMAGEN =====
 if (fileInput && fileName) {
@@ -66,12 +68,14 @@ function applyTheme(theme) {
 	document.body.setAttribute('data-theme', theme);
 	localStorage.setItem('clinicpet-theme', theme);
 
-	if (theme === 'dark') {
-		themeIcon.classList.remove('bi-moon-stars-fill');
-		themeIcon.classList.add('bi-sun-fill');
-	} else {
-		themeIcon.classList.remove('bi-sun-fill');
-		themeIcon.classList.add('bi-moon-stars-fill');
+	if (themeIcon) {
+		if (theme === 'dark') {
+			themeIcon.classList.remove('bi-moon-stars-fill');
+			themeIcon.classList.add('bi-sun-fill');
+		} else {
+			themeIcon.classList.remove('bi-sun-fill');
+			themeIcon.classList.add('bi-moon-stars-fill');
+		}
 	}
 }
 
@@ -90,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	setupModals();
 	setupFormValidation();
 	setupAuthorityAssignment();
+	setupTabs();
 
 	// Deshabilitar botón de subir si no hay archivo seleccionado
 	if (submitBtn && (!fileInput || !fileInput.files || fileInput.files.length === 0)) {
@@ -225,19 +230,27 @@ function mostrarMensaje(mensaje, tipo = 'info') {
 // ===== FUNCIONES DE CARGA DE DETALLES =====
 function verMascota(id) {
 	fetch(`/admin/mascota/${id}`)
-		.then(res => res.json())
+		.then(res => {
+			if (!res.ok) throw new Error('Error al cargar mascota');
+			return res.json();
+		})
 		.then(data => {
-			document.getElementById('modalTitulo').innerText = 'Detalles de Mascota';
-			document.getElementById('modalCuerpo').innerHTML = `
-                <p><strong>Nombre:</strong> ${data.nombre}</p>
-                <p><strong>Especie:</strong> ${data.especie}</p>
-                <p><strong>Edad:</strong> ${data.edad}</p>
-                <p><strong>Género:</strong> ${data.genero}</p>
-                <p><strong>Tamaño:</strong> ${data.tamano}</p>
-                <p><strong>Descripción:</strong> ${data.descripcion}</p>
-                <p><strong>Dueño:</strong> ${data.usuario.nombres} ${data.usuario.apellidos}</p>
-                <img src="${data.foto || 'https://via.placeholder.com/150'}" width="150" />
-            `;
+			const modalTitulo = document.getElementById('modalTitulo');
+			const modalCuerpo = document.getElementById('modalCuerpo');
+
+			if (modalTitulo) modalTitulo.innerText = 'Detalles de Mascota';
+			if (modalCuerpo) {
+				modalCuerpo.innerHTML = `
+					<p><strong>Nombre:</strong> ${data.nombre}</p>
+					<p><strong>Especie:</strong> ${data.especie}</p>
+					<p><strong>Edad:</strong> ${data.edad}</p>
+					<p><strong>Género:</strong> ${data.genero}</p>
+					<p><strong>Tamaño:</strong> ${data.tamano}</p>
+					<p><strong>Descripción:</strong> ${data.descripcion}</p>
+					<p><strong>Dueño:</strong> ${data.usuario.nombres} ${data.usuario.apellidos}</p>
+					<img src="${data.foto || 'https://via.placeholder.com/150'}" width="150" alt="Foto de mascota" />
+				`;
+			}
 			abrirModal('detalleModal');
 		})
 		.catch(error => {
@@ -248,55 +261,91 @@ function verMascota(id) {
 
 function verUsuario(id) {
 	fetch(`/admin/usuario/${id}`)
-		.then(res => res.json())
+		.then(res => {
+			if (!res.ok) throw new Error('Error al cargar usuario');
+			return res.json();
+		})
 		.then(data => {
-			document.getElementById('modalTitulo').innerText = 'Detalles de Usuario';
-			document.getElementById('modalCuerpo').innerHTML = `
-                <p><strong>Nombre:</strong> ${data.nombres} ${data.apellidos}</p>
-                <p><strong>Correo:</strong> ${data.correo}</p>
-                <p><strong>Teléfono:</strong> ${data.telefono}</p>
-                <p><strong>Dirección:</strong> ${data.direccion}</p>
-                <p><strong>Edad:</strong> ${data.edad}</p>
-            `;
+			const modalTitulo = document.getElementById('modalTitulo');
+			const modalCuerpo = document.getElementById('modalCuerpo');
+
+			if (modalTitulo) modalTitulo.innerText = 'Detalles de Usuario';
+			if (modalCuerpo) {
+				modalCuerpo.innerHTML = `
+					<p><strong>Nombre:</strong> ${data.nombres} ${data.apellidos}</p>
+					<p><strong>Correo:</strong> ${data.correo}</p>
+					<p><strong>Teléfono:</strong> ${data.telefono}</p>
+					<p><strong>Dirección:</strong> ${data.direccion}</p>
+					<p><strong>Edad:</strong> ${data.edad}</p>
+				`;
+			}
 			abrirModal('detalleModal');
+		})
+		.catch(error => {
+			console.error('Error al cargar usuario:', error);
+			mostrarMensaje('No se pudo cargar la información del usuario', 'error');
 		});
 }
 
 function verVeterinario(id) {
 	fetch(`/admin/veterinario/${id}`)
-		.then(res => res.json())
+		.then(res => {
+			if (!res.ok) throw new Error('Error al cargar veterinario');
+			return res.json();
+		})
 		.then(data => {
-			document.getElementById('modalTitulo').innerText = 'Detalles de Veterinario';
-			document.getElementById('modalCuerpo').innerHTML = `
-                <p><strong>Nombre:</strong> ${data.usuario.nombres} ${data.usuario.apellidos}</p>
-                <p><strong>Edad:</strong> ${data.usuario.edad}</p>
-                <p><strong>Documento:</strong> ${data.usuario.tipoDocumento} ${data.usuario.numDocumento}</p>
-                <p><strong>Dirección:</strong> ${data.usuario.direccion}</p>
-                <p><strong>Teléfono:</strong> ${data.usuario.telefono}</p>
-                <p><strong>Correo:</strong> ${data.usuario.correo}</p>
-                <p><strong>Especialidad:</strong> ${data.especialidad}</p>
-                <p><strong>Tarjeta Profesional:</strong> ${data.tarjetaProfesional}</p>
-                <p><strong>Experiencia:</strong> ${data.experiencia} años</p>
-            `;
+			const modalTitulo = document.getElementById('modalTitulo');
+			const modalCuerpo = document.getElementById('modalCuerpo');
+
+			if (modalTitulo) modalTitulo.innerText = 'Detalles de Veterinario';
+			if (modalCuerpo) {
+				modalCuerpo.innerHTML = `
+					<p><strong>Nombre:</strong> ${data.usuario.nombres} ${data.usuario.apellidos}</p>
+					<p><strong>Edad:</strong> ${data.usuario.edad}</p>
+					<p><strong>Documento:</strong> ${data.usuario.tipoDocumento} ${data.usuario.numDocumento}</p>
+					<p><strong>Dirección:</strong> ${data.usuario.direccion}</p>
+					<p><strong>Teléfono:</strong> ${data.usuario.telefono}</p>
+					<p><strong>Correo:</strong> ${data.usuario.correo}</p>
+					<p><strong>Especialidad:</strong> ${data.especialidad}</p>
+					<p><strong>Tarjeta Profesional:</strong> ${data.tarjetaProfesional}</p>
+					<p><strong>Experiencia:</strong> ${data.experiencia} años</p>
+				`;
+			}
 			abrirModal('detalleModal');
+		})
+		.catch(error => {
+			console.error('Error al cargar veterinario:', error);
+			mostrarMensaje('No se pudo cargar la información del veterinario', 'error');
 		});
 }
 
 function verVeterinaria(id) {
 	fetch(`/admin/veterinaria/${id}`)
-		.then(res => res.json())
+		.then(res => {
+			if (!res.ok) throw new Error('Error al cargar veterinaria');
+			return res.json();
+		})
 		.then(data => {
-			document.getElementById('modalTitulo').innerText = 'Detalles de Veterinaria';
-			document.getElementById('modalCuerpo').innerHTML = `
-                <p><strong>Nombre:</strong> ${data.nombre}</p>
-                <p><strong>RUT:</strong> ${data.rut}</p>
-                <p><strong>Dirección:</strong> ${data.direccion}</p>
-                <p><strong>Correo:</strong> ${data.correo}</p>
-                <p><strong>Horario:</strong> ${data.horario}</p>
-                <p><strong>Descripción:</strong> ${data.descripcion}</p>
-                <p><strong>Estado:</strong> ${data.estado}</p>
-            `;
+			const modalTitulo = document.getElementById('modalTitulo');
+			const modalCuerpo = document.getElementById('modalCuerpo');
+
+			if (modalTitulo) modalTitulo.innerText = 'Detalles de Veterinaria';
+			if (modalCuerpo) {
+				modalCuerpo.innerHTML = `
+					<p><strong>Nombre:</strong> ${data.nombre}</p>
+					<p><strong>RUT:</strong> ${data.rut}</p>
+					<p><strong>Dirección:</strong> ${data.direccion}</p>
+					<p><strong>Correo:</strong> ${data.correo}</p>
+					<p><strong>Horario:</strong> ${data.horario}</p>
+					<p><strong>Descripción:</strong> ${data.descripcion}</p>
+					<p><strong>Estado:</strong> ${data.estado}</p>
+				`;
+			}
 			abrirModal('detalleModal');
+		})
+		.catch(error => {
+			console.error('Error al cargar veterinaria:', error);
+			mostrarMensaje('No se pudo cargar la información de la veterinaria', 'error');
 		});
 }
 
@@ -306,6 +355,12 @@ function setupAuthorityAssignment() {
 		if (e.target.classList.contains('btn-assign')) {
 			const reportId = e.target.getAttribute('data-report-id');
 			const select = document.querySelector(`.authority-select[data-report-id="${reportId}"]`);
+
+			if (!select) {
+				mostrarMensaje('Error: No se encontró el selector de autoridad', 'error');
+				return;
+			}
+
 			const selectedValue = select.value;
 			const selectedText = select.options[select.selectedIndex].text;
 
@@ -353,6 +408,39 @@ function setupAuthorityAssignment() {
 	});
 }
 
+// ===== CONFIGURACIÓN DE TABS =====
+function setupTabs() {
+	document.querySelectorAll('.tab-btn').forEach(button => {
+		button.addEventListener('click', function() {
+			// Obtener el contenedor padre de tabs
+			const tabsContainer = this.closest('.tabs').parentElement;
+
+			// Remover clase active de todos los botones en este contenedor
+			tabsContainer.querySelectorAll('.tab-btn').forEach(btn =>
+				btn.classList.remove('active')
+			);
+
+			// Agregar clase active al botón clickeado
+			this.classList.add('active');
+
+			// Obtener el ID del tab a mostrar
+			const tabId = this.getAttribute('data-tab');
+
+			// Ocultar todos los tab-content en este contenedor
+			tabsContainer.querySelectorAll('.tab-content').forEach(content =>
+				content.classList.remove('active')
+			);
+
+			// Mostrar el tab-content correspondiente
+			const targetTab = document.getElementById(tabId);
+			if (targetTab) {
+				targetTab.classList.add('active');
+			}
+		});
+	});
+}
+
+
 // ===== EXPONER FUNCIONES AL HTML =====
 window.abrirModal = abrirModal;
 window.cerrarModal = cerrarModal;
@@ -361,4 +449,4 @@ window.verUsuario = verUsuario;
 window.verVeterinario = verVeterinario;
 window.verVeterinaria = verVeterinaria;
 window.cambiarFotoPerfil = cambiarFotoPerfil;
-window.cambiarEstadoUsuario = cambiarEstadoUsuario;
+// window.cambiarEstadoUsuario = cambiarEstadoUsuario; // Función no implementada
