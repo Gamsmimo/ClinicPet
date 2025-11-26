@@ -30,9 +30,12 @@
 </head>
 
 <body>
+	<!-- Overlay para cerrar sidebar en móviles -->
+	<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 	<div class="container-fluid">
 		<div class="row">
-			<nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+			<nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar">
 				<div class="sidebar-header">
 					<h3 class="text-center">HelpYourPet</h3>
 					<div class="user-profile text-center">
@@ -56,21 +59,13 @@
 							<i class="fas fa-paw me-2"></i>Mis Mascotas
 						</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#historia-clinica">
-							<i class="fas fa-file-medical me-2"></i>Historia Clínica
-						</a>
-					</li>
+
 					<li class="nav-item">
 						<a class="nav-link" href="#compras">
 							<i class="fas fa-shopping-cart me-2"></i>Mis Compras
 						</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#citas">
-							<i class="fas fa-calendar-alt me-2"></i>Citas Veterinarias
-						</a>
-					</li>
+
 					<li class="nav-item">
 						<a class="nav-link" href="#configuracion">
 							<i class="fas fa-cog me-2"></i>Configuración
@@ -84,15 +79,6 @@
 						</a>
 					</li>
 				</ul>
-
-				<!-- Botón de cambio de tema -->
-				<div class="theme-toggle-container">
-					<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
-					<label for="themeToggle" class="theme-toggle-label">
-						<i class="fas fa-moon toggle-icon moon-icon"></i>
-						<i class="fas fa-sun toggle-icon sun-icon"></i>
-					</label>
-				</div>
 			</nav>
 
 			<!-- Contenido Principal -->
@@ -115,9 +101,23 @@
 					<div class="section-header">
 						<h1 class="h2">Hola, <span id="username-header" th:text="${usuarioLogueado.nombres}">Juan</span>
 						</h1>
-						<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
-							<i class="fas fa-home"></i>
-						</a>
+						<div class="d-flex gap-2 align-items-center">
+							<!-- Botón Hamburguesa (solo móviles) -->
+							<button class="menu-toggle" id="menuToggle1">
+								<i class="fas fa-bars"></i>
+							</button>
+							<!-- Botón de cambio de tema -->
+							<div class="theme-toggle-container">
+								<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
+								<label for="themeToggle" class="theme-toggle-label">
+									<i class="fas fa-moon toggle-icon moon-icon"></i>
+									<i class="fas fa-sun toggle-icon sun-icon"></i>
+								</label>
+							</div>
+							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
+								<i class="fas fa-home"></i>
+							</a>
+						</div>
 					</div>
 
 					<!-- Mis Mascotas (Preview) -->
@@ -179,6 +179,18 @@
 					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-paw me-2"></i>Mis Mascotas</h1>
 						<div class="d-flex gap-2 align-items-center">
+							<!-- Botón Hamburguesa (solo móviles) -->
+							<button class="menu-toggle" id="menuToggle2">
+								<i class="fas fa-bars"></i>
+							</button>
+							<!-- Botón de cambio de tema -->
+							<div class="theme-toggle-container">
+								<input type="checkbox" id="themeToggle2" class="theme-toggle-checkbox">
+								<label for="themeToggle2" class="theme-toggle-label">
+									<i class="fas fa-moon toggle-icon moon-icon"></i>
+									<i class="fas fa-sun toggle-icon sun-icon"></i>
+								</label>
+							</div>
 							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
 								<i class="fas fa-home"></i>
 							</a>
@@ -254,6 +266,18 @@
 					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-file-medical me-2"></i>Historia Clínica</h1>
 						<div class="d-flex gap-2 align-items-center">
+							<!-- Botón Hamburguesa (solo móviles) -->
+							<button class="menu-toggle" id="menuToggle3">
+								<i class="fas fa-bars"></i>
+							</button>
+							<!-- Botón de cambio de tema -->
+							<div class="theme-toggle-container">
+								<input type="checkbox" id="themeToggle3" class="theme-toggle-checkbox">
+								<label for="themeToggle3" class="theme-toggle-label">
+									<i class="fas fa-moon toggle-icon moon-icon"></i>
+									<i class="fas fa-sun toggle-icon sun-icon"></i>
+								</label>
+							</div>
 							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
 								<i class="fas fa-home"></i>
 							</a>
@@ -299,12 +323,24 @@
 					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-shopping-cart me-2"></i>Mis Compras</h1>
 						<div class="d-flex gap-2 align-items-center">
+							<!-- Botón Hamburguesa (solo móviles) -->
+							<button class="menu-toggle" id="menuToggle4">
+								<i class="fas fa-bars"></i>
+							</button>
+							<!-- Botón de cambio de tema -->
+							<div class="theme-toggle-container">
+								<input type="checkbox" id="themeToggle4" class="theme-toggle-checkbox">
+								<label for="themeToggle4" class="theme-toggle-label">
+									<i class="fas fa-moon toggle-icon moon-icon"></i>
+									<i class="fas fa-sun toggle-icon sun-icon"></i>
+								</label>
+							</div>
 							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
 								<i class="fas fa-home"></i>
 							</a>
 							<button class="btn btn-primary" id="go-to-shop-btn">
 								<a th:href="@{/Tienda.html}" class="text-white text-decoration-none">
-									<i class="fas fa-store me-2"></i>Ir a la Tienda
+									<i class="fas fa-store me-2"></i>
 								</a>
 							</button>
 						</div>
@@ -339,6 +375,18 @@
 					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-calendar-alt me-2"></i>Citas Veterinarias</h1>
 						<div class="d-flex gap-2 align-items-center">
+							<!-- Botón Hamburguesa (solo móviles) -->
+							<button class="menu-toggle" id="menuToggle5">
+								<i class="fas fa-bars"></i>
+							</button>
+							<!-- Botón de cambio de tema -->
+							<div class="theme-toggle-container">
+								<input type="checkbox" id="themeToggle5" class="theme-toggle-checkbox">
+								<label for="themeToggle5" class="theme-toggle-label">
+									<i class="fas fa-moon toggle-icon moon-icon"></i>
+									<i class="fas fa-sun toggle-icon sun-icon"></i>
+								</label>
+							</div>
 							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
 								<i class="fas fa-home"></i>
 							</a>
@@ -366,190 +414,196 @@
 				<section id="configuracion" class="content-section" style="display: none;">
 					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-cog me-2"></i>Configuración de Perfil</h1>
-						<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
-							<i class="fas fa-home"></i>
-						</a>
+						<div class="d-flex gap-2 align-items-center">
+							<!-- Botón Hamburguesa (solo móviles) -->
+							<button class="menu-toggle" id="menuToggle6">
+								<i class="fas fa-bars"></i>
+							</button>
+							<!-- Botón de cambio de tema -->
+							<div class="theme-toggle-container">
+								<input type="checkbox" id="themeToggle6" class="theme-toggle-checkbox">
+								<label for="themeToggle6" class="theme-toggle-label">
+									<i class="fas fa-moon toggle-icon moon-icon"></i>
+									<i class="fas fa-sun toggle-icon sun-icon"></i>
+								</label>
+							</div>
+							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
+								<i class="fas fa-home"></i>
+							</a>
+						</div>
 					</div>
 
-					<div class="row g-4">
-						<!-- Información Personal - Ocupa todo el ancho -->
+					<div class="row g-2 config-main-layout">
+						<!-- Información Personal - Ancho completo -->
 						<div class="col-12">
 							<div class="card">
 								<div class="card-header">
-									<h5 class="mb-0"><i class="fas fa-user-edit me-2"></i>Información Personal</h5>
+									<h6 class="mb-0"><i class="fas fa-user-edit me-2"></i>Información Personal</h6>
 								</div>
 								<div class="card-body">
-									<div class="row g-4">
-										<!-- Sección de Foto de Perfil -->
-										<div class="col-md-4 col-lg-3">
-											<div class="text-center">
-												<div class="mb-3">
-													<img th:src="${usuarioLogueado.imagen} ?: @{/assets/IMG/humano.jpg}"
-														alt="Foto de perfil" class="rounded-circle img-fluid"
-														style="width: 150px; height: 150px; object-fit: cover; border: 4px solid var(--pastel-blue);"
-														id="current-profile-picture">
-												</div>
-												<h6 class="mb-2">Foto de Perfil</h6>
-												<p class="text-muted small mb-3">
-													Formatos: JPG, PNG, GIF, WebP<br>Sin límite de tamaño
-												</p>
-												<div class="d-flex flex-column gap-2">
-													<input type="file" class="d-none" id="profile-picture-input"
-														accept="image/*" onchange="previewProfilePicture(this)">
-													<button type="button" class="btn btn-outline-primary btn-sm"
-														onclick="document.getElementById('profile-picture-input').click()">
-														<i class="fas fa-upload me-1"></i>Cambiar Foto
-													</button>
-													<button type="button" class="btn btn-outline-secondary btn-sm"
-														onclick="removeProfilePicture()">
-														<i class="fas fa-trash me-1"></i>Eliminar
-													</button>
-												</div>
+									<form id="profile-form" th:object="${usuarioLogueado}"
+										th:action="@{/usuarios/perfilusuario/actualizarInfoPersonal}"
+										method="post" enctype="multipart/form-data">
+										<input type="hidden" th:field="*{id}" />
+										<input type="hidden" id="profile-picture-data" name="fotoPerfil">
 
-												<!-- Vista previa de la nueva foto -->
-												<div id="new-picture-preview" class="mt-3 text-center"
-													style="display: none;">
-													<p class="small text-muted mb-2">Vista previa:</p>
-													<img id="picture-preview" class="rounded-circle"
-														style="width: 80px; height: 80px; object-fit: cover; border: 2px solid var(--secondary-color);">
-													<div class="mt-2">
-														<button type="button" class="btn btn-success btn-sm me-1"
-															onclick="saveProfilePicture()">
-															<i class="fas fa-check me-1"></i>Guardar
-														</button>
-														<button type="button" class="btn btn-secondary btn-sm"
-															onclick="cancelProfilePicture()">
-															<i class="fas fa-times me-1"></i>Cancelar
-														</button>
-													</div>
+										<div class="row g-2">
+										<!-- Foto de Perfil - Columna Izquierda -->
+										<div class="col-md-1 text-center d-flex flex-column">
+											<!-- Foto Principal -->
+											<div class="profile-picture-container">
+												<img th:src="${usuarioLogueado.imagen} ?: @{/assets/IMG/humano.jpg}"
+													alt="Foto de perfil" class="rounded-circle img-fluid mb-1"
+													style="width: 90px; height: 90px; object-fit: cover; border: 2px solid var(--pastel-blue);"
+													id="current-profile-picture">
+												<p class="text-muted" style="font-size: 0.65rem; margin: 0.2rem 0;">JPG, PNG</p>
+												<input type="file" class="d-none" id="profile-picture-input"
+													accept="image/*" onchange="previewProfilePicture(this)">
+												<button type="button" class="btn btn-outline-primary btn-sm w-100 mb-1"
+													style="font-size: 0.65rem; padding: 0.2rem;"
+													onclick="document.getElementById('profile-picture-input').click()">
+													<i class="fas fa-upload"></i> Cambiar
+												</button>
+												<button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2"
+													style="font-size: 0.65rem; padding: 0.2rem;"
+													onclick="removeProfilePicture()">
+													<i class="fas fa-trash"></i> Eliminar
+												</button>
+											</div>
+											
+											<!-- Preview (aparece debajo cuando se selecciona una imagen) -->
+											<div id="new-picture-preview" class="preview-container" style="display: none;">
+												<hr style="margin: 0.5rem 0; border-color: var(--border-color);">
+												<p class="text-muted mb-2" style="font-size: 0.75rem;">Preview:</p>
+												<img id="picture-preview" class="rounded-circle mb-2"
+													style="width: 90px; height: 90px; object-fit: cover; border: 2px solid var(--secondary-color);">
+												<div class="d-flex flex-column gap-1">
+													<button type="button" class="btn btn-success btn-sm w-100"
+														style="font-size: 0.7rem; padding: 0.3rem;"
+														onclick="saveProfilePicture()">
+														<i class="fas fa-check me-1"></i>Guardar
+													</button>
+													<button type="button" class="btn btn-secondary btn-sm w-100"
+														style="font-size: 0.7rem; padding: 0.3rem;"
+														onclick="cancelProfilePicture()">
+														<i class="fas fa-times me-1"></i>Cancelar
+													</button>
 												</div>
 											</div>
 										</div>
-
-										<!-- Formulario de Información Personal -->
-										<div class="col-md-8 col-lg-9">
-											<form id="profile-form" th:object="${usuarioLogueado}"
-												th:action="@{/usuarios/perfilusuario/actualizarInfoPersonal}"
-												method="post" enctype="multipart/form-data">
-												<input type="hidden" th:field="*{id}" />
-												<input type="hidden" id="profile-picture-data" name="fotoPerfil">
-
-												<div class="row g-3">
-													<div class="col-md-6">
-														<label for="profile-name"
-															class="form-label fw-bold">Nombres</label>
-														<input type="text" class="form-control" id="profile-name"
-															th:field="*{nombres}" required
-															placeholder="Ingresa tus nombres">
-													</div>
-													<div class="col-md-6">
-														<label for="profile-apellidos"
-															class="form-label fw-bold">Apellidos</label>
-														<input type="text" class="form-control" id="profile-apellidos"
-															th:field="*{apellidos}" required
-															placeholder="Ingresa tus apellidos">
-													</div>
-
-													<div class="col-12">
-														<label for="profile-email" class="form-label fw-bold">Correo
-															Electrónico</label>
-														<input type="email" class="form-control" id="profile-email"
-															th:field="*{correo}" required
-															placeholder="correo@ejemplo.com">
-													</div>
-
-													<div class="col-md-6">
-														<label for="profile-phone"
-															class="form-label fw-bold">Teléfono</label>
-														<input type="tel" class="form-control" id="profile-phone"
-															th:field="*{telefono}" placeholder="+57 123 456 7890">
-													</div>
-													<div class="col-md-6">
-														<label for="profile-edad"
-															class="form-label fw-bold">Edad</label>
-														<input type="number" class="form-control" id="profile-edad"
-															th:field="*{edad}" placeholder="Tu edad">
-													</div>
-
-													<div class="col-12">
-														<label for="profile-address"
-															class="form-label fw-bold">Dirección</label>
-														<textarea class="form-control" id="profile-address" rows="2"
-															th:field="*{direccion}"
-															placeholder="Ingresa tu dirección completa"></textarea>
-													</div>
-
-													<div class="col-md-6">
-														<label for="profile-tipoDocumento"
-															class="form-label fw-bold">Tipo
-															Documento</label>
-														<input type="text" class="form-control"
-															id="profile-tipoDocumento"
-															th:value="${usuarioLogueado.tipoDocumento}" readonly
-															style="background-color: #f8f9fa; cursor: not-allowed;"
-															placeholder="Tipo de documento">
-													</div>
-													<div class="col-md-6">
-														<label for="profile-numDocumento"
-															class="form-label fw-bold">Número
-															Documento</label>
-														<input type="text" class="form-control"
-															id="profile-numDocumento" th:field="*{numDocumento}"
-															placeholder="Número de documento">
-													</div>
-
-													<div class="col-12 mt-4">
-														<div class="d-flex justify-content-center">
-															<button type="submit" class="btn btn-primary btn-lg px-4">
-																<i class="fas fa-save me-2"></i>Guardar Cambios
-															</button>
+										
+										<!-- Información del formulario - 2 Columnas -->
+										<div class="col-md-11">
+											<div class="row g-2">
+												<!-- COLUMNA 1 -->
+												<div class="col-md-6">
+													<div class="row g-2">
+														<div class="col-12">
+															<label for="profile-name" class="form-label fw-bold">Nombres</label>
+															<input type="text" class="form-control" id="profile-name"
+																th:field="*{nombres}" required
+																placeholder="Ingresa tus nombres">
+														</div>
+														<div class="col-12">
+															<label for="profile-apellidos" class="form-label fw-bold">Apellidos</label>
+															<input type="text" class="form-control" id="profile-apellidos"
+																th:field="*{apellidos}" required
+																placeholder="Ingresa tus apellidos">
+														</div>
+														<div class="col-12">
+															<label for="profile-email" class="form-label fw-bold">Correo Electrónico</label>
+															<input type="email" class="form-control" id="profile-email"
+																th:field="*{correo}" required
+																placeholder="correo@ejemplo.com">
+														</div>
+														<div class="col-12">
+															<label for="profile-phone" class="form-label fw-bold">Teléfono</label>
+															<input type="tel" class="form-control" id="profile-phone"
+																th:field="*{telefono}" placeholder="+57 123 456 7890">
 														</div>
 													</div>
 												</div>
-											</form>
+												
+												<!-- COLUMNA 2 -->
+												<div class="col-md-6">
+													<div class="row g-2">
+														<div class="col-12">
+															<label for="profile-edad" class="form-label fw-bold">Edad</label>
+															<input type="number" class="form-control" id="profile-edad"
+																th:field="*{edad}" placeholder="Tu edad">
+														</div>
+														<div class="col-12">
+															<label for="profile-address" class="form-label fw-bold">Dirección</label>
+															<input type="text" class="form-control" id="profile-address"
+																th:field="*{direccion}"
+																placeholder="Ingresa tu dirección completa">
+														</div>
+														<div class="col-12">
+															<label for="profile-tipoDocumento" class="form-label fw-bold">Tipo Documento</label>
+															<input type="text" class="form-control"
+																id="profile-tipoDocumento"
+																th:value="${usuarioLogueado.tipoDocumento}" readonly
+																style="background-color: #f8f9fa; cursor: not-allowed;"
+																placeholder="Tipo de documento">
+														</div>
+														<div class="col-12">
+															<label for="profile-numDocumento" class="form-label fw-bold">Número Documento</label>
+															<input type="text" class="form-control"
+																id="profile-numDocumento" th:field="*{numDocumento}"
+																placeholder="Número de documento">
+														</div>
+													</div>
+												</div>
+												
+												<!-- Botón Guardar -->
+												<div class="col-12 text-center mt-2">
+													<button type="submit" class="btn btn-primary btn-sm px-4">
+														<i class="fas fa-save me-1"></i>Guardar Cambios
+													</button>
+												</div>
+											</div>
 										</div>
-									</div> <!-- .row g-4 -->
+									</div>
+								</form>
 								</div>
 							</div>
 						</div>
 
-						<!-- Botones de Seguridad y Eliminar Cuenta -->
-						<div class="col-12">
-							<div class="row g-3">
-								<div class="col-md-6">
-									<div class="card h-100 border-warning">
-										<div class="card-header bg-warning text-dark">
-											<h5 class="mb-0"><i class="fas fa-key me-2"></i>Seguridad</h5>
-										</div>
-										<div class="card-body text-center">
-											<p class="text-muted mb-3">
-												Cambia tu contraseña regularmente para mantener tu cuenta segura.</p>
-											<a th:href="@{/usuarios/recovery}" class="btn btn-warning btn-lg px-4">
-												<i class="fas fa-lock me-2"></i>Cambiar Contraseña
-											</a>
-										</div>
+					<!-- Botones de Seguridad y Eliminar Cuenta -->
+					<div class="col-12">
+						<div class="row g-2">
+							<!-- Seguridad -->
+							<div class="col-md-6">
+								<div class="card border-warning">
+									<div class="card-header bg-warning text-dark" style="padding: 0.4rem 0.6rem;">
+										<h6 class="mb-0" style="font-size: 0.9rem;"><i class="fas fa-key me-2"></i>Seguridad</h6>
+									</div>
+									<div class="card-body text-center" style="padding: 0.6rem;">
+										<p class="text-muted mb-2" style="font-size: 0.8rem;">Cambia tu contraseña regularmente</p>
+										<a th:href="@{/usuarios/recovery}" class="btn btn-warning btn-sm">
+											<i class="fas fa-lock me-1"></i>Cambiar Contraseña
+										</a>
 									</div>
 								</div>
-								<div class="col-md-6">
-									<div class="card h-100 border-danger">
-										<div class="card-header bg-danger text-white">
-											<h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Zona de
-												Peligro</h5>
-										</div>
-										<div class="card-body text-center">
-											<p class="text-muted mb-3">
-												Eliminación permanente de cuenta y todos los datos asociados.
-											</p>
-											<button class="btn btn-outline-danger btn-lg px-4" id="delete-account-btn">
-												<i class="fas fa-trash me-2"></i>Eliminar Cuenta
-											</button>
-										</div>
+							</div>
+							<!-- Eliminar Cuenta -->
+							<div class="col-md-6">
+								<div class="card border-danger">
+									<div class="card-header bg-danger text-white" style="padding: 0.4rem 0.6rem;">
+										<h6 class="mb-0" style="font-size: 0.9rem;"><i class="fas fa-exclamation-triangle me-2"></i>Zona de Peligro</h6>
+									</div>
+									<div class="card-body text-center" style="padding: 0.6rem;">
+										<p class="text-muted mb-2" style="font-size: 0.8rem;">Eliminación permanente de cuenta</p>
+										<button class="btn btn-outline-danger btn-sm" id="delete-account-btn">
+											<i class="fas fa-trash me-1"></i>Eliminar Cuenta
+										</button>
 									</div>
 								</div>
 							</div>
 						</div>
+					</div>
 
-					</div> <!-- .row g-4 outer -->
+				</div> <!-- .row g-2 config-main-layout -->
 				</section>
 
 			</main>
@@ -859,55 +913,6 @@
 				}
 			});
 		}
-
-		// Sistema de Temas Mejorado
-		(function () {
-			if (document.readyState === 'loading') {
-				document.addEventListener('DOMContentLoaded', initTheme);
-			} else {
-				initTheme();
-			}
-
-			function initTheme() {
-				const themeToggle = document.getElementById('themeToggle');
-				const htmlElement = document.documentElement;
-
-				if (!themeToggle) {
-					console.error('❌ Toggle de tema no encontrado');
-					return;
-				}
-
-				// Cargar tema guardado o usar claro por defecto
-				const savedTheme = localStorage.getItem('theme') || 'light';
-
-				// Aplicar tema inicial
-				htmlElement.setAttribute('data-theme', savedTheme);
-				themeToggle.checked = (savedTheme === 'dark');
-
-				console.log(`🎨 Tema inicial: ${savedTheme}`);
-
-				// Escuchar cambios en el toggle
-				themeToggle.addEventListener('change', function () {
-					const newTheme = this.checked ? 'dark' : 'light';
-
-					// Aplicar el tema
-					htmlElement.setAttribute('data-theme', newTheme);
-
-					// Guardar preferencia
-					localStorage.setItem('theme', newTheme);
-
-					console.log(`🎨 Tema cambiado a: ${newTheme}`);
-
-					// Animación suave al cambiar
-					document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
-					setTimeout(() => {
-						document.body.style.transition = '';
-					}, 300);
-				});
-
-				console.log('✅ Sistema de temas inicializado correctamente');
-			}
-		})();
 	</script>
 
 	<!-- JS Personalizado (archivo único fusionado) -->
