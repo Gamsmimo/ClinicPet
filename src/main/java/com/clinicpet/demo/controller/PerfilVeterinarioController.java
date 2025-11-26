@@ -96,10 +96,20 @@ public class PerfilVeterinarioController {
 
 	    // Buscar perfil veterinario
 	    Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
+	    Veterinaria veterinaria = null;
+	    Integer veterinariaId = null;
 
 	    if (perfilOpt.isPresent()) {
-	        model.addAttribute("perfilVeterinario", perfilOpt.get());
-	        System.out.println("✅ Perfil veterinario encontrado para: " + correo);
+	        PerfilVeterinario perfil = perfilOpt.get();
+	        model.addAttribute("perfilVeterinario", perfil);
+	        veterinaria = perfil.getVeterinaria();
+	        if (veterinaria != null) {
+	            veterinariaId = veterinaria.getId();
+	            model.addAttribute("veterinaria", veterinaria);
+	            System.out.println("✅ Perfil veterinario encontrado para: " + correo + " - Veterinaria ID: " + veterinariaId);
+	        } else {
+	            System.out.println("⚠️ Perfil veterinario sin veterinaria asociada");
+	        }
 	    } else {
 	        System.out.println("❌ ERROR: Veterinario sin perfil en BD: " + correo);
 	        model.addAttribute("error", "Error: Perfil de veterinario no encontrado.");
@@ -110,58 +120,68 @@ public class PerfilVeterinarioController {
 	    System.out.println("🐾 Mascotas encontradas: " + mascotas.size());
 	    model.addAttribute("mascotas", mascotas);
 
-	    // 🔹 🔹 🔹 NUEVO: CARGAR PRODUCTOS PARA PET SHOP 🔹 🔹 🔹
+	    // 🔹 🔹 🔹 CARGAR PRODUCTOS PARA PET SHOP FILTRADOS POR VETERINARIA 🔹 🔹 🔹
 	    try {
 	        System.out.println("🛍️ Cargando productos para Pet Shop...");
-	        List<Producto> productos = productoService.obtenerTodosLosProductos();
-	        System.out.println("📦 Productos encontrados: " + productos.size());
-	        
-	        // Obtener inventario
-	        List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(1);
-	        System.out.println("📊 Registros de inventario: " + inventarios.size());
-	        
-	        // Crear mapa de inventario
-	        Map<Integer, Inventario> inventarioPorProducto = new HashMap<>();
-	        for (Inventario inventario : inventarios) {
-	            if (inventario.getProducto() != null) {
-	                inventarioPorProducto.put(inventario.getProducto().getId(), inventario);
-	            }
-	        }
-	        
-	        // Aplicar filtros de categoría y estado si vienen en la petición
-	        List<Producto> productosFiltrados = new ArrayList<>();
-	        for (Producto p : productos) {
-	            boolean coincide = true;
+
+	        if (veterinariaId == null) {
+	            System.out.println("⚠️ No se encontró veterinaria asociada al perfil. No se cargarán productos.");
+	            model.addAttribute("productos", new ArrayList<Producto>());
+	            model.addAttribute("inventarioPorProducto", new HashMap<Integer, Inventario>());
+	        } else {
+	            List<Producto> productos = productoService.obtenerTodosLosProductos();
+	            System.out.println("📦 Productos encontrados: " + productos.size());
 	            
-	            // Filtro por categoría (ignora "Todas las categorías" o vacío)
-	            if (categoria != null && !categoria.isEmpty() && !"Todas las categorías".equalsIgnoreCase(categoria)) {
-	                if (p.getCategoria() == null || !p.getCategoria().equalsIgnoreCase(categoria)) {
-	                    coincide = false;
+	            // Obtener inventario SOLO de la veterinaria del perfil
+	            List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(veterinariaId);
+	            System.out.println("📊 Registros de inventario para veterinaria " + veterinariaId + ": " + inventarios.size());
+	            
+	            // Crear mapa de inventario
+	            Map<Integer, Inventario> inventarioPorProducto = new HashMap<>();
+	            for (Inventario inventario : inventarios) {
+	                if (inventario.getProducto() != null) {
+	                    inventarioPorProducto.put(inventario.getProducto().getId(), inventario);
 	                }
 	            }
 	            
-	            // Filtro por estado (ignora "Todos" o vacío)
-	            if (coincide && estado != null && !estado.isEmpty() && !"Todos".equalsIgnoreCase(estado)) {
-	                Inventario inv = inventarioPorProducto.get(p.getId());
-	                String estadoInv = (inv != null && inv.getEstado() != null) ? inv.getEstado() : "agotado";
+	            // Aplicar filtros de categoría y estado si vienen en la petición
+	            List<Producto> productosFiltrados = new ArrayList<>();
+	            for (Producto p : productos) {
+	                // SOLO considerar productos que tengan inventario en esta veterinaria
+	                if (!inventarioPorProducto.containsKey(p.getId())) {
+	                    continue;
+	                }
+	
+	                boolean coincide = true;
 	                
-	                if ("Disponible".equalsIgnoreCase(estado) && !"disponible".equalsIgnoreCase(estadoInv)) {
-	                    coincide = false;
-	                } else if ("Agotado".equalsIgnoreCase(estado) && "disponible".equalsIgnoreCase(estadoInv)) {
-	                    coincide = false;
+	                if (categoria != null && !categoria.isEmpty() && !"Todas las categorías".equalsIgnoreCase(categoria)) {
+	                    if (p.getCategoria() == null || !p.getCategoria().equalsIgnoreCase(categoria)) {
+	                        coincide = false;
+	                    }
+	                }
+	                
+	                if (coincide && estado != null && !estado.isEmpty() && !"Todos".equalsIgnoreCase(estado)) {
+	                    Inventario inv = inventarioPorProducto.get(p.getId());
+	                    String estadoInv = (inv != null && inv.getEstado() != null) ? inv.getEstado() : "agotado";
+	                    
+	                    if ("Disponible".equalsIgnoreCase(estado) && !"disponible".equalsIgnoreCase(estadoInv)) {
+	                        coincide = false;
+	                    } else if ("Agotado".equalsIgnoreCase(estado) && "disponible".equalsIgnoreCase(estadoInv)) {
+	                        coincide = false;
+	                    }
+	                }
+	                
+	                if (coincide) {
+	                    productosFiltrados.add(p);
 	                }
 	            }
 	            
-	            if (coincide) {
-	                productosFiltrados.add(p);
-	            }
+	            model.addAttribute("productos", productosFiltrados);
+	            model.addAttribute("inventarioPorProducto", inventarioPorProducto);
+	            model.addAttribute("categoriaSeleccionada", categoria);
+	            model.addAttribute("estadoSeleccionado", estado);
+	            System.out.println("✅ Pet Shop cargado correctamente con filtros aplicados para veterinaria " + veterinariaId);
 	        }
-	        
-	        model.addAttribute("productos", productosFiltrados);
-	        model.addAttribute("inventarioPorProducto", inventarioPorProducto);
-	        model.addAttribute("categoriaSeleccionada", categoria);
-	        model.addAttribute("estadoSeleccionado", estado);
-	        System.out.println("✅ Pet Shop cargado correctamente con filtros aplicados");
 	        
 	    } catch (Exception e) {
 	        System.out.println("❌ Error cargando Pet Shop: " + e.getMessage());
@@ -181,17 +201,41 @@ public class PerfilVeterinarioController {
 	    try {
 	        System.out.println("🔍 Filtro AJAX - categoria: " + categoria + ", estado: " + estado);
 	        
-	        List<Producto> productos = productoService.obtenerTodosLosProductos();
-	        List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(1);
+	        // Obtener usuario y perfil para conocer la veterinaria
+	        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+	        if (usuarioLogueado == null) {
+	            response.put("error", "Usuario no autenticado");
+	            return response;
+	        }
+
+	        Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
+	        if (perfilOpt.isEmpty() || perfilOpt.get().getVeterinaria() == null) {
+	            response.put("error", "Perfil de veterinario o veterinaria no encontrados");
+	            return response;
+	        }
+
+	        Integer veterinariaId = perfilOpt.get().getVeterinaria().getId();
+	        System.out.println("🔍 Filtro AJAX para veterinaria ID: " + veterinariaId);
+
+	        // Productos solo de esta veterinaria (a partir del inventario)
+	        List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(veterinariaId);
 	        Map<Integer, Inventario> inventarioPorProducto = new HashMap<>();
+	        List<Producto> productos = productoService.obtenerTodosLosProductos();
+
 	        for (Inventario inventario : inventarios) {
-	            if (inventario.getProducto() != null) {
-	                inventarioPorProducto.put(inventario.getProducto().getId(), inventario);
-	            }
+	        	if (inventario.getProducto() != null) {
+	        		Integer prodId = inventario.getProducto().getId();
+	        		inventarioPorProducto.put(prodId, inventario);
+	        	}
 	        }
 	        
 	        List<Map<String, Object>> listaFiltrada = new ArrayList<>();
 	        for (Producto p : productos) {
+	        	// SOLO considerar productos que tengan inventario en esta veterinaria
+	            if (!inventarioPorProducto.containsKey(p.getId())) {
+	                continue;
+	            }
+	        
 	            boolean coincide = true;
 	            
 	            if (categoria != null && !categoria.isEmpty() && !"Todas las categorías".equalsIgnoreCase(categoria)) {

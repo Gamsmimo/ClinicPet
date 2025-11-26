@@ -448,7 +448,6 @@ input:checked+.theme-slider:before {
 }
 
 @keyframes pulse {
-
 	0%,
 	100% {
 		transform: scale(1);
@@ -457,18 +456,6 @@ input:checked+.theme-slider:before {
 	50% {
 		transform: scale(1.1);
 	}
-}
-
-.hero-section {
-	top: -7px;
-	color: #000000de;
-	position: relative;
-	height: 600px;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
 }
 
 .carousel-slide {

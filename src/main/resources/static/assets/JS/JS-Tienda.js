@@ -510,13 +510,143 @@ function showNotification(message) {
 	console.log(message);
 }
 
-// Event Listeners
-document.addEventListener("DOMContentLoaded", () => {
+// ===== DATOS DE TIENDAS =====
+let stores = [];
+let selectedStore = null;
+
+// ===== FUNCIONES DE TIENDAS =====
+async function loadStores() {
+	try {
+		const response = await fetch('/usuarios/api/veterinarias');
+		if (!response.ok) {
+			throw new Error('Error al cargar las tiendas');
+		}
+		stores = await response.json();
+		console.log('✅ Tiendas cargadas:', stores);
+		renderStores();
+	} catch (error) {
+		console.error('❌ Error al cargar tiendas:', error);
+		// Mostrar mensaje de error al usuario
+		const storesGrid = document.getElementById('storesGrid');
+		storesGrid.innerHTML = `
+			<div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+				<i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff6b6b; margin-bottom: 20px;"></i>
+				<h3 style="color: var(--text-color); margin-bottom: 10px;">Error al cargar las tiendas</h3>
+				<p style="color: var(--text-secondary);">Por favor, intenta recargar la página</p>
+				<button onclick="loadStores()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer;">
+					<i class="fas fa-redo"></i> Reintentar
+				</button>
+			</div>
+		`;
+	}
+}
+
+function renderStores() {
+	const storesGrid = document.getElementById('storesGrid');
+	
+	if (!stores || stores.length === 0) {
+		storesGrid.innerHTML = `
+			<div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+				<i class="fas fa-store-slash" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 20px;"></i>
+				<h3 style="color: var(--text-color);">No hay tiendas disponibles</h3>
+				<p style="color: var(--text-secondary);">Por favor, contacta al administrador</p>
+			</div>
+		`;
+		return;
+	}
+	
+	storesGrid.innerHTML = stores.map(store => {
+		// Determinar si es destacada (puedes usar el campo 'estado' o agregar lógica personalizada)
+		const isFeatured = store.estado === 'Activo' || store.estado === 'activo';
+		
+		return `
+			<div class="store-card" onclick="selectStore(${store.id})">
+				${isFeatured ? '<div class="store-badge">⭐ Disponible</div>' : ''}
+				<div class="store-card-image">
+					<i class="fas fa-store-alt"></i>
+				</div>
+				<div class="store-card-content">
+					<h3 class="store-card-name">${store.nombre || 'Tienda'}</h3>
+					<div class="store-card-info">
+						<div class="store-info-item">
+							<i class="fas fa-map-marker-alt"></i>
+							<span>${store.direccion || 'Dirección no disponible'}</span>
+						</div>
+						<div class="store-info-item">
+							<i class="fas fa-phone"></i>
+							<span>${store.telefono || 'Teléfono no disponible'}</span>
+						</div>
+						<div class="store-info-item">
+							<i class="fas fa-clock"></i>
+							<span>${store.horario || 'Horario no disponible'}</span>
+						</div>
+					</div>
+					<button class="store-card-button">
+						<i class="fas fa-shopping-bag"></i>
+						Ver Productos
+					</button>
+				</div>
+			</div>
+		`;
+	}).join('');
+}
+
+function selectStore(storeId) {
+	selectedStore = stores.find(s => s.id === storeId);
+	
+	// Ocultar selección de tiendas
+	document.getElementById('storeSelection').style.display = 'none';
+	
+	// Mostrar botón de volver
+	document.getElementById('btnBackToStores').style.display = 'flex';
+	
+	// Mostrar secciones de productos
+	document.getElementById('inicio').style.display = 'flex';
+	document.getElementById('benefitsSection').style.display = 'block';
+	document.getElementById('filtersSection').style.display = 'block';
+	document.getElementById('featuredSection').style.display = 'block';
+	document.getElementById('allProductsSection').style.display = 'block';
+	
 	// Inicializar carrusel
 	initCarousel();
-
-	// Renderizar productos iniciales
+	
+	// Renderizar productos
 	renderProducts();
+	
+	// Scroll suave al inicio
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+	
+	console.log(`Tienda seleccionada: ${selectedStore.nombre || selectedStore.name}`);
+}
+
+// Función para volver a la selección de tiendas
+function backToStoreSelection() {
+	// Ocultar botón de volver
+	document.getElementById('btnBackToStores').style.display = 'none';
+	
+	// Ocultar secciones de productos
+	document.getElementById('inicio').style.display = 'none';
+	document.getElementById('benefitsSection').style.display = 'none';
+	document.getElementById('filtersSection').style.display = 'none';
+	document.getElementById('featuredSection').style.display = 'none';
+	document.getElementById('allProductsSection').style.display = 'none';
+	
+	// Mostrar selección de tiendas
+	document.getElementById('storeSelection').style.display = 'block';
+	
+	// Limpiar tienda seleccionada
+	selectedStore = null;
+	
+	// Scroll suave al inicio
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+	
+	console.log('🔙 Volviendo a la selección de tiendas');
+}
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", () => {
+	// Cargar tiendas desde la base de datos
+	loadStores();
 
 	// Carrito
 	document.getElementById("openCart").addEventListener("click", () => {

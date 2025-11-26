@@ -46,7 +46,7 @@ public class Usuario {
 	@Column(nullable = false, length = 255)
 	private String password;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "TINYINT(1)")
 	private boolean activo = true; // para aprobar/desaprobar usuarios
 
 	@Column(length = 255)

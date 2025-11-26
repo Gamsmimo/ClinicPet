@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.util.List; // *** AGREGADO: Para List<Mascota> en perfil ***
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.clinicpet.demo.dto.VeterinariaDTO;
 import com.clinicpet.demo.model.Mascota;
 import com.clinicpet.demo.model.Usuario;
+import com.clinicpet.demo.model.Veterinaria;
+import com.clinicpet.demo.repository.IVeterinariaRepository;
 import com.clinicpet.demo.service.IMascotaService;
 import com.clinicpet.demo.service.IUsuarioService;
 
@@ -46,6 +50,9 @@ public class UsuarioController {
 
 	@Autowired
 	private IMascotaService mascotaService;
+
+	@Autowired
+	private IVeterinariaRepository veterinariaRepository;
 
 	// Mostrar formulario de login (unificado a vista "iniciarsesion")
 	@GetMapping("/iniciarsesion")
@@ -469,28 +476,75 @@ public class UsuarioController {
 		try {
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 			if (usuarioLogueado == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(Map.of("error", "No hay usuario logueado"));
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "No hay usuario logueado"));
 			}
 
 			// Eliminar el usuario de la base de datos
 			usuarioService.eliminarUsuario(usuarioLogueado.getId());
-			
+
 			// Invalidar la sesión
 			session.invalidate();
-			
-			return ResponseEntity.ok()
-				.body(Map.of("mensaje", "Cuenta eliminada exitosamente"));
-				
+
+			return ResponseEntity.ok().body(Map.of("mensaje", "Cuenta eliminada exitosamente"));
+
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al eliminar la cuenta: " + e.getMessage()));
+					.body(Map.of("error", "Error al eliminar la cuenta: " + e.getMessage()));
 		}
 	}
 
-	//redireccion al cerrar sesion
+	// REDIRECCION PARA LA VISTA ADOPCIONES
+	@GetMapping("/adopcion")
+	public String mostrarAdopciones(HttpSession session, Model model) {
+
+		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+		if (usuarioLogueado == null) {
+			return "redirect:/usuarios/iniciarsesion";
+		}
+		model.addAttribute("usuarioLogueado", usuarioLogueado);
+
+		return "Adopciones/adopcion";
+	}
+
+	// redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {
 		return "/index";
 	}
+
+	//redireccion al cerrar sesion
+	@GetMapping("/tienda")
+	public String tienda() {
+		return "Tienda/tienda";
+	}
+
+	// API para obtener todas las veterinarias/tiendas
+	@GetMapping("/api/veterinarias")
+	@ResponseBody
+	public ResponseEntity<List<VeterinariaDTO>> obtenerVeterinarias() {
+		try {
+			List<Veterinaria> veterinarias = veterinariaRepository.findAll();
+			
+			// Convertir entidades a DTOs para evitar problemas de lazy loading
+			List<VeterinariaDTO> veterinariasDTO = veterinarias.stream()
+				.map(v -> new VeterinariaDTO(
+					v.getId(),
+					v.getNombre(),
+					v.getDireccion(),
+					v.getTelefono(),
+					v.getCorreo(),
+					v.getHorario(),
+					v.getDescripcion(),
+					v.getEstado()
+				))
+				.collect(Collectors.toList());
+			
+			LOGGER.info("✅ Se encontraron {} veterinarias", veterinariasDTO.size());
+			return ResponseEntity.ok(veterinariasDTO);
+		} catch (Exception e) {
+			LOGGER.error("❌ Error al obtener veterinarias: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 }

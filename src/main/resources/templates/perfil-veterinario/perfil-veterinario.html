@@ -829,7 +829,7 @@
 
 
 	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
-	<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
+	<div th:if="${veterinaria != null}" id="veterinaria-data" th:data-id="${veterinaria.id}" style="display:none;"></div>
 	<!-- Modal Agregar Producto -->
 	<div class="modal" id="new-product-modal">
 		<form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data"
