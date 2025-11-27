@@ -95,6 +95,11 @@
 						</a>
 					</li>
 					<li class="nav-item">
+						<a class="nav-link" href="#adopciones-usuario">
+							<i class="fas fa-heart me-2"></i>Mis Adopciones
+						</a>
+					</li>
+					<li class="nav-item">
 						<a class="nav-link" href="#configuracion">
 							<i class="fas fa-cog me-2"></i>Configuración
 						</a>
@@ -379,6 +384,38 @@
 								</div>
 								<div class="card-body" id="past-appointments">
 									<!-- Citas pasadas se cargarán aquí -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Sección Mis Mascotas en Adopción -->
+				<section id="adopciones-usuario" class="content-section" style="display: none;">
+					<div class="section-header">
+						<h1 class="h2"><i class="fas fa-heart me-2"></i>Mis Mascotas en Adopción</h1>
+						<div class="d-flex gap-2 align-items-center">
+							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
+								<i class="fas fa-home"></i>
+							</a>
+							<a th:href="@{/adopciones}" class="btn btn-primary">
+								<i class="fas fa-plus me-2"></i>Publicar Mascota en Adopción
+							</a>
+						</div>
+					</div>
+
+					<div class="card">
+						<div class="card-body">
+							<p class="text-muted mb-4">
+								Aquí puedes gestionar las mascotas que has publicado para adopción.
+								Para agregar una nueva mascota en adopción, ve a la sección de Adopciones.
+							</p>
+
+							<!-- Contenido se cargará dinámicamente -->
+							<div id="mis-adopciones-list">
+								<div class="text-center py-5">
+									<i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
+									<p>Cargando...</p>
 								</div>
 							</div>
 						</div>
