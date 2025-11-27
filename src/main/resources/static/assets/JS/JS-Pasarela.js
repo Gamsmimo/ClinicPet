@@ -278,12 +278,39 @@ function processPayment() {
     // Mostrar modal de procesamiento
     document.getElementById('processingModal').classList.add('active');
     
-    // Simular procesamiento (2 segundos)
-    setTimeout(() => {
+    // Generar número de orden
+    const orderNumber = '#' + Math.floor(100000 + Math.random() * 900000);
+    
+    // Preparar datos de la venta
+    const ventaData = {
+        items: cartItems,
+        subtotal: subtotal,
+        total: subtotal + shippingCost - discount,
+        metodoPago: getMetodoPagoTexto(currentPaymentMethod),
+        numeroOrden: orderNumber
+    };
+    
+    // Enviar venta al backend
+    fetch('/usuarios/api/ventas/registrar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(ventaData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error al registrar la venta');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('✅ Venta registrada:', data);
+        
+        // Ocultar modal de procesamiento
         document.getElementById('processingModal').classList.remove('active');
         
-        // Generar número de orden
-        const orderNumber = '#' + Math.floor(100000 + Math.random() * 900000);
+        // Mostrar número de orden
         document.getElementById('orderNumber').textContent = orderNumber;
         
         // Mostrar modal de confirmación
@@ -291,7 +318,22 @@ function processPayment() {
         
         // Limpiar carrito
         localStorage.removeItem('checkoutCart');
-    }, 2000);
+    })
+    .catch(error => {
+        console.error('❌ Error al registrar venta:', error);
+        document.getElementById('processingModal').classList.remove('active');
+        showNotification('Error al procesar el pago. Por favor intenta de nuevo.', 'error');
+    });
+}
+
+// Función auxiliar para obtener texto del método de pago
+function getMetodoPagoTexto(metodo) {
+    const metodos = {
+        'card': 'Tarjeta de Crédito/Débito',
+        'pse': 'PSE',
+        'nequi': 'Nequi'
+    };
+    return metodos[metodo] || 'Otro';
 }
 
 // ===== CANCELAR PAGO =====

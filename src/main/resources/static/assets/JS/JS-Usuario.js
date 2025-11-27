@@ -112,7 +112,84 @@ $(document).ready(function() {
 	function loadPetsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
 	function loadMedicalHistorySection() { console.log('ℹ️ Datos cargados desde servidor'); }
 	function loadTreatmentsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
-	function loadPurchasesSection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadPurchasesSection() { 
+		console.log('📦 Cargando compras del usuario...');
+		
+		fetch('/usuarios/api/ventas/mis-compras')
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Error al cargar compras');
+				}
+				return response.json();
+			})
+			.then(ventas => {
+				console.log('✅ Compras cargadas:', ventas);
+				renderPurchases(ventas);
+			})
+			.catch(error => {
+				console.error('❌ Error al cargar compras:', error);
+				document.getElementById('purchase-history').innerHTML = `
+					<tr>
+						<td colspan="4" class="text-center text-danger">
+							<i class="fas fa-exclamation-triangle me-2"></i>
+							Error al cargar el historial de compras
+						</td>
+					</tr>
+				`;
+			});
+	}
+	
+	function renderPurchases(ventas) {
+		const container = document.getElementById('purchase-history');
+		
+		if (!ventas || ventas.length === 0) {
+			container.innerHTML = `
+				<tr>
+					<td colspan="4" class="text-center text-muted">
+						<i class="fas fa-shopping-bag me-2"></i>
+						No tienes compras registradas
+					</td>
+				</tr>
+			`;
+			return;
+		}
+		
+		container.innerHTML = ventas.map(venta => {
+			const fecha = new Date(venta.fecha).toLocaleDateString('es-ES', {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric'
+			});
+			
+			const productos = venta.detalles ? venta.detalles.map(d => 
+				`${d.productoNombre} (x${d.cantidad})`
+			).join(', ') : 'Sin detalles';
+			
+			return `
+				<tr>
+					<td>${fecha}</td>
+					<td>
+						<small>${productos}</small>
+						<br>
+						<span class="badge bg-info">${venta.metodoPago || 'N/A'}</span>
+						${venta.referencia ? `<br><small class="text-muted">Ref: ${venta.referencia}</small>` : ''}
+					</td>
+					<td><strong>$${venta.total.toFixed(2)}</strong></td>
+					<td>
+						<button class="btn btn-sm btn-primary" onclick="verDetalleCompra(${venta.id})">
+							<i class="fas fa-eye"></i> Ver
+						</button>
+					</td>
+				</tr>
+			`;
+		}).join('');
+	}
+	
+	function verDetalleCompra(ventaId) {
+		console.log('Ver detalle de compra:', ventaId);
+		// Aquí puedes implementar un modal con más detalles si lo deseas
+		alert('Funcionalidad de detalle en desarrollo');
+	}
 	function loadAppointmentsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
 	function loadAdoptionSection() { console.log('ℹ️ Datos cargados desde servidor'); }
 	function loadReportsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
