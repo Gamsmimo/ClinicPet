@@ -518,10 +518,16 @@ public class UsuarioController {
 		return "/index";
 	}
 
-	//redireccion al cerrar sesion
+	//redireccion a tienda
 	@GetMapping("/tienda")
 	public String tienda() {
 		return "Tienda/tienda";
+	}
+	
+	//redireccion a pasarela de pagos
+	@GetMapping("/pasarela-pagos")
+	public String pasarelaPagos() {
+		return "Tienda/pasarela-pagos";
 	}
 
 	// API para obtener todas las veterinarias/tiendas

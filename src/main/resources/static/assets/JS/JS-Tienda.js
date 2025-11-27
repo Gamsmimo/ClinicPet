@@ -284,11 +284,11 @@ function updateCart() {
 				(item) => `
             <div class="cart-item">
                 <div class="cart-item-image">
-                    <img src="img/${item.image}.png" alt="${item.name}">
+                    <img src="img/${item.imagen}.png" alt="${item.nombre}" onerror="this.src='img/default.png'">
                 </div>
                 <div class="cart-item-details">
-                    <div class="cart-item-name">${item.name}</div>
-                    <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                    <div class="cart-item-name">${item.nombre}</div>
+                    <div class="cart-item-price">$${item.precio.toFixed(2)}</div>
                     <div class="cart-item-controls">
                         <button class="quantity-btn" onclick="updateQuantity(${item.id
 					}, -1)">-</button>
@@ -309,7 +309,7 @@ function updateCart() {
 
 	// Actualizar totales
 	const subtotal = cart.reduce(
-		(sum, item) => sum + item.price * item.quantity,
+		(sum, item) => sum + item.precio * item.quantity,
 		0
 	);
 	subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
@@ -319,6 +319,56 @@ function updateCart() {
 function showNotification(message) {
 	// Función removida - no se usan alertas
 	console.log(message);
+}
+
+// ===== NOTIFICACIÓN PARA CHECKOUT =====
+function showCheckoutNotification(message, type = 'info') {
+	const notification = document.createElement('div');
+	notification.className = `checkout-notification notification-${type}`;
+	
+	const icons = {
+		'success': 'check-circle',
+		'error': 'exclamation-circle',
+		'warning': 'exclamation-triangle',
+		'info': 'info-circle'
+	};
+	
+	const colors = {
+		'success': '#51CF66',
+		'error': '#FF6B6B',
+		'warning': '#FFD93D',
+		'info': '#018099'
+	};
+	
+	notification.innerHTML = `
+		<i class="fas fa-${icons[type]}"></i>
+		<span>${message}</span>
+	`;
+	
+	notification.style.cssText = `
+		position: fixed;
+		top: 100px;
+		right: 20px;
+		background: ${colors[type]};
+		color: white;
+		padding: 1rem 1.5rem;
+		border-radius: 10px;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+		display: flex;
+		align-items: center;
+		gap: 0.8rem;
+		z-index: 10000;
+		animation: slideInRight 0.3s ease;
+		font-family: 'Fredoka', sans-serif;
+		font-weight: 500;
+	`;
+	
+	document.body.appendChild(notification);
+	
+	setTimeout(() => {
+		notification.style.animation = 'slideOutRight 0.3s ease';
+		setTimeout(() => notification.remove(), 300);
+	}, 3000);
 }
 
 // ===== DATOS DE TIENDAS =====
@@ -518,17 +568,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	// Checkout
 	document.getElementById("checkoutBtn").addEventListener("click", () => {
 		if (cart.length === 0) {
-			alert("Tu carrito está vacío");
+			showCheckoutNotification("Tu carrito está vacío", "warning");
 			return;
 		}
-		const total = cart.reduce(
-			(sum, item) => sum + item.price * item.quantity,
-			0
-		);
-		alert(`¡Gracias por tu compra!\nTotal: $${total.toFixed(2)}`);
-		cart = [];
-		updateCart();
-		closeCartSidebar();
+		
+		// Guardar carrito en localStorage para la pasarela de pagos
+		localStorage.setItem('checkoutCart', JSON.stringify(cart));
+		
+		// Redirigir a la pasarela de pagos
+		window.location.href = '/usuarios/pasarela-pagos';
 	});
 
 	// ===== FUNCIONALIDAD DEL BOTÓN DE FILTRAR (SIN ALERTAS) =====
