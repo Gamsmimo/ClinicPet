@@ -1,13 +1,14 @@
 package com.clinicpet.demo.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.clinicpet.demo.model.Adopcion;
 import com.clinicpet.demo.repository.IAdopcionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdopcionServiceImplement implements IAdopcionService {
@@ -15,7 +16,6 @@ public class AdopcionServiceImplement implements IAdopcionService {
 	@Autowired
 	private IAdopcionRepository adopcionRepository;
 
-	// CRUD
 	@Override
 	public Adopcion guardarAdopcion(Adopcion adopcion) {
 		return adopcionRepository.save(adopcion);
@@ -34,10 +34,8 @@ public class AdopcionServiceImplement implements IAdopcionService {
 	@Override
 	public void eliminarAdopcion(Integer id) {
 		adopcionRepository.deleteById(id);
-
 	}
 
-	// METODOS PERSONALIZADOS
 	@Override
 	public List<Adopcion> buscarAdopcionesByEstado(String estado) {
 		return adopcionRepository.findByEstado(estado);
@@ -49,13 +47,22 @@ public class AdopcionServiceImplement implements IAdopcionService {
 	}
 
 	@Override
-	public List<Adopcion> buscarAdopcionesByUsuarioAdoptante(Integer idUsuario) {
-		return adopcionRepository.findByUsuarioAdoptanteId(idUsuario);
+	public List<Adopcion> buscarAdopcionesByUsuarioId(Integer idUsuario) {
+		return adopcionRepository.findByUsuarioId(idUsuario);
 	}
 
 	@Override
-	public Optional<Adopcion> buscarAdopcionesByMascota(Integer idMascota) {
-		return adopcionRepository.findByMascotaId(idMascota);
+	public Page<Adopcion> buscarConFiltros(String tipoMascota, String raza, String tamano, Pageable pageable) {
+		return adopcionRepository.buscarConFiltros(tipoMascota, raza, tamano, pageable);
 	}
 
+	@Override
+	public Page<Adopcion> buscarDisponibles(Pageable pageable) {
+		return adopcionRepository.findByEstado(Adopcion.ESTADO_DISPONIBLE, pageable);
+	}
+
+	@Override
+	public Page<Adopcion> buscarPorUsuarioId(Integer idUsuario, Pageable pageable) {
+		return adopcionRepository.findByUsuarioId(idUsuario, pageable);
+	}
 }

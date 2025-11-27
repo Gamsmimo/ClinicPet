@@ -1,9 +1,11 @@
 package com.clinicpet.demo.service;
 
+import com.clinicpet.demo.model.Adopcion;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
-
-import com.clinicpet.demo.model.Adopcion;
 
 public interface IAdopcionService {
 
@@ -16,15 +18,15 @@ public interface IAdopcionService {
 
 	void eliminarAdopcion(Integer id);
 
-	// METODOS PERSONALIZADOS
 	List<Adopcion> buscarAdopcionesByEstado(String estado);
 
-	// Obtener adopciones por veterinaria
 	List<Adopcion> buscarAdopcionesByVeterinaria(Integer idVeterinaria);
 
-	// Obtener adopciones por usuario adoptante
-	List<Adopcion> buscarAdopcionesByUsuarioAdoptante(Integer idUsuario);
+	List<Adopcion> buscarAdopcionesByUsuarioId(Integer idUsuario);
 
-	// Obtener adopciones por mascota
-	Optional<Adopcion> buscarAdopcionesByMascota(Integer idMascota);
+	Page<Adopcion> buscarConFiltros(String tipoMascota, String raza, String tamano, Pageable pageable);
+
+	Page<Adopcion> buscarDisponibles(Pageable pageable);
+
+	Page<Adopcion> buscarPorUsuarioId(Integer idUsuario, Pageable pageable);
 }
