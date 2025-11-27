@@ -9,53 +9,54 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "adopcion")
 public class Adopcion {
 
+	public static final String ESTADO_DISPONIBLE = "DISPONIBLE";
+	public static final String ESTADO_EN_PROCESO = "EN_PROCESO";
+	public static final String ESTADO_ADOPTADO = "ADOPTADO";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	private Date fechaSolicitud;
-
-	private String estado;
-
-	private String descripcion;
-
-	private String imagen; // Si es null "default.jpg"
-
-	private String contacto;
-
-	// Relaciones
+	// Relación OPCIONAL con mascota (puede ser null porque tenemos campos duplicados)
 	@ManyToOne
-	@JoinColumn(name = "idUsuarioAdoptante")
-	private Usuario usuarioAdoptante;
-
-	@ManyToOne
-	@JoinColumn(name = "idVeterinaria", nullable = false)
-	private Veterinaria veterinaria;
-
-	@ManyToOne
-	@JoinColumn(name = "idMascota", nullable = false)
+	@JoinColumn(name = "idMascota", nullable = true)
 	private Mascota mascota;
+
+	// Campos de la mascota duplicados para independencia
+	private String nombreMascota;
+	private String tipoMascota;
+	private String raza;
+	private Integer edad;
+	private String genero;
+	private String tamano;
+	private String descripcion;
+	private String contacto;
+	private String imagen = "default.jpg";
+	private String estado = ESTADO_DISPONIBLE;
+	private Date fechaPublicacion = new Date();
+
+	@Transient
+	private MultipartFile archivoImagen;
+
+	// Relación con el usuario que publica la mascota
+	@ManyToOne
+	@JoinColumn(name = "usuario_id", nullable = false)
+	private Usuario usuario;
+
+	// Relación con la veterinaria donde está la mascota (opcional)
+	@ManyToOne
+	@JoinColumn(name = "veterinaria_id")
+	private Veterinaria veterinaria;
 
 	// Constructores
 	public Adopcion() {
-	}
-
-	public Adopcion(Integer id, Date fechaSolicitud, String estado, String descripcion, String imagen, String contacto,
-			Usuario usuarioAdoptante, Veterinaria veterinaria, Mascota mascota) {
-		this.id = id;
-		this.fechaSolicitud = fechaSolicitud;
-		this.estado = estado;
-		this.descripcion = descripcion;
-		this.imagen = imagen;
-		this.contacto = contacto;
-		this.usuarioAdoptante = usuarioAdoptante;
-		this.veterinaria = veterinaria;
-		this.mascota = mascota;
 	}
 
 	// Getters y Setters
@@ -67,20 +68,60 @@ public class Adopcion {
 		this.id = id;
 	}
 
-	public Date getFechaSolicitud() {
-		return fechaSolicitud;
+	public Mascota getMascota() {
+		return mascota;
 	}
 
-	public void setFechaSolicitud(Date fechaSolicitud) {
-		this.fechaSolicitud = fechaSolicitud;
+	public void setMascota(Mascota mascota) {
+		this.mascota = mascota;
 	}
 
-	public String getEstado() {
-		return estado;
+	public String getNombreMascota() {
+		return nombreMascota;
 	}
 
-	public void setEstado(String estado) {
-		this.estado = estado;
+	public void setNombreMascota(String nombreMascota) {
+		this.nombreMascota = nombreMascota;
+	}
+
+	public String getTipoMascota() {
+		return tipoMascota;
+	}
+
+	public void setTipoMascota(String tipoMascota) {
+		this.tipoMascota = tipoMascota;
+	}
+
+	public String getRaza() {
+		return raza;
+	}
+
+	public void setRaza(String raza) {
+		this.raza = raza;
+	}
+
+	public Integer getEdad() {
+		return edad;
+	}
+
+	public void setEdad(Integer edad) {
+		this.edad = edad;
+	}
+
+	public String getGenero() {
+		return genero;
+	}
+
+	public void setGenero(String genero) {
+		this.genero = genero;
+	}
+
+	public String getTamano() {
+		return tamano;
+	}
+
+	public void setTamano(String tamano) {
+		this.tamano = tamano;
 	}
 
 	public String getDescripcion() {
@@ -91,14 +132,6 @@ public class Adopcion {
 		this.descripcion = descripcion;
 	}
 
-	public String getImagen() {
-		return imagen;
-	}
-
-	public void setImagen(String imagen) {
-		this.imagen = imagen;
-	}
-
 	public String getContacto() {
 		return contacto;
 	}
@@ -107,12 +140,44 @@ public class Adopcion {
 		this.contacto = contacto;
 	}
 
-	public Usuario getUsuarioAdoptante() {
-		return usuarioAdoptante;
+	public String getImagen() {
+		return imagen;
 	}
 
-	public void setUsuarioAdoptante(Usuario usuarioAdoptante) {
-		this.usuarioAdoptante = usuarioAdoptante;
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
+
+	public Date getFechaPublicacion() {
+		return fechaPublicacion;
+	}
+
+	public void setFechaPublicacion(Date fechaPublicacion) {
+		this.fechaPublicacion = fechaPublicacion;
+	}
+
+	public MultipartFile getArchivoImagen() {
+		return archivoImagen;
+	}
+
+	public void setArchivoImagen(MultipartFile archivoImagen) {
+		this.archivoImagen = archivoImagen;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	public Veterinaria getVeterinaria() {
@@ -123,20 +188,37 @@ public class Adopcion {
 		this.veterinaria = veterinaria;
 	}
 
-	public Mascota getMascota() {
-		return mascota;
+	public boolean estaDisponible() {
+		return ESTADO_DISPONIBLE.equals(this.estado);
 	}
 
-	public void setMascota(Mascota mascota) {
-		this.mascota = mascota;
+	public boolean estaEnProceso() {
+		return ESTADO_EN_PROCESO.equals(this.estado);
+	}
+
+	public boolean estaAdoptada() {
+		return ESTADO_ADOPTADO.equals(this.estado);
+	}
+
+	public void marcarComoEnProceso(Usuario adoptante) {
+		if (estaDisponible()) {
+			this.estado = ESTADO_EN_PROCESO;
+		}
+	}
+
+	public void marcarComoAdoptado() {
+		if (estaEnProceso()) {
+			this.estado = ESTADO_ADOPTADO;
+		}
+	}
+
+	public void cancelarProcesoAdopcion() {
+		this.estado = ESTADO_DISPONIBLE;
 	}
 
 	@Override
 	public String toString() {
-		return "Adopcion [id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", estado=" + estado + ", descripcion="
-				+ descripcion + ", imagen=" + imagen + ", contacto=" + contacto + ", usuarioAdoptante="
-				+ (usuarioAdoptante != null ? usuarioAdoptante.getId() : null) + ", veterinaria="
-				+ (veterinaria != null ? veterinaria.getId() : null) + ", mascota="
-				+ (mascota != null ? mascota.getId() : null) + "]";
+		return "Adopcion{" + "id=" + id + ", nombreMascota='" + nombreMascota + '\'' + ", tipoMascota='" + tipoMascota
+				+ '\'' + ", raza='" + raza + '\'' + ", estado='" + estado + '\'';
 	}
 }

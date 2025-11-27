@@ -500,22 +500,22 @@ public class UsuarioController {
 	}
 
 	// REDIRECCION PARA LA VISTA ADOPCIONES
-	@GetMapping("/adopcion")
-	public String mostrarAdopciones(HttpSession session, Model model) {
+	//@GetMapping("/adopcion")
+	///public String mostrarAdopcion(HttpSession session, Model model) {
 
-		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
-		if (usuarioLogueado == null) {
-			return "redirect:/usuarios/iniciarsesion";
-		}
-		model.addAttribute("usuarioLogueado", usuarioLogueado);
+		//Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+		//if (usuarioLogueado == null) {
+			//return "redirect:/usuarios/iniciarsesion";
+		//}
+		//model.addAttribute("usuarioLogueado", usuarioLogueado);
 
-		return "Adopciones/adopcion";
-	}
+		//return "Adopcion/adopcion";
+    //	}
 
 	// redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index() {
-		return "/index";
+		return "index";
 	}
 
 	//redireccion a tienda
