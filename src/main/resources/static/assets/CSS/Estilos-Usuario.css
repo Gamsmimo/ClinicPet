@@ -22,7 +22,7 @@
 	/* Variables dinámicas TEMA CLARO */
 	--bg-body: #FFFFFF;
 	--bg-card: #FFFFFF;
-	--card-header:  rgba(137, 168, 213, 0.08);
+	--card-header: rgba(137, 168, 213, 0.08);
 	--text-primary: #2C3E50;
 	--text-secondary: #6C757D;
 	--border-color: #E9ECEF;
@@ -58,7 +58,50 @@ body {
 	padding: 0;
 	line-height: 1.6;
 	font-size: 14px;
+	max-width: 100vw;
+	position: relative;
+}
+
+/* Prevenir scroll horizontal global */
+html {
+	overflow-x: hidden;
+	max-width: 100vw;
+}
+
+/* Contenedores principales sin overflow */
+.container-fluid {
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+.row {
+	margin-left: 0;
+	margin-right: 0;
+	max-width: 100%;
 	transition: background-color 0.3s ease, color 0.3s ease;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+/* Asegurar que las columnas sean simétricas */
+.row > * {
+	flex-shrink: 0;
+	width: 100%;
+	max-width: 100%;
+	padding-right: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+	padding-left: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+	margin-top: var(--bs-gutter-y, 0);
+}
+
+/* Columnas simétricas */
+.col-md-6 {
+	flex: 0 0 auto;
+	width: 50%;
+}
+
+.col-lg-4 {
+	flex: 0 0 auto;
+	width: 33.333333%;
 }
 
 /* ===== SIDEBAR ===== */
@@ -71,14 +114,16 @@ body {
 	top: 0;
 	z-index: 1000;
 	width: 240px;
-	transition: all 0.3s ease;
+	transition: transform 0.3s ease;
 	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
+	transform: translateX(0); /* Visible por defecto en desktop */
 }
 
 .sidebar-header {
 	padding: 15px;
+
 	background-color: var(--card-header);
 	margin: 15px 12px 12px;
 	border-radius: 12px;
@@ -148,8 +193,8 @@ body {
 	padding: 0.5rem;
 	width: 40px;
 	height: 40px;
-	background: rgba(255, 255, 255, 0.25);
-	color: white;
+	background: rgba(137, 168, 213, 0.15);
+	color: #2C3E50;
 	text-decoration: none;
 	border-radius: 50%;
 	font-family: 'Fredoka', sans-serif;
@@ -157,20 +202,33 @@ body {
 	font-size: 1.1rem;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	transition: all 0.3s ease;
-	border: 2px solid rgba(255, 255, 255, 0.4);
+	border: 2px solid rgba(137, 168, 213, 0.3);
 	backdrop-filter: blur(10px);
 }
 
 .btn-volver-inicio:hover {
-	background: rgba(255, 255, 255, 0.35);
-	color: white;
+	background: rgba(137, 168, 213, 0.25);
+	color: #2C3E50;
 	transform: translateY(-2px) scale(1.05);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	border-color: rgba(255, 255, 255, 0.6);
+	box-shadow: 0 4px 12px rgba(137, 168, 213, 0.3);
+	border-color: rgba(137, 168, 213, 0.5);
 }
 
 .btn-volver-inicio i {
 	font-size: 1rem;
+}
+
+/* Modo oscuro - icono claro */
+[data-theme="dark"] .btn-volver-inicio {
+	background: rgba(144, 187, 252, 0.15);
+	color: #E8EAF0;
+	border-color: rgba(144, 187, 252, 0.3);
+}
+
+[data-theme="dark"] .btn-volver-inicio:hover {
+	background: rgba(144, 187, 252, 0.25);
+	color: #E8EAF0;
+	border-color: rgba(144, 187, 252, 0.5);
 }
 
 /* ===== NAVEGACIÓN ===== */
@@ -206,10 +264,10 @@ body {
 
 /* ===== BOTÓN MODO OSCURO/CLARO ===== */
 .theme-toggle-container {
-	position: fixed;
-	bottom: 20px;
-	left: 20px;
-	z-index: 1100;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 0.5rem;
 }
 
 .theme-toggle-checkbox {
@@ -220,14 +278,14 @@ body {
 	background-color: var(--bg-card);
 	border: 2px solid var(--border-color);
 	border-radius: 50%;
-	width: 50px;
-	height: 50px;
+	width: 40px;
+	height: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
 	transition: all 0.3s ease;
-	box-shadow: var(--shadow-medium);
+	box-shadow: var(--shadow-light);
 }
 
 .theme-toggle-label:hover {
@@ -236,7 +294,7 @@ body {
 }
 
 .toggle-icon {
-	font-size: 22px;
+	font-size: 18px;
 	transition: all 0.3s ease;
 }
 
@@ -265,6 +323,10 @@ body {
 	position: relative;
 	z-index: 1;
 	transition: all 0.3s ease;
+	width: calc(100% - 240px);
+	max-width: 100%;
+	overflow-x: hidden;
+	padding: 0;
 }
 
 .content-header {
@@ -307,9 +369,10 @@ body {
 
 /* ===== CONTENIDO ===== */
 .content-wrapper {
-	padding: 1.5rem;
-	margin: 0;
+	padding: 1rem 0.8rem;
+	margin: 0 auto;
 	width: 100%;
+	max-width: 1600px;
 	box-sizing: border-box;
 }
 
@@ -335,9 +398,10 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
-	padding: 1.2rem 0;
+	gap: 1rem;
+	padding: 1rem 0;
 	border-bottom: 2px solid var(--border-color);
-	margin-bottom: 1.5rem;
+	margin-bottom: 1.2rem;
 }
 
 .section-header h1 {
@@ -354,7 +418,10 @@ body {
 	border-radius: 12px;
 	box-shadow: var(--shadow-light);
 	transition: all 0.3s ease;
-	margin-bottom: 20px;
+	margin-bottom: 1.2rem;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 	background-color: var(--bg-card);
 	overflow: hidden;
 }
@@ -391,17 +458,25 @@ body {
 }
 
 .card-body {
-	padding: 1.3rem;
+	padding: 1rem 0.8rem;
 	background-color: var(--bg-card);
 	color: var(--text-primary);
 }
 
-/* ===== CARDS DE MASCOTAS ===== */
+/* ===== GRID DE MASCOTAS - RESPONSIVO Y SIMÉTRICO ===== */
 .pets-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-	gap: 1.5rem;
-	margin-top: 1.2rem;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 0.8rem;
+	margin-top: 0.8rem;
+	width: 100%;
+	align-items: stretch;
+}
+
+/* Quitar márgenes extra en las cards dentro del grid de mascotas */
+.pets-grid .card,
+.pets-grid .pet-card {
+	margin: 0 !important;
 }
 
 .pet-card {
@@ -411,6 +486,7 @@ body {
 	overflow: hidden;
 	transition: all 0.3s ease;
 	border: 1px solid var(--border-color);
+	margin: 0;
 }
 
 .pet-card:hover {
@@ -420,12 +496,13 @@ body {
 
 .pet-image-container {
 	width: 100%;
-	height: 180px;
+	aspect-ratio: 16/9;
 	overflow: hidden;
 	background-color: var(--pastel-blue);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	position: relative;
 }
 
 [data-theme="dark"] .pet-image-container {
@@ -436,6 +513,7 @@ body {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	object-position: center;
 	transition: transform 0.4s ease;
 }
 
@@ -450,22 +528,22 @@ body {
 }
 
 .pet-info {
-	padding: 1.2rem;
+	padding: 1rem;
 	background-color: var(--bg-card);
 }
 
 .pet-name {
-	font-size: 1.15rem;
+	font-size: 1.1rem;
 	font-weight: 700;
 	color: var(--text-primary);
-	margin-bottom: 0.7rem;
+	margin-bottom: 0.5rem;
 	font-family: 'Baloo 2', sans-serif;
 }
 
 .pet-details {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: 0.4rem;
 }
 
 .pet-detail {
@@ -747,6 +825,64 @@ body {
 	font-size: 0.8rem;
 }
 
+/* ===== SCROLLBAR PERSONALIZADO ===== */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--bg-body);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--primary-color);
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #6A8EC9;
+}
+
+/* ===== SELECCIÓN DE TEXTO ===== */
+::selection {
+	background-color: var(--primary-color);
+	color: white;
+}
+
+/* ===== EFECTOS ADICIONALES ===== */
+.text-muted {
+	color: var(--text-secondary) !important;
+}
+
+strong,
+.fw-bold {
+	color: var(--text-primary);
+}
+
+small,
+.small {
+	color: var(--text-secondary);
+}
+
+/* ===== DROPDOWN ===== */
+.dropdown-menu {
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	box-shadow: var(--shadow-medium);
+}
+
+.dropdown-item {
+	color: var(--text-primary);
+	transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+	background-color: var(--card-hover-bg);
+	color: var(--primary-color);
+}
+
+/* Dispositivos móviles (hasta 767px) */
 .bg-success {
 	background-color: var(--secondary-color) !important;
 	color: #2C5530 !important;
@@ -778,20 +914,20 @@ body {
 
 /* ===== MENÚ HAMBURGUESA ===== */
 .menu-toggle {
-	display: none;
+	display: none; /* Oculto por defecto, solo visible en móviles */
 	background: var(--bg-card);
 	border: 1px solid var(--border-color);
-	font-size: 1.3rem;
+	font-size: 1.1rem;
 	color: var(--text-primary);
 	cursor: pointer;
-	padding: 6px 10px;
-	border-radius: 6px;
+	padding: 0.5rem;
+	border-radius: 8px;
 	transition: all 0.3s ease;
-	z-index: 1001;
-	position: fixed;
-	top: 12px;
-	left: 12px;
 	box-shadow: var(--shadow-light);
+	width: 40px;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
 }
 
 .menu-toggle:hover {
@@ -864,199 +1000,461 @@ body {
 	border-color: #F5A3A8 !important;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 767.98px) {
-	.menu-toggle {
-		display: block;
+/* ===== OPTIMIZACIÓN SECCIÓN CONFIGURACIÓN - SIN SCROLL ===== */
+/* Todos los estilos de la sección de configuración consolidados aquí */
+#configuracion .content-wrapper {
+	min-height: calc(100vh - 80px); /* Ocupa toda la altura disponible */
+	display: flex;
+	flex-direction: column;
+	padding: 0.5rem;
+}
+
+/* Contenedor principal específico */
+.config-main-layout {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	row-gap: 0.5rem !important;
+	justify-content: space-between;
+}
+
+/* La primera columna (Card de Info) crece para llenar el espacio */
+.config-main-layout > .col-12:first-child {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+/* El card crece dentro de la columna */
+.config-main-layout > .col-12:first-child > .card {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 0;
+}
+
+/* El body del card (sin centrar contenido) */
+.config-main-layout > .col-12:first-child > .card > .card-body {
+	padding: 0.6rem;
+}
+
+/* Formulario con comportamiento normal */
+.config-main-layout > .col-12:first-child > .card > .card-body > form {
+	height: auto;
+}
+
+/* Fila del formulario: sin forzar expansión */
+.config-main-layout > .col-12:first-child > .card > .card-body > form > .row {
+	flex: initial;
+	align-content: initial;
+}
+
+/* La segunda columna (Seguridad) no crece, se queda abajo */
+.config-main-layout > .col-12:last-child {
+	flex-shrink: 0;
+	margin-top: auto; /* Empuja esta fila al fondo del contenedor */
+}
+
+#configuracion .card-header {
+	padding: 0.4rem 0.6rem;
+}
+
+#configuracion .card-header h6 {
+	font-size: 0.95rem;
+	margin: 0;
+}
+
+#configuracion .form-label {
+	margin-bottom: 0.2rem;
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+#configuracion .form-control,
+#configuracion .form-select {
+	padding: 0.35rem 0.5rem;
+	font-size: 0.85rem;
+	height: auto;
+}
+
+#configuracion .btn {
+	padding: 0.35rem 0.7rem;
+	font-size: 0.8rem;
+}
+
+#configuracion .btn-sm {
+	padding: 0.25rem 0.5rem;
+	font-size: 0.75rem;
+}
+
+/* Foto de perfil compacta */
+#configuracion #current-profile-picture {
+	width: 90px !important;
+	height: 90px !important;
+	border-width: 2px !important;
+}
+
+/* Vista previa del mismo tamaño que la foto principal */
+#configuracion #picture-preview {
+	width: 90px !important;
+	height: 90px !important;
+}
+
+/* Contenedor del preview - ocupa su propio espacio */
+#configuracion .preview-container {
+	margin-top: 0.5rem;
+	padding-top: 0.5rem;
+}
+
+/* Asegurar que la columna de foto tenga suficiente espacio */
+#configuracion .col-md-1.d-flex.flex-column {
+	min-height: auto;
+	align-items: center;
+}
+
+/* Optimizar espacios en el formulario */
+#configuracion .col-md-1 {
+	padding-left: 0.3rem;
+	padding-right: 0.5rem;
+	max-width: 100px;
+}
+
+#configuracion .col-md-11 {
+	padding-left: 0.5rem;
+	flex: 1;
+}
+
+/* Espaciado de filas en configuración */
+#configuracion .row.g-3 {
+	row-gap: 0.7rem !important;
+}
+
+#configuracion .row.g-4 {
+	row-gap: 1rem !important;
+}
+
+/* Cards de seguridad y zona de peligro */
+#configuracion .card.h-100 .card-body {
+	padding: 1rem !important;
+}
+
+#configuracion .card.h-100 .card-body p {
+	margin-bottom: 0.7rem;
+	font-size: 0.85rem;
+}
+
+/* Botones de acción más compactos */
+#configuracion .btn-lg {
+	padding: 0.6rem 1.5rem;
+	font-size: 0.95rem;
+}
+
+/* Reducir espaciado del header de sección */
+#configuracion .section-header {
+	padding: 0.8rem 0;
+	margin-bottom: 1rem;
+}
+
+/* Textarea compacto */
+#configuracion textarea.form-control {
+	min-height: 50px;
+}
+
+/* ===== RESPONSIVE - PANTALLAS GRANDES (Aumentar tamaño en resoluciones altas) ===== */
+
+/* Laptops grandes (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+	#configuracion #current-profile-picture {
+		width: 110px !important;
+		height: 110px !important;
 	}
 
+	#configuracion #picture-preview {
+		width: 110px !important;
+		height: 110px !important;
+	}
+
+	#configuracion .form-label {
+		font-size: 0.9rem;
+		margin-bottom: 0.3rem;
+	}
+
+	#configuracion .form-control,
+	#configuracion .form-select {
+		padding: 0.45rem 0.65rem;
+		font-size: 0.95rem;
+	}
+
+	#configuracion .btn {
+		padding: 0.45rem 0.85rem;
+		font-size: 0.9rem;
+	}
+
+	#configuracion .card-header h6 {
+		font-size: 1.05rem;
+	}
+
+	#configuracion .card-body {
+		padding: 0.8rem;
+	}
+
+	#configuracion .section-header {
+		padding: 1rem 0;
+		margin-bottom: 1.3rem;
+	}
+
+	#configuracion .section-header h1 {
+		font-size: 1.8rem;
+	}
+}
+
+/* Pantallas Extra Grandes (1920px+) */
+@media (min-width: 1920px) {
+	#configuracion #current-profile-picture {
+		width: 130px !important;
+		height: 130px !important;
+	}
+
+	#configuracion #picture-preview {
+		width: 130px !important;
+		height: 130px !important;
+	}
+
+	#configuracion .form-label {
+		font-size: 1rem;
+		margin-bottom: 0.4rem;
+	}
+
+	#configuracion .form-control,
+	#configuracion .form-select {
+		padding: 0.55rem 0.8rem;
+		font-size: 1.05rem;
+	}
+
+	#configuracion .btn {
+		padding: 0.55rem 1rem;
+		font-size: 1rem;
+	}
+
+	#configuracion .btn-sm {
+		padding: 0.35rem 0.65rem;
+		font-size: 0.85rem;
+	}
+
+	#configuracion .card-header h6 {
+		font-size: 1.15rem;
+	}
+
+	#configuracion .card-body {
+		padding: 1rem;
+	}
+
+	#configuracion .section-header {
+		padding: 1.2rem 0;
+		margin-bottom: 1.5rem;
+	}
+
+	#configuracion .section-header h1 {
+		font-size: 2rem;
+	}
+
+	#configuracion textarea.form-control {
+		min-height: 70px;
+	}
+
+	#configuracion .card.h-100 .card-body p {
+		font-size: 0.95rem;
+	}
+
+	#configuracion .row.g-2 {
+		row-gap: 0.7rem !important;
+	}
+}
+
+/* ===== RESPONSIVE - MÓVILES ===== */
+@media (max-width: 767.98px) {
+	/* Mostrar botón hamburguesa */
+	.menu-toggle {
+		display: flex !important;
+	}
+
+	/* Sidebar oculto por defecto en móviles */
 	.sidebar {
 		transform: translateX(-100%);
 		width: 280px;
 		z-index: 1050;
+		position: fixed;
+		transition: transform 0.3s ease;
 	}
 
+	/* Sidebar visible cuando tiene clase active */
 	.sidebar.active {
 		transform: translateX(0);
 	}
 
+	/* Main content ocupa todo el ancho */
 	.main-content {
 		margin-left: 0;
 		width: 100%;
+		max-width: 100vw;
+		overflow-x: hidden;
+		padding: 0;
 	}
 
-	.theme-toggle-container {
-		bottom: 80px;
-		left: 15px;
+	/* Content wrapper con padding reducido */
+	.content-wrapper {
+		padding: 0.8rem 0.5rem;
+		max-width: 100%;
 	}
 
-	.pets-grid {
-		grid-template-columns: 1fr;
-	}
-
+	/* Section header responsive */
 	.section-header {
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 1rem;
-	}
-}
-
-@media (min-width: 768px) and (max-width: 1199.98px) {
-	.sidebar {
-		width: 220px;
+		justify-content: flex-start;
+		gap: 0.8rem;
+		padding: 0.8rem 0;
+		margin-bottom: 1rem;
 	}
 
-	.main-content {
-		margin-left: 220px;
+	.section-header h1 {
+		font-size: 1.1rem;
+		margin: 0;
 	}
 
+	/* Botones de header en columna */
+	.section-header .d-flex {
+		width: 100%;
+		flex-wrap: wrap;
+	}
+
+	/* Grid de mascotas a una columna */
 	.pets-grid {
-		grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+		grid-template-columns: 1fr;
+		gap: 0.8rem;
+		width: 100%;
+	}
+
+	.pet-card {
+		max-width: 100%;
+	}
+
+	/* Cards con menos padding */
+	.card {
+		margin-bottom: 0.8rem;
+	}
+
+	.card-body {
+		padding: 0.8rem;
+	}
+
+	.card-header {
+		padding: 0.6rem 0.8rem;
+	}
+
+	.card-header h5 {
+		font-size: 0.95rem;
+	}
+
+	/* Foto de perfil más pequeña en móvil */
+	#current-profile-picture {
+		width: 100px !important;
+		height: 100px !important;
+	}
+
+	/* Formulario de perfil en móvil */
+	.col-md-4,
+	.col-md-8,
+	.col-md-6 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+
+	/* Espaciado entre campos del formulario */
+	.row.g-3 {
+		row-gap: 0.8rem !important;
+	}
+
+	.row.g-4 {
+		row-gap: 1rem !important;
+	}
+
+	/* Botones más compactos */
+	.btn-lg {
+		padding: 0.6rem 1.2rem;
+		font-size: 0.9rem;
+	}
+
+	.btn-sm {
+		padding: 0.4rem 0.8rem;
+		font-size: 0.8rem;
+	}
+
+	/* Inputs y labels más compactos */
+	.form-label {
+		font-size: 0.85rem;
+		margin-bottom: 0.3rem;
+	}
+
+	.form-control,
+	.form-select {
+		font-size: 0.85rem;
+		padding: 0.5rem 0.7rem;
+	}
+
+	/* Ajustar área de texto */
+	textarea.form-control {
+		min-height: 60px;
+	}
+
+	/* Configuración responsive en móviles */
+	#configuracion .card-body {
+		padding: 0.7rem !important;
+	}
+	
+	#configuracion #current-profile-picture {
+		width: 90px !important;
+		height: 90px !important;
+	}
+	
+	#configuracion .form-control,
+	#configuracion .form-select {
+		padding: 0.4rem 0.6rem;
+		font-size: 0.85rem;
+	}
+	
+	#configuracion textarea.form-control {
+		min-height: 45px;
+	}
+
+	/* Botón de tema más pequeño en móvil */
+	.theme-toggle-label {
+		width: 35px;
+		height: 35px;
+	}
+
+	.toggle-icon {
+		font-size: 16px;
+	}
+
+	/* Botón volver al inicio más pequeño */
+	.btn-volver-inicio {
+		width: 35px;
+		height: 35px;
+		padding: 0.4rem;
+	}
+
+	.btn-volver-inicio i {
+		font-size: 0.9rem;
+	}
+
+	/* Botón hamburguesa más pequeño en móvil */
+	.menu-toggle {
+		width: 35px;
+		height: 35px;
+		padding: 0.4rem;
+		font-size: 1rem;
 	}
 }
 
-/* ===== SCROLLBAR PERSONALIZADO ===== */
-::-webkit-scrollbar {
-	width: 10px;
-}
-
-::-webkit-scrollbar-track {
-	background: var(--bg-body);
-}
-
-::-webkit-scrollbar-thumb {
-	background: var(--primary-color);
-	border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-	background: #6A8EC9;
-}
-
-/* ===== SELECCIÓN DE TEXTO ===== */
-::selection {
-	background-color: var(--primary-color);
-	color: white;
-}
-
-/* ===== EFECTOS ADICIONALES ===== */
-.text-muted {
-	color: var(--text-secondary) !important;
-}
-
-strong,
-.fw-bold {
-	color: var(--text-primary);
-}
-
-small,
-.small {
-	color: var(--text-secondary);
-}
-
-/* ===== DROPDOWN ===== */
-.dropdown-menu {
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-color);
-	border-radius: 8px;
-	box-shadow: var(--shadow-medium);
-}
-
-.dropdown-item {
-	color: var(--text-primary);
-	transition: all 0.2s ease;
-}
-
-.dropdown-item:hover {
-	background-color: var(--card-hover-bg);
-	color: var(--primary-color);
-}
-
-/* ===== TIMELINE (Historia Clínica) ===== */
-.timeline {
-	position: relative;
-	padding-left: 2rem;
-}
-
-.timeline-item {
-	position: relative;
-	padding-bottom: 2rem;
-}
-
-.timeline-item::before {
-	content: '';
-	position: absolute;
-	left: -2rem;
-	top: 0;
-	width: 2px;
-	height: 100%;
-	background-color: var(--border-color);
-}
-
-.timeline-date {
-	font-weight: 600;
-	color: var(--primary-color);
-	font-size: 0.85rem;
-	margin-bottom: 0.5rem;
-}
-
-.timeline-title {
-	font-weight: 600;
-	color: var(--text-primary);
-	margin-bottom: 0.5rem;
-}
-
-.timeline-content {
-	color: var(--text-secondary);
-	font-size: 0.9rem;
-}
-
-/* ===== UTILIDADES ===== */
-.text-center {
-	text-align: center;
-}
-
-.mb-3 {
-	margin-bottom: 1rem;
-}
-
-.mb-4 {
-	margin-bottom: 1.5rem;
-}
-
-.mt-3 {
-	margin-top: 1rem;
-}
-
-.d-flex {
-	display: flex;
-}
-
-.justify-content-between {
-	justify-content: space-between;
-}
-
-.align-items-center {
-	align-items: center;
-}
-
-.w-100 {
-	width: 100%;
-}
-
-/* ===== ANIMACIONES ===== */
-@keyframes slideIn {
-	from {
-		opacity: 0;
-		transform: translateX(-20px);
-	}
-
-	to {
-		opacity: 1;
-		transform: translateX(0);
-	}
-}
-
-.sidebar {
-	animation: slideIn 0.4s ease-out;
-}
+/* ===== FIN DEL ARCHIVO ===== */

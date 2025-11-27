@@ -2,7 +2,6 @@ const currentUserId = document.getElementById('current-user-id') ? document.getE
 let currentPhotoFile = null;
 
 $(document).ready(function() {
-	const API_BASE_URL = 'http://localhost:8080/api';
 
 	// Función para inicializar la aplicación
 	initApp();
@@ -86,7 +85,7 @@ $(document).ready(function() {
 			eliminarCuentaUsuario();
 		});
 
-		$('#profile-form').off('submit');
+		// El formulario de perfil se envía mediante POST tradicional (th:action)
 
 		$('#password-form').submit(function(e) {
 			e.preventDefault();
@@ -107,50 +106,18 @@ $(document).ready(function() {
 		});
 	}
 
-	// Funciones de carga de secciones
-	async function loadQuickSummary() {
-		console.log('ℹ️ loadQuickSummary deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadPetsPreview() {
-		console.log('ℹ️ loadPetsPreview deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadPetsSection() {
-		console.log('ℹ️ loadPetsSection deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadMedicalHistorySection() {
-		console.log('ℹ️ loadMedicalHistorySection deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadTreatmentsSection() {
-		console.log('ℹ️ loadTreatmentsSection deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadPurchasesSection() {
-		console.log('ℹ️ loadPurchasesSection deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadAppointmentsSection() {
-		console.log('ℹ️ loadAppointmentsSection deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadAdoptionSection() {
-		console.log('ℹ️ loadAdoptionSection deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadReportsSection() {
-		console.log('ℹ️ loadReportsSection deshabilitada - datos cargados desde servidor');
-	}
-
-	async function loadReviewsSection() {
-		console.log('ℹ️ loadReviewsSection deshabilitada - datos cargados desde servidor');
-	}
-
-	function loadSettingsSection() {
-		console.log('✅ Sección de configuración cargada (datos del servidor)');
-	}
+	// Funciones de carga de secciones (datos precargados desde servidor)
+	function loadQuickSummary() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadPetsPreview() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadPetsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadMedicalHistorySection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadTreatmentsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadPurchasesSection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadAppointmentsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadAdoptionSection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadReportsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadReviewsSection() { console.log('ℹ️ Datos cargados desde servidor'); }
+	function loadSettingsSection() { console.log('✅ Configuración cargada'); }
 
 	function changePassword() {
 		console.log('⚠️ Función changePassword deshabilitada - endpoint no implementado');
@@ -211,21 +178,21 @@ function eliminarMascota(id) {
 				'Content-Type': 'application/json',
 			}
 		})
-		.then(response => {
-			console.log('Respuesta del servidor:', response.status);
-			if (response.ok) {
-				alert('Mascota eliminada exitosamente');
-				location.reload();
-			} else {
-				return response.text().then(errorMessage => {
-					alert('Error al eliminar la mascota: ' + errorMessage);
-				});
-			}
-		})
-		.catch(error => {
-			console.error('Error en la solicitud:', error);
-			alert('Error de conexión: ' + error.message);
-		});
+			.then(response => {
+				console.log('Respuesta del servidor:', response.status);
+				if (response.ok) {
+					alert('Mascota eliminada exitosamente');
+					location.reload();
+				} else {
+					return response.text().then(errorMessage => {
+						alert('Error al eliminar la mascota: ' + errorMessage);
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error en la solicitud:', error);
+				alert('Error de conexión: ' + error.message);
+			});
 	}
 }
 
@@ -239,9 +206,14 @@ function showAlert(message, type) {
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
 
-	const section = document.getElementById('configuracion');
-	const title = section.querySelector('.border-bottom');
-	title.parentNode.insertBefore(alertDiv, title.nextSibling);
+	// Buscar contenedor principal
+	const mainContent = document.querySelector('.main-content');
+	if (mainContent) {
+		mainContent.insertBefore(alertDiv, mainContent.firstChild);
+	} else {
+		console.warn('No se pudo mostrar la alerta: contenedor no encontrado');
+		return;
+	}
 
 	setTimeout(() => {
 		if (alertDiv.parentNode) {
@@ -558,53 +530,85 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	function initTheme() {
-		const themeToggle = document.getElementById('themeToggle');
+		// Obtener todos los toggles de tema
+		const themeToggles = document.querySelectorAll('.theme-toggle-checkbox');
 		const htmlElement = document.documentElement;
 
-		if (!themeToggle) {
+		if (themeToggles.length === 0) {
 			console.error('Toggle de tema no encontrado');
 			return;
 		}
 
+		// Inicializar tema claro
 		htmlElement.setAttribute('data-theme', 'light');
-		themeToggle.checked = false;
+		themeToggles.forEach(toggle => toggle.checked = false);
 
-		themeToggle.addEventListener('change', function() {
-			if (this.checked) {
-				htmlElement.setAttribute('data-theme', 'dark');
-				console.log('Tema oscuro activado');
-			} else {
-				htmlElement.setAttribute('data-theme', 'light');
-				console.log('Tema claro activado');
-			}
+		// Función para sincronizar todos los toggles
+		function syncToggles(checked) {
+			themeToggles.forEach(toggle => toggle.checked = checked);
+		}
+
+		// Agregar event listener a cada toggle
+		themeToggles.forEach(toggle => {
+			toggle.addEventListener('change', function() {
+				if (this.checked) {
+					htmlElement.setAttribute('data-theme', 'dark');
+					syncToggles(true);
+					console.log('Tema oscuro activado');
+				} else {
+					htmlElement.setAttribute('data-theme', 'light');
+					syncToggles(false);
+					console.log('Tema claro activado');
+				}
+			});
 		});
 
-		console.log('Sistema de temas inicializado correctamente');
+		console.log('Sistema de temas inicializado correctamente con ' + themeToggles.length + ' toggles');
 	}
 })();
 
-// Cargar sidebar
-function cargarSidebar() {
-	if (!currentUserId) {
-		console.warn('No se pudo cargar el sidebar: currentUserId no está definido');
+// ===== MENÚ HAMBURGUESA Y SIDEBAR MÓVIL =====
+(function() {
+	// Obtener todos los botones hamburguesa
+	const menuToggles = document.querySelectorAll('.menu-toggle');
+	const sidebar = document.getElementById('sidebar');
+	const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+	if (menuToggles.length === 0 || !sidebar || !sidebarOverlay) {
+		console.warn('Elementos del menú hamburguesa no encontrados');
 		return;
 	}
 
-	fetch(`/usuario/buscar/${currentUserId}`)
-		.then(r => {
-			if (!r.ok) {
-				throw new Error(`Error HTTP: ${r.status}`);
+	// Agregar event listener a cada botón hamburguesa
+	menuToggles.forEach(menuToggle => {
+		menuToggle.addEventListener('click', function() {
+			sidebar.classList.add('active');
+			sidebarOverlay.classList.add('active');
+			console.log('Sidebar abierto');
+		});
+	});
+
+	// Cerrar sidebar al hacer click en el overlay
+	sidebarOverlay.addEventListener('click', function() {
+		sidebar.classList.remove('active');
+		sidebarOverlay.classList.remove('active');
+		console.log('Sidebar cerrado');
+	});
+
+	// Cerrar sidebar al hacer click en un link del menú
+	const navLinks = sidebar.querySelectorAll('.nav-link');
+	navLinks.forEach(link => {
+		link.addEventListener('click', function() {
+			// Solo cerrar en móviles (cuando el overlay está visible)
+			if (window.innerWidth <= 767.98) {
+				sidebar.classList.remove('active');
+				sidebarOverlay.classList.remove('active');
 			}
-			return r.json();
-		})
-		.then(u => {
-			const sidebarNombre = document.getElementById("sidebarNombre");
-			const sidebarFoto = document.getElementById("sidebarFoto");
+		});
+	});
 
-			if (sidebarNombre) sidebarNombre.innerText = u.nombres || 'Usuario';
-			if (sidebarFoto) sidebarFoto.src = u.imagen ? `/${u.imagen}` : "/img/default.png";
-		})
-		.catch(error => console.error('Error al cargar el sidebar:', error));
-}
+	console.log('Sistema de menú hamburguesa inicializado con ' + menuToggles.length + ' botones');
+})();
 
-cargarSidebar();
+// Los datos del sidebar se cargan desde el servidor mediante Thymeleaf
+// No es necesario hacer llamadas AJAX adicionales

@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.util.List; // *** AGREGADO: Para List<Mascota> en perfil ***
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.clinicpet.demo.dto.ProductoDTO;
+import com.clinicpet.demo.dto.VeterinariaDTO;
+import com.clinicpet.demo.model.Inventario;
 import com.clinicpet.demo.model.Mascota;
 import com.clinicpet.demo.model.Usuario;
+import com.clinicpet.demo.model.Veterinaria;
+import com.clinicpet.demo.repository.IInventarioRepository;
+import com.clinicpet.demo.repository.IVeterinariaRepository;
 import com.clinicpet.demo.service.IMascotaService;
 import com.clinicpet.demo.service.IUsuarioService;
 
@@ -46,6 +53,12 @@ public class UsuarioController {
 
 	@Autowired
 	private IMascotaService mascotaService;
+
+	@Autowired
+	private IVeterinariaRepository veterinariaRepository;
+
+	@Autowired
+	private IInventarioRepository inventarioRepository;
 
 	// Mostrar formulario de login (unificado a vista "iniciarsesion")
 	@GetMapping("/iniciarsesion")
@@ -504,4 +517,92 @@ public class UsuarioController {
 	public String index() {
 		return "index";
 	}
+
+	//redireccion a tienda
+	@GetMapping("/tienda")
+	public String tienda() {
+		return "Tienda/tienda";
+	}
+	
+	//redireccion a pasarela de pagos
+	@GetMapping("/pasarela-pagos")
+	public String pasarelaPagos() {
+		return "Tienda/pasarela-pagos";
+	}
+
+	// API para obtener todas las veterinarias/tiendas
+	@GetMapping("/api/veterinarias")
+	@ResponseBody
+	public ResponseEntity<List<VeterinariaDTO>> obtenerVeterinarias() {
+		try {
+			List<Veterinaria> veterinarias = veterinariaRepository.findAll();
+			
+			// Convertir entidades a DTOs para evitar problemas de lazy loading
+			List<VeterinariaDTO> veterinariasDTO = veterinarias.stream()
+				.map(v -> new VeterinariaDTO(
+					v.getId(),
+					v.getNombre(),
+					v.getDireccion(),
+					v.getTelefono(),
+					v.getCorreo(),
+					v.getHorario(),
+					v.getDescripcion(),
+					v.getEstado()
+				))
+				.collect(Collectors.toList());
+			
+			LOGGER.info("✅ Se encontraron {} veterinarias", veterinariasDTO.size());
+			return ResponseEntity.ok(veterinariasDTO);
+		} catch (Exception e) {
+			LOGGER.error("❌ Error al obtener veterinarias: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	// API para obtener productos de una veterinaria específica
+	@GetMapping("/api/veterinarias/{veterinariaId}/productos")
+	@ResponseBody
+	public ResponseEntity<List<ProductoDTO>> obtenerProductosPorVeterinaria(@PathVariable Integer veterinariaId) {
+		try {
+			LOGGER.info("🔍 Buscando productos para veterinaria ID: {}", veterinariaId);
+			
+			// Verificar que la veterinaria existe
+			Optional<Veterinaria> veterinariaOpt = veterinariaRepository.findById(veterinariaId);
+			if (veterinariaOpt.isEmpty()) {
+				LOGGER.warn("❌ Veterinaria no encontrada con ID: {}", veterinariaId);
+				return ResponseEntity.notFound().build();
+			}
+			
+			Veterinaria veterinaria = veterinariaOpt.get();
+			
+			// Obtener inventario de la veterinaria
+			List<Inventario> inventarios = inventarioRepository.findByVeterinaria(veterinaria);
+			
+			// Convertir a DTOs con información del producto y stock
+			List<ProductoDTO> productosDTO = inventarios.stream()
+				.filter(inv -> inv.getCantidadDisponible() != null && inv.getCantidadDisponible() > 0) // Solo productos disponibles
+				.map(inv -> new ProductoDTO(
+					inv.getProducto().getId(),
+					inv.getProducto().getNombre(),
+					inv.getProducto().getDescripcion(),
+					inv.getProducto().getPrecio(),
+					inv.getProducto().getImagen(),
+					inv.getProducto().getCategoria(),
+					inv.getCantidadDisponible(),
+					inv.getEstado()
+				))
+				.collect(Collectors.toList());
+			
+			LOGGER.info("✅ Se encontraron {} productos disponibles para veterinaria '{}'", 
+				productosDTO.size(), veterinaria.getNombre());
+			
+			return ResponseEntity.ok(productosDTO);
+			
+		} catch (Exception e) {
+			LOGGER.error("❌ Error al obtener productos de veterinaria {}: {}", veterinariaId, e.getMessage());
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 }
