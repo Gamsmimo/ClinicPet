@@ -39,6 +39,7 @@ import com.clinicpet.demo.model.Producto;
 import com.clinicpet.demo.model.Usuario;
 import com.clinicpet.demo.model.Veterinaria;
 import com.clinicpet.demo.service.*;
+
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -79,23 +80,23 @@ public class PerfilVeterinarioController {
 	@GetMapping
 	public String mostrarPerfilVeterinario(HttpSession session, Model model,
 			@RequestParam(required = false) String categoria, @RequestParam(required = false) String estado) {
-		System.out.println("🔍 Accediendo a vista principal del veterinario");
+		System.out.println(" Accediendo a vista principal del veterinario");
 
-		// ✅ USAR SESIÓN
+		// USAR SESIÓN
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
-			System.out.println("❌ Usuario no autenticado - Redirigiendo al login");
+			System.out.println(" Usuario no autenticado - Redirigiendo al login");
 			return "redirect:/usuarios/iniciarsesion";
 		}
 
 		// Verificar si es veterinario
 		if (usuarioLogueado.getRol().getId() != 2) {
-			System.out.println("❌ Usuario no tiene rol de veterinario");
+			System.out.println(" Usuario no tiene rol de veterinario");
 			return "redirect:/acceso-denegado";
 		}
 
 		String correo = usuarioLogueado.getCorreo();
-		System.out.println("📧 Buscando perfil para: " + correo);
+		System.out.println(" Buscando perfil para: " + correo);
 
 		// Buscar perfil veterinario
 		Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
@@ -110,36 +111,50 @@ public class PerfilVeterinarioController {
 				veterinariaId = veterinaria.getId();
 				model.addAttribute("veterinaria", veterinaria);
 				System.out.println(
-						"✅ Perfil veterinario encontrado para: " + correo + " - Veterinaria ID: " + veterinariaId);
+						" Perfil veterinario encontrado para: " + correo + " - Veterinaria ID: " + veterinariaId);
 			} else {
-				System.out.println("⚠️ Perfil veterinario sin veterinaria asociada");
+				System.out.println(" Perfil veterinario sin veterinaria asociada");
 			}
 		} else {
-			System.out.println("❌ ERROR: Veterinario sin perfil en BD: " + correo);
+			System.out.println(" ERROR: Veterinario sin perfil en BD: " + correo);
 			model.addAttribute("error", "Error: Perfil de veterinario no encontrado.");
 		}
 
-		// 🔹 Cargar mascotas (MANTENIDO)
+		// Cargar mascotas (MANTENIDO)
 		List<Mascota> mascotas = mascotaService.listarMascotas();
-		System.out.println("🐾 Mascotas encontradas: " + mascotas.size());
+		System.out.println(" Mascotas encontradas: " + mascotas.size());
 		model.addAttribute("mascotas", mascotas);
 
-		// 🔹 🔹 🔹 CARGAR PRODUCTOS PARA PET SHOP FILTRADOS POR VETERINARIA 🔹 🔹 🔹
+		// Cargar eventos de la veterinaria del veterinario logueado
+		List<Evento> eventosVet = new ArrayList<>();
+		if (veterinariaId != null) {
+			List<Evento> todosEventos = eventoService.obtenerTodosLosEventos();
+			for (Evento ev : todosEventos) {
+				if (ev.getVeterinaria() != null && ev.getVeterinaria().getId() != null
+						&& ev.getVeterinaria().getId().equals(veterinariaId)) {
+					eventosVet.add(ev);
+				}
+			}
+		}
+		System.out.println(" Eventos encontrados para veterinaria " + veterinariaId + ": " + eventosVet.size());
+		model.addAttribute("eventosVet", eventosVet);
+
+		// CARGAR PRODUCTOS PARA PET SHOP FILTRADOS POR VETERINARIA
 		try {
-			System.out.println("🛍️ Cargando productos para Pet Shop...");
+			System.out.println(" Cargando productos para Pet Shop...");
 
 			if (veterinariaId == null) {
-				System.out.println("⚠️ No se encontró veterinaria asociada al perfil. No se cargarán productos.");
+				System.out.println(" No se encontró veterinaria asociada al perfil. No se cargarán productos.");
 				model.addAttribute("productos", new ArrayList<Producto>());
 				model.addAttribute("inventarioPorProducto", new HashMap<Integer, Inventario>());
 			} else {
 				List<Producto> productos = productoService.obtenerTodosLosProductos();
-				System.out.println("📦 Productos encontrados: " + productos.size());
+				System.out.println(" Productos encontrados: " + productos.size());
 
 				// Obtener inventario SOLO de la veterinaria del perfil
 				List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(veterinariaId);
 				System.out.println(
-						"📊 Registros de inventario para veterinaria " + veterinariaId + ": " + inventarios.size());
+						" Registros de inventario para veterinaria " + veterinariaId + ": " + inventarios.size());
 
 				// Crear mapa de inventario
 				Map<Integer, Inventario> inventarioPorProducto = new HashMap<>();
@@ -187,11 +202,11 @@ public class PerfilVeterinarioController {
 				model.addAttribute("categoriaSeleccionada", categoria);
 				model.addAttribute("estadoSeleccionado", estado);
 				System.out.println(
-						"✅ Pet Shop cargado correctamente con filtros aplicados para veterinaria " + veterinariaId);
+						" Pet Shop cargado correctamente con filtros aplicados para veterinaria " + veterinariaId);
 			}
 
 		} catch (Exception e) {
-			System.out.println("❌ Error cargando Pet Shop: " + e.getMessage());
+			System.out.println(" Error cargando Pet Shop: " + e.getMessage());
 			model.addAttribute("productos", new ArrayList<>());
 			model.addAttribute("inventarioPorProducto", new HashMap<>());
 		}
@@ -205,7 +220,7 @@ public class PerfilVeterinarioController {
 			@RequestParam(required = false) String estado) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			System.out.println("🔍 Filtro AJAX - categoria: " + categoria + ", estado: " + estado);
+			System.out.println(" Filtro AJAX - categoria: " + categoria + ", estado: " + estado);
 
 			// Obtener usuario y perfil para conocer la veterinaria
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
@@ -222,7 +237,7 @@ public class PerfilVeterinarioController {
 			}
 
 			Integer veterinariaId = perfilOpt.get().getVeterinaria().getId();
-			System.out.println("🔍 Filtro AJAX para veterinaria ID: " + veterinariaId);
+			System.out.println(" Filtro AJAX para veterinaria ID: " + veterinariaId);
 
 			// Productos solo de esta veterinaria (a partir del inventario)
 			List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(veterinariaId);
@@ -277,9 +292,9 @@ public class PerfilVeterinarioController {
 			}
 
 			response.put("productos", listaFiltrada);
-			System.out.println("✅ Filtro AJAX - productos retornados: " + listaFiltrada.size());
+			System.out.println(" Filtro AJAX - productos retornados: " + listaFiltrada.size());
 		} catch (Exception e) {
-			System.err.println("💥 Error en filtro AJAX: " + e.getMessage());
+			System.err.println(" Error en filtro AJAX: " + e.getMessage());
 			response.put("error", e.getMessage());
 		}
 		return response;
@@ -312,19 +327,19 @@ public class PerfilVeterinarioController {
 	public String actualizarConfiguracion(@ModelAttribute PerfilVeterinario perfilForm,
 			@RequestParam(value = "foto", required = false) MultipartFile fotoFile, HttpSession session,
 			RedirectAttributes redirectAttributes) {
-		System.out.println("🔄 Procesando actualización de configuración");
+		System.out.println(" Procesando actualización de configuración");
 
-		// ✅ USAR SESIÓN
+		// USAR SESIÓN
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
-			System.out.println("❌ Usuario no autenticado - Redirigiendo al login");
+			System.out.println(" Usuario no autenticado - Redirigiendo al login");
 			return "redirect:/usuarios/iniciarsesion";
 		}
 
 		try {
 			// Verificar si es veterinario
 			if (usuarioLogueado.getRol().getId() != 2) {
-				redirectAttributes.addFlashAttribute("error", "❌ No tiene permisos de veterinario");
+				redirectAttributes.addFlashAttribute("error", " No tiene permisos de veterinario");
 				return "redirect:/perfil-veterinario";
 			}
 
@@ -335,7 +350,7 @@ public class PerfilVeterinarioController {
 			if (perfilExistenteOpt.isPresent()) {
 				PerfilVeterinario perfilExistente = perfilExistenteOpt.get();
 
-				// ✅ ACTUALIZAR USUARIO EXISTENTE
+				// ACTUALIZAR USUARIO EXISTENTE
 				Usuario usuarioActual = usuarioLogueado;
 				usuarioActual.setNombres(perfilForm.getUsuario().getNombres());
 				usuarioActual.setApellidos(perfilForm.getUsuario().getApellidos());
@@ -343,7 +358,7 @@ public class PerfilVeterinarioController {
 				usuarioActual.setDireccion(perfilForm.getUsuario().getDireccion());
 				usuarioActual.setImagen(perfilForm.getUsuario().getImagen());
 
-				// 🔥 **MANEJO DE FOTO - CORREGIDO**
+				// MANEJO DE FOTO - CORREGIDO
 				// En tu método del controller, reemplaza esta parte:
 				if (fotoFile != null && !fotoFile.isEmpty()) {
 					// Validaciones de foto
@@ -361,72 +376,72 @@ public class PerfilVeterinarioController {
 
 					// CON LOS LOGS AÑADIDOS QUEDARÍA ASÍ:
 					System.out.println("=== DEBUG INICIO SUBIDA DE IMAGEN ===");
-					System.out.println("📸 Archivo recibido: " + fotoFile.getOriginalFilename());
-					System.out.println("📸 Tamaño archivo: " + fotoFile.getSize() + " bytes");
-					System.out.println("📸 ContentType: " + contentType);
-					System.out.println("📸 ¿Está vacío?: " + fotoFile.isEmpty());
+					System.out.println(" Archivo recibido: " + fotoFile.getOriginalFilename());
+					System.out.println(" Tamaño archivo: " + fotoFile.getSize() + " bytes");
+					System.out.println(" ContentType: " + contentType);
+					System.out.println(" ¿Está vacío?: " + fotoFile.isEmpty());
 
 					// Usar sistema uploads
 					String uploadDir = System.getProperty("user.dir") + "/uploads/";
-					System.out.println("📁 Ruta uploads: " + uploadDir);
+					System.out.println(" Ruta uploads: " + uploadDir);
 
 					// Verificar si el directorio existe y tiene permisos
 					File dir = new File(uploadDir);
-					System.out.println("📁 ¿Directorio existe?: " + dir.exists());
-					System.out.println("📁 ¿Directorio puede escribir?: " + dir.canWrite());
-					System.out.println("📁 Ruta absoluta: " + dir.getAbsolutePath());
+					System.out.println(" ¿Directorio existe?: " + dir.exists());
+					System.out.println(" ¿Directorio puede escribir?: " + dir.canWrite());
+					System.out.println(" Ruta absoluta: " + dir.getAbsolutePath());
 
 					String extension = contentType.equals("image/jpeg") ? ".jpg" : ".png";
 					String fileName = "vet_" + usuarioLogueado.getId() + "_" + System.currentTimeMillis() + extension;
-					System.out.println("📝 Nombre archivo generado: " + fileName);
+					System.out.println(" Nombre archivo generado: " + fileName);
 
 					Path uploadPath = Paths.get(uploadDir);
 					if (!Files.exists(uploadPath)) {
-						System.out.println("📁 Creando directorio...");
+						System.out.println(" Creando directorio...");
 						Files.createDirectories(uploadPath);
 					}
 
 					// Guardar foto
 					Path filePath = uploadPath.resolve(fileName);
-					System.out.println("💾 Ruta completa archivo: " + filePath.toString());
+					System.out.println(" Ruta completa archivo: " + filePath.toString());
 
 					try {
 						Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-						System.out.println("✅ Archivo guardado exitosamente");
+						System.out.println(" Archivo guardado exitosamente");
 
 						// Verificar si el archivo se creó
 						File savedFile = new File(filePath.toString());
-						System.out.println("✅ ¿Archivo guardado existe?: " + savedFile.exists());
-						System.out.println("✅ Tamaño archivo guardado: " + savedFile.length() + " bytes");
+						System.out.println(" ¿Archivo guardado existe?: " + savedFile.exists());
+						System.out.println(" Tamaño archivo guardado: " + savedFile.length() + " bytes");
 
 					} catch (IOException e) {
-						System.out.println("❌ Error al guardar archivo: " + e.getMessage());
+						System.out.println(" Error al guardar archivo: " + e.getMessage());
 						e.printStackTrace();
 						throw e; // re-lanzar la excepción
 					}
 
-					// 🔥 **IMPORTANTE: Actualizar la imagen en el usuario**
+					// IMPORTANTE: Actualizar la imagen en el usuario
 					usuarioActual.setImagen("/uploads/" + fileName);
 					usuarioService.actualizarUsuario(usuarioActual.getId(), usuarioActual);
 
-					System.out.println("👤 Nueva ruta de imagen en usuario: " + usuarioActual.getImagen());
+					System.out.println(" Nueva ruta de imagen en usuario: " + usuarioActual.getImagen());
 
 					// AÑADE ESTO PARA VER SI SE GUARDA EN BD:
-					System.out.println("💾 Guardando usuario en BD...");
-					System.out.println("✅ Usuario actualizado en BD");
+					System.out.println(" Guardando usuario en BD...");
+					System.out.println(" Usuario actualizado en BD");
 
 					System.out.println("=== DEBUG FIN SUBIDA DE IMAGEN ===");
 				} else {
-					System.out.println("⚠️ No se recibió archivo de foto o está vacío");
-					System.out.println("⚠️ fotoFile es null: " + (fotoFile == null));
+					System.out.println(" No se recibió archivo de foto o está vacío");
+					System.out.println(" fotoFile es null: " + (fotoFile == null));
 					if (fotoFile != null) {
-						System.out.println("⚠️ fotoFile isEmpty: " + fotoFile.isEmpty());
+						System.out.println(" fotoFile isEmpty: " + fotoFile.isEmpty());
 					}
 				}
 
 				Usuario usuarioGuardado = usuarioService.actualizarUsuario(usuarioActual.getId(), usuarioActual);
 
-				// ✅ ACTUALIZAR PERFIL EXISTENTE
+				// ACTUALIZAR PERFIL EXISTENTE
 				perfilExistente.setEspecialidad(perfilForm.getEspecialidad());
 				perfilExistente.setExperiencia(perfilForm.getExperiencia());
 				perfilExistente.setTarjetaProfesional(perfilForm.getTarjetaProfesional());
@@ -434,22 +449,23 @@ public class PerfilVeterinarioController {
 				PerfilVeterinario perfilGuardado = perfilVeterinarioService.actualizarPerfil(perfilExistente.getId(),
 						perfilExistente);
 
-				// ✅ ACTUALIZAR SESIÓN con los nuevos datos
+				// ACTUALIZAR SESIÓN con los nuevos datos
 				session.setAttribute("usuarioLogueado", usuarioGuardado);
 
-				redirectAttributes.addFlashAttribute("success", "✅ Perfil actualizado correctamente");
-				System.out.println("✅ Perfil actualizado para: " + usuarioLogueado.getCorreo());
+				redirectAttributes.addFlashAttribute("success", " Perfil actualizado correctamente");
+				System.out.println(" Perfil actualizado para: " + usuarioLogueado.getCorreo());
 			} else {
 				System.out
-						.println("❌ ERROR: Intentando actualizar perfil que no existe: " + usuarioLogueado.getCorreo());
-				redirectAttributes.addFlashAttribute("error", "❌ Error: Perfil no encontrado");
+						.println(" ERROR: Intentando actualizar perfil que no existe: " + usuarioLogueado.getCorreo());
+				redirectAttributes.addFlashAttribute("error", " Error: Perfil no encontrado");
 			}
 
 			return "redirect:/perfil-veterinario";
 
 		} catch (Exception e) {
-			System.out.println("❌ Error al actualizar perfil: " + e.getMessage());
+			System.out.println(" Error al actualizar perfil: " + e.getMessage());
 			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("error", " Error al actualizar perfil: " + e.getMessage());
 			return "redirect:/perfil-veterinario";
 		}
 	}
@@ -458,17 +474,17 @@ public class PerfilVeterinarioController {
 	public String changePassword(@RequestParam String currentPassword, @RequestParam String newPassword,
 			@RequestParam String confirmPassword, HttpSession session, Model model) {
 
-		System.out.println("🎯 changePassword en VeterinarioController ejecutado!");
+		System.out.println(" changePassword en VeterinarioController ejecutado!");
 
 		try {
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuario");
 			if (usuarioLogueado == null) {
 				model.addAttribute("error", "Debe iniciar sesión");
-				return "redirect:/usuarios/iniciarsesion"; // ← CORREGIDO
+				return "redirect:/usuarios/iniciarsesion"; // CORREGIDO
 			}
 
-			System.out.println("🔐 Contraseña actual en BD: " + usuarioLogueado.getPassword());
-			System.out.println("🔐 Contraseña ingresada: " + currentPassword);
+			System.out.println(" Contraseña actual en BD: " + usuarioLogueado.getPassword());
+			System.out.println(" Contraseña ingresada: " + currentPassword);
 
 			// Verificar contraseña actual
 			if (!usuarioLogueado.getPassword().equals(currentPassword)) {
@@ -488,7 +504,7 @@ public class PerfilVeterinarioController {
 				return "perfil-veterinario";
 			}
 
-			System.out.println("✅ Contraseñas válidas, actualizando...");
+			System.out.println(" Contraseñas válidas, actualizando...");
 
 			// Actualizar en BD
 			usuarioService.actualizarPassword(usuarioLogueado.getId(), newPassword);
@@ -497,76 +513,18 @@ public class PerfilVeterinarioController {
 			usuarioLogueado.setPassword(newPassword);
 			session.setAttribute("usuario", usuarioLogueado);
 
-			System.out.println("✅ Contraseña actualizada correctamente para usuario: " + usuarioLogueado.getCorreo());
+			System.out.println(" Contraseña actualizada correctamente para usuario: " + usuarioLogueado.getCorreo());
 
 			// Cerrar sesión después de cambiar contraseña
 			session.invalidate();
 			model.addAttribute("success", "Contraseña actualizada correctamente. Por favor inicie sesión nuevamente.");
-			return "redirect:/usuarios/iniciarsesion"; // ← REDIRIGE AL LOGIN
+			return "redirect:/usuarios/iniciarsesion"; // REDIRIGE AL LOGIN
 
 		} catch (Exception e) {
-			System.out.println("❌ Error: " + e.getMessage());
+			System.out.println(" Error: " + e.getMessage());
 			model.addAttribute("error", "Error al cambiar la contraseña: " + e.getMessage());
 			e.printStackTrace();
 			return "perfil-veterinario";
-		}
-	}
-
-	// ==================== MODAL CREAR EVENTO ====================
-
-	@PostMapping("/evento/guardar")
-	public String guardarEvento(@RequestParam("nombre") String titulo, @RequestParam("descripcion") String descripcion,
-			@RequestParam("fechaInicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-			@RequestParam("fechaFin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
-			@RequestParam("fileImagen") MultipartFile imagen, HttpSession session,
-			RedirectAttributes redirectAttributes) {
-
-		try {
-			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
-			if (usuarioLogueado == null) {
-				redirectAttributes.addFlashAttribute("error", "Debe iniciar sesión como veterinario");
-				return "redirect:/usuarios/iniciarsesion";
-			}
-
-			Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService
-					.buscarPorUsuarioId(usuarioLogueado.getId());
-			if (perfilOpt.isEmpty() || perfilOpt.get().getVeterinaria() == null) {
-				redirectAttributes.addFlashAttribute("error", "No se encontró veterinaria asociada al veterinario");
-				return "redirect:/perfil-veterinario";
-			}
-
-			Veterinaria veterinaria = perfilOpt.get().getVeterinaria();
-
-			String rutaImagen = null;
-			if (imagen != null && !imagen.isEmpty()) {
-				String uploadsDir = System.getProperty("user.dir") + "/uploads/";
-				String nombreOriginal = imagen.getOriginalFilename();
-				String extension = (nombreOriginal != null && nombreOriginal.contains("."))
-						? nombreOriginal.substring(nombreOriginal.lastIndexOf("."))
-						: "";
-				String nombreArchivo = System.currentTimeMillis() + "_evento_"
-						+ (titulo.replaceAll("[^a-zA-Z0-9]", "_").toLowerCase()) + extension;
-				Path rutaCompleta = Paths.get(uploadsDir + nombreArchivo);
-				Files.createDirectories(rutaCompleta.getParent());
-				imagen.transferTo(rutaCompleta.toFile());
-				rutaImagen = "/uploads/" + nombreArchivo;
-			}
-
-			Evento evento = new Evento();
-			evento.setTitulo(titulo);
-			evento.setDescripcion(descripcion);
-			evento.setFechainicio(fechaInicio);
-			evento.setFechafin(fechaFin);
-			evento.setImagen(rutaImagen);
-			evento.setVeterinaria(veterinaria);
-
-			eventoService.guardarEvento(evento);
-			redirectAttributes.addFlashAttribute("success", "Evento creado correctamente");
-			return "redirect:/perfil-veterinario";
-
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Error al guardar evento: " + e.getMessage());
-			return "redirect:/perfil-veterinario";
 		}
 	}
 
@@ -577,6 +535,65 @@ public class PerfilVeterinarioController {
 		List<Mascota> mascotas = mascotaService.listarMascotas();
 		model.addAttribute("mascotas", mascotas);
 		return "perfil-veterinario/perfil-veterinario"; // tu vista que tiene el modal
+	}
+
+	// ==================== MODAL CREAR EVENTO ====================
+	@PostMapping("/evento/guardar")
+	public String guardarEvento(@RequestParam("nombre") String nombre,
+			@RequestParam("descripcion") String descripcion,
+			@RequestParam("fechainicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechainicio,
+			@RequestParam("fechafin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechafin,
+			@RequestParam("fileImagen") MultipartFile fileImagen,
+			HttpSession session,
+			RedirectAttributes redirectAttributes) {
+
+		try {
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				redirectAttributes.addFlashAttribute("error", "Debe iniciar sesión como veterinario");
+				return "redirect:/usuarios/iniciarsesion";
+			}
+
+			Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
+			if (perfilOpt.isEmpty() || perfilOpt.get().getVeterinaria() == null) {
+				redirectAttributes.addFlashAttribute("error", "No se encontró veterinaria asociada al perfil");
+				return "redirect:/perfil-veterinario";
+			}
+
+			Veterinaria veterinaria = perfilOpt.get().getVeterinaria();
+
+			Evento evento = new Evento();
+			evento.setTitulo(nombre);
+			evento.setDescripcion(descripcion);
+			evento.setFechainicio(fechainicio);
+			evento.setFechafin(fechafin);
+			evento.setVeterinaria(veterinaria);
+
+			// Manejo de imagen del evento
+			if (fileImagen != null && !fileImagen.isEmpty()) {
+				String uploadsDir = System.getProperty("user.dir") + "/uploads/";
+				String nombreOriginal = fileImagen.getOriginalFilename();
+				String extension = (nombreOriginal != null && nombreOriginal.contains("."))
+						? nombreOriginal.substring(nombreOriginal.lastIndexOf("."))
+						: "";
+				String nombreArchivo = System.currentTimeMillis() + "_evento_"
+						+ (nombre.replaceAll("[^a-zA-Z0-9]", "_").toLowerCase()) + extension;
+
+				Path rutaCompleta = Paths.get(uploadsDir + nombreArchivo);
+				Files.createDirectories(rutaCompleta.getParent());
+				fileImagen.transferTo(rutaCompleta.toFile());
+
+				evento.setImagen("/uploads/" + nombreArchivo);
+			}
+
+			eventoService.guardarEvento(evento);
+			redirectAttributes.addFlashAttribute("success", "Evento creado correctamente");
+			return "redirect:/perfil-veterinario";
+
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error al crear el evento: " + e.getMessage());
+			return "redirect:/perfil-veterinario";
+		}
 	}
 
 	// MODAL DE AGREGAR PRODUCTO!!!!!!!!!!!!!!

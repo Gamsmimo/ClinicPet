@@ -3,6 +3,7 @@ package com.clinicpet.demo.service;
 import java.util.Optional;
 
 import com.clinicpet.demo.model.PerfilVeterinario;
+import com.clinicpet.demo.model.Usuario;
 
 public interface IPerfilVeterinarioService {
 
@@ -29,5 +30,7 @@ public interface IPerfilVeterinarioService {
 
 	// Verificar existencia por documento
 	boolean existePorUsuarioNumDocumento(String numDocumento);
+
+	PerfilVeterinario obtenerPerfilVeterinarioPorUsuario(Usuario usuarioLogueado);
 
 }

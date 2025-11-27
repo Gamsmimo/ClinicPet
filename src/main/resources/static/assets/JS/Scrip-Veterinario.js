@@ -649,3 +649,98 @@ document.addEventListener('DOMContentLoaded', function() {
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
     loadHCRecord(0);
 }
+
+// Eventos y Campañas - Paginación
+let currentPage = 1;
+        const itemsPerPage = 3;
+        let totalPages;
+
+        function renderCards() {
+            const container = document.getElementById('cardsContainer');
+            const cards = container.querySelectorAll('.event-card');
+            totalPages = Math.ceil(cards.length / itemsPerPage);
+            
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            
+            // Ocultar todas las cards primero
+            cards.forEach(card => {
+                card.classList.add('card-hidden');
+            });
+            
+            // Mostrar solo las cards de la página actual
+            for (let i = start; i < end && i < cards.length; i++) {
+                cards[i].classList.remove('card-hidden');
+            }
+            
+            updatePagination();
+        }
+
+        function updatePagination() {
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        function changePage(direction) {
+            const newPage = currentPage + direction;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderCards();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function editEvent(id) {
+            const card = document.querySelector(`.event-card[data-id="${id}"]`);
+            const title = card.querySelector('.card-title').textContent;
+            const date = card.querySelector('.card-date').textContent.replace(' ', '').trim();
+            const description = card.querySelector('.card-description').textContent;
+            
+            console.log('Editando evento:', { id, title, date, description });
+            // Aquí puedes implementar la lógica de edición
+        }
+
+        function deleteEvent(id) {
+            const card = document.querySelector(`.event-card[data-id="${id}"]`);
+            const title = card.querySelector('.card-title').textContent;
+            
+            Swal.fire({
+                title: '¿Eliminar evento?',
+                html: `
+                    <div style="text-align: left; padding: 10px;">
+                        <p style="margin-bottom: 10px; color: var(--dark);">
+                            <strong>Evento:</strong> ${title}
+                        </p>
+                        <p style="color: var(--gray); font-size: 0.95rem;">
+                            Esta acción no se puede deshacer
+                        </p>
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-trash-alt"></i> Eliminar',
+                cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Eliminar la card del DOM
+                    card.remove();
+                    // Recalcular la paginación
+                    renderCards();
+                    
+                    Swal.fire({
+                        title: '¡Eliminado!',
+                        text: 'El evento ha sido eliminado exitosamente',
+                        icon: 'success',
+                        confirmButtonText: '<i class="fas fa-check"></i> Aceptar',
+                        timer: 2500,
+                        timerProgressBar: true
+                    });
+                }
+            });
+        }
+
+        // Inicializar la página
+        renderCards();

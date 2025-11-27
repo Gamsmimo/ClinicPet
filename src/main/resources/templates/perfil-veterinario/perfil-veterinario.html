@@ -78,7 +78,7 @@
 					<span>Historias Clínicas</span></a></li>
 			<li><a href="#adopciones" class="menu-link" data-section="adopciones"><i class="fas fa-heart"></i>
 					<span>Adopciones</span></a></li>
-			<li><a href="#eventos" class="menu-link" data-section="eventos"><i class="fas fa-heart"></i>
+			<li><a href="#eventos" class="menu-link" data-section="eventos"><i class="fa-solid fa-calendar-week"></i>
 					<span>Eventos y Campañas</span></a></li>
 			<li><a href="#petshop" class="menu-link" data-section="petshop"><i class="fas fa-shopping-bag"></i>
 					<span>Pet Shop</span></a></li>
@@ -492,50 +492,63 @@
 			</section>
 
 			<!-- Eventos y Campañas -->
-			<section id="eventos"  class="content-section">
+			<section id="eventos" class="content-section">
 				<div class="section-header">
-									<h2><i class="fas fa-shopping-bag"></i> Eventos y Campañas</h2>
-					<div class="row">
-						<div class="col-md-4 mb-4">
-							<div class="eventos">
-								<img th:src="@{/assets/IMG/Desparasitacion1.png}" class="card-img-top" alt="Campaña">
-								<h4 class="card-title">Jornada de Desparasitación</h4>
-								<p class="card-text">Julio 10-15, 2025 - Desparasitación interna y externa con descuento
-									del
-									30%. Protege
-									a tu mascota de parásitos y enfermedades asociadas.</p>
-								<button class="btn btn-primary">Más Información</button>
-							</div>
-						</div>
-
-						<div class="col-md-4 mb-4">
-							<div class="eventos">
-								<img th:src="@{/assets/IMG/CampañaE2.png}" class="card-img-top" alt="Campaña">
-								<h4 class="card-title">Campaña de Esterilización</h4>
-								<p class="card-text">Junio 15-30, 2025 - Precios especiales en esterilización para
-									perros y
-									gatos.
-									Contribuye al control de la población animal y previene enfermedades.</p>
-								<button class="btn btn-primary">Más Información</button>
-							</div>
-						</div>
-
-						<div class="col-md-4 mb-4">
-							<div class="eventos">
-								<img th:src="@{/assets/IMG/Desparasitacion2.png}" class="card-img-top" alt="Campaña">
-								<h4 class="card-title">Jornada de Desparasitación</h4>
-								<p class="card-text">Agosto 15-25, 2025 - 40% de descuento en tratamientos contra
-									pulgas,
-									garrapatas y
-									gusanos intestinales.
-									No esperes a que sea tarde. ¡Desparasita ahora!</p>
-								<button class="btn btn-primary">Más Información</button>
-							</div>
-						</div>
-					</div>
-					
+					<h2><i class="fa-solid fa-calendar-week"></i> Eventos y Campañas</h2>
 				</div>
+
+					<div class="cards-container" id="cardsContainer">
+						<div class="event-card" th:each="evento : ${eventosVet}" th:data-id="${evento.id}">
+							<div class="card-image-placeholder">
+								<!-- Aquí podrías mostrar la imagen real si existe -->
+								<i class="fas fa-image" th:if="${evento.imagen == null}"></i>
+								<img th:if="${evento.imagen != null}"
+									th:src="@{${evento.imagen}}" alt="Imagen evento" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+							</div>
+							<div class="card-content">
+								<h4 class="card-title" th:text="${evento.titulo}">Título del evento</h4>
+								<div class="card-date">
+									<i class="far fa-calendar-alt"></i>
+									<span th:text="'Desde ' + ${evento.fechainicio}">Desde ...</span>
+								</div>
+								<div class="card-date">
+									<i class="far fa-calendar-alt"></i>
+									<span th:text="'Hasta ' + ${evento.fechafin}">Hasta ...</span>
+								</div>
+								<p class="card-description" th:text="${evento.descripcion}">
+									Descripción del evento
+								</p>
+								<div class="card-actions">
+									<button class="btn btn-edit" th:onclick="|editEvent(${evento.id})|">
+										<i class="fas fa-pen"></i>
+										EDITAR
+									</button>
+									<button class="btn btn-delete" th:onclick="|deleteEvent(${evento.id})|">
+										<i class="fas fa-trash-alt"></i>
+										ELIMINAR
+									</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="pagination">
+						<button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+							<i class="fas fa-chevron-left"></i>
+							Anterior
+						</button>
+						<div class="pagination-info">
+							Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
+						</div>
+						<button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+							Siguiente
+							<i class="fas fa-chevron-right"></i>
+						</button>
+					</div>
+				
 			</section>
+
 
 			<!-- Sección Pet Shop -->
 			<section id="petshop" class="content-section">
@@ -856,12 +869,13 @@
 						<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
 					</div>
 					<div class="col-md-6 mb-3">
-						<label class="form-label" for="fechaInicio">Fecha de Inicio</label>
-						<input type="date" id="fechaInicio" name="fechaInicio" class="form-control" required>
+						<label class="form-label" for="fechainicio">Fecha de Inicio</label>
+						<input type="date" id="fechainicio" name="fechainicio" class="form-control" required>
 					</div>
 					<div class="col-md-6 mb-3">
-						<label class="form-label" for="fechaFin">Fecha de finalizaciòn</label>
-						<input type="date" id="fechaFin" name="fechaFin" class="form-control" required>
+						<label class="form-label" for="fechafin">Fecha de finalización</label>
+						<input type="date" id="fechafin" name="fechafin" class="form-control" required
+							th:attr="min=${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
 					</div>
 					<div class="mb-3">
 						<label class="form-label">Descripción del evento</label>

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.clinicpet.demo.model.PerfilVeterinario;
+import com.clinicpet.demo.model.Usuario;
 import com.clinicpet.demo.repository.IPerfilVeterinarioRepository;
 
 @Service
@@ -80,6 +81,12 @@ public class PerfilVeterinarioServiceImplement implements IPerfilVeterinarioServ
 	public boolean existePorUsuarioNumDocumento(String numDocumento) {
 		// TODO Auto-generated method stub
 		return perfilVeterinarioRepository.existsByUsuarioNumDocumento(numDocumento);
+	}
+
+	@Override
+	public PerfilVeterinario obtenerPerfilVeterinarioPorUsuario(Usuario usuarioLogueado) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
