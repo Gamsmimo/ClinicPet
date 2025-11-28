@@ -94,242 +94,41 @@ function resumeCarousel() {
 	startAutoSlide();
 }
 
-// Datos de productos ampliados
-const products = {
-	food: [
-		{
-			id: 1,
-			name: "Alimento Premium para Perros",
-			description:
-				"Alimento balanceado para perros adultos de todas las razas. Con proteínas de alta calidad.",
-			price: 24.99,
-			image: "concentrado",
-			featured: true,
-			pet: "dog",
-			rating: 5,
-		},
-		{
-			id: 2,
-			name: "Alimento para Gatos Sensibles",
-			description:
-				"Fórmula especial para gatos con estómagos sensibles. Sin granos ni colorantes artificiales.",
-			price: 19.99,
-			image: "comidaparagato",
-			featured: true,
-			pet: "cat",
-			rating: 4,
-		},
-		{
-			id: 3,
-			name: "Snacks para Perros",
-			description:
-				"Deliciosos snacks para perro, bajos en calorías y con vitaminas esenciales.",
-			price: 9.99,
-			image: "snackperro",
-			featured: false,
-			pet: "dog",
-			rating: 5,
-		},
-		{
-			id: 4,
-			name: "Alimento para Aves",
-			description:
-				"Mezcla de semillas y granos para aves domésticas. Rico en nutrientes esenciales.",
-			price: 8.49,
-			image: "pajaros",
-			featured: false,
-			pet: "bird",
-			rating: 4,
-		},
-		{
-			id: 13,
-			name: "Comida Orgánica para Gatos",
-			description:
-				"Ingredientes 100% naturales y orgánicos para gatos exigentes.",
-			price: 29.99,
-			image: "comidaparagato",
-			featured: true,
-			pet: "cat",
-			rating: 5,
-		},
-		{
-			id: 14,
-			name: "Galletas Dentales Perros",
-			description: "Snacks que ayudan a mantener los dientes limpios y sanos.",
-			price: 12.99,
-			image: "snackperro",
-			featured: false,
-			pet: "dog",
-			rating: 4,
-		},
-	],
-	accessories: [
-		{
-			id: 5,
-			name: "Collar Ajustable",
-			description:
-				"Collar de nylon resistente con hebilla de seguridad y ajuste personalizado.",
-			price: 12.99,
-			image: "collar",
-			featured: false,
-			pet: "dog",
-			rating: 4,
-		},
-		{
-			id: 6,
-			name: "Juguete para Gatos",
-			description:
-				"Varita con plumas para estimular el instinto de caza de tu gato. Ideal para juego interactivo.",
-			price: 7.99,
-			image: "juguetegato",
-			featured: true,
-			pet: "cat",
-			rating: 5,
-		},
-		{
-			id: 7,
-			name: "Cama para Mascotas",
-			description:
-				"Cama suave y cómoda con base antideslizante. Disponible en varios tamaños.",
-			price: 29.99,
-			image: "camaperro",
-			featured: true,
-			pet: "dog",
-			rating: 5,
-		},
-		{
-			id: 8,
-			name: "Arnés Paseo Seguro",
-			description:
-				"Arnés ergonómico con correa incluida para paseos cómodos y seguros.",
-			price: 18.5,
-			image: "arnes",
-			featured: false,
-			pet: "dog",
-			rating: 4,
-		},
-		{
-			id: 15,
-			name: "Rascador para Gatos",
-			description:
-				"Torre rascadora con múltiples niveles y juguetes colgantes.",
-			price: 45.99,
-			image: "juguetegato",
-			featured: true,
-			pet: "cat",
-			rating: 5,
-		},
-		{
-			id: 16,
-			name: "Transportadora Premium",
-			description: "Transportadora espaciosa y ventilada para viajes seguros.",
-			price: 39.99,
-			image: "collar",
-			featured: false,
-			pet: "all",
-			rating: 4,
-		},
-	],
-	medicine: [
-		{
-			id: 9,
-			name: "Antiparasitario",
-			description:
-				"Tabletas antiparasitarias para perros y gatos. Protege contra parásitos internos.",
-			price: 14.95,
-			image: "antiparasitario",
-			featured: false,
-			pet: "all",
-			rating: 5,
-		},
-		{
-			id: 10,
-			name: "Shampoo Medicado",
-			description:
-				"Shampoo para mascotas con problemas dermatológicos. Calma la piel irritada.",
-			price: 11.25,
-			image: "shampoo",
-			featured: true,
-			pet: "all",
-			rating: 4,
-		},
-		{
-			id: 11,
-			name: "Suplemento Articular",
-			description:
-				"Suplemento con glucosamina para la salud articular de perros y gatos.",
-			price: 22.75,
-			image: "suplemento",
-			featured: true,
-			pet: "all",
-			rating: 5,
-		},
-		{
-			id: 12,
-			name: "Gotas para Oídos",
-			description:
-				"Solución limpiadora para prevenir infecciones y mantener los oídos saludables.",
-			price: 9.99,
-			image: "gotas",
-			featured: false,
-			pet: "all",
-			rating: 4,
-		},
-		{
-			id: 17,
-			name: "Vitaminas Multifuncionales",
-			description: "Complejo vitamínico para fortalecer el sistema inmune.",
-			price: 18.99,
-			image: "suplemento",
-			featured: false,
-			pet: "all",
-			rating: 5,
-		},
-		{
-			id: 18,
-			name: "Spray Antiparasitario",
-			description: "Protección externa contra pulgas y garrapatas.",
-			price: 16.5,
-			image: "antiparasitario",
-			featured: false,
-			pet: "all",
-			rating: 4,
-		},
-	],
-};
+// ===== PRODUCTOS DE LA TIENDA (CARGADOS DESDE BD) =====
+let allProducts = []; // Se cargarán desde la base de datos
 
 let cart = [];
 let currentFilter = { category: "all", pet: "all", sort: "featured" };
 
 // Funciones de renderizado
 function createProductCard(product) {
-	const stars = '<i class="fas fa-star star"></i>'.repeat(product.rating);
-	const badge = product.featured
-		? '<div class="product-badge">⭐ Destacado</div>'
-		: "";
+	// Generar estrellas (rating por defecto 5 si no viene de BD)
+	const rating = product.rating || 5;
+	const stars = '<i class="fas fa-star star"></i>'.repeat(rating);
+	
+	// Badge de disponibilidad
+	const badge = product.cantidadDisponible > 0
+		? `<div class="product-badge">✅ Disponible (${product.cantidadDisponible})</div>`
+		: '<div class="product-badge" style="background: #ff6b6b;">❌ Agotado</div>';
+
+	// Categoría en español
+	const categoriaES = getCategoryNameES(product.categoria);
 
 	return `
-        <div class="product-card" data-category="${getCategoryByProductId(
-		product.id
-	)}" data-pet="${product.pet}">
+        <div class="product-card" data-category="${product.categoria}">
             ${badge}
             <div class="product-image">
-                <img src="img/${product.image}.png" alt="${product.name}">
+                <img src="img/${product.imagen}.png" alt="${product.nombre}" onerror="this.src='img/default.png'">
             </div>
             <div class="product-info">
-                <div class="product-category">${getCategoryName(
-		product.id
-	)}</div>
-                <h3 class="product-name">${product.name}</h3>
+                <div class="product-category">${categoriaES}</div>
+                <h3 class="product-name">${product.nombre}</h3>
                 <div class="product-rating">${stars}</div>
-                <p class="product-description">${product.description}</p>
+                <p class="product-description">${product.descripcion}</p>
                 <div class="product-bottom">
-                    <div class="product-price">$${product.price.toFixed(
-		2
-	)}</div>
-                    <button class="add-to-cart" onclick="addToCart(${product.id
-		})">
-                        <i class="fas fa-cart-plus"></i> Añadir
+                    <div class="product-price">$${product.precio.toFixed(2)}</div>
+                    <button class="add-to-cart" onclick="addToCart(${product.id})" ${product.cantidadDisponible <= 0 ? 'disabled' : ''}>
+                        <i class="fas fa-cart-plus"></i> ${product.cantidadDisponible > 0 ? 'Añadir' : 'Agotado'}
                     </button>
                 </div>
             </div>
@@ -337,34 +136,50 @@ function createProductCard(product) {
     `;
 }
 
-function getCategoryByProductId(id) {
-	if (id <= 4 || (id >= 13 && id <= 14)) return "food";
-	if ((id >= 5 && id <= 8) || (id >= 15 && id <= 16)) return "accessories";
-	return "medicine";
-}
-
-function getCategoryName(id) {
-	const cat = getCategoryByProductId(id);
-	if (cat === "food") return "Alimento";
-	if (cat === "accessories") return "Accesorio";
-	return "Medicamento";
+// Función para traducir categorías al español
+function getCategoryNameES(categoria) {
+	if (!categoria) return "Producto";
+	
+	const categorias = {
+		'food': 'Alimento',
+		'alimento': 'Alimento',
+		'accessories': 'Accesorio',
+		'accesorio': 'Accesorio',
+		'medicine': 'Medicamento',
+		'medicamento': 'Medicamento',
+		'juguete': 'Juguete',
+		'higiene': 'Higiene'
+	};
+	
+	return categorias[categoria.toLowerCase()] || categoria;
 }
 
 function getAllProducts() {
-	return [...products.food, ...products.accessories, ...products.medicine];
+	return allProducts; // Retorna productos cargados desde BD
 }
 
 function renderProducts() {
-	const allProducts = getAllProducts();
-	const featured = allProducts.filter((p) => p.featured);
+	const productos = getAllProducts();
+	
+	// Productos destacados (primeros 6 productos disponibles)
+	const featured = productos.filter(p => p.cantidadDisponible > 0).slice(0, 6);
 
-	// Productos destacados (siempre mostrar todos los destacados)
-	document.getElementById("featuredProducts").innerHTML = featured
-		.map(createProductCard)
-		.join("");
+	// Productos destacados
+	if (featured.length > 0) {
+		document.getElementById("featuredProducts").innerHTML = featured
+			.map(createProductCard)
+			.join("");
+	} else {
+		document.getElementById("featuredProducts").innerHTML = `
+			<div style="grid-column: 1/-1; text-align: center; padding: 40px 20px;">
+				<i class="fas fa-box-open" style="font-size: 3rem; opacity: 0.3; margin-bottom: 15px;"></i>
+				<h3 style="color: var(--text-color);">No hay productos destacados</h3>
+			</div>
+		`;
+	}
 
 	// Todos los productos (filtrados)
-	let filtered = filterProducts(allProducts);
+	let filtered = filterProducts(productos);
 
 	// Si no hay productos filtrados, mostrar mensaje
 	if (filtered.length === 0) {
@@ -373,8 +188,8 @@ function renderProducts() {
                 <div style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;">
                     <i class="fas fa-search"></i>
                 </div>
-                <h3 style="color: #666; margin-bottom: 10px;">No se encontraron productos</h3>
-                <p style="color: #999;">Intenta con otros filtros o categorías</p>
+                <h3 style="color: var(--text-color); margin-bottom: 10px;">No se encontraron productos</h3>
+                <p style="color: var(--text-secondary);">Intenta con otros filtros o categorías</p>
             </div>
         `;
 	} else {
@@ -390,24 +205,20 @@ function filterProducts(products) {
 	// Filtro de categoría
 	if (currentFilter.category !== "all") {
 		filtered = filtered.filter(
-			(p) => getCategoryByProductId(p.id) === currentFilter.category
-		);
-	}
-
-	// Filtro de mascota
-	if (currentFilter.pet !== "all") {
-		filtered = filtered.filter(
-			(p) => p.pet === currentFilter.pet || p.pet === "all"
+			(p) => p.categoria && p.categoria.toLowerCase() === currentFilter.category.toLowerCase()
 		);
 	}
 
 	// Ordenamiento
 	if (currentFilter.sort === "price-low") {
-		filtered.sort((a, b) => a.price - b.price);
+		filtered.sort((a, b) => a.precio - b.precio);
 	} else if (currentFilter.sort === "price-high") {
-		filtered.sort((a, b) => b.price - a.price);
+		filtered.sort((a, b) => b.precio - a.precio);
 	} else if (currentFilter.sort === "name") {
-		filtered.sort((a, b) => a.name.localeCompare(b.name));
+		filtered.sort((a, b) => a.nombre.localeCompare(b.nombre));
+	} else if (currentFilter.sort === "featured") {
+		// Ordenar por cantidad disponible (más stock primero)
+		filtered.sort((a, b) => b.cantidadDisponible - a.cantidadDisponible);
 	}
 
 	return filtered;
@@ -473,11 +284,11 @@ function updateCart() {
 				(item) => `
             <div class="cart-item">
                 <div class="cart-item-image">
-                    <img src="img/${item.image}.png" alt="${item.name}">
+                    <img src="img/${item.imagen}.png" alt="${item.nombre}" onerror="this.src='img/default.png'">
                 </div>
                 <div class="cart-item-details">
-                    <div class="cart-item-name">${item.name}</div>
-                    <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+                    <div class="cart-item-name">${item.nombre}</div>
+                    <div class="cart-item-price">$${item.precio.toFixed(2)}</div>
                     <div class="cart-item-controls">
                         <button class="quantity-btn" onclick="updateQuantity(${item.id
 					}, -1)">-</button>
@@ -498,7 +309,7 @@ function updateCart() {
 
 	// Actualizar totales
 	const subtotal = cart.reduce(
-		(sum, item) => sum + item.price * item.quantity,
+		(sum, item) => sum + item.precio * item.quantity,
 		0
 	);
 	subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
@@ -508,6 +319,56 @@ function updateCart() {
 function showNotification(message) {
 	// Función removida - no se usan alertas
 	console.log(message);
+}
+
+// ===== NOTIFICACIÓN PARA CHECKOUT =====
+function showCheckoutNotification(message, type = 'info') {
+	const notification = document.createElement('div');
+	notification.className = `checkout-notification notification-${type}`;
+	
+	const icons = {
+		'success': 'check-circle',
+		'error': 'exclamation-circle',
+		'warning': 'exclamation-triangle',
+		'info': 'info-circle'
+	};
+	
+	const colors = {
+		'success': '#51CF66',
+		'error': '#FF6B6B',
+		'warning': '#FFD93D',
+		'info': '#018099'
+	};
+	
+	notification.innerHTML = `
+		<i class="fas fa-${icons[type]}"></i>
+		<span>${message}</span>
+	`;
+	
+	notification.style.cssText = `
+		position: fixed;
+		top: 100px;
+		right: 20px;
+		background: ${colors[type]};
+		color: white;
+		padding: 1rem 1.5rem;
+		border-radius: 10px;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+		display: flex;
+		align-items: center;
+		gap: 0.8rem;
+		z-index: 10000;
+		animation: slideInRight 0.3s ease;
+		font-family: 'Fredoka', sans-serif;
+		font-weight: 500;
+	`;
+	
+	document.body.appendChild(notification);
+	
+	setTimeout(() => {
+		notification.style.animation = 'slideOutRight 0.3s ease';
+		setTimeout(() => notification.remove(), 300);
+	}, 3000);
 }
 
 // ===== DATOS DE TIENDAS =====
@@ -591,8 +452,18 @@ function renderStores() {
 	}).join('');
 }
 
-function selectStore(storeId) {
+async function selectStore(storeId) {
 	selectedStore = stores.find(s => s.id === storeId);
+	
+	console.log(`🏪 Tienda seleccionada: ${selectedStore.nombre || selectedStore.name} (ID: ${storeId})`);
+	
+	// Cargar productos de la veterinaria seleccionada
+	const productosLoaded = await loadProductsFromStore(storeId);
+	
+	if (!productosLoaded) {
+		alert('No se pudieron cargar los productos de esta tienda. Por favor, intenta de nuevo.');
+		return;
+	}
 	
 	// Ocultar selección de tiendas
 	document.getElementById('storeSelection').style.display = 'none';
@@ -615,8 +486,35 @@ function selectStore(storeId) {
 	
 	// Scroll suave al inicio
 	window.scrollTo({ top: 0, behavior: 'smooth' });
-	
-	console.log(`Tienda seleccionada: ${selectedStore.nombre || selectedStore.name}`);
+}
+
+// ===== CARGAR PRODUCTOS DE UNA VETERINARIA =====
+async function loadProductsFromStore(veterinariaId) {
+	try {
+		console.log(`🔍 Cargando productos de veterinaria ID: ${veterinariaId}`);
+		
+		const response = await fetch(`/usuarios/api/veterinarias/${veterinariaId}/productos`);
+		
+		if (!response.ok) {
+			throw new Error(`Error HTTP: ${response.status}`);
+		}
+		
+		allProducts = await response.json();
+		
+		console.log(`✅ Productos cargados: ${allProducts.length}`);
+		console.log('Productos:', allProducts);
+		
+		if (allProducts.length === 0) {
+			console.warn('⚠️ Esta veterinaria no tiene productos en inventario');
+		}
+		
+		return true;
+		
+	} catch (error) {
+		console.error('❌ Error al cargar productos:', error);
+		allProducts = [];
+		return false;
+	}
 }
 
 // Función para volver a la selección de tiendas
@@ -634,8 +532,9 @@ function backToStoreSelection() {
 	// Mostrar selección de tiendas
 	document.getElementById('storeSelection').style.display = 'block';
 	
-	// Limpiar tienda seleccionada
+	// Limpiar tienda seleccionada y productos
 	selectedStore = null;
+	allProducts = [];
 	
 	// Scroll suave al inicio
 	window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -669,17 +568,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	// Checkout
 	document.getElementById("checkoutBtn").addEventListener("click", () => {
 		if (cart.length === 0) {
-			alert("Tu carrito está vacío");
+			showCheckoutNotification("Tu carrito está vacío", "warning");
 			return;
 		}
-		const total = cart.reduce(
-			(sum, item) => sum + item.price * item.quantity,
-			0
-		);
-		alert(`¡Gracias por tu compra!\nTotal: $${total.toFixed(2)}`);
-		cart = [];
-		updateCart();
-		closeCartSidebar();
+		
+		// Guardar carrito en localStorage para la pasarela de pagos
+		localStorage.setItem('checkoutCart', JSON.stringify(cart));
+		
+		// Redirigir a la pasarela de pagos
+		window.location.href = '/usuarios/pasarela-pagos';
 	});
 
 	// ===== FUNCIONALIDAD DEL BOTÓN DE FILTRAR (SIN ALERTAS) =====

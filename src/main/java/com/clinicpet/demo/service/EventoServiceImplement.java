@@ -79,9 +79,9 @@ public class EventoServiceImplement implements IEventoService {
 			throw new IllegalArgumentException("La fecha de fin no puede ser anterior a la fecha de inicio");
 		}
 
-		// Validar que las fechas no sean pasadas
-		if (evento.getFechainicio().isBefore(LocalDate.now())) {
-			throw new IllegalArgumentException("La fecha de inicio no puede ser en el pasado");
+		// Validar que la fecha de fin no sea anterior a hoy
+		if (evento.getFechafin().isBefore(LocalDate.now())) {
+			throw new IllegalArgumentException("La fecha de fin no puede ser anterior a hoy");
 		}
 
 		// Validar longitud máxima del título (opcional)
