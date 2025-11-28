@@ -438,7 +438,8 @@ body.dark-mode .servicio-icon {
 .botones-finales {
 	display: flex;
 	align-items: center;
-	gap: 100px;
+	gap: 10px;
+	flex-wrap: wrap;
 }
 
 h1,
@@ -471,6 +472,7 @@ h2 .container h2 {
 	padding: 0 20px;
 	flex-wrap: wrap;
 	gap: 15px;
+	justify-content: space-between;
 }
 
 .brand-section {
@@ -510,6 +512,7 @@ h2 .container h2 {
 	flex-grow: 1;
 	max-width: 300px;
 	margin: 0 10px;
+	min-width: 150px;
 }
 
 .search-input {
@@ -586,6 +589,7 @@ h2 .container h2 {
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	flex-wrap: wrap;
 }
 
 .nav-buttons {
@@ -636,7 +640,7 @@ h2 .container h2 {
 	position: absolute;
 	right: 0;
 	top: 50px;
-	background: linear-gradient(135deg, #fdeef9);
+	background: linear-gradient(135deg, #fdeef9e0);
 	border-radius: 10px;
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 	padding: 15px;
@@ -746,7 +750,7 @@ h2 .container h2 {
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 	width: 250px;
 	padding: 15px;
-	z-index: 100;
+	z-index: 1100;
 	display: none;
 }
 
@@ -796,6 +800,7 @@ h2 .container h2 {
 	margin-bottom: 20px;
 	color: #59b9fa;
 	text-shadow: 5px 1px 5px rgba(255, 255, 255, 0.212);
+	word-wrap: break-word;
 }
 
 .hero p {
@@ -805,7 +810,8 @@ h2 .container h2 {
 	color: #1a1a1a;
 	font-weight: 600;
 	text-shadow: 5px 2px 5px rgba(255, 255, 255, 0.952);
-
+	padding: 0 15px;
+	word-wrap: break-word;
 }
 
 .btn-hero {
@@ -890,11 +896,14 @@ h2 .container h2 {
 .intro-text h2 {
 	color: var(--verde-oscuro);
 	margin-bottom: 20px;
+	text-align: center;
 }
 
 .intro-text p {
 	color: #0e0f2b;
 	font-size: 18px;
+	text-align: center;
+	padding: 0 10px;
 }
 
 /* Consejos */
@@ -909,6 +918,8 @@ h2 .container h2 {
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 	transition: all 0.3s;
 	height: 100%;
+	margin-bottom: 20px;
+	text-align: center;
 }
 
 .card-consejo:hover {
@@ -923,11 +934,13 @@ h2 .container h2 {
 
 .card-body {
 	padding: 25px;
+	text-align: center;
 }
 
 .card-title {
 	color: var(--azul-oscuro);
 	margin-bottom: 15px;
+	text-align: center;
 }
 
 /* Curiosidades */
@@ -943,6 +956,8 @@ h2 .container h2 {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	text-align: center;
+	margin-bottom: 20px;
 }
 
 .curiosidad-img {
@@ -958,58 +973,6 @@ h2 .container h2 {
 	color: var(--rosa-fuerte);
 }
 
-/* Veterinarios - Carrusel */
-.veterinarios {
-	background-color: var(--beige);
-	padding: 80px 0;
-}
-
-.vet-card {
-	background: white;
-	border-radius: 15px;
-	overflow: hidden;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-	margin: 15px;
-}
-
-.vet-img {
-	height: 300px;
-	width: 100%;
-	object-fit: cover;
-}
-
-.vet-info {
-	padding: 20px;
-}
-
-.vet-name {
-	color: #201f68;
-	margin-bottom: 10px;
-}
-
-.vet-rating {
-	color: #ffc107;
-	margin-bottom: 10px;
-}
-
-.owl-nav {
-	text-align: center;
-	margin-top: 20px;
-}
-
-.owl-prev,
-.owl-next {
-	background: var(--azul-oscuro) !important;
-	color: white !important;
-	width: 40px;
-	height: 40px;
-	border-radius: 50% !important;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	margin: 0 10px;
-}
-
 /* Eventos */
 .eventos {
 	background: white;
@@ -1018,6 +981,8 @@ h2 .container h2 {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	text-align: center;
+	margin-bottom: 20px;
 }
 
 /* Mapa y Ubicaciones */
@@ -1088,61 +1053,89 @@ h2 .container h2 {
 	background: linear-gradient(135deg, #032547, #0b253b);
 	color: white;
 	position: relative;
-	padding: 2rem 0;
+	padding: 3rem 0 1.5rem;
+	text-align: center;
+}
+
+.footer .container {
+	max-width: 1200px;
 }
 
 .footer-logo {
-	height: 90px;
-	margin-right: 200px;
-	display: inline-block;
-	vertical-align: middle;
-	transform: translateY(1px);
+	width: 150px;
+	height: auto;
+	display: block;
+	margin: 0 auto 15px;
+}
+
+.footer-logo img {
+	width: 100%;
+	height: auto;
+	display: block;
 }
 
 .row {
-	justify-content: right;
-	margin-left: 40px;
+	justify-content: center;
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .footer-brand {
 	font-family: 'Poppins', sans-serif;
 	font-weight: 700;
-	font-size: 1.8rem;
-	margin-bottom: 10px;
+	font-size: 2rem;
+	margin-bottom: 15px;
 	color: white;
-	display: inline-block;
-	vertical-align: middle;
+	display: block;
+	text-align: center;
 }
 
 .footer-lema {
-	padding: 0;
+	padding: 0 20px;
 	font-style: italic;
-	opacity: 0.8;
+	opacity: 0.9;
 	margin-bottom: 20px;
+	font-size: 1.1rem;
+	text-align: center;
+}
+
+.footer .col-lg-4 {
+	text-align: center;
+	padding: 0 30px;
+}
+
+.footer .col-lg-3 {
+	text-align: center;
+	padding: 0 30px;
+	margin-top: 0;
 }
 
 footer p {
 	justify-content: center;
+	text-align: center;
+	line-height: 1.6;
 }
 
 .footer-title {
-	font-size: 1.3rem;
+	font-size: 1.4rem;
 	margin-bottom: 20px;
 	position: relative;
-	padding-bottom: 1px;
+	padding-bottom: 10px;
+	font-weight: 600;
+	color: #fff;
+}
+
+.footer-links {
+	text-align: center;
 }
 
 .footer-links a {
 	display: block;
 	color: #ccc;
-	margin-bottom: 10px;
+	margin-bottom: 12px;
 	text-decoration: none;
 	transition: all 0.3s;
-}
-
-/*contacto*/
-.footer .col-lg-3 {
-	margin-top: -60px;
+	font-size: 1rem;
 }
 
 .footer-links a:hover {
@@ -1150,22 +1143,31 @@ footer p {
 	padding-left: 5px;
 }
 
+.social-links {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 15px;
+	margin-top: 20px;
+}
+
 .social-links a {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 40px;
-	height: 40px;
+	width: 45px;
+	height: 45px;
 	background: rgba(255, 255, 255, 0.1);
 	border-radius: 50%;
 	color: white;
-	margin-right: 10px;
 	transition: all 0.3s;
+	font-size: 1.2rem;
 }
 
 .social-links a:hover {
 	background: var(--rosa-fuerte);
 	transform: translateY(-3px);
+	box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
 }
 
 .copyright {
@@ -1465,7 +1467,6 @@ footer p {
 	font-weight: bold;
 }
 
-
 /* Responsive */
 @media (max-width: 768px) {
 	.modal-servicios-content {
@@ -1601,32 +1602,302 @@ footer p {
 }
 
 @media (max-width: 576px) {
+	body {
+		padding-top: 140px;
+	}
+
+	.navbar {
+		padding: 10px 0;
+	}
+
+	.navbar-container {
+		padding: 0 10px;
+		gap: 4px;
+		justify-content: center;
+	}
+
+	.brand-section {
+		width: 100%;
+		justify-content: center;
+		margin-right: 0;
+		margin-bottom: 10px;
+	}
+
 	.brand-name {
-		font-size: 1.5rem;
+		font-size: 1.8rem;
+	}
+
+	.logo {
+		width: 50px;
+		height: 50px;
+	}
+
+	.search-container {
+		width: auto;
+		max-width: 45px;
+		margin: 0;
+		order: 3;
+		min-width: auto;
+	}
+
+	.search-input {
+		width: 45px;
+		height: 45px;
+		padding: 0;
+		border-radius: 50%;
+		background-color: #f1f1f1;
+		border: none;
+		box-shadow: 0 2px 6px rgba(123, 221, 238, 0.849);
+		cursor: pointer;
+		text-indent: -9999px;
+		transition: all 0.3s ease;
+	}
+
+	.search-input:focus {
+		width: 100%;
+		max-width: 280px;
+		height: auto;
+		padding: 10px 15px 10px 40px;
+		border-radius: 20px;
+		text-indent: 0;
+		background-color: white;
+	}
+
+	.search-container:focus-within {
+		max-width: 280px;
+		width: 100%;
+	}
+
+	.search-icon {
+		pointer-events: none;
+		z-index: 10;
+	}
+
+	.botones-finales {
+		width: 100%;
+		justify-content: center;
+		gap: 4px;
+		order: 2;
+	}
+
+	.nav-buttons {
+		gap: 4px;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.nav-button {
+		padding: 8px 12px;
+		font-size: 0.75rem;
+		white-space: nowrap;
+	}
+
+	.nav-button i {
+		font-size: 0.9rem;
+	}
+
+	.theme-toggle-label,
+	.hamburger-btn {
+		width: 40px;
+		height: 40px;
+		margin-left: 0;
+	}
+
+	.hamburger-menu {
+		position: relative;
+	}
+
+	.hero {
+		padding: 100px 15px 60px;
 	}
 
 	.hero h1 {
-		font-size: 2rem;
+		font-size: 2.2rem;
+		padding: 0 10px;
+		line-height: 1.2;
 	}
 
 	.hero p {
-		font-size: 1.1rem;
+		font-size: 1rem;
+		padding: 0 15px;
+		line-height: 1.4;
+	}
+
+	.btn-hero {
+		padding: 10px 20px;
+		font-size: 0.95rem;
+	}
+
+	.section {
+		padding: 40px 15px;
 	}
 
 	.section-title h2 {
-		font-size: 1.8rem;
+		font-size: 1.6rem;
+		padding: 0 10px;
+	}
+
+	.intro-content {
+		gap: 20px;
+		text-align: center;
+	}
+
+	.intro-text p {
+		font-size: 16px;
+		text-align: center;
+		padding: 0 10px;
+	}
+
+	.card-consejo,
+	.curiosidad-card,
+	.eventos {
+		margin-bottom: 20px;
+		text-align: center;
+	}
+
+	.card-consejo .card-body,
+	.curiosidad-card,
+	.eventos {
+		text-align: center;
+	}
+
+	.card-title,
+	.curiosidad-card h4,
+	.eventos h4 {
+		text-align: center;
+	}
+
+	.card-text,
+	.curiosidad-card p,
+	.eventos p {
+		text-align: center;
+	}
+
+	.footer {
+		padding: 2rem 0;
+		text-align: center;
+	}
+
+	.footer-logo {
+		height: auto;
+		width: 100%;
+		max-width: 200px;
+		margin: 0 auto 15px;
+		display: block;
+	}
+
+	.footer-logo img {
+		width: 100%;
+		height: auto;
+		max-width: 200px;
+		display: block;
+		margin: 0 auto;
 	}
 
 	.footer-brand {
 		font-size: 1.5rem;
+		display: block;
+		text-align: center;
+		margin-bottom: 10px;
+		line-height: 1.3;
 	}
 
-	.nav-buttons {
-		gap: 5px;
+	.footer .row {
+		margin-left: 0;
+		margin-right: 0;
+		text-align: center;
 	}
 
-	.nav-button {
-		padding: 6px 10px;
-		font-size: 0.8rem;
+	.footer .col-lg-4,
+	.footer .col-lg-3,
+	.footer .col-md-6 {
+		margin-bottom: 25px;
+		margin-top: 0;
+		padding: 0 15px;
+	}
+
+	.footer-lema {
+		text-align: center;
+		padding: 0 20px;
+		font-size: 1rem;
+		line-height: 1.5;
+		margin-bottom: 15px;
+	}
+
+	.footer p {
+		text-align: center;
+		padding: 0 20px;
+		font-size: 0.9rem;
+		line-height: 1.6;
+		margin-bottom: 15px;
+	}
+
+	.footer p br {
+		display: none;
+	}
+
+	.social-links {
+		justify-content: center;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: 20px;
+	}
+
+	.social-links a {
+		width: 45px;
+		height: 45px;
+		font-size: 1.2rem;
+	}
+
+	.footer-links {
+		text-align: center;
+	}
+
+	.footer-links a {
+		display: block;
+		padding: 8px 0;
+		font-size: 0.95rem;
+	}
+
+	.footer-title {
+		font-size: 1.2rem;
+		margin-bottom: 15px;
+	}
+
+	.copyright {
+		margin-top: 30px;
+		padding-top: 20px;
+	}
+
+	.copyright p {
+		font-size: 0.85rem;
+		line-height: 1.5;
+	}
+
+	.calendar-popup {
+		right: 50%;
+		transform: translateX(50%);
+		width: 90%;
+		max-width: 350px;
+	}
+
+	.menu-content {
+		position: fixed;
+		top: 120px;
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+		width: 90%;
+		max-width: 280px;
+		z-index: 1100;
+		max-height: 70vh;
+		overflow-y: auto;
+	}
+
+	.btn-inicio {
+		padding: 12px 15px;
+		bottom: 15px;
+		right: 15px;
 	}
 }

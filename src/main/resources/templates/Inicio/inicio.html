@@ -44,66 +44,57 @@
 
 			<div class="d-flex align-items-center">
 
-				<!-- Botones principales -->
-				<div class="botones-finales">
-					<div class="nav-buttons">
-						<button class="nav-button" id="emergencias">
-							<i class="fas fa-ambulance"></i> Emergencias
-						</button>
-
-						<!-- Toggle Modo Oscuro/Claro -->
-						<div class="theme-toggle-container">
-							<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
-							<label for="themeToggle" class="theme-toggle-label">
-								<div class="toggle-circle">
-									<i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
-									<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
-								</div>
-							</label>
+				<!-- Toggle Modo Oscuro/Claro -->
+				<div class="theme-toggle-container">
+					<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
+					<label for="themeToggle" class="theme-toggle-label">
+						<div class="toggle-circle">
+							<i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
+							<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
 						</div>
-					</div>
-				</div>
-				<!-- Menú Hamburguesa -->
-				<div class="hamburger-menu">
-					<button class="hamburger-btn">
-						<i class="fas fa-bars"></i>
-					</button>
-					<div class="menu-content">
-						<div class="menu-item">
-							<a th:href="@{/usuarios/perfilusuario}" style="text-decoration: none;"> <i
-									class="fas fa-user-plus"></i>
-								<span>Perfil</span></a>
-						</div>
-						<div class="menu-item">
-							<a th:href="@{/usuarios/tienda}" style="text-decoration: none;"> <i class="fas fa-shop"></i>
-								<span>PetShop</span></a>
-						</div>
-						<div class="menu-item">
-							<a th:href="@{/adopciones}" style="text-decoration: none;"> <i
-									class="fas fa-dog"></i>
-								<span>Adopciones</span></a>
-						</div>
-						<div class="menu-item">
-							<a th:href="@{/usuarios/reporte}" style="text-decoration: none;"> <i
-									class="fas fa-clinic-medical"></i>
-								<span>Reporte Maltrato</span></a>
-						</div>
-						<div class="menu-item">
-							<a href="Calificaciones.html" style="text-decoration: none;"><i
-									class="fas fa-star"></i><span>Calificaciones</span></a>
-						</div>
-						<div class="menu-item">
-							<a href="sobrenosotros.html" style="text-decoration: none;"> <i class="fas fa-users"></i>
-								<span>Acerca de Nosotros</span></a>
-						</div>
-						<div class="menu-item">
-							<a th:href="@{/usuarios/index}" style="text-decoration: none;"> <i
-									class="fas fa-arrow-right"></i>
-								<span>Cerrar Sesión</span></a>
-						</div>
-					</div>
+					</label>
 				</div>
 			</div>
+		</div>
+		<!-- Menú Hamburguesa -->
+		<div class="hamburger-menu">
+			<button class="hamburger-btn">
+				<i class="fas fa-bars"></i>
+			</button>
+			<div class="menu-content">
+				<div class="menu-item">
+					<a th:href="@{/usuarios/perfilusuario}" style="text-decoration: none;"> <i
+							class="fas fa-user-plus"></i>
+						<span>Perfil</span></a>
+				</div>
+				<div class="menu-item">
+					<a th:href="@{/usuarios/tienda}" style="text-decoration: none;"> <i class="fas fa-shop"></i>
+						<span>PetShop</span></a>
+				</div>
+				<div class="menu-item">
+					<a th:href="@{/adopciones}" style="text-decoration: none;"> <i class="fas fa-dog"></i>
+						<span>Adopciones</span></a>
+				</div>
+				<div class="menu-item">
+					<a th:href="@{/usuarios/reporte}" style="text-decoration: none;"> <i
+							class="fas fa-clinic-medical"></i>
+						<span>Reporte Maltrato</span></a>
+				</div>
+				<div class="menu-item">
+					<a href="Calificaciones.html" style="text-decoration: none;"><i
+							class="fas fa-star"></i><span>Calificaciones</span></a>
+				</div>
+				<div class="menu-item">
+					<a href="sobrenosotros.html" style="text-decoration: none;"> <i class="fas fa-users"></i>
+						<span>Acerca de Nosotros</span></a>
+				</div>
+				<div class="menu-item">
+					<a th:href="@{/usuarios/index}" style="text-decoration: none;"> <i class="fas fa-arrow-right"></i>
+						<span>Cerrar Sesión</span></a>
+				</div>
+			</div>
+		</div>
+		</div>
 	</nav>
 
 	<body>
@@ -158,7 +149,7 @@
 			<div class="container">
 				<h1><strong>¡BIENVENIDO A HelpYourPet!</strong></h1>
 				<p>Cuidamos de quienes hacen tu vida más feliz.</p>
-				<button onclick="abrirServicios()" class="btn btn-hero">Conoce Nuestros Servicios</button>
+				<!--<button onclick="abrirServicios()" class="btn btn-hero">Conoce Nuestros Servicios</button>-->
 			</div>
 		</section>
 

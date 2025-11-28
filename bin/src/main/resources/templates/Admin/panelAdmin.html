@@ -8,40 +8,6 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 	<link rel="stylesheet" th:href="@{/assets/CSS/CSS-Admin.css}">
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<style>
-		/* Estilos para el botón de cerrar sesión en el nav menu */
-		.logout-nav-btn {
-			background: linear-gradient(135deg, #dc3545, #c82333) !important;
-			color: white !important;
-			border-radius: 8px;
-			margin-top: 1rem;
-			border: 2px solid transparent;
-			transition: all 0.3s ease;
-		}
-
-		.logout-nav-btn:hover {
-			background: linear-gradient(135deg, #c82333, #a71e2a) !important;
-			border-color: #dc3545;
-			transform: translateX(5px);
-			box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-		}
-
-		.logout-nav-btn i {
-			margin-right: 0.5rem;
-			font-size: 1.1rem;
-		}
-
-		/* Separador visual antes del botón de cerrar sesión */
-		.logout-nav-btn::before {
-			content: '';
-			position: absolute;
-			top: -0.5rem;
-			left: 1rem;
-			right: 1rem;
-			height: 1px;
-			background: var(--border-color, #e0e0e0);
-		}
-	</style>
 </head>
 
 <body>
@@ -55,6 +21,13 @@
 			</div>
 		</div>
 		<div class="user-controls">
+			<!-- Botón de notificaciones -->
+			<button id="notificationBell" class="theme-toggle-btn notification-bell" aria-label="Notificaciones"
+				title="Notificaciones">
+				<i class="bi bi-bell-fill"></i>
+				<span th:if="${reportesPendientes > 0}" class="notification-badge"
+					th:text="${reportesPendientes}">0</span>
+			</button>
 			<!-- Botón de cambio de tema -->
 			<button id="themeToggle" class="theme-toggle-btn" aria-label="Cambiar tema">
 				<i class="bi bi-moon-fill theme-icon"></i>
@@ -78,10 +51,8 @@
 				<li><a href="#" class="nav-link" data-section="settings">Configuración General</a></li>
 				<li><a href="#" class="nav-link" data-section="security">Control y Seguridad</a></li>
 				<li><a href="#" class="nav-link" data-section="profile">Perfil Administrador</a></li>
-				<li><a href="#" class="nav-link logout-nav-btn" onclick="cerrarSesion(event)">
-						<i class="bi bi-box-arrow-right"></i>
-						Cerrar Sesión
-					</a></li>
+				<li><a href="#" class="nav-link logout-nav-btn" onclick="cerrarSesion(event)"><i class="bi bi-box-arrow-right"></i>Cerrar Sesión</a>
+				</li>
 			</ul>
 		</nav>
 
@@ -200,57 +171,59 @@
 					</table>
 				</div>
 
+				<!-- REPORTES -->
+
 				<div class="tab-content" id="abuse-tab">
 					<table class="data-table">
 						<thead>
 							<tr>
+								<th>ID</th>
 								<th>Fecha</th>
-								<th>Descripción</th>
-								<th>Ubicación</th>
+								<th>Usuario</th>
 								<th>Estado</th>
-								<th>Autoridad Asignada</th>
 								<th>Acciones</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>15/10/2023</td>
-								<td>Perro abandonado en parque central</td>
-								<td>Parque Central, Ciudad</td>
-								<td><span class="status pending">Pendiente</span></td>
-								<td><span class="authority-assigned">-</span></td>
-								<td>
-									<div class="authority-dropdown">
-										<select class="authority-select" data-report-id="1">
-											<option value="">Seleccionar autoridad...</option>
-											<option value="policia">Policía Nacional</option>
-											<option value="seguridad-animal">Seguridad Animal</option>
-											<option value="defensa-animal">Defensa Animal Municipal</option>
-											<option value="ambiental">Policía Ambiental</option>
-											<option value="fiscalia">Fiscalía</option>
-										</select>
-										<button class="btn-action btn-assign" data-report-id="1">Asignar</button>
-									</div>
-								</td>
+							<tr th:if="${reportes == null or reportes.isEmpty()}">
+								<td colspan="5" class="text-center">No hay reportes de maltrato registrados</td>
 							</tr>
-							<tr>
-								<td>16/10/2023</td>
-								<td>Gato maltratado en residencias</td>
-								<td>Calle 45 #12-34</td>
-								<td><span class="status pending">Pendiente</span></td>
-								<td><span class="authority-assigned">-</span></td>
+							<tr th:each="reporte : ${reportes}">
+								<td th:text="${reporte.id}">1</td>
+								<td th:text="${#temporals.format(reporte.fecha, 'dd/MM/yyyy')}">15/10/2023</td>
+								<td
+									th:text="${reporte.usuario != null ? reporte.usuario.nombres + ' ' + reporte.usuario.apellidos : 'Anónimo'}">
+									Usuario</td>
 								<td>
-									<div class="authority-dropdown">
-										<select class="authority-select" data-report-id="2">
-											<option value="">Seleccionar autoridad...</option>
-											<option value="policia">Policía Nacional</option>
-											<option value="seguridad-animal">Seguridad Animal</option>
-											<option value="defensa-animal">Defensa Animal Municipal</option>
-											<option value="ambiental">Policía Ambiental</option>
-											<option value="fiscalia">Fiscalía</option>
+									<span th:if="${reporte.estado == 'pendiente'}"
+										class="status pending">Pendiente</span>
+									<span th:if="${reporte.estado == 'asignado'}" class="status medium">Asignado</span>
+									<span th:if="${reporte.estado == 'completado'}"
+										class="status active">Completado</span>
+								</td>
+								<td>
+									<a th:href="@{/admin(verReporte=${reporte.id})}" class="btn-action">Ver</a>
+
+									<form th:if="${reporte.estado == 'pendiente'}"
+										th:action="@{/admin/reporte/asignar-autoridad/} + ${reporte.id}" method="post"
+										style="display:inline;">
+										<select name="autoridad" class="authority-select" required>
+											<option value="">Asignar autoridad...</option>
+											<option value="Policía Nacional">Policía Nacional</option>
+											<option value="Seguridad Animal">Seguridad Animal</option>
+											<option value="Defensa Animal Municipal">Defensa Animal Municipal</option>
+											<option value="Policía Ambiental">Policía Ambiental</option>
+											<option value="Fiscalía">Fiscalía</option>
 										</select>
-										<button class="btn-action btn-assign" data-report-id="2">Asignar</button>
-									</div>
+										<button type="submit" class="btn-action btn-assign">Asignar</button>
+									</form>
+
+									<form th:if="${reporte.estado == 'asignado'}"
+										th:action="@{/admin/reporte/cambiar-estado/} + ${reporte.id}" method="post"
+										style="display:inline;">
+										<input type="hidden" name="estado" value="completado" />
+										<button type="submit" class="btn-action">Marcar Completado</button>
+									</form>
 								</td>
 							</tr>
 						</tbody>
@@ -771,41 +744,44 @@
 		</div>
 	</div>
 
-	<script>
-		// Función para cerrar sesión
-		function cerrarSesion(event) {
-			// Prevenir comportamiento por defecto
-			if (event) {
-				event.preventDefault();
-				event.stopPropagation();
-			}
-			
-			Swal.fire({
-				title: '¿Cerrar sesión?',
-				text: '¿Estás seguro de que deseas cerrar la sesión?',
-				icon: 'question',
-				showCancelButton: true,
-				confirmButtonColor: '#d33',
-				cancelButtonColor: '#3085d6',
-				confirmButtonText: 'Sí, cerrar sesión',
-				cancelButtonText: 'Cancelar'
-			}).then((result) => {
-				if (result.isConfirmed) {
-					// Mostrar mensaje de despedida
-					Swal.fire({
-						title: 'Sesión cerrada',
-						text: 'Hasta pronto, administrador',
-						icon: 'success',
-						timer: 1500,
-						showConfirmButton: false
-					}).then(() => {
-						// Redirigir al logout del controlador
-						window.location.href = '/admin/logout';
-					});
-				}
-			});
-		}
-	</script>
+	<!-- Modal Detalle Reporte -->
+	<div id="detalleReporteModal" class="modal"
+		th:style="${mostrarModal == 'reporte'} ? 'display: flex;' : 'display: none;'">
+		<div class="modal-content" th:if="${detalleReporte != null}">
+			<a th:href="@{/admin#pets}" class="close">&times;</a>
+			<h2>Detalles del Reporte de Maltrato</h2>
+			<div class="modal-reporte-content" style="display: grid; gap: 1rem;">
+				<div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+					<p><strong>ID del Reporte:</strong> <span th:text="${detalleReporte.id}">N/A</span></p>
+					<p><strong>Fecha de Reporte:</strong> <span
+							th:text="${#temporals.format(detalleReporte.fecha, 'dd/MM/yyyy')}">N/A</span></p>
+					<p><strong>Estado:</strong>
+						<span th:if="${detalleReporte.estado == 'pendiente'}" class="status pending">Pendiente</span>
+						<span th:if="${detalleReporte.estado == 'asignado'}" class="status medium">Asignado</span>
+						<span th:if="${detalleReporte.estado == 'completado'}" class="status active">Completado</span>
+					</p>
+					<p><strong>Usuario que reporta:</strong>
+						<span
+							th:text="${detalleReporte.usuario != null ? detalleReporte.usuario.nombres + ' ' + detalleReporte.usuario.apellidos : 'Anónimo'}">N/A</span>
+					</p>
+				</div>
+
+				<div style="background: #fff; padding: 1rem; border: 1px solid #dee2e6; border-radius: 8px;">
+					<h4 style="color: var(--primary-color); margin-bottom: 1rem;">Descripción Completa del Reporte</h4>
+					<pre style="white-space: pre-wrap; font-family: inherit;"
+						th:text="${detalleReporte.descripcion}">Descripción del reporte</pre>
+				</div>
+
+				<div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
+					<a th:href="@{/admin#pets}" class="btn-primary"
+						style="text-decoration: none; text-align: center;">Cerrar</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
 	<script th:src="@{/assets/JS/JS-Admin.js}"></script>
 </body>
 
