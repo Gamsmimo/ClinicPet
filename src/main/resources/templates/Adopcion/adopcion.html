@@ -42,9 +42,10 @@
 			<div class="d-flex align-items-center">
 				<div class="botones-finales">
 					<div class="nav-buttons">
-						<button class="nav-button">
+
+						<!--- <button class="nav-button">
 							<i class="fas fa-ambulance"></i> Emergencias
-						</button>
+						</button> -->
 
 						<div class="theme-toggle-container">
 							<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
@@ -138,17 +139,17 @@
 	<section class="stats-section">
 		<div class="stats-container">
 			<div class="stat-item">
-				<div class="stat-number">127</div>
+				<div class="stat-number" th:text="${estadisticas['adoptadas']}">0</div>
 				<div class="stat-label">Mascotas Adoptadas</div>
 			</div>
 			<div class="stat-item">
-				<div class="stat-number">45</div>
+				<div class="stat-number" th:text="${estadisticas['esperando']}">0</div>
 				<div class="stat-label">Esperando Hogar</div>
 			</div>
-			<div class="stat-item">
+			<!--<div class="stat-item">
 				<div class="stat-number">98%</div>
 				<div class="stat-label">Familias Felices</div>
-			</div>
+			</div>-->
 			<div class="stat-item">
 				<div class="stat-number">24/7</div>
 				<div class="stat-label">Atención Disponible</div>
@@ -212,9 +213,12 @@
 						<h3 class="mascota-nombre" th:text="${adopcion.nombreMascota}">Nombre</h3>
 						<div class="mascota-detalles">
 							<span th:text="${adopcion.tipoMascota}">Tipo</span>
-							<span th:if="${adopcion.raza != null and !#strings.isEmpty(adopcion.raza)}"
-								th:text="' - ' + ${adopcion.raza}">Raza</span>
+							<span th:if="${adopcion.tamano != null and !#strings.isEmpty(adopcion.tamano)}"
+								th:text="'  ' + ${adopcion.tamano}">Tamaño</span>
+							<span th:if="${adopcion.edad != null and !#strings.isEmpty(adopcion.edad)}"
+								th:text=" ${adopcion.edad} + ' Año/s' ">edad</span>
 						</div>
+						<h6 class="mascota-raza" th:text="' Raza: ' + ${adopcion.raza}">Raza</h6>
 						<p class="mascota-descripcion" th:text="${#strings.abbreviate(adopcion.descripcion, 100)}">
 							Descripción...
 						</p>
@@ -292,12 +296,13 @@
 						<h3 class="mascota-nombre" th:text="${adopcion.nombreMascota}">Nombre</h3>
 						<div class="mascota-detalles">
 							<span th:text="${adopcion.tipoMascota}">Tipo</span>
-							<span th:if="${adopcion.raza != null and !#strings.isEmpty(adopcion.raza)}"
-								th:text="'  ' + ${adopcion.raza}">Raza</span>
+							<span th:if="${adopcion.tamano != null and !#strings.isEmpty(adopcion.tamano)}"
+								th:text=" ${adopcion.tamano}">Tamaño</span>
 							<span th:if="${adopcion.edad != null and !#strings.isEmpty(adopcion.edad)}"
-								th:text=" ${adopcion.edad} + ' añ ' ">edad</span>
+								th:text=" ${adopcion.edad} + ' Año ' ">edad</span>
 						</div>
-						<p class="mascota-descripcion" th:text="${#strings.abbreviate(adopcion.descripcion, 100)}">
+						<h6 class="mascota-raza" th:text="' Raza: ' + ${adopcion.raza}">Raza</h6>
+						<p class="mascota-descripcion" th:text="${#strings.abbreviate(adopcion.descripcion, 150)}">
 							Descripción...
 						</p>
 						<div class="mascota-acciones">
@@ -346,13 +351,13 @@
 						th:object="${nuevaAdopcion}" class="formulario-grid">
 
 						<div class="grupo-formulario">
-							<label for="nombreMascota">Nombre de la mascota *</label>
+							<label for="nombreMascota">Nombre de la mascota </label>
 							<input type="text" id="nombreMascota" th:field="*{nombreMascota}" required
 								placeholder="Ej: Max, Luna, Copito...">
 						</div>
 
 						<div class="grupo-formulario">
-							<label for="tipoMascota">Tipo de mascota *</label>
+							<label for="tipoMascota">Tipo de mascota </label>
 							<select id="tipoMascota" th:field="*{tipoMascota}" required>
 								<option value="">Selecciona un tipo</option>
 								<option value="Perro">Perro</option>
@@ -369,7 +374,7 @@
 
 						<div class="grupo-formulario">
 							<label for="edad">Edad (años) *</label>
-							<input type="number" id="edad" th:field="*{edad}" min="0" max="30" required placeholder="0">
+							<input type="number" id="edad" th:field="*{edad}" min="0" max="20" required placeholder="0">
 						</div>
 
 						<div class="grupo-formulario">
@@ -382,7 +387,7 @@
 						</div>
 
 						<div class="grupo-formulario">
-							<label for="tamano">Tamaño *</label>
+							<label for="tamano">Tamaño </label>
 							<select id="tamano" th:field="*{tamano}" required>
 								<option value="">Seleccione...</option>
 								<option value="Pequeño">Pequeño</option>
@@ -391,14 +396,21 @@
 							</select>
 						</div>
 
-						<div class="grupo-formulario" style="grid-column: 1 / -1;">
-							<label for="descripcion">Descripción *</label>
+						<div class="grupo-formulario">
+							<label for="contacto">Teléfono de contacto *</label>
+							<input type="tel" id="contacto" th:field="*{contacto}" required placeholder="Ej: 3201234567"
+								pattern="[0-9]{10}">
+						</div>
+
+
+						<div class="grupo-formulario">
+							<label for="descripcion">Descripción </label>
 							<textarea id="descripcion" th:field="*{descripcion}" rows="4" required
 								placeholder="Cuéntanos sobre su personalidad, comportamiento, necesidades especiales..."></textarea>
 						</div>
 
-						<div class="grupo-formulario" style="grid-column: 1 / -1;">
-							<label for="archivoImagen">Foto de la mascota *</label>
+						<div class="grupo-formulario">
+							<label for="archivoImagen">Foto de la mascota </label>
 							<div class="file-input-wrapper">
 								<input type="file" id="archivoImagen" name="archivoImagen"
 									accept="image/jpeg,image/jpg,image/png" required class="file-input">
@@ -411,12 +423,7 @@
 							<small class="text-muted">* La imagen es obligatoria. Formato: JPG, PNG. Máx: 5MB</small>
 						</div>
 
-						<div class="grupo-formulario">
-							<label for="contacto">Teléfono de contacto *</label>
-							<input type="tel" id="contacto" th:field="*{contacto}" required placeholder="Ej: 3201234567"
-								pattern="[0-9]{10}">
-							<small class="text-muted">10 dígitos</small>
-						</div>
+
 
 						<button type="submit" class="boton-publicar" style="grid-column: 1 / -1;">
 							<i class="fas fa-paper-plane"></i> Publicar Mascota
@@ -427,13 +434,13 @@
 		</div>
 	</div>
 
-	<!-- Modal para Ver Detalles -->
+	<!-- Modal para Ver Detalles - DISEÑO MEJORADO -->
 	<div class="modal-overlay" id="modalDetalles">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2 class="modal-title">
-						<i class="fas fa-info-circle"></i> Detalles de la Mascota
+						<i class="fas fa-paw"></i> Detalles de la Mascota
 					</h2>
 					<button type="button" class="close-modal" onclick="cerrarModalDetalles()">
 						<i class="fas fa-times"></i>
@@ -441,55 +448,104 @@
 				</div>
 				<div class="modal-body">
 					<div class="detalle-grid">
-						<div class="detalle-imagen-col">
-							<img id="detalle-imagen" src="" alt="Mascota">
+						<!-- COLUMNA IZQUIERDA -->
+						<div class="detalle-col-izquierda">
+							<!-- Imagen Principal -->
+							<div class="detalle-imagen-wrapper">
+								<img id="detalle-imagen" src="" alt="Foto de la mascota">
+							</div>
+
+							<!-- Información Debajo de la Imagen -->
+							<div class="info-cards-wrapper">
+								<div class="info-card">
+									<div class="info-card-icon">
+										<i class="fas fa-user-circle"></i>
+									</div>
+									<div class="info-card-content">
+										<span class="info-card-label">Publicado por</span>
+										<span class="info-card-value" id="detalle-publicador"></span>
+									</div>
+								</div>
+
+								<div class="info-card">
+									<div class="info-card-icon">
+										<i class="fas fa-phone-alt"></i>
+									</div>
+									<div class="info-card-content">
+										<span class="info-card-label">Contacto</span>
+										<span class="info-card-value" id="detalle-contacto"></span>
+									</div>
+								</div>
+
+								<div class="info-card">
+									<div class="info-card-icon">
+										<i class="fas fa-calendar-alt"></i>
+									</div>
+									<div class="info-card-content">
+										<span class="info-card-label">Fecha de Publicación</span>
+										<span class="info-card-value" id="detalle-fecha"></span>
+									</div>
+								</div>
+							</div>
 						</div>
-						<div class="detalle-info-col">
-							<h3 id="detalle-nombre" class="mb-3"></h3>
 
-							<div class="detalle-item">
-								<strong><i class="fas fa-user"></i> Publicado por:</strong>
-								<span id="detalle-publicador"></span>
+						<!-- COLUMNA DERECHA -->
+						<div class="detalle-col-derecha">
+							<!-- Nombre y Estado -->
+							<div class="mascota-header">
+								<h3 id="detalle-nombre" class="mascota-titulo"></h3>
+								<div id="detalle-estado-badge"></div>
 							</div>
 
-							<div class="detalle-item">
-								<strong><i class="fas fa-tag"></i> Tipo:</strong>
-								<span id="detalle-tipo"></span>
+							<!-- Características en Grid -->
+							<div class="caracteristicas-grid">
+								<div class="caracteristica-item">
+									<i class="fas fa-tag"></i>
+									<div>
+										<span class="caracteristica-label">Tipo</span>
+										<span class="caracteristica-value" id="detalle-tipo"></span>
+									</div>
+								</div>
+
+								<div class="caracteristica-item">
+									<i class="fas fa-paw"></i>
+									<div>
+										<span class="caracteristica-label">Raza</span>
+										<span class="caracteristica-value" id="detalle-raza"></span>
+									</div>
+								</div>
+
+								<div class="caracteristica-item">
+									<i class="fas fa-birthday-cake"></i>
+									<div>
+										<span class="caracteristica-label">Edad</span>
+										<span class="caracteristica-value" id="detalle-edad"></span>
+									</div>
+								</div>
+
+								<div class="caracteristica-item">
+									<i class="fas fa-venus-mars"></i>
+									<div>
+										<span class="caracteristica-label">Género</span>
+										<span class="caracteristica-value" id="detalle-genero"></span>
+									</div>
+								</div>
+
+								<div class="caracteristica-item">
+									<i class="fas fa-ruler-vertical"></i>
+									<div>
+										<span class="caracteristica-label">Tamaño</span>
+										<span class="caracteristica-value" id="detalle-tamano"></span>
+									</div>
+								</div>
 							</div>
 
-							<div class="detalle-item">
-								<strong><i class="fas fa-paw"></i> Raza:</strong>
-								<span id="detalle-raza"></span>
-							</div>
-
-							<div class="detalle-item">
-								<strong><i class="fas fa-birthday-cake"></i> Edad:</strong>
-								<span id="detalle-edad"></span>
-							</div>
-
-							<div class="detalle-item">
-								<strong><i class="fas fa-venus-mars"></i> Género:</strong>
-								<span id="detalle-genero"></span>
-							</div>
-
-							<div class="detalle-item">
-								<strong><i class="fas fa-ruler"></i> Tamaño:</strong>
-								<span id="detalle-tamano"></span>
-							</div>
-
-							<div class="detalle-item">
-								<strong><i class="fas fa-phone"></i> Contacto:</strong>
-								<span id="detalle-contacto"></span>
-							</div>
-
-							<div class="detalle-item" style="grid-column: 1 / -1;">
-								<strong><i class="fas fa-align-left"></i> Descripción:</strong>
-								<p id="detalle-descripcion" class="mt-2"></p>
-							</div>
-
-							<div class="detalle-item">
-								<strong><i class="fas fa-calendar"></i> Fecha de publicación:</strong>
-								<span id="detalle-fecha"></span>
+							<!-- Descripción -->
+							<div class="descripcion-section">
+								<h4 class="descripcion-titulo">
+									<i class="fas fa-align-left"></i> Descripción
+								</h4>
+								<p id="detalle-descripcion" class="descripcion-texto"></p>
 							</div>
 						</div>
 					</div>
@@ -497,7 +553,6 @@
 			</div>
 		</div>
 	</div>
-
 	<button class="btn-inicio" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
 		<i class="fas fa-arrow-up"></i>
 	</button>
