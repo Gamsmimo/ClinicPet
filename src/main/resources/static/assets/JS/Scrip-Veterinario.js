@@ -186,6 +186,52 @@ function openEditProductModal(productId) {
 		});
 }
 
+// Cargar datos en modal de edición de evento
+function openEditEventModal(eventId) {
+	console.log('🔍 Cargando datos del evento ID:', eventId);
+	
+	fetch(`/perfil-veterinario/evento/datos/${eventId}`)
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				console.error('❌ Error:', data.error);
+				alert(data.error);
+				return;
+			}
+
+			console.log('✅ Datos del evento recibidos:', data);
+
+			// Referencias a los campos del formulario
+			const nombreInput = document.getElementById('edit-event-nombre');
+			const fechainicioInput = document.getElementById('edit-event-fechainicio');
+			const fechafinInput = document.getElementById('edit-event-fechafin');
+			const descripcionInput = document.getElementById('edit-event-descripcion');
+			const formEditar = document.getElementById('form-edit-event');
+			const idInput = document.getElementById('edit-event-id');
+
+			// Cargar valores en el formulario
+			if (nombreInput) nombreInput.value = data.titulo || '';
+			if (fechainicioInput) fechainicioInput.value = data.fechainicio || '';
+			if (fechafinInput) fechafinInput.value = data.fechafin || '';
+			if (descripcionInput) descripcionInput.value = data.descripcion || '';
+			if (idInput) idInput.value = data.id || '';
+
+			// Ajustar action del formulario para incluir el ID del evento
+			if (formEditar) {
+				formEditar.action = `/perfil-veterinario/evento/actualizar/${eventId}`;
+				console.log('📝 Form action configurado:', formEditar.action);
+			}
+
+			// Abrir modal
+			openModal('edit-event');
+			console.log('✅ Modal de edición abierto');
+		})
+		.catch(error => {
+			console.error('💥 Error al cargar datos del evento:', error);
+			alert('Error al cargar datos del evento');
+		});
+}
+
 // Cerrar modal al hacer clic fuera
 document.getElementById('modal-overlay').addEventListener('click', closeModal);
 
@@ -652,95 +698,118 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 
 // Eventos y Campañas - Paginación
 let currentPage = 1;
-        const itemsPerPage = 3;
-        let totalPages;
+const itemsPerPage = 3;
+let totalPages;
 
-        function renderCards() {
-            const container = document.getElementById('cardsContainer');
-            const cards = container.querySelectorAll('.event-card');
-            totalPages = Math.ceil(cards.length / itemsPerPage);
-            
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            
-            // Ocultar todas las cards primero
-            cards.forEach(card => {
-                card.classList.add('card-hidden');
-            });
-            
-            // Mostrar solo las cards de la página actual
-            for (let i = start; i < end && i < cards.length; i++) {
-                cards[i].classList.remove('card-hidden');
-            }
-            
-            updatePagination();
-        }
+function renderCards() {
+    const container = document.getElementById('cardsContainer');
+    if (!container) {
+        console.error('❌ No se encontró el contenedor de eventos');
+        return;
+    }
+    
+    const cards = container.querySelectorAll('.event-card');
+    console.log(`📊 Total de eventos: ${cards.length}`);
+    
+    totalPages = Math.ceil(cards.length / itemsPerPage);
+    
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    
+    console.log(`📄 Mostrando eventos ${start + 1} a ${Math.min(end, cards.length)} de ${cards.length}`);
+    
+    // Ocultar todas las cards primero
+    cards.forEach(card => {
+        card.classList.add('card-hidden');
+    });
+    
+    // Mostrar solo las cards de la página actual
+    for (let i = start; i < end && i < cards.length; i++) {
+        cards[i].classList.remove('card-hidden');
+    }
+    
+    updatePagination();
+}
 
-        function updatePagination() {
-            document.getElementById('currentPage').textContent = currentPage;
-            document.getElementById('totalPages').textContent = totalPages;
-            document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = currentPage === totalPages;
-        }
+function updatePagination() {
+    const currentPageEl = document.getElementById('currentPage');
+    const totalPagesEl = document.getElementById('totalPages');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (currentPageEl) currentPageEl.textContent = currentPage;
+    if (totalPagesEl) totalPagesEl.textContent = totalPages;
+    if (prevBtn) prevBtn.disabled = currentPage === 1;
+    if (nextBtn) nextBtn.disabled = currentPage === totalPages;
+}
 
-        function changePage(direction) {
-            const newPage = currentPage + direction;
-            if (newPage >= 1 && newPage <= totalPages) {
-                currentPage = newPage;
-                renderCards();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function editEvent(id) {
-            const card = document.querySelector(`.event-card[data-id="${id}"]`);
-            const title = card.querySelector('.card-title').textContent;
-            const date = card.querySelector('.card-date').textContent.replace(' ', '').trim();
-            const description = card.querySelector('.card-description').textContent;
-            
-            console.log('Editando evento:', { id, title, date, description });
-            // Aquí puedes implementar la lógica de edición
-        }
-
-        function deleteEvent(id) {
-            const card = document.querySelector(`.event-card[data-id="${id}"]`);
-            const title = card.querySelector('.card-title').textContent;
-            
-            Swal.fire({
-                title: '¿Eliminar evento?',
-                html: `
-                    <div style="text-align: left; padding: 10px;">
-                        <p style="margin-bottom: 10px; color: var(--dark);">
-                            <strong>Evento:</strong> ${title}
-                        </p>
-                        <p style="color: var(--gray); font-size: 0.95rem;">
-                            Esta acción no se puede deshacer
-                        </p>
-                    </div>
-                `,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: '<i class="fas fa-trash-alt"></i> Eliminar',
-                cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Eliminar la card del DOM
-                    card.remove();
-                    // Recalcular la paginación
-                    renderCards();
-                    
-                    Swal.fire({
-                        title: '¡Eliminado!',
-                        text: 'El evento ha sido eliminado exitosamente',
-                        icon: 'success',
-                        confirmButtonText: '<i class="fas fa-check"></i> Aceptar',
-                        timer: 2500,
-                        timerProgressBar: true
-                    });
-                }
-            });
-        }
-
-        // Inicializar la página
+function changePage(direction) {
+    const newPage = currentPage + direction;
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
         renderCards();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function editEvent(id) {
+    const card = document.querySelector(`.event-card[data-id="${id}"]`);
+    const title = card.querySelector('.card-title').textContent;
+    const date = card.querySelector('.card-date').textContent.replace(' ', '').trim();
+    const description = card.querySelector('.card-description').textContent;
+    
+    console.log('Editando evento:', { id, title, date, description });
+    // Aquí puedes implementar la lógica de edición
+}
+
+function deleteEvent(id) {
+    const card = document.querySelector(`.event-card[data-id="${id}"]`);
+    const title = card.querySelector('.card-title').textContent;
+    
+    Swal.fire({
+        title: '¿Eliminar evento?',
+        html: `
+            <div style="text-align: left; padding: 10px;">
+                <p style="margin-bottom: 10px; color: var(--dark);">
+                    <strong>Evento:</strong> ${title}
+                </p>
+                <p style="color: var(--gray); font-size: 0.95rem;">
+                    Esta acción no se puede deshacer
+                </p>
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-trash-alt"></i> Eliminar',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log('🗑️ Eliminando evento ID:', id);
+            
+            // Crear formulario para enviar POST al backend
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/perfil-veterinario/evento/eliminar/${id}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+
+// Inicializar paginación cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando paginación de eventos...');
+    // Esperar un poco para asegurarse de que todo esté cargado
+    setTimeout(() => {
+        renderCards();
+    }, 100);
+});
+
+// También inicializar si el DOM ya está cargado
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    console.log('🚀 DOM ya cargado, inicializando paginación...');
+    setTimeout(() => {
+        renderCards();
+    }, 100);
+}

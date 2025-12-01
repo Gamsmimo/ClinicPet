@@ -22,7 +22,6 @@
 	<!-- En el <head> -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<link rel="stylesheet" href="historia-clinica.css">
 
 	<!-- CSS Personalizado (CON Thymeleaf - como en el que SÍ funciona) -->
 	<link rel="stylesheet" th:href="@{/assets/CSS/Css-Veterinario.css}">
@@ -95,20 +94,21 @@
 		</ul>
 	</nav>
 
-	<!-- Toggle Modo Oscuro/Claro -->
-	<div class="theme-toggle-container">
-		<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
-		<label for="themeToggle" class="theme-toggle-label">
-			<i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
-			<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
-		</label>
-	</div>
-
 	<!-- Contenido Principal -->
 	<main class="main-content">
 		<!-- Barra Superior -->
 		<header class="top-bar">
-			<button class="btn btn-menu"><i class="fas fa-bars"></i></button>
+			<div class="top-bar-left">
+				<button class="btn btn-menu"><i class="fas fa-bars"></i></button>
+				<!-- Toggle Modo Oscuro/Claro movido aquí -->
+				<div class="theme-toggle-container">
+					<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
+					<label for="themeToggle" class="theme-toggle-label">
+						<i class="bi bi-moon-stars-fill toggle-icon moon-icon"></i>
+						<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
+					</label>
+				</div>
+			</div>
 			<div class="search-bar">
 				<input type="text" placeholder="Buscar...">
 				<i class="fas fa-search"></i>
@@ -497,56 +497,56 @@
 					<h2><i class="fa-solid fa-calendar-week"></i> Eventos y Campañas</h2>
 				</div>
 
-					<div class="cards-container" id="cardsContainer">
-						<div class="event-card" th:each="evento : ${eventosVet}" th:data-id="${evento.id}">
-							<div class="card-image-placeholder">
-								<!-- Aquí podrías mostrar la imagen real si existe -->
-								<i class="fas fa-image" th:if="${evento.imagen == null}"></i>
-								<img th:if="${evento.imagen != null}"
-									th:src="@{${evento.imagen}}" alt="Imagen evento" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+				<div class="cards-container" id="cardsContainer">
+					<div class="event-card" th:each="evento : ${eventosVet}" th:data-id="${evento.id}">
+						<div class="card-image-placeholder">
+							<!-- Aquí podrías mostrar la imagen real si existe -->
+							<i class="fas fa-image" th:if="${evento.imagen == null}"></i>
+							<img th:if="${evento.imagen != null}" th:src="@{${evento.imagen}}" alt="Imagen evento"
+								style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+						</div>
+						<div class="card-content">
+							<h4 class="card-title" th:text="${evento.titulo}">Título del evento</h4>
+							<div class="card-date">
+								<i class="far fa-calendar-alt"></i>
+								<span th:text="'Desde ' + ${evento.fechainicio}">Desde ...</span>
 							</div>
-							<div class="card-content">
-								<h4 class="card-title" th:text="${evento.titulo}">Título del evento</h4>
-								<div class="card-date">
-									<i class="far fa-calendar-alt"></i>
-									<span th:text="'Desde ' + ${evento.fechainicio}">Desde ...</span>
-								</div>
-								<div class="card-date">
-									<i class="far fa-calendar-alt"></i>
-									<span th:text="'Hasta ' + ${evento.fechafin}">Hasta ...</span>
-								</div>
-								<p class="card-description" th:text="${evento.descripcion}">
-									Descripción del evento
-								</p>
-								<div class="card-actions">
-									<button class="btn btn-edit" th:onclick="|editEvent(${evento.id})|">
-										<i class="fas fa-pen"></i>
-										EDITAR
-									</button>
-									<button class="btn btn-delete" th:onclick="|deleteEvent(${evento.id})|">
-										<i class="fas fa-trash-alt"></i>
-										ELIMINAR
-									</button>
-								</div>
+							<div class="card-date">
+								<i class="far fa-calendar-alt"></i>
+								<span th:text="'Hasta ' + ${evento.fechafin}">Hasta ...</span>
+							</div>
+							<p class="card-description" th:text="${evento.descripcion}">
+								Descripción del evento
+							</p>
+							<div class="card-actions">
+								<button class="btn btn-edit" th:onclick="|openEditEventModal(${evento.id})|">
+									<i class="fas fa-pen"></i>
+									EDITAR
+								</button>
+								<button class="btn btn-delete" th:onclick="|deleteEvent(${evento.id})|">
+									<i class="fas fa-trash-alt"></i>
+									ELIMINAR
+								</button>
 							</div>
 						</div>
-
 					</div>
 
-					<div class="pagination">
-						<button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
-							<i class="fas fa-chevron-left"></i>
-							Anterior
-						</button>
-						<div class="pagination-info">
-							Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
-						</div>
-						<button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
-							Siguiente
-							<i class="fas fa-chevron-right"></i>
-						</button>
+				</div>
+
+				<div class="pagination">
+					<button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+						<i class="fas fa-chevron-left"></i>
+						Anterior
+					</button>
+					<div class="pagination-info">
+						Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
 					</div>
-				
+					<button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+						Siguiente
+						<i class="fas fa-chevron-right"></i>
+					</button>
+				</div>
+
 			</section>
 
 
@@ -643,679 +643,816 @@
 					<h2><i class="fas fa-cog"></i> Configuración</h2>
 				</div>
 
-				<!-- Mensajes de éxito/error -->
-				<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-					<span th:text="${success}"></span>
-					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-				</div>
+				<form th:action="@{/perfil-veterinario/configuracion/actualizar}" method="post"
+					th:object="${perfilVeterinario}" enctype="multipart/form-data">
+					<div class="config-container">
 
-				<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-					<span th:text="${error}"></span>
-					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-				</div>
-
-				<div class="settings-tabs">
-					<button class="tab-btn active" data-tab="profile">Perfil</button>
-					<button class="tab-btn" data-tab="account">Restablecer contraseña</button>
-					<button class="tab-btn" data-tab="schedule">Horario</button>
-				</div>
-
-				<div class="tab-content active" id="profile-tab">
-					<div class="settings-card">
-						<h5>Información personal</h5>
-						<form th:action="@{/perfil-veterinario/configuracion/actualizar}" method="post"
-							th:object="${perfilVeterinario}" enctype="multipart/form-data"> <!-- 🔥 AÑADE ESTO -->
-							<div class="row">
-								<!-- Campo de foto -->
-								<div class="mb-3">
-									<label class="form-label">Foto de perfil</label>
-									<div class="profile-picture-upload">
+						<div class="config-content">
+							<!-- Columna izquierda: Foto de perfil y vista previa -->
+							<div class="config-left-column">
+								<div class="config-photo-card">
+									<div class="config-photo-wrapper">
 										<img id="previewFoto" th:src="${session.usuarioLogueado.imagen != null} ? 
-					                                               @{${session.usuarioLogueado.imagen}} : 
-					                                               @{'/uploads/default.jpg'}"
-											style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
-										<div>
-											<input type="file" name="foto" id="inputFoto" accept="image/jpeg,image/png"
-												class="form-control" style="max-width: 300px;">
-											<small class="form-text text-muted">Formatos: JPG, PNG (Max. 10MB)</small>
+			                                               @{${session.usuarioLogueado.imagen}} : 
+			                                               @{'/uploads/default.jpg'}" alt="Foto de perfil"
+											class="config-profile-img">
+										<div class="config-photo-badge">
+											<i class="fas fa-camera"></i>
 										</div>
 									</div>
+									<button type="button" class="config-change-photo-btn"
+										onclick="document.getElementById('inputFoto').click()">
+										<i class="fas fa-camera"></i> Cambiar foto
+									</button>
+									<input type="file" name="foto" id="inputFoto" accept="image/*"
+										style="display: none;" onchange="previewImage(event)">
+									<small class="config-photo-hint">
+										<i class="fas fa-info-circle"></i> Cualquier imagen (Máx. 10MB)
+									</small>
 								</div>
 
-
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Nombre</label>
-										<input type="text" class="form-control" th:field="*{usuario.nombres}">
+								<!-- Vista previa de la nueva foto -->
+								<div id="newPhotoPreview" class="new-photo-preview" style="display: none;">
+									<div class="preview-header">
+										<span><i class="fas fa-image"></i> Nueva foto seleccionada</span>
+										<button type="button" class="preview-remove" onclick="removePreview()">
+											<i class="fas fa-times"></i>
+										</button>
 									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Apellidos</label>
-										<input type="text" class="form-control" th:field="*{usuario.apellidos}">
-									</div>
+									<img id="newPhotoImg" src="" alt="Vista previa" class="preview-img">
 								</div>
 							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Especialidad</label>
-										<input type="text" class="form-control" th:field="*{especialidad}" readonly>
-										<small class="text-muted">La especialidad no se puede modificar</small>
 
+							<!-- Columna derecha: Información en dos columnas -->
+							<div class="config-info-section">
+								<!-- Información Personal -->
+								<div class="config-info-group">
+									<h3 class="config-section-title">
+										<i class="fas fa-user"></i> Información Personal
+									</h3>
+									<div class="config-field">
+										<label class="config-label">
+											<i class="fas fa-user"></i> Nombre
+										</label>
+										<input type="text" class="config-input" th:field="*{usuario.nombres}">
+									</div>
+									<div class="config-field">
+										<label class="config-label">
+											<i class="fas fa-user"></i> Apellidos
+										</label>
+										<input type="text" class="config-input" th:field="*{usuario.apellidos}">
+									</div>
+									<div class="config-field">
+										<label class="config-label">
+											<i class="fas fa-user-md"></i> Especialidad
+										</label>
+										<input type="text" class="config-input config-readonly"
+											th:field="*{especialidad}" readonly>
+										<small class="config-hint"><i class="fas fa-lock"></i> No modificable</small>
+									</div>
+									<div class="config-field">
+										<label class="config-label">
+											<i class="fas fa-id-card"></i> Tarjeta Profesional
+										</label>
+										<input type="text" class="config-input config-readonly"
+											th:field="*{tarjetaProfesional}" readonly>
+										<small class="config-hint"><i class="fas fa-lock"></i> No modificable</small>
 									</div>
 								</div>
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Tarjeta Profesional</label>
-										<input type="text" class="form-control" th:field="*{tarjetaProfesional}"
-											readonly>
-										<small class="text-muted">La tarjeta profesional no se puede modificar</small>
 
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Email</label>
-										<input type="email" class="form-control"
+								<!-- Información de Contacto -->
+								<div class="config-info-group">
+									<h3 class="config-section-title">
+										<i class="fas fa-address-book"></i> Información de Contacto
+									</h3>
+									<div class="config-field">
+										<label class="config-label">
+											<i class="fas fa-envelope"></i> Email
+										</label>
+										<input type="email" class="config-input config-readonly"
 											th:value="${perfilVeterinario.usuario.correo}" readonly>
-										<small class="text-muted">El email no se puede modificar</small>
+										<small class="config-hint"><i class="fas fa-lock"></i> No modificable</small>
 									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Teléfono</label>
-										<input type="tel" class="form-control" th:field="*{usuario.telefono}">
+									<div class="config-field">
+										<label class="config-label">
+											<i class="fas fa-phone"></i> Teléfono
+										</label>
+										<input type="tel" class="config-input" th:field="*{usuario.telefono}">
 									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Experiencia</label>
-										<input type="text" class="form-control" th:field="*{experiencia}"
-											placeholder="Describe tu experiencia profesional">
+									<div class="config-field">
+										<label class="config-label">
+											<i class="fas fa-briefcase"></i> Experiencia
+										</label>
+										<input type="text" class="config-input" th:field="*{experiencia}"
+											placeholder="Años de experiencia">
 									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="mb-3">
-										<label class="form-label">Dirección</label>
-										<input type="text" class="form-control" th:field="*{usuario.direccion}">
+									<div class="config-field">
+										<label class="config-label">
+											<i class="fas fa-map-marker-alt"></i> Dirección
+										</label>
+										<input type="text" class="config-input" th:field="*{usuario.direccion}">
 									</div>
-								</div>
-							</div>
-							<button type="submit" class="btn btn-primary">Guardar cambios</button>
-						</form>
-					</div>
-				</div>
-
-				<div class="tab-content" id="account-tab">
-					<div class="settings-card">
-						<h5>Seguridad de la cuenta</h5>
-
-						<!-- Mensajes de éxito/error -->
-						<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-							<span th:text="${success}"></span>
-							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-						</div>
-						<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-							<span th:text="${error}"></span>
-							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-						</div>
-
-						<form th:action="@{/perfil-veterinario/change-password}" method="post">
-							<div class="mb-3">
-								<label class="form-label">Contraseña actual</label>
-								<input type="password" class="form-control" id="currentPassword" name="currentPassword"
-									placeholder="Ingresa tu contraseña actual" required>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Nueva contraseña</label>
-								<input type="password" class="form-control" id="newPassword" name="newPassword"
-									placeholder="Ingresa tu nueva contraseña" required>
-							</div>
-							<div class="mb-3">
-								<label class="form-label">Confirmar nueva contraseña</label>
-								<input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-									placeholder="Confirma tu nueva contraseña" required>
-							</div>
-							<button type="submit" class="btn btn-primary">Cambiar contraseña</button>
-						</form>
-
-					</div>
-				</div>
-
-
-				<div class="tab-content" id="schedule-tab">
-					<div class="settings-card">
-						<h5>Horario de Atención</h5>
-						<p class="text-muted">Configura tus horarios de atención semanales</p>
-
-						<div class="schedule-container">
-							<div class="schedule-day">
-								<div class="day-header">Lunes</div>
-								<div class="time-slots">
-									<span class="time-badge">08:00 AM - 12:00 PM</span>
-									<span class="time-badge">02:00 PM - 06:00 PM</span>
-								</div>
-							</div>
-							<div class="schedule-day">
-								<div class="day-header">Martes</div>
-								<div class="time-slots">
-									<span class="time-badge">08:00 AM - 12:00 PM</span>
-									<span class="time-badge">02:00 PM - 06:00 PM</span>
-								</div>
-							</div>
-							<div class="schedule-day">
-								<div class="day-header">Miércoles</div>
-								<div class="time-slots">
-									<span class="time-badge">08:00 AM - 12:00 PM</span>
-									<span class="time-badge">02:00 PM - 06:00 PM</span>
-								</div>
-							</div>
-							<div class="schedule-day">
-								<div class="day-header">Jueves</div>
-								<div class="time-slots">
-									<span class="time-badge">08:00 AM - 12:00 PM</span>
-									<span class="time-badge">02:00 PM - 06:00 PM</span>
-								</div>
-							</div>
-							<div class="schedule-day">
-								<div class="day-header">Viernes</div>
-								<div class="time-slots">
-									<span class="time-badge">08:00 AM - 12:00 PM</span>
-									<span class="time-badge">02:00 PM - 06:00 PM</span>
-								</div>
-							</div>
-							<div class="schedule-day weekend">
-								<div class="day-header">Sábado</div>
-								<div class="time-slots">
-									<span class="time-badge">09:00 AM - 01:00 PM</span>
-								</div>
-							</div>
-							<div class="schedule-day weekend">
-								<div class="day-header">Domingo</div>
-								<div class="time-slots">
-									<span class="time-badge closed">Cerrado</span>
 								</div>
 							</div>
 						</div>
+
+						<!-- Botones de acción -->
+						<div class="config-actions">
+							<button type="button" class="config-btn config-btn-save"
+								onclick="confirmSaveChanges(event)">
+								<i class="fas fa-save"></i> Guardar Cambios
+							</button>
+							<button type="button" class="config-btn config-btn-password">
+								<a th:href="@{/usuarios/recovery}">
+								 <i class="fas fa-key"></i> Cambiar Contraseña</a>
+							</button>
+							<button type="button" class="config-btn config-btn-delete" onclick="confirmDeleteAccount()">
+								<i class="fas fa-trash-alt"></i> Eliminar Cuenta
+							</button>
+						</div>
 					</div>
-				</div>
+				</form>
 			</section>
-		</div>
-	</main>
 
-	<!-- Modales -->
-	<div class="modal-overlay" id="modal-overlay"></div>
 
-	<!-- Modal Crear Evento -->
-	<div class="modal" id="new-event-modal">
-		<form th:action="@{/perfil-veterinario/evento/guardar}" method="post" enctype="multipart/form-data">
-			<div class="modal-header">
-				<h3><i class="fa-solid fa-calendar-week"></i>Crear Evento</h3>
-				<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="nombre">Nombre del evento</label>
-						<input type="text" id="nombre" name="nombre" placeholder="Nombre" class="form-control" required>
+
+
+			<!-- Modales -->
+			<div class="modal-overlay" id="modal-overlay"></div>
+
+			<!-- Modal Crear Evento -->
+			<div class="modal" id="edit-event-modal">
+				<form id="form-edit-event" method="post" enctype="multipart/form-data">
+					<input type="hidden" id="edit-event-id" name="idEvento">
+					<div class="modal-header">
+						<h3><i class="fa-solid fa-calendar-week"></i>Editar Evento</h3>
+						<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
 					</div>
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="imagen">Imagen del evento</label>
-						<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="fechainicio">Fecha de Inicio</label>
-						<input type="date" id="fechainicio" name="fechainicio" class="form-control" required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="fechafin">Fecha de finalización</label>
-						<input type="date" id="fechafin" name="fechafin" class="form-control" required
-							th:attr="min=${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Descripción del evento</label>
-						<textarea class="form-control" rows="3" name="descripcion"></textarea>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-				<button type="submit" class="btn btn-primary">Publicar evento</button>
-			</div>
-		</form>
-	</div>
-
-
-	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
-	<div th:if="${veterinaria != null}" id="veterinaria-data" th:data-id="${veterinaria.id}" style="display:none;">
-	</div>
-	<!-- Modal Agregar Producto -->
-	<div class="modal" id="new-product-modal">
-		<form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data"
-			id="form-producto">
-			<div class="modal-header">
-				<h3><i class="fas fa-box-open"></i> Agregar Producto</h3>
-				<button type="button" class="btn-close-modal" onclick="closeModal()">
-					<i class="fas fa-times"></i>
-				</button>
-			</div>
-
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="nombre">Nombre *</label>
-						<input type="text" id="nombre" name="nombre" placeholder="Nombre del producto"
-							class="form-control" required minlength="2">
-					</div>
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="precio">Precio *</label>
-						<input type="number" id="precio" name="precio" step="1.000" min="0" placeholder="0.000"
-							class="form-control" required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label for="cantidadDisponible" class="form-label">Cantidad *</label>
-						<input type="number" id="cantidadDisponible" name="cantidadDisponible" class="form-control"
-							min="1" required>
-						<small class="text-muted">Número de unidades que ingresan al stock</small>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label for="categoria" class="form-label">Categoría *</label>
-						<select id="categoria" name="categoria" class="form-select" required>
-							<option value="">Seleccionar categoría</option>
-							<option value="Alimentos">Alimentos</option>
-							<option value="Medicamentos">Medicamentos</option>
-							<option value="Juguetes">Juguetes</option>
-							<option value="Accesorios">Accesorios</option>
-						</select>
-					</div>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="descripcion">Descripción *</label>
-					<textarea id="descripcion" name="descripcion" class="form-control" rows="3"
-						placeholder="Descripción del producto" required></textarea>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="imagen">Imagen del Producto *</label>
-					<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*" required>
-					<!-- CAMPO OCULTO CON VALOR FIJO PARA PRUEBAS -->
-					<input type="hidden" name="idveterinaria" id="idveterinaria-input" value="1">
-
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-				<button type="submit" class="btn btn-primary" id="btn-guardar">Guardar</button>
-
-			</div>
-		</form>
-	</div>
-
-
-
-
-	<!-- Modal Nueva Cita -->
-	<div class="modal" id="new-appointment-modal">
-		<form th:action="@{/perfil-veterinario/cita/guardar}" method="post">
-			<div class="modal-header">
-				<h3><i class="fas fa-calendar-plus"></i> Nueva Cita</h3>
-				<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
-			</div>
-			<div class="modal-body">
-				<div class="mb-3">
-					<label class="form-label" for="mascota">Mascota</label>
-					<select id="mascotas" name="mascotas.id" class="form-control" required>
-						<option value="" disabled selected>Selecciona una mascota</option>
-						<option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre}"></option>
-					</select>
-				</div>
-				<div class="row">
-					<div class="col-md-6">
-						<div class="mb-3">
-							<label class="form-label">Fecha</label>
-							<input type="date" class="form-control" name="fecha">
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="edit-event-nombre">Nombre del evento</label>
+								<input type="text" id="edit-event-nombre" name="nombre" placeholder="Nombre"
+									class="form-control" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="edit-event-imagen">Imagen del evento</label>
+								<input type="file" id="edit-event-imagen" name="fileImagen" class="form-control"
+									accept="image/*">
+								<small class="text-muted">Deja vacío para mantener la imagen actual</small>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="edit-event-fechainicio">Fecha de Inicio</label>
+								<input type="date" id="edit-event-fechainicio" name="fechainicio" class="form-control"
+									required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="edit-event-fechafin">Fecha de finalización</label>
+								<input type="date" id="edit-event-fechafin" name="fechafin" class="form-control"
+									required th:attr="min=${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Descripción del evento</label>
+								<textarea id="edit-event-descripcion" class="form-control" rows="3"
+									name="descripcion"></textarea>
+							</div>
 						</div>
 					</div>
-					<div class="col-md-6">
-						<div class="mb-3">
-							<label class="form-label">Hora</label>
-							<input type="time" class="form-control" name="hora">
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+						<button type="submit" class="btn btn-primary">Actualizar evento</button>
+					</div>
+				</form>
+			</div>
+
+
+
+
+			<!-- Modal Editar Evento -->
+			<div class="modal" id="new-event-modal">
+				<form th:action="@{/perfil-veterinario/evento/guardar}" method="post" enctype="multipart/form-data">
+					<div class="modal-header">
+						<h3><i class="fa-solid fa-calendar-week"></i>Crear Evento</h3>
+						<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="nombre">Nombre del evento</label>
+								<input type="text" id="nombre" name="nombre" placeholder="Nombre" class="form-control"
+									required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="imagen">Imagen del evento</label>
+								<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*"
+									required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="fechainicio">Fecha de Inicio</label>
+								<input type="date" id="fechainicio" name="fechainicio" class="form-control" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="fechafin">Fecha de finalización</label>
+								<input type="date" id="fechafin" name="fechafin" class="form-control" required
+									th:attr="min=${#dates.format(#dates.createNow(),'yyyy-MM-dd')}">
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Descripción del evento</label>
+								<textarea class="form-control" rows="3" name="descripcion"></textarea>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="motivo">Motivo</label>
-					<textarea id="motivo" name="motivo" class="form-control" rows="3" required></textarea>
-				</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+						<button type="submit" class="btn btn-primary">Publicar evento</button>
+					</div>
+				</form>
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-				<button type="submit" class="btn btn-primary">Agendar cita</button>
-			</div>
-		</form>
-	</div>
 
 
-	<!-- Modal Emergencia -->
-	<div class="modal" id="new-pet-modal">
-		<div class="modal-header">
-			<h3><i class="fas fa-exclamation-triangle"></i>Registrar Emergencia</h3>
-			<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
-		</div>
-		<div class="modal-body">
-			<form th:action="@{/perfil-veterinario/emergencia/guardar}" method="post">
-				<div class="row">
-					<div class="col-md-6">
+
+			<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
+			<div th:if="${veterinaria != null}" id="veterinaria-data" th:data-id="${veterinaria.id}"
+				style="display:none;">
+			</div>
+			<!-- Modal Agregar Producto -->
+			<div class="modal" id="new-product-modal">
+				<form th:action="@{/perfil-veterinario/producto/guardar}" method="post" enctype="multipart/form-data"
+					id="form-producto">
+					<div class="modal-header">
+						<h3><i class="fas fa-box-open"></i> Agregar Producto</h3>
+						<button type="button" class="btn-close-modal" onclick="closeModal()">
+							<i class="fas fa-times"></i>
+						</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="nombre">Nombre *</label>
+								<input type="text" id="nombre" name="nombre" placeholder="Nombre del producto"
+									class="form-control" required minlength="2">
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="precio">Precio *</label>
+								<input type="number" id="precio" name="precio" step="1.000" min="0" placeholder="0.000"
+									class="form-control" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="cantidadDisponible" class="form-label">Cantidad *</label>
+								<input type="number" id="cantidadDisponible" name="cantidadDisponible"
+									class="form-control" min="1" required>
+								<small class="text-muted">Número de unidades que ingresan al stock</small>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="categoria" class="form-label">Categoría *</label>
+								<select id="categoria" name="categoria" class="form-select" required>
+									<option value="">Seleccionar categoría</option>
+									<option value="Alimentos">Alimentos</option>
+									<option value="Medicamentos">Medicamentos</option>
+									<option value="Juguetes">Juguetes</option>
+									<option value="Accesorios">Accesorios</option>
+								</select>
+							</div>
+						</div>
 						<div class="mb-3">
-							<label class="form-label">Mascota</label>
-							<select class="form-select" name="mascotaId">
-								<option value="">Seleccione una mascota</option>
-								<option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre}">
-								</option>
+							<label class="form-label" for="descripcion">Descripción *</label>
+							<textarea id="descripcion" name="descripcion" class="form-control" rows="3"
+								placeholder="Descripción del producto" required></textarea>
+						</div>
+						<div class="mb-3">
+							<label class="form-label" for="imagen">Imagen del Producto *</label>
+							<input type="file" id="imagen" name="fileImagen" class="form-control" accept="image/*"
+								required>
+							<!-- CAMPO OCULTO CON VALOR FIJO PARA PRUEBAS -->
+							<input type="hidden" name="idveterinaria" id="idveterinaria-input" value="1">
+
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+						<button type="submit" class="btn btn-primary" id="btn-guardar">Guardar</button>
+
+					</div>
+				</form>
+			</div>
+
+
+
+
+			<!-- Modal Nueva Cita -->
+			<div class="modal" id="new-appointment-modal">
+				<form th:action="@{/perfil-veterinario/cita/guardar}" method="post">
+					<div class="modal-header">
+						<h3><i class="fas fa-calendar-plus"></i> Nueva Cita</h3>
+						<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<label class="form-label" for="mascota">Mascota</label>
+							<select id="mascotas" name="mascotas.id" class="form-control" required>
+								<option value="" disabled selected>Selecciona una mascota</option>
+								<option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre}"></option>
 							</select>
 						</div>
-					</div>
-					<div class="col-md-6">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label">Fecha</label>
+									<input type="date" class="form-control" name="fecha">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label">Hora</label>
+									<input type="time" class="form-control" name="hora">
+								</div>
+							</div>
+						</div>
 						<div class="mb-3">
-							<label class="form-label">Tipo</label>
-							<select name="tipo" class="form-control" required>
-								<option value="">Seleccione el tipo de emergencia</option>
-								<option value="accidente">Accidente</option>
-								<option value="enfermedad">Enfermedad</option>
-								<option value="intoxicacion">Intoxicación</option>
-								<option value="parto">Parto</option>
-								<option value="cirugia">Cirugia</option>
-								<option value="otro">Otro</option>
-							</select>
+							<label class="form-label" for="motivo">Motivo</label>
+							<textarea id="motivo" name="motivo" class="form-control" rows="3" required></textarea>
 						</div>
 					</div>
-					<div class="col-md-6">
-						<div class="mb-3">
-							<label class="form-label">Fecha</label>
-							<input type="date" class="form-control" name="fecha">
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+						<button type="submit" class="btn btn-primary">Agendar cita</button>
+					</div>
+				</form>
+			</div>
+
+
+			<!-- Modal Emergencia -->
+			<div class="modal" id="new-pet-modal">
+				<div class="modal-header">
+					<h3><i class="fas fa-exclamation-triangle"></i>Registrar Emergencia</h3>
+					<button class="btn-close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+				</div>
+				<div class="modal-body">
+					<form th:action="@{/perfil-veterinario/emergencia/guardar}" method="post">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label">Mascota</label>
+									<select class="form-select" name="mascotaId">
+										<option value="">Seleccione una mascota</option>
+										<option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre}">
+										</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label">Tipo</label>
+									<select name="tipo" class="form-control" required>
+										<option value="">Seleccione el tipo de emergencia</option>
+										<option value="accidente">Accidente</option>
+										<option value="enfermedad">Enfermedad</option>
+										<option value="intoxicacion">Intoxicación</option>
+										<option value="parto">Parto</option>
+										<option value="cirugia">Cirugia</option>
+										<option value="otro">Otro</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label">Fecha</label>
+									<input type="date" class="form-control" name="fecha">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="mb-3">
+									<label class="form-label">Hora</label>
+									<input type="time" class="form-control" name="hora">
+								</div>
+							</div>
 						</div>
-					</div>
-					<div class="col-md-6">
 						<div class="mb-3">
-							<label class="form-label">Hora</label>
-							<input type="time" class="form-control" name="hora">
+							<label class="form-label">Descripción</label>
+							<textarea class="form-control" rows="3" name="descripcion"></textarea>
 						</div>
-					</div>
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Descripción</label>
-					<textarea class="form-control" rows="3" name="descripcion"></textarea>
-				</div>
-				<input type="hidden" name="veterinariaId" th:value="${veterinaria != null ? veterinaria.id : ''}">
-				<input type="hidden" name="veterinarioId" th:value="${veterinario != null ? veterinario.id : ''}">
+						<input type="hidden" name="veterinariaId"
+							th:value="${veterinaria != null ? veterinaria.id : ''}">
+						<input type="hidden" name="veterinarioId"
+							th:value="${veterinario != null ? veterinario.id : ''}">
 
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-					<button type="submit" class="btn btn-primary">Registrar Emergencia</button>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+							<button type="submit" class="btn btn-primary">Registrar Emergencia</button>
+						</div>
+					</form>
 				</div>
-			</form>
-		</div>
-	</div>
-
-	<!-- Más modales... -->
-
-	<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
-	<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;"></div>
-	<!-- Modal Editar Producto -->
-	<div class="modal" id="edit-product-modal">
-		<form th:action="@{/perfil-veterinario/producto/actualizar/{id}}" method="post" enctype="multipart/form-data"
-			id="form-producto-editar">
-			<div class="modal-header">
-				<h3><i class="fa-solid fa-pen-to-square"></i> Editar Producto</h3>
-				<button type="button" class="btn-close-modal" onclick="closeModal()">
-					<i class="fas fa-times"></i>
-				</button>
 			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="edit-nombre">Nombre *</label>
-						<input type="text" id="edit-nombre" name="nombre" class="form-control" required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label class="form-label" for="edit-precio">Precio *</label>
-						<input type="number" id="edit-precio" name="precio" step="0.001" min="0" class="form-control"
-							required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label for="edit-cantidadDisponible" class="form-label">Cantidad *</label>
-						<input type="number" id="edit-cantidadDisponible" name="cantidadDisponible" class="form-control"
-							min="0" required>
-					</div>
-					<div class="col-md-6 mb-3">
-						<label for="edit-categoria" class="form-label">Categoría *</label>
-						<select id="edit-categoria" name="categoria" class="form-select" required>
-							<option value="">Seleccionar categoría</option>
-							<option value="Alimentos">Alimentos</option>
-							<option value="Medicamentos">Medicamentos</option>
-							<option value="Juguetes">Juguetes</option>
-							<option value="Accesorios">Accesorios</option>
-						</select>
-					</div>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="edit-descripcion">Descripción *</label>
-					<textarea id="edit-descripcion" name="descripcion" class="form-control" rows="3"
-						required></textarea>
-				</div>
-				<div class="mb-3">
-					<label class="form-label" for="edit-imagen">Imagen del Producto</label>
-					<input type="file" id="edit-imagen" name="imagen" class="form-control" accept="image/*">
-					<small class="text-muted">Dejar vacío para mantener la imagen actual</small>
-					<!-- Vista previa de imagen actual -->
-					<div class="mt-2">
-						<img id="preview-imagen-actual" src="" alt="Imagen actual"
-							style="max-width: 200px; display: none;">
-					</div>
-				</div>
-				<!-- Campo oculto para idveterinaria -->
-				<input type="hidden" name="idveterinaria" value="1">
+
+			<!-- Más modales... -->
+
+			<!-- En tu página perfil-veterinario.html, asegúrate de tener esto: -->
+			<div th:if="${veterinaria != null}" id="veterinaria-data" data-id="${veterinaria.id}" style="display:none;">
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-				<button type="submit" class="btn btn-primary">Actualizar Producto</button>
+			<!-- Modal Editar Producto -->
+			<div class="modal" id="edit-product-modal">
+				<form th:action="@{/perfil-veterinario/producto/actualizar/{id}}" method="post"
+					enctype="multipart/form-data" id="form-producto-editar">
+					<div class="modal-header">
+						<h3><i class="fa-solid fa-pen-to-square"></i> Editar Producto</h3>
+						<button type="button" class="btn-close-modal" onclick="closeModal()">
+							<i class="fas fa-times"></i>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="edit-nombre">Nombre *</label>
+								<input type="text" id="edit-nombre" name="nombre" class="form-control" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="form-label" for="edit-precio">Precio *</label>
+								<input type="number" id="edit-precio" name="precio" step="0.001" min="0"
+									class="form-control" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="edit-cantidadDisponible" class="form-label">Cantidad *</label>
+								<input type="number" id="edit-cantidadDisponible" name="cantidadDisponible"
+									class="form-control" min="0" required>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="edit-categoria" class="form-label">Categoría *</label>
+								<select id="edit-categoria" name="categoria" class="form-select" required>
+									<option value="">Seleccionar categoría</option>
+									<option value="Alimentos">Alimentos</option>
+									<option value="Medicamentos">Medicamentos</option>
+									<option value="Juguetes">Juguetes</option>
+									<option value="Accesorios">Accesorios</option>
+								</select>
+							</div>
+						</div>
+						<div class="mb-3">
+							<label class="form-label" for="edit-descripcion">Descripción *</label>
+							<textarea id="edit-descripcion" name="descripcion" class="form-control" rows="3"
+								required></textarea>
+						</div>
+						<div class="mb-3">
+							<label class="form-label" for="edit-imagen">Imagen del Producto</label>
+							<input type="file" id="edit-imagen" name="imagen" class="form-control" accept="image/*">
+							<small class="text-muted">Dejar vacío para mantener la imagen actual</small>
+							<!-- Vista previa de imagen actual -->
+							<div class="mt-2">
+								<img id="preview-imagen-actual" src="" alt="Imagen actual"
+									style="max-width: 200px; display: none;">
+							</div>
+						</div>
+						<!-- Campo oculto para idveterinaria -->
+						<input type="hidden" name="idveterinaria" value="1">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+						<button type="submit" class="btn btn-primary">Actualizar Producto</button>
+					</div>
+				</form>
 			</div>
-		</form>
-	</div>
 
 
-	<!-- Scripts -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-	<script th:src="@{/assets/JS/Scrip-Veterinario.js}"></script>
+			<!-- Scripts -->
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+			<script th:src="@{/assets/JS/Scrip-Veterinario.js}"></script>
 
+			<!-- Script para vista previa de imagen en configuración -->
+			<script>
+				function previewImage(event) {
+					event.stopPropagation();
 
+					const file = event.target.files[0];
+					if (file) {
+						// Validar que sea una imagen
+						if (!file.type.match('image.*')) {
+							Swal.fire({
+								icon: 'error',
+								title: 'Archivo inválido',
+								text: 'Por favor selecciona un archivo de imagen válido',
+								confirmButtonColor: '#6B9BD1'
+							});
+							return;
+						}
 
+						// Validar tamaño (10MB máximo)
+						if (file.size > 10 * 1024 * 1024) {
+							Swal.fire({
+								icon: 'error',
+								title: 'Archivo muy grande',
+								text: 'La imagen no debe superar los 10MB',
+								confirmButtonColor: '#6B9BD1'
+							});
+							return;
+						}
 
+						const reader = new FileReader();
+						reader.onload = function (e) {
+							// Actualizar imagen principal
+							const imgElement = document.getElementById('previewFoto');
+							if (imgElement) {
+								imgElement.src = e.target.result;
+							}
 
-	<script>
-		// Si quieres hacerlo dinámico, puedes usar este script:
-		function openProductModal() {
-			// Intentar obtener el ID de la veterinaria del elemento oculto
-			const veterinariaData = document.getElementById('veterinaria-data');
-			if (veterinariaData) {
-				const veterinariaId = veterinariaData.getAttribute('data-id');
-				document.getElementById('idveterinaria-input').value = veterinariaId;
-				console.log("🔑 ID Veterinaria establecido: " + veterinariaId);
-			}
-
-			// Mostrar el modal
-			document.getElementById('new-product-modal').style.display = 'block';
-		}
-
-		function closeModal() {
-			document.getElementById('new-product-modal').style.display = 'none';
-		}
-	</script>
-
-
-
-	<!-- Script para navegación entre secciones (FALTABA ESTO) -->
-	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			// Navegación entre secciones
-			const menuLinks = document.querySelectorAll('.menu-link');
-			const contentSections = document.querySelectorAll('.content-section');
-
-			menuLinks.forEach(link => {
-				link.addEventListener('click', function (e) {
-					e.preventDefault();
-
-					// Remover active de todos
-					menuLinks.forEach(l => l.classList.remove('active'));
-					contentSections.forEach(s => s.classList.remove('active'));
-
-					// Agregar active al clickeado
-					this.classList.add('active');
-
-					// Mostrar sección correspondiente
-					const targetSection = this.getAttribute('data-section');
-					document.getElementById(targetSection).classList.add('active');
-				});
-			});
-
-			// Menú móvil
-			const btnMenu = document.querySelector('.btn-menu');
-			const sidebar = document.querySelector('.sidebar');
-			const btnCloseMenu = document.querySelector('.btn-close-menu');
-			if (btnCloseMenu) {                       // ← evita el null
-				btnCloseMenu.addEventListener('click', function () {
-					sidebar.classList.remove('active');
-				});
-			}
-		});
-	</script>
-
-	<script>
-		document.getElementById('inputFoto').addEventListener('change', function () {
-			const file = this.files[0];
-			if (!file) return;
-
-			// Validación frontend
-			if (file.size > 10 * 1024 * 1024) {
-				alert('❌ La imagen no debe superar 2MB');
-				this.value = '';
-				return;
-			}
-
-			const formData = new FormData();
-			formData.append('foto', file);
-
-			// Feedback visual
-			const button = document.querySelector('button[onclick*="inputFoto"]');
-			const originalText = button.textContent;
-			button.textContent = 'Subiendo...';
-			button.disabled = true;
-
-			fetch('/perfil-veterinario/configuracion/actualizar', {
-				method: 'POST',
-				body: formData
-			})
-				.then(res => res.json())
-				.then(data => {
-					if (data.success) {
-						// 🔥 **Usar la ruta completa con timestamp para evitar cache**
-						const newSrc = data.fotoPath + '?t=' + new Date().getTime();
-
-						// Actualizar todas las imágenes
-						document.getElementById('previewFoto').src = newSrc;
-						document.querySelectorAll('.user-profile img, .user-dropdown img').forEach(img => {
-							img.src = newSrc;
-						});
-
-						alert('✅ ' + data.message);
-					} else {
-						alert('❌ ' + data.message);
+							// Mostrar vista previa nueva
+							const newPreview = document.getElementById('newPhotoPreview');
+							const newImg = document.getElementById('newPhotoImg');
+							if (newPreview && newImg) {
+								newImg.src = e.target.result;
+								newPreview.style.display = 'block';
+							}
+						};
+						reader.onerror = function () {
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'Error al leer el archivo',
+								confirmButtonColor: '#6B9BD1'
+							});
+						};
+						reader.readAsDataURL(file);
 					}
-				})
-				.catch(err => {
-					console.error('Error:', err);
-					alert('❌ Error de red: ' + err);
-				})
-				.finally(() => {
-					// Restaurar botón
-					button.textContent = originalText;
-					button.disabled = false;
-					this.value = '';
-				});
-		});
-	</script>
-
-
-	<script>
-		document.getElementById('changePasswordForm').addEventListener('submit', function (e) {
-			const newPassword = document.getElementById('newPassword').value;
-			const confirmPassword = document.getElementById('confirmPassword').value;
-
-			if (newPassword !== confirmPassword) {
-				e.preventDefault();
-				alert('Las contraseñas no coinciden');
-				return false;
-			}
-
-			if (newPassword.length < 4) {
-				e.preventDefault();
-				alert('La contraseña debe tener al menos 4 caracteres');
-				return false;
-			}
-		});
-	</script>
-
-	<script>
-		// Función para cerrar sesión del veterinario con confirmación
-		function cerrarSesionVeterinario(event) {
-			// Prevenir comportamiento por defecto
-			if (event) {
-				event.preventDefault();
-				event.stopPropagation();
-			}
-
-			Swal.fire({
-				title: '¿Cerrar sesión?',
-				text: '¿Estás seguro de que deseas cerrar la sesión?',
-				icon: 'question',
-				showCancelButton: true,
-				confirmButtonColor: '#dc3545',
-				cancelButtonColor: '#6c757d',
-				confirmButtonText: 'Sí, cerrar sesión',
-				cancelButtonText: 'Cancelar',
-				background: '#fff',
-				customClass: {
-					popup: 'swal-popup-veterinario',
-					title: 'swal-title-veterinario',
-					content: 'swal-content-veterinario'
 				}
-			}).then((result) => {
-				if (result.isConfirmed) {
-					// Mostrar mensaje de despedida
+
+				function removePreview() {
+					// Ocultar vista previa
+					const newPreview = document.getElementById('newPhotoPreview');
+					if (newPreview) {
+						newPreview.style.display = 'none';
+					}
+
+					// Limpiar input de archivo
+					const inputFoto = document.getElementById('inputFoto');
+					if (inputFoto) {
+						inputFoto.value = '';
+					}
+
+					// Restaurar imagen original (recargar desde el servidor)
+					const imgElement = document.getElementById('previewFoto');
+					if (imgElement && imgElement.dataset.original) {
+						imgElement.src = imgElement.dataset.original;
+					}
+				}
+
+				function confirmSaveChanges(event) {
+					event.preventDefault();
+
 					Swal.fire({
-						title: 'Sesión cerrada',
-						text: 'Hasta pronto, Dr. Esperamos verte pronto cuidando a nuestras mascotas',
-						icon: 'success',
-						timer: 2000,
-						showConfirmButton: false,
-						background: '#fff',
+						title: '¿Guardar cambios?',
+						text: 'Se actualizará tu información de perfil',
+						icon: 'question',
+						showCancelButton: true,
+						confirmButtonColor: '#6B9BD1',
+						cancelButtonColor: '#95a5a6',
+						confirmButtonText: '<i class="fas fa-save"></i> Sí, guardar',
+						cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
 						customClass: {
 							popup: 'swal-popup-veterinario',
 							title: 'swal-title-veterinario'
 						}
-					}).then(() => {
-						// Redirigir al index
-						window.location.href = '/usuarios/index';
+					}).then((result) => {
+						if (result.isConfirmed) {
+							// Mostrar loading
+							Swal.fire({
+								title: 'Guardando cambios...',
+								text: 'Por favor espera',
+								allowOutsideClick: false,
+								allowEscapeKey: false,
+								didOpen: () => {
+									Swal.showLoading();
+								}
+							});
+
+							// Enviar formulario
+							event.target.closest('form').submit();
+						}
 					});
 				}
-			});
-		}
-	</script>
+
+				function openPasswordModal() {
+					// Funcionalidad de cambiar contraseña - puede implementarse más adelante
+					console.log('Abrir modal de cambiar contraseña');
+				}
+
+				function confirmDeleteAccount() {
+					Swal.fire({
+						title: '¿Eliminar cuenta?',
+						html: '<strong>⚠️ ADVERTENCIA</strong><br>Esta acción es permanente y no se puede deshacer.<br>Se eliminarán todos tus datos.',
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonColor: '#EF5350',
+						cancelButtonColor: '#95a5a6',
+						confirmButtonText: '<i class="fas fa-trash-alt"></i> Sí, eliminar',
+						cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+						customClass: {
+							popup: 'swal-popup-veterinario',
+							title: 'swal-title-veterinario'
+						}
+					}).then((result) => {
+						if (result.isConfirmed) {
+							Swal.fire({
+								icon: 'info',
+								title: 'Funcionalidad en desarrollo',
+								text: 'La eliminación de cuenta estará disponible próximamente',
+								confirmButtonColor: '#6B9BD1'
+							});
+						}
+					});
+				}
+
+				// Guardar URL original de la imagen al cargar la página
+				document.addEventListener('DOMContentLoaded', function () {
+					const imgElement = document.getElementById('previewFoto');
+					if (imgElement) {
+						imgElement.dataset.original = imgElement.src;
+					}
+				});
+			</script>
+
+
+
+
+
+			<script>
+				// Si quieres hacerlo dinámico, puedes usar este script:
+				function openProductModal() {
+					// Intentar obtener el ID de la veterinaria del elemento oculto
+					const veterinariaData = document.getElementById('veterinaria-data');
+					if (veterinariaData) {
+						const veterinariaId = veterinariaData.getAttribute('data-id');
+						document.getElementById('idveterinaria-input').value = veterinariaId;
+						console.log("🔑 ID Veterinaria establecido: " + veterinariaId);
+					}
+
+					// Mostrar el modal
+					document.getElementById('new-product-modal').style.display = 'block';
+				}
+
+				function closeModal() {
+					document.getElementById('new-product-modal').style.display = 'none';
+				}
+			</script>
+
+
+
+			<!-- Script para navegación entre secciones (FALTABA ESTO) -->
+			<script>
+				document.addEventListener('DOMContentLoaded', function () {
+					// Navegación entre secciones
+					const menuLinks = document.querySelectorAll('.menu-link');
+					const contentSections = document.querySelectorAll('.content-section');
+
+					menuLinks.forEach(link => {
+						link.addEventListener('click', function (e) {
+							e.preventDefault();
+
+							// Remover active de todos
+							menuLinks.forEach(l => l.classList.remove('active'));
+							contentSections.forEach(s => s.classList.remove('active'));
+
+							// Agregar active al clickeado
+							this.classList.add('active');
+
+							// Mostrar sección correspondiente
+							const targetSection = this.getAttribute('data-section');
+							document.getElementById(targetSection).classList.add('active');
+						});
+					});
+
+					// Menú móvil
+					const btnMenu = document.querySelector('.btn-menu');
+					const sidebar = document.querySelector('.sidebar');
+					const btnCloseMenu = document.querySelector('.btn-close-menu');
+					if (btnCloseMenu) {                       // ← evita el null
+						btnCloseMenu.addEventListener('click', function () {
+							sidebar.classList.remove('active');
+						});
+					}
+				});
+			</script>
+
+			<script>
+				document.getElementById('inputFoto').addEventListener('change', function () {
+					const file = this.files[0];
+					if (!file) return;
+
+					// Validación frontend
+					if (file.size > 10 * 1024 * 1024) {
+						alert('❌ La imagen no debe superar 2MB');
+						this.value = '';
+						return;
+					}
+
+					const formData = new FormData();
+					formData.append('foto', file);
+
+					// Feedback visual
+					const button = document.querySelector('button[onclick*="inputFoto"]');
+					const originalText = button.textContent;
+					button.textContent = 'Subiendo...';
+					button.disabled = true;
+
+					fetch('/perfil-veterinario/configuracion/actualizar', {
+						method: 'POST',
+						body: formData
+					})
+						.then(res => res.json())
+						.then(data => {
+							if (data.success) {
+								// 🔥 **Usar la ruta completa con timestamp para evitar cache**
+								const newSrc = data.fotoPath + '?t=' + new Date().getTime();
+
+								// Actualizar todas las imágenes
+								document.getElementById('previewFoto').src = newSrc;
+								document.querySelectorAll('.user-profile img, .user-dropdown img').forEach(img => {
+									img.src = newSrc;
+								});
+
+								alert('✅ ' + data.message);
+							} else {
+								alert('❌ ' + data.message);
+							}
+						})
+						.catch(err => {
+							console.error('Error:', err);
+							alert('❌ Error de red: ' + err);
+						})
+						.finally(() => {
+							// Restaurar botón
+							button.textContent = originalText;
+							button.disabled = false;
+							this.value = '';
+						});
+				});
+			</script>
+
+
+			<script>
+				document.getElementById('changePasswordForm').addEventListener('submit', function (e) {
+					const newPassword = document.getElementById('newPassword').value;
+					const confirmPassword = document.getElementById('confirmPassword').value;
+
+					if (newPassword !== confirmPassword) {
+						e.preventDefault();
+						alert('Las contraseñas no coinciden');
+						return false;
+					}
+
+					if (newPassword.length < 4) {
+						e.preventDefault();
+						alert('La contraseña debe tener al menos 4 caracteres');
+						return false;
+					}
+				});
+			</script>
+
+			<script>
+				// Función para cerrar sesión del veterinario con confirmación
+				function cerrarSesionVeterinario(event) {
+					// Prevenir comportamiento por defecto
+					if (event) {
+						event.preventDefault();
+						event.stopPropagation();
+					}
+
+					Swal.fire({
+						title: '¿Cerrar sesión?',
+						text: '¿Estás seguro de que deseas cerrar la sesión?',
+						icon: 'question',
+						showCancelButton: true,
+						confirmButtonColor: '#dc3545',
+						cancelButtonColor: '#6c757d',
+						confirmButtonText: 'Sí, cerrar sesión',
+						cancelButtonText: 'Cancelar',
+						background: '#fff',
+						customClass: {
+							popup: 'swal-popup-veterinario',
+							title: 'swal-title-veterinario',
+							content: 'swal-content-veterinario'
+						}
+					}).then((result) => {
+						if (result.isConfirmed) {
+							// Mostrar mensaje de despedida
+							Swal.fire({
+								title: 'Sesión cerrada',
+								text: 'Hasta pronto, Dr. Esperamos verte pronto cuidando a nuestras mascotas',
+								icon: 'success',
+								timer: 2000,
+								showConfirmButton: false,
+								background: '#fff',
+								customClass: {
+									popup: 'swal-popup-veterinario',
+									title: 'swal-title-veterinario'
+								}
+							}).then(() => {
+								// Redirigir al index
+								window.location.href = '/usuarios/index';
+							});
+						}
+					});
+				}
+			</script>
 </body>
 
 </html>

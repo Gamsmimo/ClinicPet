@@ -1619,3 +1619,13 @@ footer p {
 		font-size: 0.8rem;
 	}
 }
+
+/* Centrar cards de eventos cuando no completan una fila */
+.section.eventos .row {
+	justify-content: center;
+}
+
+.section.eventos .row .col-md-4 {
+	max-width: 33.333333%;
+	flex: 0 0 33.333333%;
+}
