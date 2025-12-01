@@ -22,6 +22,9 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.http.ResponseEntity;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/adopciones")
@@ -58,7 +61,6 @@ public class AdopcionController {
 		if (!model.containsAttribute("nuevaAdopcion")) {
 			model.addAttribute("nuevaAdopcion", new Adopcion());
 		}
-
 		return "Adopcion/adopcion";
 	}
 
@@ -148,14 +150,42 @@ public class AdopcionController {
 	// Ver detalles de una mascota (AJAX - devuelve JSON)
 	@GetMapping("/{id}/detalles")
 	@ResponseBody
-	public Adopcion verDetalleMascota(@PathVariable Integer id,
+	public ResponseEntity<Map<String, Object>> verDetalleMascota(@PathVariable Integer id,
 			@SessionAttribute(value = "usuarioLogueado", required = false) Usuario usuarioLogueado) {
 
 		if (usuarioLogueado == null) {
-			throw new RuntimeException("Usuario no autenticado");
+			Map<String, Object> error = new HashMap<>();
+			error.put("error", "Usuario no autenticado");
+			return ResponseEntity.status(401).body(error);
 		}
 
-		return adopcionService.buscarAdopcionById(id).orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+		Adopcion adopcion = adopcionService.buscarAdopcionById(id)
+				.orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+
+		// Crear un mapa con todos los datos necesarios
+		Map<String, Object> response = new HashMap<>();
+		response.put("id", adopcion.getId());
+		response.put("nombreMascota", adopcion.getNombreMascota());
+		response.put("tipoMascota", adopcion.getTipoMascota());
+		response.put("raza", adopcion.getRaza());
+		response.put("edad", adopcion.getEdad());
+		response.put("genero", adopcion.getGenero());
+		response.put("tamano", adopcion.getTamano());
+		response.put("contacto", adopcion.getContacto());
+		response.put("descripcion", adopcion.getDescripcion());
+		response.put("imagen", adopcion.getImagen());
+		response.put("estado", adopcion.getEstado());
+		response.put("fechaPublicacion", adopcion.getFechaPublicacion());
+
+		// Datos del usuario que publicó
+		if (adopcion.getUsuario() != null) {
+			Map<String, String> usuarioData = new HashMap<>();
+			usuarioData.put("nombres", adopcion.getUsuario().getNombres());
+			usuarioData.put("apellidos", adopcion.getUsuario().getApellidos());
+			response.put("usuario", usuarioData);
+		}
+
+		return ResponseEntity.ok(response);
 	}
 
 	// Cambiar estado de una adopción (solo el dueño puede hacerlo)
@@ -311,4 +341,17 @@ public class AdopcionController {
 			return estado;
 		}
 	}
+
+	// TARJETAS DE ESTADISTICAS (MASCOTAS ADOPTADAS Y ESPERANDO HOGAR)
+	@ModelAttribute("estadisticas")
+	public Map<String, Long> estadisticas() {
+		Map<String, Long> map = new HashMap<>();
+		map.put("adoptadas", adopcionService.contarPorEstado(Adopcion.ESTADO_ADOPTADO));
+		map.put("esperando", adopcionService.contarPorEstado(Adopcion.ESTADO_DISPONIBLE));
+		return map;
+	}
+	
+	
+	//PARA FILTRAR MASCOTAS
+
 }

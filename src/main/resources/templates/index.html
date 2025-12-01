@@ -697,8 +697,15 @@
 							<p><strong>Tarjeta Profesional:</strong> TP-56789</p>
 							<p><strong>Experiencia:</strong> 14 años</p>
 						</div>
+<<<<<<< HEAD
 					</div>
 	<-- Eventos y Campañas -->
+	=======
+	</div>-->
+
+
+	<!-- Eventos y Campañas-->
+	>>>>>>> b776d895d475f0a1aad9e92836a869dc1bb7966b
 	<section id="eventos-section" class="section eventos" data-searchable>
 		<div class="container">
 			<div class="section-title">
@@ -716,7 +723,10 @@
 							<span th:text="${#temporals.format(evento.fechafin, 'dd/MM/yyyy')}">Fecha fin</span><br>
 							<span th:text="${evento.descripcion}">Descripción del evento</span>
 						</p>
+
 						<button class="btn btn-primary open-modal-btn">Más Información</button>
+
+
 					</div>
 				</div>
 
@@ -759,6 +769,49 @@
 			</div>
 		</div>
 	</section>
+
+
+	<!-- Mensaje si no hay eventos -->
+	<div class="col-12 text-center" th:if="${eventos == null || eventos.isEmpty()}">
+		<p class="text-muted">No hay eventos disponibles en este momento.</p>
+	</div>
+	</div>
+
+	<!-- Paginación -->
+	<div class="row" th:if="${totalPages > 1}">
+		<div class="col-12">
+			<nav aria-label="Paginación de eventos">
+				<ul class="pagination justify-content-center">
+					<!-- Botón Anterior -->
+					<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+						<a class="page-link" th:href="@{/?page={p}(p=${currentPage - 1})} + '#eventos-section'"
+							aria-label="Anterior">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+
+					<!-- Números de página -->
+					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+						th:classappend="${i == currentPage} ? 'active'">
+						<a class="page-link" th:href="@{/?page={p}(p=${i})} + '#eventos-section'"
+							th:text="${i + 1}">1</a>
+					</li>
+
+					<!-- Botón Siguiente -->
+					<li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+						<a class="page-link" th:href="@{/?page={p}(p=${currentPage + 1})} + '#eventos-section'"
+							aria-label="Siguiente">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+	</div>
+	</section>
+
+	<!-- Mapa y Ubicaciones -->
 
 	<a href="#inicio" class="btn btn-inicio">
 		<i class="fa-solid fa-up-long"></i>
@@ -953,43 +1006,40 @@
 
 	<!-- Footer -->
 	<footer class="footer">
-		<div class="container">
-			<div class="footer-logo">
-				<img th:src="@{/assets/IMG/logofotter.png}" alt="logo">
-			</div>
-			<div class="footer-brand">HelpYourPet</div>
-			<div class="row">
-				<div class="col-lg-4 mb-5 mb-lg-0">
-					<p class="footer-lema">"Simplifica tu trabajo, mejora su salud"</p>
-					<p>Nuestra plataforma digital está diseñada para <br> optimizar la gestión clínica, conectando a
-						<br>
-						veterinarios y
-						propietarios de mascotas a través <br> de un sistema eficiente, seguro y personalizado.
-					</p>
-					<div class="social-links mt-4">
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-facebook-f"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-instagram"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-twitter"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-youtube"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-whatsapp"></i></a>
+		<div class="footer-container">
+			<div class="footer-top">
+				<div class="footer-logo">
+					<img src="IMG/logofotter.png" alt="logo" style="height: 90px;">
+					<div class="footer-brand" style="font-family: 'fira sans'; font-size: 1.8rem; margin-top: 10px;">
+						HelpYourPet</div>
+				</div>
+
+				<div class="footer-about" style="max-width: 400px;">
+					<p style="font-style: italic; opacity: 0.8;">"Simplifica tu trabajo, mejora su salud"</p>
+					<p>Nuestra plataforma digital está diseñada para optimizar la gestión clínica.</p>
+					<div class="social-links" style="margin-top: 20px;">
+						<a href="#"><i class="fab fa-facebook-f"></i></a>
+						<a href="#"><i class="fab fa-instagram"></i></a>
+						<a href="#"><i class="fab fa-twitter"></i></a>
+						<a href="#"><i class="fab fa-youtube"></i></a>
+						<a href="#"><i class="fab fa-whatsapp"></i></a>
 					</div>
 				</div>
 
-				<div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-					<h5 class="footer-title">Contacto</h5>
-					<div class="footer-links">
-						<a href="#"><i class="fas fa-map-marker-alt me-2"></i> Duitama, Boyacá</a>
-						<a href="tel: 01 8000 45 78 90"><i class="fas fa-phone me-2"></i> 018000 45 78 90</a>
-						<a href="mailto:info@clinicpet.com"><i class="fas fa-envelope me-2"></i> info@clinicpet.com</a>
+				<div class="footer-contact">
+					<h5 style="font-size: 1.3rem; margin-bottom: 15px;">Contacto</h5>
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<a href="#" style="color: #ccc; text-decoration: none;"><i class="fas fa-map-marker-alt"></i>
+							Duitama, Boyacá</a>
+						<a href="tel:018000457890" style="color: #ccc; text-decoration: none;"><i
+								class="fas fa-phone"></i> 018000
+							45 78 90</a>
+						<a href="mailto:info@clinicpet.com" style="color: #ccc; text-decoration: none;"><i
+								class="fas fa-envelope"></i> info@clinicpet.com</a>
 					</div>
 				</div>
-
 			</div>
+
 			<div class="copyright">
 				<p>&copy; 2025 HelpYourPet. Todos los derechos reservados. Desarrollado en Duitama, Boyacá</p>
 			</div>
