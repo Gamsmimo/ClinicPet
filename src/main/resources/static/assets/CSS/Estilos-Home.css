@@ -20,23 +20,31 @@
 	box-sizing: border-box;
 }
 
+/* Botón Volver al Inicio */
 .btn-inicio {
 	position: fixed;
-	bottom: 10px;
-	right: 10px;
-	z-index: 1000;
-	background: #a37cf7d7;
+	bottom: 20px;
+	right: 20px;
+	z-index: 999;
+	background: linear-gradient(135deg, #a37cf7, #8b5cf6);
 	color: #fff;
 	border: none;
-	border-radius: 50px;
-	padding: 15px 20px;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	border-radius: 50%;
+	width: 55px;
+	height: 55px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 5px 20px rgba(163, 124, 247, 0.4);
 	transition: all 0.3s ease;
+	cursor: pointer;
+	font-size: 1.3rem;
 }
 
 .btn-inicio:hover {
-	background: #c2e6f7;
-	transform: translateY(-3px);
+	transform: translateY(-5px);
+	box-shadow: 0 8px 25px rgba(163, 124, 247, 0.6);
+	background: linear-gradient(135deg, #8b5cf6, #7c3aed);
 }
 
 .navbar,
@@ -124,7 +132,7 @@ body.dark-mode .logo {
 
 /* Brand Name en Dark Mode */
 body.dark-mode .brand-name {
-	color: #77bdff;
+	color: #a8d5ff;
 	filter: drop-shadow(1px 1px 5px rgba(129, 196, 255, 0.4));
 }
 
@@ -291,7 +299,7 @@ body.dark-mode .hero {
 }
 
 body.dark-mode .hero h1 {
-	color: #2072a8;
+	color: #a3d3ff;
 }
 
 body.dark-mode .hero p {
@@ -784,27 +792,27 @@ h2 .container h2 {
 
 /* Hero Section */
 .hero {
-	background: linear-gradient(rgba(207, 226, 255, 0), rgba(209, 231, 221, 0.521)), url('https://i.pinimg.com/1200x/2a/2c/13/2a2c13551d7250f1685a3f9209397686.jpg') center/cover no-repeat;
+	background: linear-gradient(rgba(207, 226, 255, 0.24), rgba(209, 231, 221, 0.7)), url('https://i.pinimg.com/1200x/2a/2c/13/2a2c13551d7250f1685a3f9209397686.jpg') center/cover no-repeat;
 	padding: 150px 0 100px;
 	text-align: center;
-	color: #222222;
+	color: #333;
 }
 
 .hero h1 {
-	font-size: 5rem;
+	font-size: 4rem;
 	font-weight: 700;
 	margin-bottom: 20px;
-	color: #59b9fa;
-	text-shadow: 5px 1px 5px rgba(255, 255, 255, 0.212);
+	color: #040355;
+	text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
 }
 
 .hero p {
 	font-size: 1.8rem;
 	max-width: 800px;
 	margin: 0 auto 30px;
-	color: #1a1a1a;
+	color: #ffe0f6;
 	font-weight: 600;
-	text-shadow: 5px 2px 5px rgba(255, 255, 255, 0.952);
+	text-shadow: 1px 1px 5px rgba(20, 20, 20, 0.993);
 
 }
 
@@ -1085,69 +1093,22 @@ h2 .container h2 {
 
 /* Footer */
 .footer {
-	background: linear-gradient(135deg, #032547, #0b253b);
+	background: linear-gradient(135deg, #0b3f72, #143049);
 	color: white;
-	position: relative;
-	padding: 2rem 0;
+	padding: 2rem 1rem;
 }
 
-.footer-logo {
-	height: 90px;
-	margin-right: 200px;
-	display: inline-block;
-	vertical-align: middle;
-	transform: translateY(1px);
+.footer-container {
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
-.row {
-	justify-content: right;
-	margin-left: 40px;
-}
-
-.footer-brand {
-	font-family: 'Poppins', sans-serif;
-	font-weight: 700;
-	font-size: 1.8rem;
-	margin-bottom: 10px;
-	color: white;
-	display: inline-block;
-	vertical-align: middle;
-}
-
-.footer-lema {
-	padding: 0;
-	font-style: italic;
-	opacity: 0.8;
-	margin-bottom: 20px;
-}
-
-footer p {
-	justify-content: center;
-}
-
-.footer-title {
-	font-size: 1.3rem;
-	margin-bottom: 20px;
-	position: relative;
-	padding-bottom: 1px;
-}
-
-.footer-links a {
-	display: block;
-	color: #ccc;
-	margin-bottom: 10px;
-	text-decoration: none;
-	transition: all 0.3s;
-}
-
-/*contacto*/
-.footer .col-lg-3 {
-	margin-top: -60px;
-}
-
-.footer-links a:hover {
-	color: white;
-	padding-left: 5px;
+.footer-top {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 2rem;
+	align-items: flex-start;
 }
 
 .social-links a {
@@ -1161,10 +1122,11 @@ footer p {
 	color: white;
 	margin-right: 10px;
 	transition: all 0.3s;
+	text-decoration: none;
 }
 
 .social-links a:hover {
-	background: var(--rosa-fuerte);
+	background: #e91e63;
 	transform: translateY(-3px);
 }
 
@@ -1465,7 +1427,6 @@ footer p {
 	font-weight: bold;
 }
 
-
 /* Responsive */
 @media (max-width: 768px) {
 	.modal-servicios-content {
@@ -1601,32 +1562,302 @@ footer p {
 }
 
 @media (max-width: 576px) {
+	body {
+		padding-top: 140px;
+	}
+
+	.navbar {
+		padding: 10px 0;
+	}
+
+	.navbar-container {
+		padding: 0 10px;
+		gap: 4px;
+		justify-content: center;
+	}
+
+	.brand-section {
+		width: 100%;
+		justify-content: center;
+		margin-right: 0;
+		margin-bottom: 10px;
+	}
+
 	.brand-name {
-		font-size: 1.5rem;
+		font-size: 1.8rem;
+	}
+
+	.logo {
+		width: 50px;
+		height: 50px;
+	}
+
+	.search-container {
+		width: auto;
+		max-width: 45px;
+		margin: 0;
+		order: 3;
+		min-width: auto;
+	}
+
+	.search-input {
+		width: 45px;
+		height: 45px;
+		padding: 0;
+		border-radius: 50%;
+		background-color: #f1f1f1;
+		border: none;
+		box-shadow: 0 2px 6px rgba(123, 221, 238, 0.849);
+		cursor: pointer;
+		text-indent: -9999px;
+		transition: all 0.3s ease;
+	}
+
+	.search-input:focus {
+		width: 100%;
+		max-width: 280px;
+		height: auto;
+		padding: 10px 15px 10px 40px;
+		border-radius: 20px;
+		text-indent: 0;
+		background-color: white;
+	}
+
+	.search-container:focus-within {
+		max-width: 280px;
+		width: 100%;
+	}
+
+	.search-icon {
+		pointer-events: none;
+		z-index: 10;
+	}
+
+	.botones-finales {
+		width: 100%;
+		justify-content: center;
+		gap: 4px;
+		order: 2;
+	}
+
+	.nav-buttons {
+		gap: 4px;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.nav-button {
+		padding: 8px 12px;
+		font-size: 0.75rem;
+		white-space: nowrap;
+	}
+
+	.nav-button i {
+		font-size: 0.9rem;
+	}
+
+	.theme-toggle-label,
+	.hamburger-btn {
+		width: 40px;
+		height: 40px;
+		margin-left: 0;
+	}
+
+	.hamburger-menu {
+		position: relative;
+	}
+
+	.hero {
+		padding: 100px 15px 60px;
 	}
 
 	.hero h1 {
-		font-size: 2rem;
+		font-size: 2.2rem;
+		padding: 0 10px;
+		line-height: 1.2;
 	}
 
 	.hero p {
-		font-size: 1.1rem;
+		font-size: 1rem;
+		padding: 0 15px;
+		line-height: 1.4;
+	}
+
+	.btn-hero {
+		padding: 10px 20px;
+		font-size: 0.95rem;
+	}
+
+	.section {
+		padding: 40px 15px;
 	}
 
 	.section-title h2 {
-		font-size: 1.8rem;
+		font-size: 1.6rem;
+		padding: 0 10px;
+	}
+
+	.intro-content {
+		gap: 20px;
+		text-align: center;
+	}
+
+	.intro-text p {
+		font-size: 16px;
+		text-align: center;
+		padding: 0 10px;
+	}
+
+	.card-consejo,
+	.curiosidad-card,
+	.eventos {
+		margin-bottom: 20px;
+		text-align: center;
+	}
+
+	.card-consejo .card-body,
+	.curiosidad-card,
+	.eventos {
+		text-align: center;
+	}
+
+	.card-title,
+	.curiosidad-card h4,
+	.eventos h4 {
+		text-align: center;
+	}
+
+	.card-text,
+	.curiosidad-card p,
+	.eventos p {
+		text-align: center;
+	}
+
+	.footer {
+		padding: 2rem 0;
+		text-align: center;
+	}
+
+	.footer-logo {
+		height: auto;
+		width: 100%;
+		max-width: 200px;
+		margin: 0 auto 15px;
+		display: block;
+	}
+
+	.footer-logo img {
+		width: 100%;
+		height: auto;
+		max-width: 200px;
+		display: block;
+		margin: 0 auto;
 	}
 
 	.footer-brand {
 		font-size: 1.5rem;
+		display: block;
+		text-align: center;
+		margin-bottom: 10px;
+		line-height: 1.3;
 	}
 
-	.nav-buttons {
-		gap: 5px;
+	.footer .row {
+		margin-left: 0;
+		margin-right: 0;
+		text-align: center;
 	}
 
-	.nav-button {
-		padding: 6px 10px;
-		font-size: 0.8rem;
+	.footer .col-lg-4,
+	.footer .col-lg-3,
+	.footer .col-md-6 {
+		margin-bottom: 25px;
+		margin-top: 0;
+		padding: 0 15px;
+	}
+
+	.footer-lema {
+		text-align: center;
+		padding: 0 20px;
+		font-size: 1rem;
+		line-height: 1.5;
+		margin-bottom: 15px;
+	}
+
+	.footer p {
+		text-align: center;
+		padding: 0 20px;
+		font-size: 0.9rem;
+		line-height: 1.6;
+		margin-bottom: 15px;
+	}
+
+	.footer p br {
+		display: none;
+	}
+
+	.social-links {
+		justify-content: center;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: 20px;
+	}
+
+	.social-links a {
+		width: 45px;
+		height: 45px;
+		font-size: 1.2rem;
+	}
+
+	.footer-links {
+		text-align: center;
+	}
+
+	.footer-links a {
+		display: block;
+		padding: 8px 0;
+		font-size: 0.95rem;
+	}
+
+	.footer-title {
+		font-size: 1.2rem;
+		margin-bottom: 15px;
+	}
+
+	.copyright {
+		margin-top: 30px;
+		padding-top: 20px;
+	}
+
+	.copyright p {
+		font-size: 0.85rem;
+		line-height: 1.5;
+	}
+
+	.calendar-popup {
+		right: 50%;
+		transform: translateX(50%);
+		width: 90%;
+		max-width: 350px;
+	}
+
+	.menu-content {
+		position: fixed;
+		top: 120px;
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+		width: 90%;
+		max-width: 280px;
+		z-index: 1100;
+		max-height: 70vh;
+		overflow-y: auto;
+	}
+
+	.btn-inicio {
+		padding: 12px 15px;
+		bottom: 15px;
+		right: 15px;
 	}
 }

@@ -1,4 +1,4 @@
-package com.clinicpet.demo.controller;
+﻿package com.clinicpet.demo.controller;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,17 +29,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.clinicpet.demo.dto.ProductoDTO;
+import com.clinicpet.demo.dto.VentaDTO;
 import com.clinicpet.demo.dto.VeterinariaDTO;
+import com.clinicpet.demo.model.DetalleVenta;
 import com.clinicpet.demo.model.Inventario;
 import com.clinicpet.demo.model.Mascota;
+import com.clinicpet.demo.model.Pago;
+import com.clinicpet.demo.model.Producto;
 import com.clinicpet.demo.model.Usuario;
+import com.clinicpet.demo.model.Venta;
 import com.clinicpet.demo.model.Veterinaria;
 import com.clinicpet.demo.repository.IInventarioRepository;
+import com.clinicpet.demo.repository.IProductoRepository;
+import com.clinicpet.demo.repository.IVentaRepository;
 import com.clinicpet.demo.repository.IVeterinariaRepository;
 import com.clinicpet.demo.service.IMascotaService;
 import com.clinicpet.demo.service.IUsuarioService;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -59,6 +71,12 @@ public class UsuarioController {
 
 	@Autowired
 	private IInventarioRepository inventarioRepository;
+	
+	@Autowired
+	private IVentaRepository ventaRepository;
+	
+	@Autowired
+	private IProductoRepository productoRepository;
 
 	// Mostrar formulario de login (unificado a vista "iniciarsesion")
 	@GetMapping("/iniciarsesion")
@@ -79,7 +97,7 @@ public class UsuarioController {
 					session.setAttribute("usuarioLogueado", usuario);
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
 
-					// ✅ REDIRIGIR SEGÚN ROL
+					// âœ… REDIRIGIR SEGÃšN ROL
 					Integer rolId = usuario.getRol().getId();
 
 					if (rolId == 3) { // Administrador
@@ -91,13 +109,13 @@ public class UsuarioController {
 					}
 				}
 			}
-			// Bloque unificado para errores (evita duplicación)
-			model.addAttribute("error", "Correo o contraseña incorrectos, o usuario inactivo");
+			// Bloque unificado para errores (evita duplicaciÃ³n)
+			model.addAttribute("error", "Correo o contraseÃ±a incorrectos, o usuario inactivo");
 			model.addAttribute("usuarioLogin", usuarioLogin); // Rellena campos en error
 			return "IniciarSesion/iniciarsesion"; // Corregido: unificado a "iniciarsesion"
 
 		} catch (Exception e) {
-			model.addAttribute("error", "Error al iniciar sesión: " + e.getMessage());
+			model.addAttribute("error", "Error al iniciar sesiÃ³n: " + e.getMessage());
 			model.addAttribute("usuarioLogin", usuarioLogin != null ? usuarioLogin : new Usuario()); // Consistente:
 																										// prefiere
 																										// datos
@@ -122,7 +140,7 @@ public class UsuarioController {
 	@GetMapping("/registro")
 	public String mostrarFormularioRegistro(Model model) {
 		model.addAttribute("usuario", new Usuario());
-		// *** CORRECCIÓN BÁSICA: Usar subcarpeta para coincidir con tu estructura ***
+		// *** CORRECCIÃ“N BÃSICA: Usar subcarpeta para coincidir con tu estructura ***
 		return "Registro/registro"; // Busca templates/Registro/registro.html
 	}
 
@@ -131,16 +149,16 @@ public class UsuarioController {
 	public String procesarRegistro(@ModelAttribute Usuario usuario, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
-			// *** CORRECCIÓN BÁSICA: Llamar al service corregido (maneja rol y
+			// *** CORRECCIÃ“N BÃSICA: Llamar al service corregido (maneja rol y
 			// validaciones) ***
 			Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
-			redirectAttributes.addFlashAttribute("mensaje", "¡Registro exitoso! Bienvenido a HelpYourPet");
+			redirectAttributes.addFlashAttribute("mensaje", "Â¡Registro exitoso! Bienvenido a HelpYourPet");
 
-			// *** CORRECCIÓN: Redirigir al INICIO (página principal) ***
-			return "redirect:/"; // Redirige a la página de inicio
+			// *** CORRECCIÃ“N: Redirigir al INICIO (pÃ¡gina principal) ***
+			return "redirect:/"; // Redirige a la pÃ¡gina de inicio
 
 		} catch (RuntimeException e) {
-			// *** CORRECCIÓN BÁSICA: Usar la misma ruta con subcarpeta para consistencia
+			// *** CORRECCIÃ“N BÃSICA: Usar la misma ruta con subcarpeta para consistencia
 			// ***
 			model.addAttribute("error", e.getMessage());
 			model.addAttribute("usuario", usuario); // Preserva los datos del form
@@ -157,7 +175,7 @@ public class UsuarioController {
 			return "redirect:/usuarios/iniciarsesion";
 		}
 
-		// ✅ AGREGAR ESTA LÍNEA - Pasar el ID al modelo
+		// âœ… AGREGAR ESTA LÃNEA - Pasar el ID al modelo
 		model.addAttribute("idUsuarioActual", usuarioLogueado.getId());
 
 		model.addAttribute("mascota", new Mascota());
@@ -176,33 +194,33 @@ public class UsuarioController {
 	@GetMapping("/perfilusuario/mascota/{id}")
 	@ResponseBody
 	public ResponseEntity<Mascota> obtenerMascotaPorId(@PathVariable Integer id, HttpSession session) {
-		LOGGER.info("🔍 Buscando mascota con ID: {}", id);
+		LOGGER.info("ðŸ” Buscando mascota con ID: {}", id);
 
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
-			LOGGER.warn("❌ Usuario no logueado");
+			LOGGER.warn("âŒ Usuario no logueado");
 			return ResponseEntity.status(401).build();
 		}
 
 		Optional<Mascota> mascotaOpt = mascotaService.buscarMascotaPorId(id);
 		if (mascotaOpt.isEmpty()) {
-			LOGGER.warn("❌ Mascota no encontrada con ID: {}", id);
+			LOGGER.warn("âŒ Mascota no encontrada con ID: {}", id);
 			return ResponseEntity.notFound().build();
 		}
 
 		Mascota mascota = mascotaOpt.get();
 
-		// ✅ Verificar que la mascota pertenece al usuario
+		// âœ… Verificar que la mascota pertenece al usuario
 		if (!mascota.getUsuario().getId().equals(usuarioLogueado.getId())) {
-			LOGGER.warn("❌ Usuario {} intentó acceder a mascota {} que no le pertenece", usuarioLogueado.getId(), id);
+			LOGGER.warn("âŒ Usuario {} intentÃ³ acceder a mascota {} que no le pertenece", usuarioLogueado.getId(), id);
 			return ResponseEntity.status(403).build();
 		}
 
-		LOGGER.info("✅ Mascota encontrada: {} - Unidad Edad: {}", mascota.getNombre(), mascota.getUnidadEdad());
+		LOGGER.info("âœ… Mascota encontrada: {} - Unidad Edad: {}", mascota.getNombre(), mascota.getUnidadEdad());
 		return ResponseEntity.ok(mascota);
 	}
 
-	// Agregar mascota (corregido: agregado check null y logs debug básicos)
+	// Agregar mascota (corregido: agregado check null y logs debug bÃ¡sicos)
 	@PostMapping("/perfilusuario/agregarMascota")
 	public String agregarMascota(@ModelAttribute Mascota mascota, @RequestParam("idUsuario") Integer idUsuario,
 			@RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
@@ -210,7 +228,7 @@ public class UsuarioController {
 
 		try {
 			if (idUsuario == null) {
-				redirectAttributes.addFlashAttribute("error", "ID de usuario inválido");
+				redirectAttributes.addFlashAttribute("error", "ID de usuario invÃ¡lido");
 				return "redirect:/usuarios/perfilusuario";
 			}
 
@@ -237,7 +255,7 @@ public class UsuarioController {
 
 				mascota.setFoto("/uploads/" + fileName);
 			} else {
-				mascota.setFoto("/uploads/default_pet.png"); // Asegúrate que exista esta imagen por defecto
+				mascota.setFoto("/uploads/default_pet.png"); // AsegÃºrate que exista esta imagen por defecto
 			}
 
 			mascotaService.guardarMascota(mascota);
@@ -262,7 +280,7 @@ public class UsuarioController {
 
 		try {
 			if (mascota.getId() == null) {
-				redirectAttributes.addFlashAttribute("error", "ID de mascota requerido para actualización.");
+				redirectAttributes.addFlashAttribute("error", "ID de mascota requerido para actualizaciÃ³n.");
 				return "redirect:/usuarios/perfilusuario";
 			}
 
@@ -352,7 +370,7 @@ public class UsuarioController {
 				return ResponseEntity.ok().body(Map.of("mensaje", "Foto actualizada correctamente"));
 			}
 
-			return ResponseEntity.badRequest().body(Map.of("error", "Datos de imagen inválidos"));
+			return ResponseEntity.badRequest().body(Map.of("error", "Datos de imagen invÃ¡lidos"));
 
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError()
@@ -378,7 +396,7 @@ public class UsuarioController {
 		}
 	}
 
-	// Método auxiliar para guardar imágenes
+	// MÃ©todo auxiliar para guardar imÃ¡genes
 	private String guardarImagenDesdeBase64(String base64Image, Long usuarioId) {
 		try {
 			// Eliminar el prefijo data:image/...;base64,
@@ -388,7 +406,7 @@ public class UsuarioController {
 			// Decodificar Base64
 			byte[] imageBytes = Base64.getDecoder().decode(imageString);
 
-			// Sin restricción de tamaño - permitir cualquier peso de imagen
+			// Sin restricciÃ³n de tamaÃ±o - permitir cualquier peso de imagen
 			System.out.println(" Procesando imagen de " + (imageBytes.length / (1024 * 1024)) + "MB");
 
 			// Crear directorio si no existe
@@ -398,7 +416,7 @@ public class UsuarioController {
 				Files.createDirectories(uploadPath);
 			}
 
-			// Generar nombre único
+			// Generar nombre Ãºnico
 			String fileName = "profile_" + usuarioId + "_" + System.currentTimeMillis() + ".webp";
 			Path filePath = uploadPath.resolve(fileName);
 
@@ -443,12 +461,12 @@ public class UsuarioController {
 
 			if (actualizado != null) {
 				session.setAttribute("usuarioLogueado", actualizado);
-				redirectAttributes.addFlashAttribute("success", "Información de perfil actualizada correctamente");
+				redirectAttributes.addFlashAttribute("success", "InformaciÃ³n de perfil actualizada correctamente");
 			} else {
-				redirectAttributes.addFlashAttribute("error", "No se encontró el usuario para actualizar");
+				redirectAttributes.addFlashAttribute("error", "No se encontrÃ³ el usuario para actualizar");
 			}
 		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Error al actualizar la información: " + e.getMessage());
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar la informaciÃ³n: " + e.getMessage());
 		}
 
 		return "redirect:/usuarios/perfilusuario";
@@ -466,10 +484,10 @@ public class UsuarioController {
 	public ResponseEntity<?> actualizarPassword(@PathVariable Integer id, @RequestBody String nuevaPassword) {
 
 		usuarioService.actualizarPassword(id, nuevaPassword);
-		return ResponseEntity.ok("Contraseña actualizada");
+		return ResponseEntity.ok("ContraseÃ±a actualizada");
 	}
 
-	// redireccion cambiar contraseña
+	// redireccion cambiar contraseÃ±a
 	@GetMapping("/recovery")
 	public String recovery() {
 		return "RecuperarContrasena/recovery";
@@ -488,7 +506,7 @@ public class UsuarioController {
 			// Eliminar el usuario de la base de datos
 			usuarioService.eliminarUsuario(usuarioLogueado.getId());
 
-			// Invalidar la sesión
+			// Invalidar la sesiÃ³n
 			session.invalidate();
 
 			return ResponseEntity.ok().body(Map.of("mensaje", "Cuenta eliminada exitosamente"));
@@ -524,7 +542,7 @@ public class UsuarioController {
 		return "Tienda/tienda";
 	}
 	
-	//redireccion a pasarela de pagos
+		//redireccion a pasarela de pagos
 	@GetMapping("/pasarela-pagos")
 	public String pasarelaPagos() {
 		return "Tienda/pasarela-pagos";
@@ -537,7 +555,6 @@ public class UsuarioController {
 		try {
 			List<Veterinaria> veterinarias = veterinariaRepository.findAll();
 			
-			// Convertir entidades a DTOs para evitar problemas de lazy loading
 			List<VeterinariaDTO> veterinariasDTO = veterinarias.stream()
 				.map(v -> new VeterinariaDTO(
 					v.getId(),
@@ -566,7 +583,6 @@ public class UsuarioController {
 		try {
 			LOGGER.info("🔍 Buscando productos para veterinaria ID: {}", veterinariaId);
 			
-			// Verificar que la veterinaria existe
 			Optional<Veterinaria> veterinariaOpt = veterinariaRepository.findById(veterinariaId);
 			if (veterinariaOpt.isEmpty()) {
 				LOGGER.warn("❌ Veterinaria no encontrada con ID: {}", veterinariaId);
@@ -574,13 +590,10 @@ public class UsuarioController {
 			}
 			
 			Veterinaria veterinaria = veterinariaOpt.get();
-			
-			// Obtener inventario de la veterinaria
 			List<Inventario> inventarios = inventarioRepository.findByVeterinaria(veterinaria);
 			
-			// Convertir a DTOs con información del producto y stock
 			List<ProductoDTO> productosDTO = inventarios.stream()
-				.filter(inv -> inv.getCantidadDisponible() != null && inv.getCantidadDisponible() > 0) // Solo productos disponibles
+				.filter(inv -> inv.getCantidadDisponible() != null && inv.getCantidadDisponible() > 0)
 				.map(inv -> new ProductoDTO(
 					inv.getProducto().getId(),
 					inv.getProducto().getNombre(),
@@ -593,7 +606,7 @@ public class UsuarioController {
 				))
 				.collect(Collectors.toList());
 			
-			LOGGER.info("✅ Se encontraron {} productos disponibles para veterinaria '{}'", 
+			LOGGER.info("✅ Se encontraron {} productos disponibles para veterinaria '{}'",
 				productosDTO.size(), veterinaria.getNombre());
 			
 			return ResponseEntity.ok(productosDTO);
@@ -603,6 +616,150 @@ public class UsuarioController {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+	
+	// ===== ENDPOINTS PARA SISTEMA DE VENTAS =====
+	
+	@PostMapping("/api/ventas/registrar")
+	@ResponseBody
+	public ResponseEntity<?> registrarVenta(@RequestBody Map<String, Object> ventaData, HttpSession session) {
+		try {
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(Map.of("error", "Usuario no autenticado"));
+			}
+			
+			LOGGER.info("🛒 Registrando venta para usuario ID: {}", usuarioLogueado.getId());
+			
+			// Convertir valores numéricos de forma segura
+			Double subtotal = convertToDouble(ventaData.get("subtotal"));
+			Double total = convertToDouble(ventaData.get("total"));
+			
+			Venta venta = new Venta();
+			venta.setUsuario(usuarioLogueado);
+			venta.setFecha(new Date());
+			venta.setSubtotal(subtotal);
+			venta.setTotal(total);
+			
+			Venta ventaGuardada = ventaRepository.save(venta);
+			
+			Pago pago = new Pago();
+			pago.setVenta(ventaGuardada);
+			pago.setMetodo((String) ventaData.get("metodoPago"));
+			pago.setEstado("completado");
+			pago.setReferencia((String) ventaData.get("numeroOrden"));
+			pago.setFechaPago(LocalDateTime.now());
+			ventaGuardada.setPago(pago);
+			
+			List<Map<String, Object>> items = (List<Map<String, Object>>) ventaData.get("items");
+			List<DetalleVenta> detalles = new ArrayList<>();
+			
+			for (Map<String, Object> item : items) {
+				Integer productoId = convertToInteger(item.get("id"));
+				Integer cantidad = convertToInteger(item.get("quantity"));
+				Double precio = convertToDouble(item.get("precio"));
+				
+				Optional<Producto> productoOpt = productoRepository.findById(productoId);
+				if (productoOpt.isPresent()) {
+					DetalleVenta detalle = new DetalleVenta();
+					detalle.setVenta(ventaGuardada);
+					detalle.setProducto(productoOpt.get());
+					detalle.setCantidad(cantidad);
+					detalle.setPrecioUnitario(precio);
+					detalles.add(detalle);
+				}
+			}
+			
+			ventaGuardada.setDetallesVenta(detalles);
+			ventaRepository.save(ventaGuardada);
+			
+			LOGGER.info("✅ Venta registrada exitosamente. ID: {}", ventaGuardada.getId());
+			
+			return ResponseEntity.ok(Map.of(
+				"mensaje", "Venta registrada exitosamente",
+				"ventaId", ventaGuardada.getId()
+			));
+			
+		} catch (Exception e) {
+			LOGGER.error("❌ Error al registrar venta: {}", e.getMessage());
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(Map.of("error", "Error al registrar la venta: " + e.getMessage()));
+		}
+	}
+	
+	@GetMapping("/api/ventas/mis-compras")
+	@ResponseBody
+	@Transactional(readOnly = true)
+	public ResponseEntity<List<VentaDTO>> obtenerMisCompras(HttpSession session) {
+		try {
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			}
+			
+			LOGGER.info("📋 Obteniendo compras del usuario ID: {}", usuarioLogueado.getId());
+			
+			List<Venta> ventas = ventaRepository.findByUsuarioId(usuarioLogueado.getId());
+			
+			List<VentaDTO> ventasDTO = ventas.stream()
+				.map(venta -> {
+					VentaDTO dto = new VentaDTO();
+					dto.setId(venta.getId());
+					dto.setFecha(venta.getFecha());
+					dto.setSubtotal(venta.getSubtotal());
+					dto.setTotal(venta.getTotal());
+					
+					if (venta.getPago() != null) {
+						dto.setMetodoPago(venta.getPago().getMetodo());
+						dto.setEstadoPago(venta.getPago().getEstado());
+						dto.setReferencia(venta.getPago().getReferencia());
+					}
+					
+					if (venta.getDetallesVenta() != null) {
+						List<VentaDTO.DetalleVentaDTO> detallesDTO = venta.getDetallesVenta().stream()
+							.map(detalle -> new VentaDTO.DetalleVentaDTO(
+								detalle.getProducto().getId(),
+								detalle.getProducto().getNombre(),
+								detalle.getCantidad(),
+								detalle.getPrecioUnitario(),
+								detalle.getCantidad() * detalle.getPrecioUnitario()
+							))
+							.collect(Collectors.toList());
+						dto.setDetalles(detallesDTO);
+					}
+					
+					return dto;
+				})
+				.collect(Collectors.toList());
+			
+			LOGGER.info("✅ Se encontraron {} compras", ventasDTO.size());
+			return ResponseEntity.ok(ventasDTO);
+			
+		} catch (Exception e) {
+			LOGGER.error("❌ Error al obtener compras: {}", e.getMessage());
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	// ===== MÉTODOS AUXILIARES PARA CONVERSIÓN DE TIPOS =====
+	
+	private Double convertToDouble(Object value) {
+		if (value == null) return 0.0;
+		if (value instanceof Double) return (Double) value;
+		if (value instanceof Integer) return ((Integer) value).doubleValue();
+		if (value instanceof String) return Double.parseDouble((String) value);
+		return Double.parseDouble(value.toString());
+	}
+	
+	private Integer convertToInteger(Object value) {
+		if (value == null) return 0;
+		if (value instanceof Integer) return (Integer) value;
+		if (value instanceof Double) return ((Double) value).intValue();
+		if (value instanceof String) return Integer.parseInt((String) value);
+		return Integer.parseInt(value.toString());
 	}
 
 }
