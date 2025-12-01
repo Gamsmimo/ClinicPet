@@ -36,12 +36,14 @@ import com.clinicpet.demo.dto.VentaDTO;
 import com.clinicpet.demo.dto.VeterinariaDTO;
 import com.clinicpet.demo.model.DetalleVenta;
 import com.clinicpet.demo.model.Inventario;
+import com.clinicpet.demo.model.Evento;
 import com.clinicpet.demo.model.Mascota;
 import com.clinicpet.demo.model.Pago;
 import com.clinicpet.demo.model.Producto;
 import com.clinicpet.demo.model.Usuario;
 import com.clinicpet.demo.model.Venta;
 import com.clinicpet.demo.model.Veterinaria;
+import com.clinicpet.demo.repository.IEventoRepository;
 import com.clinicpet.demo.repository.IInventarioRepository;
 import com.clinicpet.demo.repository.IProductoRepository;
 import com.clinicpet.demo.repository.IVentaRepository;
@@ -77,6 +79,9 @@ public class UsuarioController {
 	
 	@Autowired
 	private IProductoRepository productoRepository;
+	
+	@Autowired
+	private IEventoRepository eventoRepository;
 
 	// Mostrar formulario de login (unificado a vista "iniciarsesion")
 	@GetMapping("/iniciarsesion")
@@ -124,15 +129,33 @@ public class UsuarioController {
 		}
 	}
 
-	// Mostrar inicio (dashboard)
+	// Mostrar inicio (dashboard) con paginación de eventos
 	@GetMapping("/inicio")
-	public String mostrarInicio(Model model, HttpSession session) {
+	public String mostrarInicio(
+			@RequestParam(defaultValue = "0") int page,
+			Model model, 
+			HttpSession session) {
+		
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
 			return "usuarios/iniciarsesion";
 		}
+		
+		// Configurar paginación: 6 eventos por página
+		int pageSize = 6;
+		org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, pageSize);
+		
+		// Obtener página de eventos
+		org.springframework.data.domain.Page<com.clinicpet.demo.model.Evento> eventosPage = eventoRepository.findAll(pageable);
+		
+		// Agregar atributos al modelo
 		model.addAttribute("usuario", usuarioLogueado);
 		model.addAttribute("mensaje", "Bienvenido al Dashboard ClinicPet");
+		model.addAttribute("eventos", eventosPage.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", eventosPage.getTotalPages());
+		model.addAttribute("totalItems", eventosPage.getTotalElements());
+		
 		return "Inicio/inicio";
 	}
 
@@ -532,7 +555,23 @@ public class UsuarioController {
 
 	// redireccion al cerrar sesion
 	@GetMapping("/index")
-	public String index() {
+	public String index(
+			@RequestParam(defaultValue = "0") int page,
+			Model model) {
+		
+		// Configurar paginación: 6 eventos por página
+		int pageSize = 6;
+		org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, pageSize);
+		
+		// Obtener página de eventos
+		org.springframework.data.domain.Page<com.clinicpet.demo.model.Evento> eventosPage = eventoRepository.findAll(pageable);
+		
+		// Agregar atributos al modelo
+		model.addAttribute("eventos", eventosPage.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", eventosPage.getTotalPages());
+		model.addAttribute("totalItems", eventosPage.getTotalElements());
+		
 		return "index";
 	}
 

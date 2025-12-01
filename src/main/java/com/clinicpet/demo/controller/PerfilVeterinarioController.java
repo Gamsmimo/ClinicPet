@@ -322,209 +322,100 @@ public class PerfilVeterinarioController {
 	}
 
 	// ==================== SECCION CONFIGURACION ====================
-
 	@PostMapping("/configuracion/actualizar")
-	public String actualizarConfiguracion(@ModelAttribute PerfilVeterinario perfilForm,
-			@RequestParam(value = "foto", required = false) MultipartFile fotoFile, HttpSession session,
+	public String actualizarConfiguracion(
+			@RequestParam(value = "foto", required = false) MultipartFile fotoFile,
+			@RequestParam(value = "usuario.nombres", required = false) String nombres,
+			@RequestParam(value = "usuario.apellidos", required = false) String apellidos,
+			@RequestParam(value = "usuario.telefono", required = false) String telefono,
+			@RequestParam(value = "usuario.direccion", required = false) String direccion,
+			@RequestParam(value = "experiencia", required = false) String experiencia,
+			HttpSession session,
 			RedirectAttributes redirectAttributes) {
+		
 		System.out.println(" Procesando actualización de configuración");
 
-		// USAR SESIÓN
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
-			System.out.println(" Usuario no autenticado - Redirigiendo al login");
+			System.out.println(" Usuario no autenticado");
 			return "redirect:/usuarios/iniciarsesion";
 		}
 
 		try {
-			// Verificar si es veterinario
 			if (usuarioLogueado.getRol().getId() != 2) {
-				redirectAttributes.addFlashAttribute("error", " No tiene permisos de veterinario");
+				redirectAttributes.addFlashAttribute("error", "No tiene permisos de veterinario");
 				return "redirect:/perfil-veterinario";
 			}
 
-			// Buscar perfil veterinario existente
-			Optional<PerfilVeterinario> perfilExistenteOpt = perfilVeterinarioService
-					.buscarPorUsuarioId(usuarioLogueado.getId());
-
-			if (perfilExistenteOpt.isPresent()) {
-				PerfilVeterinario perfilExistente = perfilExistenteOpt.get();
-
-				// ACTUALIZAR USUARIO EXISTENTE
-				Usuario usuarioActual = usuarioLogueado;
-				usuarioActual.setNombres(perfilForm.getUsuario().getNombres());
-				usuarioActual.setApellidos(perfilForm.getUsuario().getApellidos());
-				usuarioActual.setTelefono(perfilForm.getUsuario().getTelefono());
-				usuarioActual.setDireccion(perfilForm.getUsuario().getDireccion());
-				usuarioActual.setImagen(perfilForm.getUsuario().getImagen());
-
-				// MANEJO DE FOTO - CORREGIDO
-				// En tu método del controller, reemplaza esta parte:
-				if (fotoFile != null && !fotoFile.isEmpty()) {
-					// Validaciones de foto
-					if (fotoFile.getSize() > 10 * 1024 * 1024) {
-						redirectAttributes.addFlashAttribute("error", "La imagen no debe superar 2MB");
-						return "redirect:/perfil-veterinario";
-					}
-
-					String contentType = fotoFile.getContentType();
-					if (contentType == null
-							|| (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
-						redirectAttributes.addFlashAttribute("error", "Formato no válido. Solo JPG y PNG");
-						return "redirect:/perfil-veterinario";
-					}
-
-					// CON LOS LOGS AÑADIDOS QUEDARÍA ASÍ:
-					System.out.println("=== DEBUG INICIO SUBIDA DE IMAGEN ===");
-					System.out.println(" Archivo recibido: " + fotoFile.getOriginalFilename());
-					System.out.println(" Tamaño archivo: " + fotoFile.getSize() + " bytes");
-					System.out.println(" ContentType: " + contentType);
-					System.out.println(" ¿Está vacío?: " + fotoFile.isEmpty());
-
-					// Usar sistema uploads
-					String uploadDir = System.getProperty("user.dir") + "/uploads/";
-					System.out.println(" Ruta uploads: " + uploadDir);
-
-					// Verificar si el directorio existe y tiene permisos
-					File dir = new File(uploadDir);
-					System.out.println(" ¿Directorio existe?: " + dir.exists());
-					System.out.println(" ¿Directorio puede escribir?: " + dir.canWrite());
-					System.out.println(" Ruta absoluta: " + dir.getAbsolutePath());
-
-					String extension = contentType.equals("image/jpeg") ? ".jpg" : ".png";
-					String fileName = "vet_" + usuarioLogueado.getId() + "_" + System.currentTimeMillis() + extension;
-					System.out.println(" Nombre archivo generado: " + fileName);
-
-					Path uploadPath = Paths.get(uploadDir);
-					if (!Files.exists(uploadPath)) {
-						System.out.println(" Creando directorio...");
-						Files.createDirectories(uploadPath);
-					}
-
-					// Guardar foto
-					Path filePath = uploadPath.resolve(fileName);
-					System.out.println(" Ruta completa archivo: " + filePath.toString());
-
-					try {
-						Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-						System.out.println(" Archivo guardado exitosamente");
-
-						// Verificar si el archivo se creó
-						File savedFile = new File(filePath.toString());
-						System.out.println(" ¿Archivo guardado existe?: " + savedFile.exists());
-						System.out.println(" Tamaño archivo guardado: " + savedFile.length() + " bytes");
-
-					} catch (IOException e) {
-						System.out.println(" Error al guardar archivo: " + e.getMessage());
-						e.printStackTrace();
-						throw e; // re-lanzar la excepción
-					}
-
-					// IMPORTANTE: Actualizar la imagen en el usuario
-					usuarioActual.setImagen("/uploads/" + fileName);
-					usuarioService.actualizarUsuario(usuarioActual.getId(), usuarioActual);
-
-					System.out.println(" Nueva ruta de imagen en usuario: " + usuarioActual.getImagen());
-
-					// AÑADE ESTO PARA VER SI SE GUARDA EN BD:
-					System.out.println(" Guardando usuario en BD...");
-					System.out.println(" Usuario actualizado en BD");
-
-					System.out.println("=== DEBUG FIN SUBIDA DE IMAGEN ===");
-				} else {
-					System.out.println(" No se recibió archivo de foto o está vacío");
-					System.out.println(" fotoFile es null: " + (fotoFile == null));
-					if (fotoFile != null) {
-						System.out.println(" fotoFile isEmpty: " + fotoFile.isEmpty());
-					}
-				}
-
-				Usuario usuarioGuardado = usuarioService.actualizarUsuario(usuarioActual.getId(), usuarioActual);
-
-				// ACTUALIZAR PERFIL EXISTENTE
-				perfilExistente.setEspecialidad(perfilForm.getEspecialidad());
-				perfilExistente.setExperiencia(perfilForm.getExperiencia());
-				perfilExistente.setTarjetaProfesional(perfilForm.getTarjetaProfesional());
-
-				PerfilVeterinario perfilGuardado = perfilVeterinarioService.actualizarPerfil(perfilExistente.getId(),
-						perfilExistente);
-
-				// ACTUALIZAR SESIÓN con los nuevos datos
-				session.setAttribute("usuarioLogueado", usuarioGuardado);
-
-				redirectAttributes.addFlashAttribute("success", " Perfil actualizado correctamente");
-				System.out.println(" Perfil actualizado para: " + usuarioLogueado.getCorreo());
-			} else {
-				System.out
-						.println(" ERROR: Intentando actualizar perfil que no existe: " + usuarioLogueado.getCorreo());
-				redirectAttributes.addFlashAttribute("error", " Error: Perfil no encontrado");
+			Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
+			if (perfilOpt.isEmpty()) {
+				redirectAttributes.addFlashAttribute("error", "Perfil no encontrado");
+				return "redirect:/perfil-veterinario";
 			}
 
+			PerfilVeterinario perfilExistente = perfilOpt.get();
+
+			// Actualizar datos del usuario
+			if (nombres != null && !nombres.trim().isEmpty()) {
+				usuarioLogueado.setNombres(nombres);
+			}
+			if (apellidos != null && !apellidos.trim().isEmpty()) {
+				usuarioLogueado.setApellidos(apellidos);
+			}
+			if (telefono != null && !telefono.trim().isEmpty()) {
+				usuarioLogueado.setTelefono(telefono);
+			}
+			if (direccion != null && !direccion.trim().isEmpty()) {
+				usuarioLogueado.setDireccion(direccion);
+			}
+
+			// Manejo de foto
+			if (fotoFile != null && !fotoFile.isEmpty()) {
+				if (fotoFile.getSize() > 10 * 1024 * 1024) {
+					redirectAttributes.addFlashAttribute("error", "La imagen no debe superar 10MB");
+					return "redirect:/perfil-veterinario";
+				}
+
+				String contentType = fotoFile.getContentType();
+				if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+					redirectAttributes.addFlashAttribute("error", "Formato no válido. Solo JPG y PNG");
+					return "redirect:/perfil-veterinario";
+				}
+
+				String uploadDir = System.getProperty("user.dir") + "/uploads/";
+				File dir = new File(uploadDir);
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
+
+				String extension = contentType.equals("image/jpeg") ? ".jpg" : ".png";
+				String fileName = "vet_" + usuarioLogueado.getId() + "_" + System.currentTimeMillis() + extension;
+				Path filePath = Paths.get(uploadDir + fileName);
+
+				Files.copy(fotoFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+				usuarioLogueado.setImagen("/uploads/" + fileName);
+			}
+
+			// Actualizar experiencia en el perfil
+			if (experiencia != null && !experiencia.trim().isEmpty()) {
+				perfilExistente.setExperiencia(experiencia);
+			}
+
+			// Guardar cambios
+			Usuario usuarioGuardado = usuarioService.actualizarUsuario(usuarioLogueado.getId(), usuarioLogueado);
+			perfilVeterinarioService.actualizarPerfil(perfilExistente.getId(), perfilExistente);
+
+			// Actualizar sesión
+			session.setAttribute("usuarioLogueado", usuarioGuardado);
+
+			redirectAttributes.addFlashAttribute("success", " Perfil actualizado correctamente");
 			return "redirect:/perfil-veterinario";
 
 		} catch (Exception e) {
 			System.out.println(" Error al actualizar perfil: " + e.getMessage());
 			e.printStackTrace();
-			redirectAttributes.addFlashAttribute("error", " Error al actualizar perfil: " + e.getMessage());
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar perfil: " + e.getMessage());
 			return "redirect:/perfil-veterinario";
-		}
-	}
-
-	@PostMapping("/change-password")
-	public String changePassword(@RequestParam String currentPassword, @RequestParam String newPassword,
-			@RequestParam String confirmPassword, HttpSession session, Model model) {
-
-		System.out.println(" changePassword en VeterinarioController ejecutado!");
-
-		try {
-			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuario");
-			if (usuarioLogueado == null) {
-				model.addAttribute("error", "Debe iniciar sesión");
-				return "redirect:/usuarios/iniciarsesion"; // CORREGIDO
-			}
-
-			System.out.println(" Contraseña actual en BD: " + usuarioLogueado.getPassword());
-			System.out.println(" Contraseña ingresada: " + currentPassword);
-
-			// Verificar contraseña actual
-			if (!usuarioLogueado.getPassword().equals(currentPassword)) {
-				model.addAttribute("error", "La contraseña actual es incorrecta");
-				return "perfil-veterinario";
-			}
-
-			// Verificar que coincidan
-			if (!newPassword.equals(confirmPassword)) {
-				model.addAttribute("error", "Las nuevas contraseñas no coinciden");
-				return "perfil-veterinario";
-			}
-
-			// Validar que la nueva contraseña sea diferente
-			if (currentPassword.equals(newPassword)) {
-				model.addAttribute("error", "La nueva contraseña debe ser diferente a la actual");
-				return "perfil-veterinario";
-			}
-
-			System.out.println(" Contraseñas válidas, actualizando...");
-
-			// Actualizar en BD
-			usuarioService.actualizarPassword(usuarioLogueado.getId(), newPassword);
-
-			// Actualizar sesión
-			usuarioLogueado.setPassword(newPassword);
-			session.setAttribute("usuario", usuarioLogueado);
-
-			System.out.println(" Contraseña actualizada correctamente para usuario: " + usuarioLogueado.getCorreo());
-
-			// Cerrar sesión después de cambiar contraseña
-			session.invalidate();
-			model.addAttribute("success", "Contraseña actualizada correctamente. Por favor inicie sesión nuevamente.");
-			return "redirect:/usuarios/iniciarsesion"; // REDIRIGE AL LOGIN
-
-		} catch (Exception e) {
-			System.out.println(" Error: " + e.getMessage());
-			model.addAttribute("error", "Error al cambiar la contraseña: " + e.getMessage());
-			e.printStackTrace();
-			return "perfil-veterinario";
 		}
 	}
 
@@ -947,6 +838,157 @@ public class PerfilVeterinarioController {
 		}
 
 		return "redirect:/perfil-veterinario";
+	}
+
+	@GetMapping("/evento/datos/{idEvento}")
+	@ResponseBody
+	public Map<String, Object> obtenerDatosEvento(@PathVariable Integer idEvento) {
+		Map<String, Object> response = new HashMap<>();
+		
+		try {
+			System.out.println("🔍 Obteniendo datos del evento ID: " + idEvento);
+			
+			// Verificar usuario autenticado
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				response.put("error", "Usuario no autenticado");
+				System.err.println("❌ Usuario no autenticado al obtener datos de evento");
+				return response;
+			}
+			
+			// Obtener evento
+			Optional<Evento> eventoOpt = eventoService.obtenerEventoPorId(idEvento);
+			if (eventoOpt.isPresent()) {
+				Evento evento = eventoOpt.get();
+				
+				response.put("id", evento.getId());
+				response.put("titulo", evento.getTitulo());
+				response.put("descripcion", evento.getDescripcion());
+				response.put("fechainicio", evento.getFechainicio().toString());
+				response.put("fechafin", evento.getFechafin().toString());
+				response.put("imagen", evento.getImagen());
+				
+				System.out.println("✅ Datos cargados para evento: " + evento.getTitulo());
+			} else {
+				response.put("error", "Evento no encontrado");
+				System.err.println("❌ Evento no encontrado ID: " + idEvento);
+			}
+		} catch (Exception e) {
+			response.put("error", "Error: " + e.getMessage());
+			System.err.println("💥 Error al obtener datos del evento: " + e.getMessage());
+		}
+		
+		return response;
+	}
+	
+	@PostMapping("/evento/actualizar/{idEvento}")
+	public String actualizarEvento(
+			@PathVariable Integer idEvento,
+			@RequestParam("nombre") String nombre,
+			@RequestParam("descripcion") String descripcion,
+			@RequestParam("fechainicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechainicio,
+			@RequestParam("fechafin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechafin,
+			@RequestParam(value = "fileImagen", required = false) MultipartFile fileImagen,
+			HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		
+		try {
+			System.out.println("🔄 Actualizando evento ID: " + idEvento);
+			
+			// Verificar usuario autenticado
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				redirectAttributes.addFlashAttribute("error", "Debe iniciar sesión como veterinario");
+				return "redirect:/usuarios/iniciarsesion";
+			}
+			
+			// Verificar que el evento existe
+			Optional<Evento> eventoExistenteOpt = eventoService.obtenerEventoPorId(idEvento);
+			if (eventoExistenteOpt.isEmpty()) {
+				redirectAttributes.addFlashAttribute("error", "Evento no encontrado");
+				return "redirect:/perfil-veterinario";
+			}
+			
+			Evento evento = eventoExistenteOpt.get();
+			
+			// Actualizar campos
+			evento.setTitulo(nombre);
+			evento.setDescripcion(descripcion);
+			evento.setFechainicio(fechainicio);
+			evento.setFechafin(fechafin);
+			
+			// Actualizar imagen solo si se subió una nueva
+			if (fileImagen != null && !fileImagen.isEmpty()) {
+				String uploadsDir = System.getProperty("user.dir") + "/uploads/";
+				String nombreOriginal = fileImagen.getOriginalFilename();
+				String extension = (nombreOriginal != null && nombreOriginal.contains("."))
+						? nombreOriginal.substring(nombreOriginal.lastIndexOf("."))
+						: "";
+				String nombreArchivo = System.currentTimeMillis() + "_evento_"
+						+ (nombre.replaceAll("[^a-zA-Z0-9]", "_").toLowerCase()) + extension;
+				
+				Path rutaCompleta = Paths.get(uploadsDir + nombreArchivo);
+				Files.createDirectories(rutaCompleta.getParent());
+				fileImagen.transferTo(rutaCompleta.toFile());
+				
+				evento.setImagen("/uploads/" + nombreArchivo);
+				System.out.println("🖼️ Nueva imagen guardada: " + evento.getImagen());
+			}
+			
+			// Guardar evento actualizado
+			eventoService.guardarEvento(evento);
+			System.out.println("✅ Evento actualizado correctamente: " + evento.getTitulo());
+			
+			redirectAttributes.addFlashAttribute("success", "Evento actualizado correctamente");
+			return "redirect:/perfil-veterinario";
+			
+		} catch (Exception e) {
+			System.err.println("💥 Error al actualizar evento: " + e.getMessage());
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar el evento: " + e.getMessage());
+			return "redirect:/perfil-veterinario";
+		}
+	}
+
+	/**
+	 * Eliminar un evento
+	 */
+	@PostMapping("/evento/eliminar/{idEvento}")
+	public String eliminarEvento(
+			@PathVariable Integer idEvento,
+			HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		
+		try {
+			System.out.println("🗑️ Eliminando evento ID: " + idEvento);
+			
+			// Verificar usuario autenticado
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				redirectAttributes.addFlashAttribute("error", "Debe iniciar sesión como veterinario");
+				return "redirect:/usuarios/iniciarsesion";
+			}
+			
+			// Verificar que el evento existe
+			Optional<Evento> eventoOpt = eventoService.obtenerEventoPorId(idEvento);
+			if (eventoOpt.isEmpty()) {
+				redirectAttributes.addFlashAttribute("error", "Evento no encontrado");
+				return "redirect:/perfil-veterinario";
+			}
+			
+			// Eliminar el evento
+			eventoService.eliminarEvento(idEvento);
+			System.out.println("✅ Evento eliminado correctamente");
+			
+			redirectAttributes.addFlashAttribute("success", "Evento eliminado correctamente");
+			return "redirect:/perfil-veterinario";
+			
+		} catch (Exception e) {
+			System.err.println("💥 Error al eliminar evento: " + e.getMessage());
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("error", "Error al eliminar el evento: " + e.getMessage());
+			return "redirect:/perfil-veterinario";
+		}
 	}
 
 }
