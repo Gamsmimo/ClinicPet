@@ -1861,3 +1861,34 @@ h2 .container h2 {
 		right: 15px;
 	}
 }
+
+@media (max-width: 576px) {
+	.brand-name {
+		font-size: 1.5rem;
+	}
+
+	.hero h1 {
+		font-size: 2rem;
+	}
+
+	.hero p {
+		font-size: 1.1rem;
+	}
+
+	.section-title h2 {
+		font-size: 1.8rem;
+	}
+
+	.footer-brand {
+		font-size: 1.5rem;
+	}
+
+	.nav-buttons {
+		gap: 5px;
+	}
+
+	.nav-button {
+		padding: 6px 10px;
+		font-size: 0.8rem;
+	}
+}

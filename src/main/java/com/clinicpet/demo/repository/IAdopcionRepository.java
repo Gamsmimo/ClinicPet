@@ -40,4 +40,7 @@ public interface IAdopcionRepository extends JpaRepository<Adopcion, Integer> {
 			+ "AND (:tamano IS NULL OR LOWER(a.tamano) = LOWER(:tamano)) " + "AND a.estado = 'DISPONIBLE'")
 	Page<Adopcion> buscarConFiltros(@Param("tipoMascota") String tipoMascota, @Param("raza") String raza,
 			@Param("tamano") String tamano, Pageable pageable);
+	
+	//para las tarjetas de estadidisticas
+	long countByEstado(String estado);
 }

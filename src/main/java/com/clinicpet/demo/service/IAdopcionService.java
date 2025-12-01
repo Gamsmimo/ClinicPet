@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface IAdopcionService {
 
-	// CRUD
 	Adopcion guardarAdopcion(Adopcion adopcion);
 
 	List<Adopcion> listarAdopciones();
@@ -29,4 +28,7 @@ public interface IAdopcionService {
 	Page<Adopcion> buscarDisponibles(Pageable pageable);
 
 	Page<Adopcion> buscarPorUsuarioId(Integer idUsuario, Pageable pageable);
+
+	long contarPorEstado(String estado);
+
 }

@@ -127,8 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	// ==================
 	// ALERTAS CON SWEETALERT
 	// ==================
-
-	// Convertir alertas de Bootstrap a SweetAlert
 	const successAlert = document.querySelector('.alert-success');
 	const errorAlert = document.querySelector('.alert-danger');
 
@@ -163,7 +161,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ==================
-// FUNCIÓN VER DETALLES
+// FUNCIÓN VER DETALLES MEJORADA
+// ==================
+// ==================
+// FUNCIÓN VER DETALLES MEJORADA
 // ==================
 function verDetalles(id) {
 	// Mostrar loading
@@ -171,6 +172,7 @@ function verDetalles(id) {
 		title: 'Cargando...',
 		text: 'Obteniendo información de la mascota',
 		allowOutsideClick: false,
+		showConfirmButton: false,
 		didOpen: () => {
 			Swal.showLoading();
 		}
@@ -187,32 +189,67 @@ function verDetalles(id) {
 			Swal.close();
 			console.log('Datos recibidos:', data);
 
-			// Llenar los datos en el modal
+			// Llenar nombre principal
 			document.getElementById('detalle-nombre').textContent = data.nombreMascota || 'Sin nombre';
 
-			// Nombre del publicador
-			const nombreCompleto = ((data.usuario.nombres || '') + ' ' + (data.usuario.apellidos || '')).trim();
+			// Publicador
+			const nombreCompleto = ((data.usuario?.nombres || '') + ' ' + (data.usuario?.apellidos || '')).trim();
 			document.getElementById('detalle-publicador').textContent = nombreCompleto || 'No especificado';
 
+			// Tipo de mascota
 			document.getElementById('detalle-tipo').textContent = data.tipoMascota || 'No especificado';
-			document.getElementById('detalle-raza').textContent = data.raza || 'No especificada';
-			document.getElementById('detalle-edad').textContent = data.edad ? data.edad + ' años' : 'No especificada';
-			document.getElementById('detalle-genero').textContent = data.genero || 'No especificado';
-			document.getElementById('detalle-tamano').textContent = data.tamano || 'No especificado';
-			document.getElementById('detalle-contacto').textContent = data.contacto || 'No especificado';
-			document.getElementById('detalle-descripcion').textContent = data.descripcion || 'Sin descripción';
 
-			// Formatear fecha
+			// Raza
+			document.getElementById('detalle-raza').textContent = data.raza || 'Mestizo / No especificada';
+
+			// Edad
+			const edad = data.edad ? `${data.edad} año${data.edad > 1 ? 's' : ''}` : 'No especificada';
+			document.getElementById('detalle-edad').textContent = edad;
+
+			// Género
+			document.getElementById('detalle-genero').textContent = data.genero || 'No especificado';
+
+			// Tamaño
+			document.getElementById('detalle-tamano').textContent = data.tamano || 'No especificado';
+
+			// Contacto
+			document.getElementById('detalle-contacto').textContent = data.contacto || 'No especificado';
+
+			// Descripción
+			document.getElementById('detalle-descripcion').textContent = data.descripcion || 'Sin descripción disponible.';
+
+			// Fecha de publicación
 			if (data.fechaPublicacion) {
 				const fecha = new Date(data.fechaPublicacion);
-				document.getElementById('detalle-fecha').textContent = fecha.toLocaleDateString('es-CO', {
+				const fechaFormateada = fecha.toLocaleDateString('es-CO', {
+					weekday: 'long',
 					year: 'numeric',
 					month: 'long',
 					day: 'numeric'
 				});
+				document.getElementById('detalle-fecha').textContent = fechaFormateada;
 			} else {
 				document.getElementById('detalle-fecha').textContent = 'No especificada';
 			}
+
+			// Estado con badge
+			const estadoBadge = document.getElementById('detalle-estado-badge');
+			let estadoHTML = '';
+
+			switch (data.estado) {
+				case 'DISPONIBLE':
+					estadoHTML = '<span class="badge-estado-modal disponible"><i class="fas fa-check-circle"></i> En Espera de Adopción</span>';
+					break;
+				case 'EN_PROCESO':
+					estadoHTML = '<span class="badge-estado-modal proceso"><i class="fas fa-clock"></i> Proceso de Adopción</span>';
+					break;
+				case 'ADOPTADO':
+					estadoHTML = '<span class="badge-estado-modal adoptado"><i class="fas fa-heart"></i> Ya fue Adoptado</span>';
+					break;
+				default:
+					estadoHTML = '<span class="badge-estado-modal disponible">No especificado</span>';
+			}
+			estadoBadge.innerHTML = estadoHTML;
 
 			// Cargar imagen
 			const imgUrl = data.imagen && data.imagen !== 'default.jpg'
@@ -221,11 +258,13 @@ function verDetalles(id) {
 
 			const imgElement = document.getElementById('detalle-imagen');
 			imgElement.src = imgUrl;
+			imgElement.alt = `Foto de ${data.nombreMascota}`;
 			imgElement.onerror = function() {
 				this.src = '/uploads/default.jpg';
+				this.alt = 'Imagen no disponible';
 			};
 
-			// Mostrar el modal
+			// Mostrar el modal con animación
 			const modalDetalles = document.getElementById('modalDetalles');
 			modalDetalles.classList.add('show');
 			modalDetalles.style.display = 'flex';
@@ -235,9 +274,9 @@ function verDetalles(id) {
 			Swal.fire({
 				icon: 'error',
 				title: 'Error',
-				text: 'No se pudieron cargar los detalles de la mascota',
+				text: 'No se pudieron cargar los detalles de la mascota. Por favor, intenta nuevamente.',
 				confirmButtonText: 'Entendido',
-				confirmButtonColor: '#667eea'
+				confirmButtonColor: '#dc143c'
 			});
 		});
 }
@@ -246,7 +285,10 @@ function verDetalles(id) {
 function cerrarModalDetalles() {
 	const modalDetalles = document.getElementById('modalDetalles');
 	modalDetalles.classList.remove('show');
-	modalDetalles.style.display = 'none';
+	// Pequeño delay para la animación de salida
+	setTimeout(() => {
+		modalDetalles.style.display = 'none';
+	}, 300);
 }
 
 // Cerrar modal de detalles al hacer clic fuera
@@ -257,6 +299,15 @@ document.addEventListener('click', function(e) {
 	}
 });
 
+// Cerrar modal con tecla ESC
+document.addEventListener('keydown', function(e) {
+	if (e.key === 'Escape') {
+		const modalDetalles = document.getElementById('modalDetalles');
+		if (modalDetalles.classList.contains('show')) {
+			cerrarModalDetalles();
+		}
+	}
+});
 // ==================
 // CONFIRMACIÓN DE ELIMINACIÓN CON SWEETALERT
 // ==================

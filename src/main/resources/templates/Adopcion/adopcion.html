@@ -53,9 +53,10 @@
 			<div class="d-flex align-items-center">
 				<div class="botones-finales">
 					<div class="nav-buttons">
-						<button class="nav-button">
+
+						<!--- <button class="nav-button">
 							<i class="fas fa-ambulance"></i> Emergencias
-						</button>
+						</button> -->
 
 
 
@@ -192,17 +193,17 @@
 	<section class="stats-section">
 		<div class="stats-container">
 			<div class="stat-item">
-				<div class="stat-number">127</div>
+				<div class="stat-number" th:text="${estadisticas['adoptadas']}">0</div>
 				<div class="stat-label">Mascotas Adoptadas</div>
 			</div>
 			<div class="stat-item">
-				<div class="stat-number">45</div>
+				<div class="stat-number" th:text="${estadisticas['esperando']}">0</div>
 				<div class="stat-label">Esperando Hogar</div>
 			</div>
-			<div class="stat-item">
+			<!--<div class="stat-item">
 				<div class="stat-number">98%</div>
 				<div class="stat-label">Familias Felices</div>
-			</div>
+			</div>-->
 			<div class="stat-item">
 				<div class="stat-number">24/7</div>
 				<div class="stat-label">Atención Disponible</div>
@@ -255,6 +256,35 @@
 	<!-- Lista de Mascotas -->
 	<section class="mascotas-section" data-searchable>
 		<div class="mascotas-container">
+
+			<h2 class="titulo-seccion"><i class="fas fa-paw"></i> Mis Mascotas en Adopción</h2>
+			<div class="lista-mascotas">
+				<div class="card-mascota" th:each="adopcion : ${misPublicaciones}">
+					<div class="mascota-imagen-container">
+						<span class="badge-estado"
+							th:classappend="${adopcion.estado == 'DISPONIBLE' ? 'bg-success' : (adopcion.estado == 'EN_PROCESO' ? 'bg-warning text-dark' : 'bg-secondary')}"
+							th:text="${adopcion.estado == 'DISPONIBLE' ? 'En espera' : (adopcion.estado == 'EN_PROCESO' ? 'En Proceso' : 'Adoptado')}">
+						</span>
+						<img th:src="@{'/uploads/' + ${adopcion.imagen}}" th:alt="${adopcion.nombreMascota}"
+							onerror="this.src='/uploads/default.jpg'">
+					</div>
+					<div class="mascota-info">
+						<h3 class="mascota-nombre" th:text="${adopcion.nombreMascota}">Nombre</h3>
+						<div class="mascota-detalles">
+							<span th:text="${adopcion.tipoMascota}">Tipo</span>
+							<span th:if="${adopcion.tamano != null and !#strings.isEmpty(adopcion.tamano)}"
+								th:text="'  ' + ${adopcion.tamano}">Tamaño</span>
+							<span th:if="${adopcion.edad != null and !#strings.isEmpty(adopcion.edad)}"
+								th:text=" ${adopcion.edad} + ' Año/s' ">edad</span>
+						</div>
+						<h6 class="mascota-raza" th:text="' Raza: ' + ${adopcion.raza}">Raza</h6>
+						<p class="mascota-descripcion" th:text="${#strings.abbreviate(adopcion.descripcion, 100)}">
+							Descripción...
+						</p>
+						<div class="mascota-acciones">
+							<button class="btn-ver-detalles" th:onclick="'verDetalles(' + ${adopcion.id} + ')'">
+								<i class="fas fa-eye"></i> Ver Detalles
+
 			<h2 class="titulo-seccion">Mascotas Disponibles para Adopción</h2>
 			<div class="lista-mascotas" id="lista-mascotas">
 				<!-- Las mascotas se cargarán aquí con JavaScript -->
@@ -432,6 +462,36 @@
 									<i class="fas fa-paper-plane"></i> Publicar Mascota
 								</button>
 							</form>
+
+	<!-- MASCOTAS DISPONIBLES DE OTROS USUARIOS -->
+	<section class="mascotas-section">
+		<div class="mascotas-container">
+			<h2 class="titulo-seccion">
+				<i class="fas fa-home"></i> Mascotas Disponibles para Adopción
+			</h2>
+			<div class="lista-mascotas" th:if="${adopciones != null and !adopciones.isEmpty()}">
+				<div class="card-mascota" th:each="adopcion : ${adopciones}">
+					<div class="mascota-imagen-container">
+						<span class="badge-estado bg-success">En espera</span>
+						<img th:src="@{'/uploads/' + ${adopcion.imagen}}" th:alt="${adopcion.nombreMascota}"
+							onerror="this.src='/uploads/default.jpg'">
+					</div>
+					<div class="mascota-info">
+						<h3 class="mascota-nombre" th:text="${adopcion.nombreMascota}">Nombre</h3>
+						<div class="mascota-detalles">
+							<span th:text="${adopcion.tipoMascota}">Tipo</span>
+							<span th:if="${adopcion.tamano != null and !#strings.isEmpty(adopcion.tamano)}"
+								th:text=" ${adopcion.tamano}">Tamaño</span>
+							<span th:if="${adopcion.edad != null and !#strings.isEmpty(adopcion.edad)}"
+								th:text=" ${adopcion.edad} + ' Año ' ">edad</span>
+						</div>
+						<h6 class="mascota-raza" th:text="' Raza: ' + ${adopcion.raza}">Raza</h6>
+						<p class="mascota-descripcion" th:text="${#strings.abbreviate(adopcion.descripcion, 150)}">
+							Descripción...
+						</p>
+						<div class="mascota-acciones">
+							<button class="btn-ver-detalles" th:onclick="'verDetalles(' + ${adopcion.id} + ')'">
+								<i class="fas fa-eye"></i> Ver Detalles
 
 							<!-- MASCOTAS DISPONIBLES DE OTROS USUARIOS -->
 							<section class="mascotas-section">
@@ -677,6 +737,7 @@
 
 							<button class="btn-inicio" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
 								<i class="fas fa-arrow-up"></i>
+
 							</button>
 
 							<footer class="footer">
@@ -741,11 +802,259 @@
 						</div>
 						</footer>
 
+						<div class="grupo-formulario">
+							<label for="nombreMascota">Nombre de la mascota </label>
+							<input type="text" id="nombreMascota" th:field="*{nombreMascota}" required
+								placeholder="Ej: Max, Luna, Copito...">
+						</div>
+
+						<div class="grupo-formulario">
+							<label for="tipoMascota">Tipo de mascota </label>
+							<select id="tipoMascota" th:field="*{tipoMascota}" required>
+								<option value="">Selecciona un tipo</option>
+								<option value="Perro">Perro</option>
+								<option value="Gato">Gato</option>
+								<option value="Otro">Otro</option>
+							</select>
+						</div>
+
+						<div class="grupo-formulario">
+							<label for="raza">Raza</label>
+							<input type="text" id="raza" th:field="*{raza}"
+								placeholder="Ej: Labrador, Siamés, Mestizo...">
+						</div>
+
+						<div class="grupo-formulario">
+							<label for="edad">Edad (años) *</label>
+							<input type="number" id="edad" th:field="*{edad}" min="0" max="20" required placeholder="0">
+						</div>
+
+						<div class="grupo-formulario">
+							<label for="genero">Género</label>
+							<select id="genero" th:field="*{genero}">
+								<option value="">Seleccione...</option>
+								<option value="Macho">Macho</option>
+								<option value="Hembra">Hembra</option>
+							</select>
+						</div>
+
+						<div class="grupo-formulario">
+							<label for="tamano">Tamaño </label>
+							<select id="tamano" th:field="*{tamano}" required>
+								<option value="">Seleccione...</option>
+								<option value="Pequeño">Pequeño</option>
+								<option value="Mediano">Mediano</option>
+								<option value="Grande">Grande</option>
+							</select>
+						</div>
+
+						<div class="grupo-formulario">
+							<label for="contacto">Teléfono de contacto *</label>
+							<input type="tel" id="contacto" th:field="*{contacto}" required placeholder="Ej: 3201234567"
+								pattern="[0-9]{10}">
+						</div>
 
 
-						<script
-							src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-						<script th:src="@{/assets/JS/JS-Adopciones.js}"></script>
+						<div class="grupo-formulario">
+							<label for="descripcion">Descripción </label>
+							<textarea id="descripcion" th:field="*{descripcion}" rows="4" required
+								placeholder="Cuéntanos sobre su personalidad, comportamiento, necesidades especiales..."></textarea>
+						</div>
+
+						<div class="grupo-formulario">
+							<label for="archivoImagen">Foto de la mascota </label>
+							<div class="file-input-wrapper">
+								<input type="file" id="archivoImagen" name="archivoImagen"
+									accept="image/jpeg,image/jpg,image/png" required class="file-input">
+								<label for="archivoImagen" class="file-input-label">
+									<i class="fas fa-cloud-upload-alt"></i>
+									<span>Seleccionar imagen (JPG, PNG, JPEG) *</span>
+								</label>
+								<div class="file-name" id="fileName">Ningún archivo seleccionado</div>
+							</div>
+							<small class="text-muted">* La imagen es obligatoria. Formato: JPG, PNG. Máx: 5MB</small>
+						</div>
+
+
+
+						<button type="submit" class="boton-publicar" style="grid-column: 1 / -1;">
+							<i class="fas fa-paper-plane"></i> Publicar Mascota
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal para Ver Detalles - DISEÑO MEJORADO -->
+	<div class="modal-overlay" id="modalDetalles">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-title">
+						<i class="fas fa-paw"></i> Detalles de la Mascota
+					</h2>
+					<button type="button" class="close-modal" onclick="cerrarModalDetalles()">
+						<i class="fas fa-times"></i>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="detalle-grid">
+						<!-- COLUMNA IZQUIERDA -->
+						<div class="detalle-col-izquierda">
+							<!-- Imagen Principal -->
+							<div class="detalle-imagen-wrapper">
+								<img id="detalle-imagen" src="" alt="Foto de la mascota">
+							</div>
+
+							<!-- Información Debajo de la Imagen -->
+							<div class="info-cards-wrapper">
+								<div class="info-card">
+									<div class="info-card-icon">
+										<i class="fas fa-user-circle"></i>
+									</div>
+									<div class="info-card-content">
+										<span class="info-card-label">Publicado por</span>
+										<span class="info-card-value" id="detalle-publicador"></span>
+									</div>
+								</div>
+
+								<div class="info-card">
+									<div class="info-card-icon">
+										<i class="fas fa-phone-alt"></i>
+									</div>
+									<div class="info-card-content">
+										<span class="info-card-label">Contacto</span>
+										<span class="info-card-value" id="detalle-contacto"></span>
+									</div>
+								</div>
+
+								<div class="info-card">
+									<div class="info-card-icon">
+										<i class="fas fa-calendar-alt"></i>
+									</div>
+									<div class="info-card-content">
+										<span class="info-card-label">Fecha de Publicación</span>
+										<span class="info-card-value" id="detalle-fecha"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- COLUMNA DERECHA -->
+						<div class="detalle-col-derecha">
+							<!-- Nombre y Estado -->
+							<div class="mascota-header">
+								<h3 id="detalle-nombre" class="mascota-titulo"></h3>
+								<div id="detalle-estado-badge"></div>
+							</div>
+
+							<!-- Características en Grid -->
+							<div class="caracteristicas-grid">
+								<div class="caracteristica-item">
+									<i class="fas fa-tag"></i>
+									<div>
+										<span class="caracteristica-label">Tipo</span>
+										<span class="caracteristica-value" id="detalle-tipo"></span>
+									</div>
+								</div>
+
+								<div class="caracteristica-item">
+									<i class="fas fa-paw"></i>
+									<div>
+										<span class="caracteristica-label">Raza</span>
+										<span class="caracteristica-value" id="detalle-raza"></span>
+									</div>
+								</div>
+
+								<div class="caracteristica-item">
+									<i class="fas fa-birthday-cake"></i>
+									<div>
+										<span class="caracteristica-label">Edad</span>
+										<span class="caracteristica-value" id="detalle-edad"></span>
+									</div>
+								</div>
+
+								<div class="caracteristica-item">
+									<i class="fas fa-venus-mars"></i>
+									<div>
+										<span class="caracteristica-label">Género</span>
+										<span class="caracteristica-value" id="detalle-genero"></span>
+									</div>
+								</div>
+
+								<div class="caracteristica-item">
+									<i class="fas fa-ruler-vertical"></i>
+									<div>
+										<span class="caracteristica-label">Tamaño</span>
+										<span class="caracteristica-value" id="detalle-tamano"></span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Descripción -->
+							<div class="descripcion-section">
+								<h4 class="descripcion-titulo">
+									<i class="fas fa-align-left"></i> Descripción
+								</h4>
+								<p id="detalle-descripcion" class="descripcion-texto"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<button class="btn-inicio" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+		<i class="fas fa-arrow-up"></i>
+	</button>
+
+	<footer class="footer">
+		<div class="footer-container">
+			<div class="footer-top">
+				<div class="footer-logo">
+					<img th:src="@{/assets/IMG/logofotter.png}" alt="logo" style="height: 90px;">
+					<div class="footer-brand" style="font-family: 'fira sans'; font-size: 1.8rem; margin-top: 10px;">
+						HelpYourPet
+					</div>
+				</div>
+
+				<div class="footer-about" style="max-width: 400px;">
+					<p style="font-style: italic; opacity: 0.8;">"Simplifica tu trabajo, mejora su salud"</p>
+					<p>Nuestra plataforma digital está diseñada para optimizar la gestión clínica.</p>
+					<div class="social-links" style="margin-top: 20px;">
+						<a href="#"><i class="fab fa-facebook-f"></i></a>
+						<a href="#"><i class="fab fa-instagram"></i></a>
+						<a href="#"><i class="fab fa-twitter"></i></a>
+						<a href="#"><i class="fab fa-youtube"></i></a>
+						<a href="#"><i class="fab fa-whatsapp"></i></a>
+					</div>
+				</div>
+
+				<div class="footer-contact">
+					<h5 style="font-size: 1.3rem; margin-bottom: 15px;">Contacto</h5>
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<a href="#" style="color: #ccc; text-decoration: none;">
+							<i class="fas fa-map-marker-alt"></i> Duitama, Boyacá
+						</a>
+						<a href="tel:018000457890" style="color: #ccc; text-decoration: none;">
+							<i class="fas fa-phone"></i> 018000 45 78 90
+						</a>
+						<a href="mailto:info@clinicpet.com" style="color: #ccc; text-decoration: none;">
+							<i class="fas fa-envelope"></i> info@clinicpet.com
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="copyright">
+				<p>&copy; 2025 HelpYourPet. Todos los derechos reservados. Desarrollado en Duitama, Boyacá</p>
+			</div>
+		</div>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script th:src="@{/assets/JS/JS-Adopciones.js}"></script>
 </body>
 
 </html>
