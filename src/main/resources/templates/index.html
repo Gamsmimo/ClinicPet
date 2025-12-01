@@ -431,7 +431,9 @@
 							<p><strong>Experiencia:</strong> 14 años</p>
 						</div>
 					</div>-->
-	<!-- Eventos y Campañas -->
+
+
+	<!-- Eventos y Campañas-->
 	<section id="eventos-section" class="section eventos" data-searchable>
 		<div class="container">
 			<div class="section-title">
@@ -493,8 +495,49 @@
 		</div>
 	</section>
 
+
+	<!-- Mensaje si no hay eventos -->
+	<div class="col-12 text-center" th:if="${eventos == null || eventos.isEmpty()}">
+		<p class="text-muted">No hay eventos disponibles en este momento.</p>
+	</div>
+	</div>
+
+	<!-- Paginación -->
+	<div class="row" th:if="${totalPages > 1}">
+		<div class="col-12">
+			<nav aria-label="Paginación de eventos">
+				<ul class="pagination justify-content-center">
+					<!-- Botón Anterior -->
+					<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+						<a class="page-link" th:href="@{/?page={p}(p=${currentPage - 1})} + '#eventos-section'"
+							aria-label="Anterior">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+
+					<!-- Números de página -->
+					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+						th:classappend="${i == currentPage} ? 'active'">
+						<a class="page-link" th:href="@{/?page={p}(p=${i})} + '#eventos-section'"
+							th:text="${i + 1}">1</a>
+					</li>
+
+					<!-- Botón Siguiente -->
+					<li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+						<a class="page-link" th:href="@{/?page={p}(p=${currentPage + 1})} + '#eventos-section'"
+							aria-label="Siguiente">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+	</div>
+	</section>
+
 	<!-- Mapa y Ubicaciones -->
-	
+
 	<a href="#inicio" class="btn btn-inicio">
 		<i class="fa-solid fa-up-long"></i>
 

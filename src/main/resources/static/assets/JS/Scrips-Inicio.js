@@ -396,6 +396,7 @@ document.addEventListener("keydown", function(e) {
 	if (e.key === "Escape") {
 		cerrarServicios();
 	}
+
 });
 
 // ===== MOSTRAR BOTÓN DE VOLVER AL INICIO =====

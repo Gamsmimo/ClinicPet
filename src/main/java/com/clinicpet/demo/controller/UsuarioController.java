@@ -138,7 +138,7 @@ public class UsuarioController {
 		
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
-			return "usuarios/iniciarsesion";
+			return "IniciarSesion/iniciarsesion";
 		}
 		
 		// Configurar paginación: 6 eventos por página
