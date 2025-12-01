@@ -438,122 +438,63 @@
 				<h2>Eventos Y Campañas</h2>
 			</div>
 			<div class="row">
-			<!-- Loop dinámico para mostrar eventos de la base de datos -->
-			<div class="col-md-4 mb-4" th:each="evento : ${eventos}">
-				<div class="eventos">
-					<img th:src="${evento.imagen != null && !evento.imagen.isEmpty()} ? @{${evento.imagen}} : @{/assets/IMG/Desparasitacion1.png}" 
-						class="card-img-top" alt="Evento">
-					<h4 class="card-title" th:text="${evento.titulo}">Título del Evento</h4>
-					<p class="card-text">
-						<span th:text="${#temporals.format(evento.fechainicio, 'dd/MM/yyyy')}">Fecha inicio</span> - 
-						<span th:text="${#temporals.format(evento.fechafin, 'dd/MM/yyyy')}">Fecha fin</span><br>
-						<span th:text="${evento.descripcion}">Descripción del evento</span>
-					</p>
-					<button class="btn btn-primary">Más Información</button>
+				<!-- Loop dinámico para mostrar eventos de la base de datos -->
+				<div class="col-md-4 mb-4" th:each="evento : ${eventos}">
+					<div class="eventos">
+						<img th:src="${evento.imagen != null && !evento.imagen.isEmpty()} ? @{${evento.imagen}} : @{/assets/IMG/Desparasitacion1.png}"
+							class="card-img-top" alt="Evento">
+						<h4 class="card-title" th:text="${evento.titulo}">Título del Evento</h4>
+						<p class="card-text">
+							<span th:text="${#temporals.format(evento.fechainicio, 'dd/MM/yyyy')}">Fecha inicio</span> -
+							<span th:text="${#temporals.format(evento.fechafin, 'dd/MM/yyyy')}">Fecha fin</span><br>
+							<span th:text="${evento.descripcion}">Descripción del evento</span>
+						</p>
+						<button class="btn btn-primary">Más Información</button>
+					</div>
 				</div>
-			</div>
-			
-			<!-- Mensaje si no hay eventos -->
-			<div class="col-12 text-center" th:if="${eventos == null || eventos.isEmpty()}">
-				<p class="text-muted">No hay eventos disponibles en este momento.</p>
-			</div>
-		</div>
-		
-		<!-- Paginación -->
-		<div class="row" th:if="${totalPages > 1}">
-			<div class="col-12">
-				<nav aria-label="Paginación de eventos">
-					<ul class="pagination justify-content-center">
-						<!-- Botón Anterior -->
-						<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-							<a class="page-link" th:href="@{/?page={p}(p=${currentPage - 1})} + '#eventos-section'" aria-label="Anterior">
-								<span aria-hidden="true">&laquo;</span>
-							</a>
-						</li>
-						
-						<!-- Números de página -->
-						<li class="page-item" 
-							th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-							th:classappend="${i == currentPage} ? 'active'">
-							<a class="page-link" th:href="@{/?page={p}(p=${i})} + '#eventos-section'" th:text="${i + 1}">1</a>
-						</li>
-						
-						<!-- Botón Siguiente -->
-						<li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-							<a class="page-link" th:href="@{/?page={p}(p=${currentPage + 1})} + '#eventos-section'" aria-label="Siguiente">
-								<span aria-hidden="true">&raquo;</span>
-							</a>
-						</li>
-					</ul>
-				</nav>
-			</div>
-		</div>
-	</div>
-</section>
 
-	<!-- Mapa y Ubicaciones -->
-	<section class="section ubicacion">
-		<div class="container">
-			<div class="section-title">
-				<h2>Nuestras Veterinarias en Duitama, Boyacá</h2>
-			</div>
-			<div class="row">
-				<div class="col-lg-8 mb-4">
-					<div class="map-container">
-						<iframe
-							src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.09886428697!2d-73.03233922468176!3d5.822406941536311!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a3d5e8e3e3e3f%3A0x9c7d6e5e3e3e3e3d!2sDuitama%2C%20Boyac%C3%A1!5e0!3m2!1ses!2sco!4v1689876543210!5m2!1ses!2sco"
-							allowfullscreen="" loading="lazy"></iframe>
-					</div>
+				<!-- Mensaje si no hay eventos -->
+				<div class="col-12 text-center" th:if="${eventos == null || eventos.isEmpty()}">
+					<p class="text-muted">No hay eventos disponibles en este momento.</p>
 				</div>
-				<div class="col-lg-4 mb-4">
-					<div class="info-container">
-						<h3 class="mb-4">CLINIC PET Duitama</h3>
-						<div class="info-item">
-							<div class="info-icon">
-								<i class="fas fa-map-marker-alt"></i>
-							</div>
-							<div>
-								<h5>Dirección</h5>
-								<p>Calle 15 #12-45, Centro, Duitama, Boyacá</p>
-							</div>
-						</div>
-						<div class="info-item">
-							<div class="info-icon">
-								<i class="fas fa-phone"></i>
-							</div>
-							<div>
-								<h5>Teléfono / WhatsApp</h5>
-								<p>(8) 765 4321 / +57 321 987 6543</p>
-							</div>
-						</div>
-						<div class="info-item">
-							<div class="info-icon">
-								<i class="fas fa-envelope"></i>
-							</div>
-							<div>
-								<h5>Correo Electrónico</h5>
-								<p>info@clinicpet-duitama.com</p>
-							</div>
-						</div>
-						<div class="info-item">
-							<div class="info-icon">
-								<i class="fas fa-clock"></i>
-							</div>
-							<div>
-								<h5>Horarios de Atención</h5>
-								<p>Lunes a Viernes: 8:00 AM - 7:00 PM<br>Sábados: 9:00 AM - 5:00 PM<br>Domingos:
-									Emergencias 24h</p>
-							</div>
-						</div>
-						<a href="https://goo.gl/maps/xyz" target="_blank" class="btn-llegar">
-							<i class="fas fa-directions"></i> Cómo llegar
-						</a>
-					</div>
+			</div>
+
+			<!-- Paginación -->
+			<div class="row" th:if="${totalPages > 1}">
+				<div class="col-12">
+					<nav aria-label="Paginación de eventos">
+						<ul class="pagination justify-content-center">
+							<!-- Botón Anterior -->
+							<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+								<a class="page-link" th:href="@{/?page={p}(p=${currentPage - 1})} + '#eventos-section'"
+									aria-label="Anterior">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+
+							<!-- Números de página -->
+							<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+								th:classappend="${i == currentPage} ? 'active'">
+								<a class="page-link" th:href="@{/?page={p}(p=${i})} + '#eventos-section'"
+									th:text="${i + 1}">1</a>
+							</li>
+
+							<!-- Botón Siguiente -->
+							<li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+								<a class="page-link" th:href="@{/?page={p}(p=${currentPage + 1})} + '#eventos-section'"
+									aria-label="Siguiente">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</ul>
+					</nav>
 				</div>
 			</div>
 		</div>
 	</section>
 
+	<!-- Mapa y Ubicaciones -->
+	
 	<a href="#inicio" class="btn btn-inicio">
 		<i class="fa-solid fa-up-long"></i>
 
@@ -747,43 +688,40 @@
 
 	<!-- Footer -->
 	<footer class="footer">
-		<div class="container">
-			<div class="footer-logo">
-				<img th:src="@{/assets/IMG/logofotter.png}" alt="logo">
-			</div>
-			<div class="footer-brand">HelpYourPet</div>
-			<div class="row">
-				<div class="col-lg-4 mb-5 mb-lg-0">
-					<p class="footer-lema">"Simplifica tu trabajo, mejora su salud"</p>
-					<p>Nuestra plataforma digital está diseñada para <br> optimizar la gestión clínica, conectando a
-						<br>
-						veterinarios y
-						propietarios de mascotas a través <br> de un sistema eficiente, seguro y personalizado.
-					</p>
-					<div class="social-links mt-4">
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-facebook-f"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-instagram"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-twitter"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-youtube"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-whatsapp"></i></a>
+		<div class="footer-container">
+			<div class="footer-top">
+				<div class="footer-logo">
+					<img src="IMG/logofotter.png" alt="logo" style="height: 90px;">
+					<div class="footer-brand" style="font-family: 'fira sans'; font-size: 1.8rem; margin-top: 10px;">
+						HelpYourPet</div>
+				</div>
+
+				<div class="footer-about" style="max-width: 400px;">
+					<p style="font-style: italic; opacity: 0.8;">"Simplifica tu trabajo, mejora su salud"</p>
+					<p>Nuestra plataforma digital está diseñada para optimizar la gestión clínica.</p>
+					<div class="social-links" style="margin-top: 20px;">
+						<a href="#"><i class="fab fa-facebook-f"></i></a>
+						<a href="#"><i class="fab fa-instagram"></i></a>
+						<a href="#"><i class="fab fa-twitter"></i></a>
+						<a href="#"><i class="fab fa-youtube"></i></a>
+						<a href="#"><i class="fab fa-whatsapp"></i></a>
 					</div>
 				</div>
 
-				<div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-					<h5 class="footer-title">Contacto</h5>
-					<div class="footer-links">
-						<a href="#"><i class="fas fa-map-marker-alt me-2"></i> Duitama, Boyacá</a>
-						<a href="tel: 01 8000 45 78 90"><i class="fas fa-phone me-2"></i> 018000 45 78 90</a>
-						<a href="mailto:info@clinicpet.com"><i class="fas fa-envelope me-2"></i> info@clinicpet.com</a>
+				<div class="footer-contact">
+					<h5 style="font-size: 1.3rem; margin-bottom: 15px;">Contacto</h5>
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<a href="#" style="color: #ccc; text-decoration: none;"><i class="fas fa-map-marker-alt"></i>
+							Duitama, Boyacá</a>
+						<a href="tel:018000457890" style="color: #ccc; text-decoration: none;"><i
+								class="fas fa-phone"></i> 018000
+							45 78 90</a>
+						<a href="mailto:info@clinicpet.com" style="color: #ccc; text-decoration: none;"><i
+								class="fas fa-envelope"></i> info@clinicpet.com</a>
 					</div>
 				</div>
-
 			</div>
+
 			<div class="copyright">
 				<p>&copy; 2025 HelpYourPet. Todos los derechos reservados. Desarrollado en Duitama, Boyacá</p>
 			</div>

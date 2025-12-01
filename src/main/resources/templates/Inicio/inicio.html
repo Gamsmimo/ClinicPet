@@ -510,24 +510,25 @@
 					<!-- Loop dinámico para mostrar eventos de la base de datos -->
 					<div class="col-md-4 mb-4" th:each="evento : ${eventos}">
 						<div class="eventos">
-							<img th:src="${evento.imagen != null && !evento.imagen.isEmpty()} ? @{${evento.imagen}} : @{/assets/IMG/Desparasitacion1.png}" 
+							<img th:src="${evento.imagen != null && !evento.imagen.isEmpty()} ? @{${evento.imagen}} : @{/assets/IMG/Desparasitacion1.png}"
 								class="card-img-top" alt="Evento">
 							<h4 class="card-title" th:text="${evento.titulo}">Título del Evento</h4>
 							<p class="card-text">
-								<span th:text="${#temporals.format(evento.fechainicio, 'dd/MM/yyyy')}">Fecha inicio</span> - 
+								<span th:text="${#temporals.format(evento.fechainicio, 'dd/MM/yyyy')}">Fecha
+									inicio</span> -
 								<span th:text="${#temporals.format(evento.fechafin, 'dd/MM/yyyy')}">Fecha fin</span><br>
 								<span th:text="${evento.descripcion}">Descripción del evento</span>
 							</p>
 							<button class="btn btn-primary">Más Información</button>
 						</div>
 					</div>
-					
+
 					<!-- Mensaje si no hay eventos -->
 					<div class="col-12 text-center" th:if="${eventos == null || eventos.isEmpty()}">
 						<p class="text-muted">No hay eventos disponibles en este momento.</p>
 					</div>
 				</div>
-				
+
 				<!-- Paginación -->
 				<div class="row" th:if="${totalPages > 1}">
 					<div class="col-12">
@@ -535,21 +536,26 @@
 							<ul class="pagination justify-content-center">
 								<!-- Botón Anterior -->
 								<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-									<a class="page-link" th:href="@{/usuarios/inicio?page={p}(p=${currentPage - 1})} + '#eventos-section'" aria-label="Anterior">
+									<a class="page-link"
+										th:href="@{/usuarios/inicio?page={p}(p=${currentPage - 1})} + '#eventos-section'"
+										aria-label="Anterior">
 										<span aria-hidden="true">&laquo;</span>
 									</a>
 								</li>
-								
+
 								<!-- Números de página -->
-								<li class="page-item" 
-									th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+								<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
 									th:classappend="${i == currentPage} ? 'active'">
-									<a class="page-link" th:href="@{/usuarios/inicio?page={p}(p=${i})} + '#eventos-section'" th:text="${i + 1}">1</a>
+									<a class="page-link"
+										th:href="@{/usuarios/inicio?page={p}(p=${i})} + '#eventos-section'"
+										th:text="${i + 1}">1</a>
 								</li>
-								
+
 								<!-- Botón Siguiente -->
 								<li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-									<a class="page-link" th:href="@{/usuarios/inicio?page={p}(p=${currentPage + 1})} + '#eventos-section'" aria-label="Siguiente">
+									<a class="page-link"
+										th:href="@{/usuarios/inicio?page={p}(p=${currentPage + 1})} + '#eventos-section'"
+										aria-label="Siguiente">
 										<span aria-hidden="true">&raquo;</span>
 									</a>
 								</li>
