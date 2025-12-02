@@ -33,4 +33,7 @@ public interface IPerfilVeterinarioService {
 
 	PerfilVeterinario obtenerPerfilVeterinarioPorUsuario(Usuario usuarioLogueado);
 
+	// Eliminar perfil veterinario y usuario asociado
+	void eliminarPerfilYUsuario(Integer usuarioId);
+
 }

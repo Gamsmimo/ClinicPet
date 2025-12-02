@@ -1004,4 +1004,52 @@ public class PerfilVeterinarioController {
 		}
 	}
 
+	/**
+	 * Eliminar cuenta del veterinario (perfil + usuario)
+	 */
+	@PostMapping("/configuracion/eliminar-cuenta")
+	public String eliminarCuentaVeterinario(
+			HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		
+		try {
+			System.out.println("🗑️ Iniciando eliminación de cuenta de veterinario");
+			
+			// Verificar usuario autenticado
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				System.out.println("❌ Usuario no autenticado");
+				redirectAttributes.addFlashAttribute("error", "Debe iniciar sesión");
+				return "redirect:/usuarios/iniciarsesion";
+			}
+			
+			// Verificar que es veterinario (rol 2)
+			if (usuarioLogueado.getRol().getId() != 2) {
+				System.out.println("❌ Usuario no tiene rol de veterinario");
+				redirectAttributes.addFlashAttribute("error", "No tiene permisos de veterinario");
+				return "redirect:/acceso-denegado";
+			}
+			
+			Integer usuarioId = usuarioLogueado.getId();
+			System.out.println("🔍 Eliminando cuenta de usuario ID: " + usuarioId);
+			
+			// Eliminar perfil veterinario y usuario
+			perfilVeterinarioService.eliminarPerfilYUsuario(usuarioId);
+			
+			// Limpiar sesión
+			session.invalidate();
+			System.out.println("✅ Cuenta eliminada correctamente y sesión cerrada");
+			
+			// Redirigir al login con mensaje de éxito
+			redirectAttributes.addFlashAttribute("success", "Cuenta eliminada correctamente");
+			return "redirect:/usuarios/iniciarsesion";
+			
+		} catch (Exception e) {
+			System.err.println("💥 Error al eliminar cuenta: " + e.getMessage());
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("error", "Error al eliminar la cuenta: " + e.getMessage());
+			return "redirect:/perfil-veterinario";
+		}
+	}
+
 }
