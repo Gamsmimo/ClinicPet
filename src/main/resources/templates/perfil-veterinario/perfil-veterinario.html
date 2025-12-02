@@ -48,13 +48,79 @@
 			transform: translateX(5px);
 			transition: all 0.3s ease;
 		}
+
+		/* Estilos del menú hamburguesa - solo visible en móviles */
+		.hamburger-menu-btn {
+			display: none;
+			background: transparent;
+			border: none;
+			font-size: 24px;
+			color: var(--text-color, #333);
+			cursor: pointer;
+			padding: 8px;
+			margin-right: 15px;
+			transition: all 0.3s ease;
+			border-radius: 8px;
+		}
+
+		.hamburger-menu-btn:hover {
+			background: rgba(0, 0, 0, 0.05);
+		}
+
+		.hamburger-menu-btn:active {
+			transform: scale(0.95);
+		}
+
+		/* Overlay para cerrar el menú al hacer clic fuera */
+		.sidebar-overlay {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			z-index: 998;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		.sidebar-overlay.active {
+			display: block;
+			opacity: 1;
+		}
+
+		/* Media query para pantallas pequeñas (móviles) */
+		@media (max-width: 768px) {
+			.hamburger-menu-btn {
+				display: block;
+			}
+
+			.sidebar {
+				position: fixed;
+				left: -280px;
+				transition: left 0.3s ease;
+				z-index: 999;
+			}
+
+			.sidebar.active {
+				left: 0;
+			}
+
+			.main-content {
+				margin-left: 0;
+			}
+		}
 	</style>
 </head>
 
 <body>
 
+	<!-- Overlay para cerrar el menú en móviles -->
+	<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 	<!-- Menú Lateral -->
-	<nav class="sidebar">
+	<nav class="sidebar" id="sidebar">
 		<div class="user-profile">
 			<!-- ✅ Foto dinámica -->
 			<img th:src="${session.usuarioLogueado.imagen != null} ? 
@@ -71,12 +137,12 @@
 		<ul class="menu-items">
 			<li><a href="#inicio" class="menu-link active" data-section="inicio"><i class="fas fa-home"></i>
 					<span>Inicio</span></a></li>
-			<li><a href="#agenda" class="menu-link" data-section="agenda"><i class="fas fa-calendar-alt"></i>
+			<!-- <li><a href="#agenda" class="menu-link" data-section="agenda"><i class="fas fa-calendar-alt"></i>
 					<span>Agenda</span></a></li>
 			<li><a href="#historias" class="menu-link" data-section="historias"><i class="fas fa-paw"></i>
 					<span>Historias Clínicas</span></a></li>
 			<li><a href="#adopciones" class="menu-link" data-section="adopciones"><i class="fas fa-heart"></i>
-					<span>Adopciones</span></a></li>
+					<span>Adopciones</span></a></li> -->
 			<li><a href="#eventos" class="menu-link" data-section="eventos"><i class="fa-solid fa-calendar-week"></i>
 					<span>Eventos y Campañas</span></a></li>
 			<li><a href="#petshop" class="menu-link" data-section="petshop"><i class="fas fa-shopping-bag"></i>
@@ -99,8 +165,12 @@
 		<!-- Barra Superior -->
 		<header class="top-bar">
 			<div class="top-bar-left">
-				<button class="btn btn-menu"><i class="fas fa-bars"></i></button>
-				<!-- Toggle Modo Oscuro/Claro movido aquí -->
+				<!-- Botón Hamburguesa (solo visible en móviles) -->
+				<button class="hamburger-menu-btn" id="hamburgerBtn" aria-label="Abrir menú">
+					<i class="fas fa-bars"></i>
+				</button>
+
+				<!-- Toggle Modo Oscuro/Claro -->
 				<div class="theme-toggle-container">
 					<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
 					<label for="themeToggle" class="theme-toggle-label">
@@ -129,7 +199,7 @@
 					<p>Bienvenido a tu panel de control. Aquí puedes gestionar todas las actividades de la clínica.</p>
 
 					<div class="summary-cards">
-						<div class="card card-summary bg-success">
+						<!-- <div class="card card-summary bg-success">
 							<i class="fas fa-paw"></i>
 							<h3>0</h3>
 							<p>Mascotas atendidas hasta la fecha</p>
@@ -138,7 +208,7 @@
 							<i class="fas fa-heart"></i>
 							<h3>0</h3>
 							<p>Adopciones</p>
-						</div>
+						</div> -->
 						<div class="card card-summary bg-info">
 							<i class="fas fa-shopping-bag"></i>
 							<h3>0</h3>
@@ -157,20 +227,20 @@
 								<i class="fas fa-box-open"></i>
 								<span>Agregar producto</span>
 							</button>
-							<button class="btn-action" onclick="openModal('new-appointment')">
+							<!-- <button class="btn-action" onclick="openModal('new-appointment')">
 								<i class="fa-solid fa-file-medical"></i>
 								<span>Nueva cita</span>
 							</button>
 							<button class="btn-action" onclick="openModal('new-pet')">
 								<i class="fa-solid fa-file-circle-exclamation"></i>
 								<span>Registrar emergencia</span>
-							</button>
+							</button> -->
 						</div>
 					</div>
 				</div>
 			</section>
 
-			<!-- Sección Agenda -->
+			<!-- Sección Agenda 
 			<section id="agenda" class="content-section">
 				<div class="section-header">
 					<h2><i class="fas fa-calendar-alt"></i> Agenda de Citas</h2>
@@ -232,16 +302,15 @@
 
 								</td>
 							</tr>
-							<!-- Más citas... -->
 						</tbody>
 					</table>
 				</div>
-			</section>
+			</section> -->
 
 
 
 
-			<!-- Sección Historias Clínicas -->
+			<!-- Sección Historias Clínicas 
 			<section id="historias" class="content-section">
 				<div class="section-header">
 					<h2><i class="fas fa-paw"></i> Historias Clínicas</h2>
@@ -261,10 +330,10 @@
 				</div>
 
 				<div class="row">
-					<!-- Historia Clínica Card -->
+					<!-- Historia Clínica Card 
 					<div class="col-12">
 						<div class="hc-main-card">
-							<!-- Header -->
+							<!-- Header 
 							<div class="hc-section">
 								<div class="hc-header">
 									<div class="hc-header-left">
@@ -308,7 +377,7 @@
 								</div>
 							</div>
 
-							<!-- Motivo y Anamnesis -->
+							<!-- Motivo y Anamnesis 
 							<div class="hc-section">
 								<div class="hc-two-cols">
 									<div>
@@ -326,7 +395,7 @@
 								</div>
 							</div>
 
-							<!-- Examen Físico -->
+							<!-- Examen Físico
 							<div class="hc-section">
 								<div class="hc-section-title"><i class="fa-solid fa-stethoscope"></i> Examen Físico
 								</div>
@@ -369,7 +438,7 @@
 								</div>
 							</div>
 
-							<!-- Diagnóstico y Tratamiento -->
+							<!-- Diagnóstico y Tratamiento 
 							<div class="hc-section">
 								<div class="hc-two-cols">
 									<div>
@@ -387,7 +456,7 @@
 								</div>
 							</div>
 
-							<!-- Recomendaciones -->
+							<!-- Recomendaciones 
 							<div class="hc-section">
 								<div class="hc-section-title"><i class="fa-solid fa-lightbulb"></i> Recomendaciones
 								</div>
@@ -395,7 +464,7 @@
 									placeholder="Recomendaciones para el propietario..."></textarea>
 							</div>
 
-							<!-- Anexos y Fecha -->
+							<!-- Anexos y Fecha 
 							<div class="hc-section">
 								<div class="hc-two-cols">
 									<div>
@@ -414,9 +483,9 @@
 										<input type="date" id="hcRegistrationDate" class="hc-editable" disabled>
 									</div>
 								</div>
-							</div>
+							</div> -->
 
-							<!-- Botones y Paginación -->
+							<!-- Botones y Paginación 
 							<div class="hc-section hc-section-last">
 								<div class="hc-buttons">
 									<button class="hc-btn hc-btn-edit" id="hcEditBtn"><i
@@ -441,7 +510,7 @@
 						</div>
 					</div>
 				</div>
-			</section>
+			</section> -->
 
 
 
@@ -764,19 +833,15 @@
 							</button>
 							<button type="button" class="config-btn config-btn-password">
 								<a th:href="@{/usuarios/recovery}">
-								 <i class="fas fa-key"></i> Cambiar Contraseña</a>
+									<i class="fas fa-key"></i> Cambiar Contraseña</a>
 							</button>
-							<!-- Paginación
 							<button type="button" class="config-btn config-btn-delete" onclick="confirmDeleteAccount()">
 								<i class="fas fa-trash-alt"></i> Eliminar Cuenta
-							</button> -->
+							</button>
 						</div>
 					</div>
 				</form>
 			</section>
-
-
-
 
 			<!-- Modales -->
 			<div class="modal-overlay" id="modal-overlay"></div>
@@ -1239,25 +1304,45 @@
 				function confirmDeleteAccount() {
 					Swal.fire({
 						title: '¿Eliminar cuenta?',
-						html: '<strong>⚠️ ADVERTENCIA</strong><br>Esta acción es permanente y no se puede deshacer.<br>Se eliminarán todos tus datos.',
+						html: `
+							<div style="text-align: left; padding: 10px;">
+								<p style="margin-bottom: 15px; color: var(--dark); font-weight: 500;">
+									<i class="fas fa-exclamation-triangle" style="color: #f39c12; margin-right: 8px;"></i>
+									Esta acción eliminará permanentemente:
+								</p>
+								<ul style="color: var(--gray); font-size: 0.95rem; margin-left: 20px;">
+									<li>Tu perfil de veterinario</li>
+									<li>Tu cuenta de usuario</li>
+									<li>Todos los datos asociados</li>
+								</ul>
+								<p style="color: #e74c3c; font-weight: 500; margin-top: 15px; font-size: 0.9rem;">
+									<i class="fas fa-warning" style="margin-right: 5px;"></i>
+									Esta acción no se puede deshacer
+								</p>
+							</div>
+						`,
 						icon: 'warning',
 						showCancelButton: true,
-						confirmButtonColor: '#EF5350',
-						cancelButtonColor: '#95a5a6',
-						confirmButtonText: '<i class="fas fa-trash-alt"></i> Sí, eliminar',
+						confirmButtonText: '<i class="fas fa-trash-alt"></i> Sí, eliminar cuenta',
 						cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+						reverseButtons: true,
+						confirmButtonColor: '#dc3545',
+						cancelButtonColor: '#6c757d',
 						customClass: {
 							popup: 'swal-popup-veterinario',
-							title: 'swal-title-veterinario'
+							title: 'swal-title-veterinario',
+							content: 'swal-content-veterinario'
 						}
 					}).then((result) => {
 						if (result.isConfirmed) {
-							Swal.fire({
-								icon: 'info',
-								title: 'Funcionalidad en desarrollo',
-								text: 'La eliminación de cuenta estará disponible próximamente',
-								confirmButtonColor: '#6B9BD1'
-							});
+							console.log('🗑️ Eliminando cuenta de veterinario...');
+
+							// Crear formulario para enviar POST al backend
+							const form = document.createElement('form');
+							form.method = 'POST';
+							form.action = '/perfil-veterinario/configuracion/eliminar-cuenta';
+							document.body.appendChild(form);
+							form.submit();
 						}
 					});
 				}
@@ -1286,12 +1371,8 @@
 						console.log("🔑 ID Veterinaria establecido: " + veterinariaId);
 					}
 
-					// Mostrar el modal
-					document.getElementById('new-product-modal').style.display = 'block';
-				}
-
-				function closeModal() {
-					document.getElementById('new-product-modal').style.display = 'none';
+					// Usar el sistema unificado de modales
+					openModal('new-product');
 				}
 			</script>
 
@@ -1404,6 +1485,64 @@
 						alert('La contraseña debe tener al menos 4 caracteres');
 						return false;
 					}
+				});
+			</script>
+
+			<script>
+				// Funcionalidad del menú hamburguesa (solo móviles)
+				document.addEventListener('DOMContentLoaded', function () {
+					const hamburgerBtn = document.getElementById('hamburgerBtn');
+					const sidebar = document.getElementById('sidebar');
+					const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+					// Función para abrir el menú
+					function openSidebar() {
+						sidebar.classList.add('active');
+						sidebarOverlay.classList.add('active');
+						document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+					}
+
+					// Función para cerrar el menú
+					function closeSidebar() {
+						sidebar.classList.remove('active');
+						sidebarOverlay.classList.remove('active');
+						document.body.style.overflow = ''; // Restaurar scroll del body
+					}
+
+					// Evento click en el botón hamburguesa
+					if (hamburgerBtn) {
+						hamburgerBtn.addEventListener('click', function (e) {
+							e.stopPropagation();
+							if (sidebar.classList.contains('active')) {
+								closeSidebar();
+							} else {
+								openSidebar();
+							}
+						});
+					}
+
+					// Evento click en el overlay para cerrar
+					if (sidebarOverlay) {
+						sidebarOverlay.addEventListener('click', closeSidebar);
+					}
+
+					// Cerrar el menú al hacer clic en cualquier enlace del menú (opcional)
+					const menuLinks = document.querySelectorAll('.sidebar .menu-link');
+					menuLinks.forEach(link => {
+						link.addEventListener('click', function () {
+							// Solo cerrar en móviles
+							if (window.innerWidth <= 768) {
+								closeSidebar();
+							}
+						});
+					});
+
+					// Cerrar el menú si se redimensiona la ventana a tamaño desktop
+					window.addEventListener('resize', function () {
+						if (window.innerWidth > 768) {
+							closeSidebar();
+						}
+					});
 				});
 			</script>
 

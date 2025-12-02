@@ -1,13 +1,3 @@
-// Toggle del menú lateral en móviles
-const btnMenu = document.querySelector('.btn-menu');
-const btnCloseMenu = document.querySelector('.btn-close-menu');
-const sidebar = document.querySelector('.sidebar');
-const mainContent = document.querySelector('.main-content');
-
-btnMenu.addEventListener('click', () => {
-	sidebar.classList.add('active');
-});
-
 
 // Navegación entre secciones
 const menuItems = document.querySelectorAll('.menu-items a');
@@ -99,27 +89,59 @@ function loadPetInfo(petId) {
 	// En una aplicación real, harías una petición AJAX aquí
 }
 
-
-
-
-
-// Funciones para los modales
+// Funciones para los modales - Sistema unificado
 function openModal(modalId) {
+	console.log(' Abriendo modal:', modalId);
 	const modal = document.getElementById(`${modalId}-modal`);
 	const overlay = document.getElementById('modal-overlay');
 
-	overlay.classList.add('active');
-	modal.classList.add('active');
-	document.body.style.overflow = 'hidden';
+	if (modal && overlay) {
+		// Cerrar cualquier modal abierto primero
+		closeAllModals();
+		
+		// Abrir el modal solicitado
+		overlay.classList.add('active');
+		modal.classList.add('active');
+		modal.style.display = 'block';
+		document.body.style.overflow = 'hidden';
+		
+		console.log(' Modal abierto:', modalId);
+	} else {
+		console.error(' Modal no encontrado:', modalId);
+	}
 }
 
-function closeModal() {
+function closeModal(specificModalId = null) {
+	console.log(' Cerrando modal:', specificModalId || 'todos');
+	
+	if (specificModalId) {
+		// Cerrar modal específico
+		const modal = document.getElementById(`${specificModalId}-modal`);
+		if (modal) {
+			modal.classList.remove('active');
+			modal.style.display = 'none';
+		}
+	} else {
+		// Cerrar todos los modales
+		closeAllModals();
+	}
+}
+
+function closeAllModals() {
 	const modals = document.querySelectorAll('.modal');
 	const overlay = document.getElementById('modal-overlay');
 
-	modals.forEach(modal => modal.classList.remove('active'));
-	overlay.classList.remove('active');
+	modals.forEach(modal => {
+		modal.classList.remove('active');
+		modal.style.display = 'none';
+	});
+	
+	if (overlay) {
+		overlay.classList.remove('active');
+	}
+	
 	document.body.style.overflow = '';
+	console.log(' Todos los modales cerrados');
 }
 
 // Cargar datos en modal de edición de producto
@@ -232,8 +254,69 @@ function openEditEventModal(eventId) {
 		});
 }
 
-// Cerrar modal al hacer clic fuera
-document.getElementById('modal-overlay').addEventListener('click', closeModal);
+// Event listeners mejorados para cerrar modales
+document.addEventListener('DOMContentLoaded', function() {
+	// Cerrar modal al hacer clic fuera (en el overlay)
+	const overlay = document.getElementById('modal-overlay');
+	if (overlay) {
+		overlay.addEventListener('click', function(e) {
+			// Solo cerrar si se hace clic directamente en el overlay, no en el contenido del modal
+			if (e.target === overlay) {
+				closeModal();
+			}
+		});
+	}
+	
+	// Cerrar modal con tecla Escape
+	document.addEventListener('keydown', function(e) {
+		if (e.key === 'Escape') {
+			closeModal();
+		}
+	});
+	
+	// Agregar event listeners a todos los botones de cerrar modal
+	const closeButtons = document.querySelectorAll('.btn-close-modal');
+	closeButtons.forEach(button => {
+		button.addEventListener('click', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			closeModal();
+		});
+	});
+});
+
+// Funciones específicas para abrir modales comunes
+function openNewProductModal() {
+	console.log('🛍️ Abriendo modal de nuevo producto');
+	
+	// Obtener ID de veterinaria desde el div oculto
+	const veterinariaData = document.getElementById('veterinaria-data');
+	if (veterinariaData) {
+		const veterinariaId = veterinariaData.getAttribute('data-id');
+		const input = document.getElementById('idveterinaria-input');
+		if (input) {
+			input.value = veterinariaId;
+			console.log("🔑 ID Veterinaria establecido: " + veterinariaId);
+		}
+	}
+	
+	openModal('new-product');
+}
+
+function openNewEventModal() {
+	console.log('📅 Abriendo modal de nuevo evento');
+	openModal('new-event');
+}
+
+function openNewAppointmentModal() {
+	console.log('🩺 Abriendo modal de nueva cita');
+	openModal('new-appointment');
+}
+
+function openEmergencyModal() {
+	console.log('🚨 Abriendo modal de emergencia');
+	openModal('new-pet');
+}
 
 // Inicializar gráficos (usando Chart.js)
 function initCharts() {
@@ -812,4 +895,51 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     setTimeout(() => {
         renderCards();
     }, 100);
+}
+
+// Función para confirmar eliminación de cuenta
+function confirmDeleteAccount() {
+    Swal.fire({
+        title: '¿Eliminar cuenta?',
+        html: `
+            <div style="text-align: left; padding: 10px;">
+                <p style="margin-bottom: 15px; color: var(--dark); font-weight: 500;">
+                    <i class="fas fa-exclamation-triangle" style="color: #f39c12; margin-right: 8px;"></i>
+                    Esta acción eliminará permanentemente:
+                </p>
+                <ul style="color: var(--gray); font-size: 0.95rem; margin-left: 20px;">
+                    <li>Tu perfil de veterinario</li>
+                    <li>Tu cuenta de usuario</li>
+                    <li>Todos los datos asociados</li>
+                </ul>
+                <p style="color: #e74c3c; font-weight: 500; margin-top: 15px; font-size: 0.9rem;">
+                    <i class="fas fa-warning" style="margin-right: 5px;"></i>
+                    Esta acción no se puede deshacer
+                </p>
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-trash-alt"></i> Sí, eliminar cuenta',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+        reverseButtons: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        customClass: {
+            popup: 'swal-popup-veterinario',
+            title: 'swal-title-veterinario',
+            content: 'swal-content-veterinario'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log('🗑️ Eliminando cuenta de veterinario...');
+            
+            // Crear formulario para enviar POST al backend
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/perfil-veterinario/configuracion/eliminar-cuenta';
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
 }
