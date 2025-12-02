@@ -67,6 +67,19 @@ public class PerfilVeterinarioController {
 	@Autowired
 	private IVeterinariaService veterinariaService;
 
+	/**
+	 * Servicio para la gestión de EMERGENCIAS VETERINARIAS.
+	 * 
+	 * Este servicio está inyectado y disponible para:
+	 * - Registrar nuevas emergencias
+	 * - Consultar historial de emergencias
+	 * - Filtrar emergencias por mascota, veterinario, tipo o fecha
+	 * - Obtener emergencias urgentes y recientes
+	 * 
+	 * NOTA: Actualmente no hay endpoints implementados que utilicen este servicio,
+	 * pero está disponible para futuras funcionalidades de registro y consulta
+	 * de emergencias desde el perfil del veterinario.
+	 */
 	@Autowired
 	private IEmergenciaService emergenciaService;
 
