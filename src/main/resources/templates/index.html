@@ -350,7 +350,6 @@
 		<div class="container">
 			<h1><strong>HelpYourPet</strong></h1>
 			<p>Porque una mascota no es solo un animal, es un miembro más de la familia</p>
-			<button onclick="abrirServicios()" class="btn btn-hero">Conoce Nuestros Servicios</button>
 		</div>
 	</section>
 
@@ -721,14 +720,14 @@
 						</p>
 
 						<button class="btn btn-primary open-modal-btn"
-						th:data-vet-nombre="${evento.veterinaria != null ? evento.veterinaria.nombre : 'No disponible'}"
-						th:data-vet-direccion="${evento.veterinaria != null ? evento.veterinaria.direccion : 'No disponible'}"
-						th:data-vet-telefono="${evento.veterinaria != null ? evento.veterinaria.telefono : 'No disponible'}"
-						th:data-vet-correo="${evento.veterinaria != null ? evento.veterinaria.correo : 'No disponible'}"
-						th:data-vet-horario="${evento.veterinaria != null ? evento.veterinaria.horario : 'No disponible'}"
-						th:data-vet-descripcion="${evento.veterinaria != null ? evento.veterinaria.descripcion : 'No disponible'}">
-						Más Información
-					</button>
+							th:data-vet-nombre="${evento.veterinaria != null ? evento.veterinaria.nombre : 'No disponible'}"
+							th:data-vet-direccion="${evento.veterinaria != null ? evento.veterinaria.direccion : 'No disponible'}"
+							th:data-vet-telefono="${evento.veterinaria != null ? evento.veterinaria.telefono : 'No disponible'}"
+							th:data-vet-correo="${evento.veterinaria != null ? evento.veterinaria.correo : 'No disponible'}"
+							th:data-vet-horario="${evento.veterinaria != null ? evento.veterinaria.horario : 'No disponible'}"
+							th:data-vet-descripcion="${evento.veterinaria != null ? evento.veterinaria.descripcion : 'No disponible'}">
+							Más Información
+						</button>
 
 
 					</div>
@@ -775,11 +774,6 @@
 	</section>
 
 
-	<!-- Mensaje si no hay eventos -->
-	<div class="col-12 text-center" th:if="${eventos == null || eventos.isEmpty()}">
-		<p class="text-muted">No hay eventos disponibles en este momento.</p>
-	</div>
-	</div>
 	<a href="#inicio" class="btn btn-inicio">
 		<i class="fa-solid fa-up-long"></i>
 	</a>
@@ -1116,7 +1110,7 @@
 			openModalBtns.forEach(function (btn) {
 				btn.addEventListener('click', function (e) {
 					e.preventDefault();
-					
+
 					// Obtener los datos de la veterinaria del botón
 					const vetNombre = btn.getAttribute('data-vet-nombre') || 'No disponible';
 					const vetDireccion = btn.getAttribute('data-vet-direccion') || 'No disponible';
@@ -1124,22 +1118,22 @@
 					const vetCorreo = btn.getAttribute('data-vet-correo') || 'No disponible';
 					const vetHorario = btn.getAttribute('data-vet-horario') || 'No disponible';
 					const vetDescripcion = btn.getAttribute('data-vet-descripcion') || 'No disponible';
-					
+
 					// Actualizar el contenido del modal con los datos de la veterinaria
 					document.querySelector('.vet-name').textContent = vetNombre;
 					document.querySelector('.info-row:nth-child(1) .info-text-content').textContent = vetDireccion;
 					document.querySelector('.info-row:nth-child(2) .info-text-content').textContent = vetTelefono;
 					document.querySelector('.info-row:nth-child(3) .info-text-content').textContent = vetCorreo;
-					
+
 					// Actualizar el horario (puede tener formato especial)
 					const scheduleContainer = document.querySelector('.schedule-details');
 					if (scheduleContainer) {
 						scheduleContainer.innerHTML = `<div class="schedule-line">${vetHorario}</div>`;
 					}
-					
+
 					// Actualizar la descripción
 					document.querySelector('.description-text').textContent = vetDescripcion;
-					
+
 					openModal();
 				});
 			});
