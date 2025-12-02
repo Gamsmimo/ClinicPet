@@ -2,6 +2,8 @@ package com.clinicpet.demo.service;
 
 import com.clinicpet.demo.model.Adopcion;
 import com.clinicpet.demo.repository.IAdopcionRepository;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +15,10 @@ import java.util.Optional;
 @Service
 public class AdopcionServiceImplement implements IAdopcionService {
 
+
 	@Autowired
 	private IAdopcionRepository adopcionRepository;
+
 
 	@Override
 	public Adopcion guardarAdopcion(Adopcion adopcion) {
@@ -65,4 +69,11 @@ public class AdopcionServiceImplement implements IAdopcionService {
 	public Page<Adopcion> buscarPorUsuarioId(Integer idUsuario, Pageable pageable) {
 		return adopcionRepository.findByUsuarioId(idUsuario, pageable);
 	}
+
+	@Override
+	public long contarPorEstado(String estado) {
+		return adopcionRepository.countByEstado(estado); // asume que existe el método en el repositorio
+	}
+
+	
 }

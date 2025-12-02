@@ -19,6 +19,273 @@
 		rel="stylesheet">
 	<link rel="stylesheet" th:href="@{/assets/CSS/Estilos-Home.css}">
 	<link rel="icon" th:href="@{/assets/IMG/logo.png}" type="image/png">
+
+	<!-- Estilos del Modal -->
+	<style>
+		.modal-overlay {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(59, 87, 97, 0.85);
+			backdrop-filter: blur(8px);
+			z-index: 1000;
+			animation: fadeIn 0.3s ease;
+		}
+
+		.modal-overlay.active {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes slideUp {
+			from {
+				transform: translateY(50px);
+				opacity: 0;
+			}
+
+			to {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+
+		.modal-container {
+			background: white;
+			border-radius: 25px;
+			max-width: 750px;
+			width: 100%;
+			max-height: 90vh;
+			overflow-y: auto;
+			box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+			animation: slideUp 0.4s ease;
+			position: relative;
+		}
+
+		.close-btn {
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			background: rgba(0, 0, 0, 0.05);
+			border: none;
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			color: #2d3748;
+			font-size: 22px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 10;
+		}
+
+		.close-btn:hover {
+			background: rgba(0, 0, 0, 0.1);
+			transform: rotate(90deg);
+		}
+
+		.modal-body {
+			padding: 40px 35px;
+		}
+
+		.icon-header {
+			width: 140px;
+			height: 140px;
+			background: linear-gradient(135deg, #318FAD 0%, #3FB8E0 100%);
+			border-radius: 50%;
+			margin: 0 auto 30px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 70px;
+			color: white;
+			box-shadow: 0 15px 40px rgba(49, 143, 173, 0.35);
+		}
+
+		.vet-name {
+			font-size: 32px;
+			font-weight: 800;
+			color: #1a202c;
+			text-align: center;
+			margin-bottom: 35px;
+			letter-spacing: -0.5px;
+		}
+
+		.info-container {
+			background: #f8fafc;
+			border-radius: 20px;
+			padding: 30px;
+			border: 2px solid #e2e8f0;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 30px;
+		}
+
+		.info-left {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.info-row {
+			display: flex;
+			align-items: flex-start;
+			gap: 18px;
+			padding: 18px 0;
+			border-bottom: 2px solid #e2e8f0;
+		}
+
+		.info-row:last-child {
+			border-bottom: none;
+			padding-bottom: 0;
+		}
+
+		.info-row:first-child {
+			padding-top: 0;
+		}
+
+		.icon-circle {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 22px;
+			flex-shrink: 0;
+			color: white;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		}
+
+		.icon-location {
+			background: #E0A332;
+		}
+
+		.icon-phone {
+			background: #318FAD;
+		}
+
+		.icon-email {
+			background: #AD546A;
+		}
+
+		.icon-clock {
+			background: #679F9E;
+		}
+
+		.info-text {
+			flex: 1;
+			padding-top: 5px;
+		}
+
+		.info-text-content {
+			color: #1a202c;
+			font-size: 17px;
+			line-height: 1.6;
+			font-weight: 600;
+		}
+
+		.schedule-details {
+			margin-top: 0;
+		}
+
+		.schedule-line {
+			color: #1a202c;
+			font-size: 17px;
+			margin: 6px 0;
+			font-weight: 600;
+			line-height: 1.5;
+		}
+
+		.description-section {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+		}
+
+		.description-title {
+			font-size: 20px;
+			font-weight: 800;
+			color: #1a202c;
+			margin-bottom: 15px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.description-title i {
+			color: #612F3C;
+			font-size: 22px;
+		}
+
+		.description-text {
+			color: #2d3748;
+			font-size: 16px;
+			line-height: 1.8;
+			font-weight: 500;
+		}
+
+		.modal-container::-webkit-scrollbar {
+			width: 8px;
+		}
+
+		.modal-container::-webkit-scrollbar-track {
+			background: #f1f1f1;
+			border-radius: 10px;
+		}
+
+		.modal-container::-webkit-scrollbar-thumb {
+			background: #318FAD;
+			border-radius: 10px;
+		}
+
+		.modal-container::-webkit-scrollbar-thumb:hover {
+			background: #007DBF;
+		}
+
+		@media (max-width: 640px) {
+			.modal-container {
+				margin: 15px;
+			}
+
+			.modal-body {
+				padding: 30px 25px;
+			}
+
+			.vet-name {
+				font-size: 26px;
+			}
+
+			.icon-header {
+				width: 120px;
+				height: 120px;
+				font-size: 60px;
+			}
+
+			.info-text-content,
+			.schedule-line {
+				font-size: 16px;
+			}
+
+			.info-container {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
 </head>
 
 <body>
@@ -430,120 +697,117 @@
 							<p><strong>Tarjeta Profesional:</strong> TP-56789</p>
 							<p><strong>Experiencia:</strong> 14 años</p>
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>-->
 
-	<!-- Eventos y Campañas -->
-	<section class="section eventos" data-searchable>
+	</div>-->
+
+
+	<!-- Eventos y Campañas-->
+	<section id="eventos-section" class="section eventos" data-searchable>
 		<div class="container">
 			<div class="section-title">
 				<h2>Eventos Y Campañas</h2>
 			</div>
 			<div class="row">
-				<div class="col-md-4 mb-4">
+				<!-- Loop dinámico para mostrar eventos de la base de datos -->
+				<div class="col-md-4 mb-4" th:each="evento : ${eventos}">
 					<div class="eventos">
-						<img th:src="@{/assets/IMG/Desparasitacion1.png}" class="card-img-top" alt="Campaña">
-						<h4 class="card-title">Jornada de Desparasitación</h4>
-						<p class="card-text">Julio 10-15, 2025 - Desparasitación interna y externa con descuento del
-							30%. Protege
-							a tu mascota de parásitos y enfermedades asociadas.</p>
-						<button class="btn btn-primary">Más Información</button>
+						<img th:src="${evento.imagen != null && !evento.imagen.isEmpty()} ? @{${evento.imagen}} : @{/assets/IMG/Desparasitacion1.png}"
+							class="card-img-top" alt="Evento">
+						<h4 class="card-title" th:text="${evento.titulo}">Título del Evento</h4>
+						<p class="card-text">
+							<span th:text="${#temporals.format(evento.fechainicio, 'dd/MM/yyyy')}">Fecha inicio</span> -
+							<span th:text="${#temporals.format(evento.fechafin, 'dd/MM/yyyy')}">Fecha fin</span><br>
+							<span th:text="${evento.descripcion}">Descripción del evento</span>
+						</p>
+
+						<button class="btn btn-primary open-modal-btn">Más Información</button>
+
+
 					</div>
 				</div>
 
-				<div class="col-md-4 mb-4">
-					<div class="eventos">
-						<img th:src="@{/assets/IMG/CampañaE2.png}" class="card-img-top" alt="Campaña">
-						<h4 class="card-title">Campaña de Esterilización</h4>
-						<p class="card-text">Junio 15-30, 2025 - Precios especiales en esterilización para perros y
-							gatos.
-							Contribuye al control de la población animal y previene enfermedades.</p>
-						<button class="btn btn-primary">Más Información</button>
-					</div>
+				<!-- Mensaje si no hay eventos -->
+				<div class="col-12 text-center" th:if="${eventos == null || eventos.isEmpty()}">
+					<p class="text-muted">No hay eventos disponibles en este momento.</p>
 				</div>
+			</div>
 
-				<div class="col-md-4 mb-4">
-					<div class="eventos">
-						<img th:src="@{/assets/IMG/Desparasitacion2.png}" class="card-img-top" alt="Campaña">
-						<h4 class="card-title">Jornada de Desparasitación</h4>
-						<p class="card-text">Agosto 15-25, 2025 - 40% de descuento en tratamientos contra pulgas,
-							garrapatas y
-							gusanos intestinales.
-							No esperes a que sea tarde. ¡Desparasita ahora!</p>
-						<button class="btn btn-primary">Más Información</button>
-					</div>
+			<!-- Paginación -->
+			<div class="row" th:if="${totalPages > 1}">
+				<div class="col-12">
+					<nav aria-label="Paginación de eventos">
+						<ul class="pagination justify-content-center">
+							<!-- Botón Anterior -->
+							<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+								<a class="page-link" th:href="@{/?page={p}(p=${currentPage - 1})} + '#eventos-section'"
+									aria-label="Anterior">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+
+							<!-- Números de página -->
+							<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+								th:classappend="${i == currentPage} ? 'active'">
+								<a class="page-link" th:href="@{/?page={p}(p=${i})} + '#eventos-section'"
+									th:text="${i + 1}">1</a>
+							</li>
+
+							<!-- Botón Siguiente -->
+							<li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+								<a class="page-link" th:href="@{/?page={p}(p=${currentPage + 1})} + '#eventos-section'"
+									aria-label="Siguiente">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</ul>
+					</nav>
 				</div>
 			</div>
 		</div>
 	</section>
 
 
+	<!-- Mensaje si no hay eventos -->
+	<div class="col-12 text-center" th:if="${eventos == null || eventos.isEmpty()}">
+		<p class="text-muted">No hay eventos disponibles en este momento.</p>
+	</div>
+	</div>
+
+	<!-- Paginación -->
+	<div class="row" th:if="${totalPages > 1}">
+		<div class="col-12">
+			<nav aria-label="Paginación de eventos">
+				<ul class="pagination justify-content-center">
+					<!-- Botón Anterior -->
+					<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+						<a class="page-link" th:href="@{/?page={p}(p=${currentPage - 1})} + '#eventos-section'"
+							aria-label="Anterior">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+
+					<!-- Números de página -->
+					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+						th:classappend="${i == currentPage} ? 'active'">
+						<a class="page-link" th:href="@{/?page={p}(p=${i})} + '#eventos-section'"
+							th:text="${i + 1}">1</a>
+					</li>
+
+					<!-- Botón Siguiente -->
+					<li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+						<a class="page-link" th:href="@{/?page={p}(p=${currentPage + 1})} + '#eventos-section'"
+							aria-label="Siguiente">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+	</div>
+	</section>
 
 	<!-- Mapa y Ubicaciones -->
-	<!--<section class="section ubicacion">
-		<div class="container">
-			<div class="section-title">
-				<h2>Nuestras Veterinarias en Duitama, Boyacá</h2>
-			</div>
-			<div class="row">
-				<div class="col-lg-8 mb-4">
-					<div class="map-container">
-						<iframe
-							src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.09886428697!2d-73.03233922468176!3d5.822406941536311!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a3d5e8e3e3e3f%3A0x9c7d6e5e3e3e3e3d!2sDuitama%2C%20Boyac%C3%A1!5e0!3m2!1ses!2sco!4v1689876543210!5m2!1ses!2sco"
-							allowfullscreen="" loading="lazy"></iframe>
-					</div>
-				</div>
-				<div class="col-lg-4 mb-4">
-					<div class="info-container">
-						<h3 class="mb-4">CLINIC PET Duitama</h3>
-						<div class="info-item">
-							<div class="info-icon">
-								<i class="fas fa-map-marker-alt"></i>
-							</div>
-							<div>
-								<h5>Dirección</h5>
-								<p>Calle 15 #12-45, Centro, Duitama, Boyacá</p>
-							</div>
-						</div>
-						<div class="info-item">
-							<div class="info-icon">
-								<i class="fas fa-phone"></i>
-							</div>
-							<div>
-								<h5>Teléfono / WhatsApp</h5>
-								<p>(8) 765 4321 / +57 321 987 6543</p>
-							</div>
-						</div>
-						<div class="info-item">
-							<div class="info-icon">
-								<i class="fas fa-envelope"></i>
-							</div>
-							<div>
-								<h5>Correo Electrónico</h5>
-								<p>info@clinicpet-duitama.com</p>
-							</div>
-						</div>
-						<div class="info-item">
-							<div class="info-icon">
-								<i class="fas fa-clock"></i>
-							</div>
-							<div>
-								<h5>Horarios de Atención</h5>
-								<p>Lunes a Viernes: 8:00 AM - 7:00 PM<br>Sábados: 9:00 AM - 5:00 PM<br>Domingos:
-									Emergencias 24h</p>
-							</div>
-						</div>
-						<a href="https://goo.gl/maps/xyz" target="_blank" class="btn-llegar">
-							<i class="fas fa-directions"></i> Cómo llegar
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>-->
 
 	<a href="#inicio" class="btn btn-inicio">
 		<i class="fa-solid fa-up-long"></i>
@@ -738,52 +1002,176 @@
 
 	<!-- Footer -->
 	<footer class="footer">
-		<div class="container">
-			<div class="footer-logo">
-				<img th:src="@{/assets/IMG/logofotter.png}" alt="logo">
-			</div>
-			<div class="footer-brand">HelpYourPet</div>
-			<div class="row">
-				<div class="col-lg-4 mb-5 mb-lg-0">
-					<p class="footer-lema">"Simplifica tu trabajo, mejora su salud"</p>
-					<p>Nuestra plataforma digital está diseñada para <br> optimizar la gestión clínica, conectando a
-						<br>
-						veterinarios y
-						propietarios de mascotas a través <br> de un sistema eficiente, seguro y personalizado.
-					</p>
-					<div class="social-links mt-4">
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-facebook-f"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-instagram"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-twitter"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-youtube"></i></a>
-						<a href="#" style="text-decoration: none; color:rgb(255, 255, 255);"><i
-								class="fab fa-whatsapp"></i></a>
+		<div class="footer-container">
+			<div class="footer-top">
+				<div class="footer-logo">
+					<img src="IMG/logofotter.png" alt="logo" style="height: 90px;">
+					<div class="footer-brand" style="font-family: 'fira sans'; font-size: 1.8rem; margin-top: 10px;">
+						HelpYourPet</div>
+				</div>
+
+				<div class="footer-about" style="max-width: 400px;">
+					<p style="font-style: italic; opacity: 0.8;">"Simplifica tu trabajo, mejora su salud"</p>
+					<p>Nuestra plataforma digital está diseñada para optimizar la gestión clínica.</p>
+					<div class="social-links" style="margin-top: 20px;">
+						<a href="#"><i class="fab fa-facebook-f"></i></a>
+						<a href="#"><i class="fab fa-instagram"></i></a>
+						<a href="#"><i class="fab fa-twitter"></i></a>
+						<a href="#"><i class="fab fa-youtube"></i></a>
+						<a href="#"><i class="fab fa-whatsapp"></i></a>
 					</div>
 				</div>
 
-				<div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-					<h5 class="footer-title">Contacto</h5>
-					<div class="footer-links">
-						<a href="#"><i class="fas fa-map-marker-alt me-2"></i> Duitama, Boyacá</a>
-						<a href="tel: 01 8000 45 78 90"><i class="fas fa-phone me-2"></i> 018000 45 78 90</a>
-						<a href="mailto:info@clinicpet.com"><i class="fas fa-envelope me-2"></i> info@clinicpet.com</a>
+				<div class="footer-contact">
+					<h5 style="font-size: 1.3rem; margin-bottom: 15px;">Contacto</h5>
+					<div style="display: flex; flex-direction: column; gap: 10px;">
+						<a href="#" style="color: #ccc; text-decoration: none;"><i class="fas fa-map-marker-alt"></i>
+							Duitama, Boyacá</a>
+						<a href="tel:018000457890" style="color: #ccc; text-decoration: none;"><i
+								class="fas fa-phone"></i> 018000
+							45 78 90</a>
+						<a href="mailto:info@clinicpet.com" style="color: #ccc; text-decoration: none;"><i
+								class="fas fa-envelope"></i> info@clinicpet.com</a>
 					</div>
 				</div>
-
 			</div>
+
 			<div class="copyright">
 				<p>&copy; 2025 HelpYourPet. Todos los derechos reservados. Desarrollado en Duitama, Boyacá</p>
 			</div>
 		</div>
 	</footer>
+	<!-- Modal de Información -->
+	<div class="modal-overlay" id="modalOverlay">
+		<div class="modal-container">
+			<button class="close-btn" id="closeModal">
+				<i class="fas fa-times"></i>
+			</button>
+
+			<div class="modal-body">
+				<div class="icon-header">
+					<i class="fas fa-store"></i>
+				</div>
+
+				<h2 class="vet-name">Bigotes Felices</h2>
+
+				<div class="info-container">
+					<div class="info-left">
+						<div class="info-row">
+							<div class="icon-circle icon-location">
+								<i class="fas fa-map-marker-alt"></i>
+							</div>
+							<div class="info-text">
+								<div class="info-text-content">Calle 123 #45-67, Barrio Los Laureles</div>
+							</div>
+						</div>
+
+						<div class="info-row">
+							<div class="icon-circle icon-phone">
+								<i class="fas fa-phone"></i>
+							</div>
+							<div class="info-text">
+								<div class="info-text-content">0000098878</div>
+							</div>
+						</div>
+
+						<div class="info-row">
+							<div class="icon-circle icon-email">
+								<i class="fas fa-envelope"></i>
+							</div>
+							<div class="info-text">
+								<div class="info-text-content">contacto@bigotesfelices.com</div>
+							</div>
+						</div>
+
+						<div class="info-row">
+							<div class="icon-circle icon-clock">
+								<i class="fas fa-clock"></i>
+							</div>
+							<div class="info-text">
+								<div class="schedule-details">
+									<div class="schedule-line">Lunes a Martes: 10:00 - 9:00</div>
+									<div class="schedule-line">Miércoles: Cerrado</div>
+									<div class="schedule-line">Jueves a Domingo: 10:00 - 9:00</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="description-section">
+						<div class="description-title">
+							<i class="fas fa-info-circle"></i>
+							Acerca de Nosotros
+						</div>
+						<div class="description-text">
+							Somos una clínica veterinaria dedicada al cuidado integral de tus mascotas. Con más de 15
+							años de experiencia, ofrecemos servicios de consulta general, cirugía, hospitalización,
+							laboratorio clínico, vacunación y grooming. Nuestro equipo de profesionales está
+							comprometido con el bienestar y la salud de tu mejor amigo.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 	<script th:src="@{/assets/JS/Scrips-Home.js}"></script>
+
+	<!-- JavaScript del Modal -->
+	<script>
+		// Esperar a que el DOM esté completamente cargado
+		document.addEventListener('DOMContentLoaded', function () {
+			const openModalBtns = document.querySelectorAll('.open-modal-btn');
+			const closeModalBtn = document.getElementById('closeModal');
+			const modalOverlay = document.getElementById('modalOverlay');
+
+			function openModal() {
+				if (modalOverlay) {
+					modalOverlay.classList.add('active');
+					document.body.style.overflow = 'hidden';
+				}
+			}
+
+			function closeModal() {
+				if (modalOverlay) {
+					modalOverlay.classList.remove('active');
+					document.body.style.overflow = 'auto';
+				}
+			}
+
+			// Agregar event listener a todos los botones "Más Información"
+			openModalBtns.forEach(function (btn) {
+				btn.addEventListener('click', function (e) {
+					e.preventDefault();
+					openModal();
+				});
+			});
+
+			// Botón de cerrar
+			if (closeModalBtn) {
+				closeModalBtn.addEventListener('click', closeModal);
+			}
+
+			// Cerrar al hacer clic fuera del modal
+			if (modalOverlay) {
+				modalOverlay.addEventListener('click', function (e) {
+					if (e.target === modalOverlay) {
+						closeModal();
+					}
+				});
+			}
+
+			// Cerrar con la tecla Escape
+			document.addEventListener('keydown', function (e) {
+				if (e.key === 'Escape' && modalOverlay && modalOverlay.classList.contains('active')) {
+					closeModal();
+				}
+			});
+		});
+	</script>
 
 </body>
 

@@ -396,4 +396,19 @@ document.addEventListener("keydown", function(e) {
 	if (e.key === "Escape") {
 		cerrarServicios();
 	}
+
 });
+
+// ===== MOSTRAR BOTÓN DE VOLVER AL INICIO =====
+const btnInicio = document.querySelector('.btn-inicio');
+
+window.addEventListener('scroll', function() {
+	if (window.scrollY > 300) {
+		btnInicio.style.display = 'flex';
+	} else {
+		btnInicio.style.display = 'none';
+	}
+});
+
+// Ocultar al cargar la página
+btnInicio.style.display = 'none';
