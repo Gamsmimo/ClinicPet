@@ -720,7 +720,15 @@
 							<span th:text="${evento.descripcion}">Descripción del evento</span>
 						</p>
 
-						<button class="btn btn-primary open-modal-btn">Más Información</button>
+						<button class="btn btn-primary open-modal-btn"
+						th:data-vet-nombre="${evento.veterinaria != null ? evento.veterinaria.nombre : 'No disponible'}"
+						th:data-vet-direccion="${evento.veterinaria != null ? evento.veterinaria.direccion : 'No disponible'}"
+						th:data-vet-telefono="${evento.veterinaria != null ? evento.veterinaria.telefono : 'No disponible'}"
+						th:data-vet-correo="${evento.veterinaria != null ? evento.veterinaria.correo : 'No disponible'}"
+						th:data-vet-horario="${evento.veterinaria != null ? evento.veterinaria.horario : 'No disponible'}"
+						th:data-vet-descripcion="${evento.veterinaria != null ? evento.veterinaria.descripcion : 'No disponible'}">
+						Más Información
+					</button>
 
 
 					</div>
@@ -772,46 +780,8 @@
 		<p class="text-muted">No hay eventos disponibles en este momento.</p>
 	</div>
 	</div>
-
-	<!-- Paginación -->
-	<div class="row" th:if="${totalPages > 1}">
-		<div class="col-12">
-			<nav aria-label="Paginación de eventos">
-				<ul class="pagination justify-content-center">
-					<!-- Botón Anterior -->
-					<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-						<a class="page-link" th:href="@{/?page={p}(p=${currentPage - 1})} + '#eventos-section'"
-							aria-label="Anterior">
-							<span aria-hidden="true">&laquo;</span>
-						</a>
-					</li>
-
-					<!-- Números de página -->
-					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-						th:classappend="${i == currentPage} ? 'active'">
-						<a class="page-link" th:href="@{/?page={p}(p=${i})} + '#eventos-section'"
-							th:text="${i + 1}">1</a>
-					</li>
-
-					<!-- Botón Siguiente -->
-					<li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-						<a class="page-link" th:href="@{/?page={p}(p=${currentPage + 1})} + '#eventos-section'"
-							aria-label="Siguiente">
-							<span aria-hidden="true">&raquo;</span>
-						</a>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</div>
-	</div>
-	</section>
-
-	<!-- Mapa y Ubicaciones -->
-
 	<a href="#inicio" class="btn btn-inicio">
 		<i class="fa-solid fa-up-long"></i>
-
 	</a>
 
 	<!-- Modal de SERVICIOS -->
@@ -1146,6 +1116,30 @@
 			openModalBtns.forEach(function (btn) {
 				btn.addEventListener('click', function (e) {
 					e.preventDefault();
+					
+					// Obtener los datos de la veterinaria del botón
+					const vetNombre = btn.getAttribute('data-vet-nombre') || 'No disponible';
+					const vetDireccion = btn.getAttribute('data-vet-direccion') || 'No disponible';
+					const vetTelefono = btn.getAttribute('data-vet-telefono') || 'No disponible';
+					const vetCorreo = btn.getAttribute('data-vet-correo') || 'No disponible';
+					const vetHorario = btn.getAttribute('data-vet-horario') || 'No disponible';
+					const vetDescripcion = btn.getAttribute('data-vet-descripcion') || 'No disponible';
+					
+					// Actualizar el contenido del modal con los datos de la veterinaria
+					document.querySelector('.vet-name').textContent = vetNombre;
+					document.querySelector('.info-row:nth-child(1) .info-text-content').textContent = vetDireccion;
+					document.querySelector('.info-row:nth-child(2) .info-text-content').textContent = vetTelefono;
+					document.querySelector('.info-row:nth-child(3) .info-text-content').textContent = vetCorreo;
+					
+					// Actualizar el horario (puede tener formato especial)
+					const scheduleContainer = document.querySelector('.schedule-details');
+					if (scheduleContainer) {
+						scheduleContainer.innerHTML = `<div class="schedule-line">${vetHorario}</div>`;
+					}
+					
+					// Actualizar la descripción
+					document.querySelector('.description-text').textContent = vetDescripcion;
+					
 					openModal();
 				});
 			});
