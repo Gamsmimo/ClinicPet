@@ -473,6 +473,14 @@ html {
 	align-items: stretch;
 }
 
+/* Limitar tamaño máximo en pantallas grandes */
+@media (min-width: 1200px) {
+	.pets-grid {
+		grid-template-columns: repeat(auto-fit, minmax(280px, 350px));
+		justify-content: start;
+	}
+}
+
 /* Quitar márgenes extra en las cards dentro del grid de mascotas */
 .pets-grid .card,
 .pets-grid .pet-card {
@@ -503,6 +511,7 @@ html {
 	align-items: center;
 	justify-content: center;
 	position: relative;
+	max-height: 220px;
 }
 
 [data-theme="dark"] .pet-image-container {
@@ -1454,6 +1463,52 @@ small,
 		height: 35px;
 		padding: 0.4rem;
 		font-size: 1rem;
+	}
+}
+
+/* ===== ESTILOS PARA ALERTA PERSONALIZADA DE TIENDA ===== */
+.animated-popup {
+	border-radius: 20px !important;
+	padding: 2rem !important;
+}
+
+.btn-shop-confirm {
+	border-radius: 10px !important;
+	padding: 0.75rem 2rem !important;
+	font-weight: 600 !important;
+	transition: all 0.3s ease !important;
+}
+
+.btn-shop-confirm:hover {
+	transform: translateY(-2px) !important;
+	box-shadow: 0 5px 15px rgba(1, 128, 153, 0.3) !important;
+}
+
+.btn-shop-cancel {
+	border-radius: 10px !important;
+	padding: 0.75rem 2rem !important;
+	font-weight: 600 !important;
+}
+
+/* Animaciones para SweetAlert2 */
+@keyframes fadeInDown {
+	from {
+		opacity: 0;
+		transform: translate3d(0, -100%, 0);
+	}
+	to {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+@keyframes fadeOutUp {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+		transform: translate3d(0, -100%, 0);
 	}
 }
 

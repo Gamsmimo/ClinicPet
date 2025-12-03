@@ -470,10 +470,12 @@ function removeItem(event) {
     updateCart();
 }
 
+// ===== NOTIFICACIONES - Usando sistema compartido desde notifications.js =====
+
 // Procesar pago
 function checkout() {
     if (cart.length === 0) {
-        alert('Tu carrito está vacío. Añade productos antes de pagar.');
+        showWarning('Tu carrito está vacío. Añade productos antes de pagar.');
         return;
     }
 
@@ -481,7 +483,7 @@ function checkout() {
     const discount = total * 0.1;
     const finalTotal = total - discount;
 
-    alert(`¡Gracias por tu compra!\nTotal: $${finalTotal.toFixed(2)}\nTu pedido ha sido procesado.`);
+    showSuccess(`¡Gracias por tu compra!\nTotal: $${finalTotal.toFixed(2)}\nTu pedido ha sido procesado.`, 5000);
 
     // Vaciar carrito
     cart = [];
@@ -538,7 +540,7 @@ $('.search-btn').click(function (e) {
         });
 
         if (!found) {
-            alert('No se encontraron resultados para: ' + searchTerm);
+            showInfo('No se encontraron resultados para: ' + searchTerm);
         }
     }
 });
