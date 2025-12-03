@@ -1,65 +1,132 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Contraseña</title>
-    <link rel="stylesheet" href="CSS/CSS-PRUEBAS.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>Restablecer Contraseña</title>
+    <link rel="stylesheet" th:href="@{/assets/CSS/Estilos-recovery.css}">
+    <link rel="icon" th:href="@{/assets/IMG/logo.png}" type="image/png">
+    <style>
+        .password-recovery-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .password-input {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 18px;
+        }
+        .password-strength {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .strength-bar {
+            flex: 1;
+            height: 5px;
+            background-color: #ddd;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+        .error-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .success-message {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .login-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #236c9c;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background-color 0.3s;
+        }
+        .login-link:hover {
+            background-color: #1a5278;
+        }
+    </style>
 </head>
 <body>
-    <img src="img/perro.png" alt="perrito" class="perro">
-    <img src="img/gato.png" alt="gatito" class="gato">
-    <img src="img/perro2.png" alt="perrote" class="perro2">
-    <img src="img/gato2.png" alt="gatote" class="gato2">
-    <div class="password-recovery-container">
-        <div class="logo">
-            <img src="img/logo.png" alt="Logo de la empresa">
-        </div>
-        
-        <div class="recovery-card">
-            <h1>Restablecer contraseña</h1>
-            <p class="instructions">Ingresa tu nueva contraseña a continuación.</p>
-            
-            <form id="passwordResetForm">
-                <div class="form-group">
-                    <label for="newPassword">Nueva contraseña</label>
-                    <div class="password-input">
-                        <input type="password" id="newPassword" name="newPassword" required>
-                        <span class="toggle-password" onclick="togglePasswordVisibility('newPassword')">👁️</span>
-                    </div>
-                    <div class="password-strength">
-                        <span id="strength-bar-1"></span>
-                        <span id="strength-bar-2"></span>
-                        <span id="strength-bar-3"></span>
-                        <span id="strength-bar-4"></span>
-                    </div>
-                    <p id="password-strength-text">Seguridad: <span id="strength-text">Débil</span></p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="confirmPassword">Confirmar nueva contraseña</label>
-                    <div class="password-input">
-                        <input type="password" id="confirmPassword" name="confirmPassword" required>
-                        <span class="toggle-password" onclick="togglePasswordVisibility('confirmPassword')">👁️</span>
-                    </div>
-                    <p id="password-match-message"></p>
-                </div>
-                
-                <button type="submit" class="submit-btn" id="submitBtn" disabled>Restablecer contraseña</button>
-            </form>
-            
-            <div class="success-message" id="successMessage">
-                <div class="checkmark">✓</div>
-                <h2>¡Contraseña actualizada!</h2>
-                <p>Tu contraseña ha sido cambiada exitosamente.</p>
-                <a href="login deep.html" class="login-link">Volver al inicio de sesión</a>
-            </div>
-        </div>
-        
-        <p class="footer-text">¿Necesitas ayuda? <a href="#">Contáctanos</a></p>
+    <div class="background-container">
+        <img th:src="@{/assets/IMG/fondoregistro.png}" alt="Fondo decorativo" class="background-image" />
     </div>
     
-    <script src="JS/JS-PRUEBAS.js"></script>
+    <div class="password-recovery-container">
+        <div class="password-recovery">
+            <h2>Restablecer Contraseña</h2>
+            
+            <!-- Mostrar error si el token es inválido -->
+            <div th:if="${tokenInvalido}" class="error-message">
+                <p th:text="${error}">Token inválido o expirado</p>
+                <a href="/usuarios/recovery" class="login-link">Solicitar nuevo enlace</a>
+            </div>
+            
+            <!-- Mostrar formulario si el token es válido -->
+            <div th:if="${tokenValido}">
+                <p class="description">Ingresa tu nueva contraseña a continuación.</p>
+                
+                <form id="passwordResetForm">
+                    <input type="hidden" id="token" th:value="${token}" />
+                    
+                    <div class="form-group">
+                        <label for="newPassword">Nueva contraseña</label>
+                        <div class="password-input">
+                            <input type="password" id="newPassword" name="newPassword" required placeholder="Mínimo 6 caracteres">
+                            <span class="toggle-password" onclick="togglePasswordVisibility('newPassword')">👁️</span>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar" id="strength-bar-1"></div>
+                            <div class="strength-bar" id="strength-bar-2"></div>
+                            <div class="strength-bar" id="strength-bar-3"></div>
+                            <div class="strength-bar" id="strength-bar-4"></div>
+                        </div>
+                        <p id="password-strength-text">Seguridad: <span id="strength-text">Débil</span></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar nueva contraseña</label>
+                        <div class="password-input">
+                            <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Repite tu contraseña">
+                            <span class="toggle-password" onclick="togglePasswordVisibility('confirmPassword')">👁️</span>
+                        </div>
+                        <p id="password-match-message"></p>
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" disabled>Restablecer contraseña</button>
+                </form>
+                
+                <div id="message" class="message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script th:src="@{/assets/JS/js-recovery-contra.js}"></script>
 </body>
 </html>
