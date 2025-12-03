@@ -399,6 +399,60 @@ function initCharts() {
 	}
 }
 
+// Cargar estadísticas del dashboard
+function cargarEstadisticasDashboard() {
+	console.log('📊 Cargando estadísticas del dashboard...');
+	
+	fetch('/perfil-veterinario/dashboard/estadisticas')
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				console.error('❌ Error al cargar estadísticas:', data.error);
+				return;
+			}
+			
+			console.log('✅ Estadísticas cargadas:', data);
+			
+			// Actualizar contador de productos
+			const productosCounter = document.querySelector('.card-summary.bg-info h3');
+			if (productosCounter) {
+				// Animación del contador
+				animateCounter(productosCounter, data.totalProductos || 0);
+			} else {
+				console.warn('⚠️ No se encontró el elemento contador de productos');
+			}
+		})
+		.catch(error => {
+			console.error('💥 Error al cargar estadísticas:', error);
+		});
+}
+
+// Función para animar el contador
+function animateCounter(element, targetValue) {
+	const startValue = 0;
+	const duration = 1000; // 1 segundo
+	const startTime = performance.now();
+	
+	function updateCounter(currentTime) {
+		const elapsed = currentTime - startTime;
+		const progress = Math.min(elapsed / duration, 1);
+		
+		// Función de easing (ease-out)
+		const easeOut = 1 - Math.pow(1 - progress, 3);
+		const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOut);
+		
+		element.textContent = currentValue;
+		
+		if (progress < 1) {
+			requestAnimationFrame(updateCounter);
+		} else {
+			element.textContent = targetValue; // Asegurar valor final exacto
+		}
+	}
+	
+	requestAnimationFrame(updateCounter);
+}
+
 // Inicializar la aplicación
 document.addEventListener('DOMContentLoaded', () => {
 	// Mostrar la sección de inicio por defecto
@@ -406,6 +460,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// Inicializar gráficos
 	initCharts();
+
+	// Cargar estadísticas del dashboard
+	cargarEstadisticasDashboard();
 
 	// Simular carga de datos
 	setTimeout(() => {
@@ -481,6 +538,9 @@ document.addEventListener('DOMContentLoaded', () => {
 						`;
 						grid.appendChild(card);
 					});
+					
+					// Actualizar contador después de filtrar
+					cargarEstadisticasDashboard();
 				})
 				.catch(err => console.error('Error al aplicar filtros:', err));
 		};

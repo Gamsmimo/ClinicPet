@@ -1039,8 +1039,6 @@ public class PerfilVeterinarioController {
 			// Limpiar sesión
 			session.invalidate();
 			System.out.println("✅ Cuenta eliminada correctamente y sesión cerrada");
-			
-			// Redirigir al login con mensaje de éxito
 			redirectAttributes.addFlashAttribute("success", "Cuenta eliminada correctamente");
 			return "redirect:/usuarios/iniciarsesion";
 			
@@ -1049,6 +1047,54 @@ public class PerfilVeterinarioController {
 			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("error", "Error al eliminar la cuenta: " + e.getMessage());
 			return "redirect:/perfil-veterinario";
+		}
+	}
+
+	/**
+	 * Obtener estadísticas del dashboard (contadores)
+	 */
+	@GetMapping("/dashboard/estadisticas")
+	@ResponseBody
+	public Map<String, Object> obtenerEstadisticasDashboard(HttpSession session) {
+		Map<String, Object> response = new HashMap<>();
+		
+		try {
+			System.out.println("📊 Obteniendo estadísticas del dashboard");
+			
+			// Verificar usuario autenticado
+			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+			if (usuarioLogueado == null) {
+				response.put("error", "Usuario no autenticado");
+				return response;
+			}
+			
+			// Obtener perfil veterinario y veterinaria
+			Optional<PerfilVeterinario> perfilOpt = perfilVeterinarioService.buscarPorUsuarioId(usuarioLogueado.getId());
+			if (perfilOpt.isEmpty() || perfilOpt.get().getVeterinaria() == null) {
+				response.put("error", "Perfil de veterinario o veterinaria no encontrados");
+				return response;
+			}
+			
+			Integer veterinariaId = perfilOpt.get().getVeterinaria().getId();
+			System.out.println("🏥 Obteniendo estadísticas para veterinaria ID: " + veterinariaId);
+			
+			// Contar productos en inventario de la veterinaria
+			List<Inventario> inventarios = inventarioService.obtenerInventarioPorVeterinaria(veterinariaId);
+			int totalProductos = inventarios.size();
+			
+			System.out.println("📦 Total de productos en inventario: " + totalProductos);
+			
+			// Agregar estadísticas al response
+			response.put("totalProductos", totalProductos);
+			response.put("success", true);
+			
+			return response;
+			
+		} catch (Exception e) {
+			System.err.println("💥 Error al obtener estadísticas: " + e.getMessage());
+			e.printStackTrace();
+			response.put("error", "Error al obtener estadísticas: " + e.getMessage());
+			return response;
 		}
 	}
 
