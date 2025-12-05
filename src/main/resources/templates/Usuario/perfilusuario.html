@@ -25,6 +25,8 @@
 	<!-- CSS Personalizado -->
 	<link rel="stylesheet" th:href="@{/assets/CSS/Estilos-Usuario.css}">
 	<link rel="icon" th:href="@{/assets/IMG/logo.png}" type="image/png">
+	<!-- Animate.css para animaciones -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 	<!-- SweetAlert2 -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -343,10 +345,8 @@
 							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
 								<i class="fas fa-home"></i>
 							</a>
-							<button class="btn btn-primary" id="go-to-shop-btn">
-								<a th:href="@{/Tienda.html}" class="text-white text-decoration-none">
-									<i class="fas fa-store me-2"></i>
-								</a>
+							<button class="btn btn-primary" id="go-to-shop-btn" onclick="goToShop()">
+								<i class="fas fa-store me-2"></i>Ir a la Tienda
 							</button>
 						</div>
 					</div>
@@ -420,6 +420,18 @@
 					<div class="section-header">
 						<h1 class="h2"><i class="fas fa-heart me-2"></i>Mis Mascotas en Adopción</h1>
 						<div class="d-flex gap-2 align-items-center">
+							<!-- Botón Hamburguesa (solo móviles) -->
+							<button class="menu-toggle" id="menuToggle7">
+								<i class="fas fa-bars"></i>
+							</button>
+							<!-- Botón de cambio de tema -->
+							<div class="theme-toggle-container">
+								<input type="checkbox" id="themeToggle7" class="theme-toggle-checkbox">
+								<label for="themeToggle7" class="theme-toggle-label">
+									<i class="fas fa-moon toggle-icon moon-icon"></i>
+									<i class="fas fa-sun toggle-icon sun-icon"></i>
+								</label>
+							</div>
 							<a th:href="@{/usuarios/inicio}" class="btn-volver-inicio">
 								<i class="fas fa-home"></i>
 							</a>

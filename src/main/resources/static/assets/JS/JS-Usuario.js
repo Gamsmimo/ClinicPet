@@ -77,10 +77,6 @@ $(document).ready(function() {
 			window.open('https://wa.me/573204767864?text=Hola,%20me%20gustaría%20agendar%20una%20cita', '_blank');
 		});
 
-		$('#go-to-shop-btn').click(function() {
-			alert('Redirigiendo a la tienda en línea...');
-		});
-
 		$('#delete-account-btn').click(function() {
 			eliminarCuentaUsuario();
 		});
@@ -689,3 +685,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Los datos del sidebar se cargan desde el servidor mediante Thymeleaf
 // No es necesario hacer llamadas AJAX adicionales
+
+// ===== FUNCIÓN PARA IR A LA TIENDA =====
+function goToShop() {
+	Swal.fire({
+		title: '🛍️ ¡Ir a la Tienda!',
+		html: `
+			<div style="text-align: center;">
+				<i class="fas fa-shopping-bag" style="font-size: 3rem; color: #018099; margin-bottom: 1rem;"></i>
+				<p style="font-size: 1.1rem; margin-bottom: 1rem;">
+					¿Deseas explorar nuestra tienda de productos para mascotas?
+				</p>
+				<p style="color: #666; font-size: 0.95rem;">
+					Encuentra alimentos, juguetes, accesorios y mucho más para tu mejor amigo 🐾
+				</p>
+			</div>
+		`,
+		icon: null,
+		showCancelButton: true,
+		confirmButtonColor: '#018099',
+		cancelButtonColor: '#6c757d',
+		confirmButtonText: '<i class="fas fa-store me-2"></i>Ir a la Tienda',
+		cancelButtonText: '<i class="fas fa-times me-2"></i>Cancelar',
+		customClass: {
+			popup: 'animated-popup',
+			confirmButton: 'btn-shop-confirm',
+			cancelButton: 'btn-shop-cancel'
+		},
+		backdrop: `
+			rgba(0,123,153,0.2)
+			left top
+			no-repeat
+		`,
+		showClass: {
+			popup: 'animate__animated animate__fadeInDown animate__faster'
+		},
+		hideClass: {
+			popup: 'animate__animated animate__fadeOutUp animate__faster'
+		}
+	}).then((result) => {
+		if (result.isConfirmed) {
+			// Mostrar mensaje de carga
+			Swal.fire({
+				title: 'Redirigiendo...',
+				html: '<i class="fas fa-spinner fa-spin fa-3x" style="color: #018099;"></i>',
+				showConfirmButton: false,
+				timer: 1000,
+				timerProgressBar: true,
+				allowOutsideClick: false
+			}).then(() => {
+				// Redirigir a la tienda
+				window.location.href = '/usuarios/tienda';
+			});
+		}
+	});
+}

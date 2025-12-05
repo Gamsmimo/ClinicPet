@@ -316,60 +316,7 @@ function updateCart() {
 	totalEl.textContent = `$${subtotal.toFixed(2)}`;
 }
 
-function showNotification(message) {
-	// Función removida - no se usan alertas
-	console.log(message);
-}
-
-// ===== NOTIFICACIÓN PARA CHECKOUT =====
-function showCheckoutNotification(message, type = 'info') {
-	const notification = document.createElement('div');
-	notification.className = `checkout-notification notification-${type}`;
-	
-	const icons = {
-		'success': 'check-circle',
-		'error': 'exclamation-circle',
-		'warning': 'exclamation-triangle',
-		'info': 'info-circle'
-	};
-	
-	const colors = {
-		'success': '#51CF66',
-		'error': '#FF6B6B',
-		'warning': '#FFD93D',
-		'info': '#018099'
-	};
-	
-	notification.innerHTML = `
-		<i class="fas fa-${icons[type]}"></i>
-		<span>${message}</span>
-	`;
-	
-	notification.style.cssText = `
-		position: fixed;
-		top: 100px;
-		right: 20px;
-		background: ${colors[type]};
-		color: white;
-		padding: 1rem 1.5rem;
-		border-radius: 10px;
-		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-		display: flex;
-		align-items: center;
-		gap: 0.8rem;
-		z-index: 10000;
-		animation: slideInRight 0.3s ease;
-		font-family: 'Fredoka', sans-serif;
-		font-weight: 500;
-	`;
-	
-	document.body.appendChild(notification);
-	
-	setTimeout(() => {
-		notification.style.animation = 'slideOutRight 0.3s ease';
-		setTimeout(() => notification.remove(), 300);
-	}, 3000);
-}
+// ===== NOTIFICACIONES - Usando sistema compartido desde notifications.js =====
 
 // ===== DATOS DE TIENDAS =====
 let stores = [];
@@ -461,7 +408,7 @@ async function selectStore(storeId) {
 	const productosLoaded = await loadProductsFromStore(storeId);
 	
 	if (!productosLoaded) {
-		alert('No se pudieron cargar los productos de esta tienda. Por favor, intenta de nuevo.');
+		showError('No se pudieron cargar los productos de esta tienda. Por favor, intenta de nuevo.');
 		return;
 	}
 	
@@ -674,7 +621,7 @@ function cerrarModal() {
 
 // Funciones de redirección para emergencias
 function redirigirVideollamada() {
-	alert("Redirigiendo a videollamada...");
+	showInfo("Redirigiendo a videollamada...", 2000);
 	// window.location.href = 'tu-url-videollamada';
 }
 

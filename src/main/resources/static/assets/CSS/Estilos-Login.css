@@ -34,6 +34,9 @@ body {
 	object-fit: cover;
 	object-position: center center;
 	background-color: #000000;
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 
 .login-container {
@@ -183,7 +186,8 @@ button:hover {
 	}
 
 	.background-image {
-		content: url('/assets/IMG/img1-mobile.jpeg');
+		object-fit: cover;
+		object-position: center;
 	}
 
 	.login-container {
