@@ -457,7 +457,7 @@
 
 	<!-- Modal Editar Perfil -->
 	<div id="profileModal" class="modal">
-		<div class="modal-content">
+		<div class="modal-contenido">
 			<span class="close" onclick="cerrarModal('profileModal')">&times;</span>
 			<h2>Editar Perfil</h2>
 			<form id="profileForm" th:action="@{/admin/perfil/editar}" method="post">
@@ -479,7 +479,7 @@
 	</div>
 
 	<!-- Modal Registrar Veterinario -->
-	<div id="vetModal" class="modal">
+	<div id="vetModal" class="modale">
 		<div class="modal-content">
 			<span class="close" onclick="cerrarModal('vetModal')">&times;</span>
 			<h2>Registrar Nuevo Veterinario</h2>
@@ -602,7 +602,7 @@
 	<!-- Modal Detalle Usuario -->
 	<div id="detalleUsuarioModal" class="modal"
 		th:style="${mostrarModal == 'usuario'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleUsuario != null}">
+		<div class="modal-contenido" th:if="${detalleUsuario != null}">
 			<a th:href="@{/admin(seccion='users')}" class="close">&times;</a>
 			<h2>Detalles de Usuario</h2>
 			<div style="display: grid; gap: 1rem;">
@@ -635,7 +635,7 @@
 	<!-- Modal Detalle Mascota -->
 	<div id="detalleMascotaModal" class="modal"
 		th:style="${mostrarModal == 'mascota'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleMascota != null}">
+		<div class="modal-contenido" th:if="${detalleMascota != null}">
 			<a th:href="@{/admin#pets}" class="close">&times;</a>
 			<h2>Detalles de Mascota</h2>
 			<div style="display: grid; gap: 1rem;">
@@ -669,7 +669,7 @@
 	<!-- Modal Detalle Veterinario -->
 	<div id="detalleVeterinarioModal" class="modal"
 		th:style="${mostrarModal == 'veterinario'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleVeterinario != null}">
+		<div class="modal-contenido" th:if="${detalleVeterinario != null}">
 			<a th:href="@{/admin#vets}" class="close">&times;</a>
 			<h2>Detalles de Veterinario</h2>
 			<div style="display: grid; gap: 1rem;">
@@ -712,7 +712,7 @@
 	<!-- Modal Detalle Veterinaria -->
 	<div id="detalleVeterinariaModal" class="modal"
 		th:style="${mostrarModal == 'veterinaria'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleVeterinaria != null}">
+		<div class="modal-contenido" th:if="${detalleVeterinaria != null}">
 			<a th:href="@{/admin#vets}" class="close">&times;</a>
 			<h2>Detalles de Veterinaria</h2>
 			<div style="display: grid; gap: 1rem;">
@@ -720,7 +720,7 @@
 					style="color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
 					Información General</h3>
 				<p><strong>Nombre:</strong> <span th:text="${detalleVeterinaria.nombre}">N/A</span></p>
-				<p><strong>RUT:</strong> <span th:text="${detalleVeterinaria.rut}">N/A</span></p>
+				<p><strong>NIT:</strong> <span th:text="${detalleVeterinaria.rut}">N/A</span></p>
 				<p><strong>Estado:</strong>
 					<span th:if="${detalleVeterinaria.estado == 'Activa'}" class="status active">Activa</span>
 					<span th:unless="${detalleVeterinaria.estado == 'Activa'}" class="status inactive">Inactiva</span>
@@ -747,7 +747,7 @@
 	<!-- Modal Detalle Reporte -->
 	<div id="detalleReporteModal" class="modal"
 		th:style="${mostrarModal == 'reporte'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleReporte != null}">
+		<div class="modal-contenido" th:if="${detalleReporte != null}">
 			<a th:href="@{/admin#pets}" class="close">&times;</a>
 			<h2>Detalles del Reporte de Maltrato</h2>
 			<div class="modal-reporte-content" style="display: grid; gap: 1rem;">
