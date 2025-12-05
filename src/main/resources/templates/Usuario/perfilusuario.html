@@ -441,18 +441,69 @@
 						</div>
 					</div>
 
-					<div class="card">
-						<div class="card-body">
-							<p class="text-muted mb-4">
-								Aquí puedes gestionar las mascotas que has publicado para adopción.
-								Para agregar una nueva mascota en adopción, ve a la sección de Adopciones.
-							</p>
+					<div th:if="${misAdopciones == null or misAdopciones.isEmpty() or !tieneAdopciones}"
+						class="text-center py-5"
+						style="background: var(--card-bg); border-radius: 20px; padding: 60px 20px; margin: 20px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.08);">
+						<i class="fas fa-heart fa-4x mb-4" style="color: var(--rosa-fuerte); opacity: 0.5;"></i>
+						<h3 style="color: var(--text-color); font-weight: 700; margin-bottom: 15px;">
+							No has publicado mascotas en adopción
+						</h3>
+						<p style="color: var(--text-color); opacity: 0.7; font-size: 1.1rem; margin-bottom: 30px;">
+							¡Ayuda a encontrar un hogar a una mascota que necesite amor!
+						</p>
+						<a th:href="@{/adopciones}" class="btn btn-primary"
+							style="padding: 15px 40px; font-size: 1.1rem; border-radius: 50px;">
+							<i class="fas fa-plus me-2"></i>Publicar Primera Mascota
+						</a>
+					</div>
 
-							<!-- Contenido se cargará dinámicamente -->
-							<div id="mis-adopciones-list">
-								<div class="text-center py-5">
-									<i class="fas fa-spinner fa-spin fa-3x mb-3"></i>
-									<p>Cargando...</p>
+					<!-- Grid de tarjetas de adopción (mismo estilo que adopcion.html) -->
+					<div th:if="${tieneAdopciones}" class="lista-mascotas" style="margin-top: 30px;">
+						<div class="card-mascota" th:each="adopcion : ${misAdopciones}">
+							<!-- Imagen con badge de estado -->
+							<div class="mascota-imagen-container">
+								<span class="badge-estado"
+									th:classappend="${adopcion.estado == 'DISPONIBLE' ? 'bg-success' : (adopcion.estado == 'EN_PROCESO' ? 'bg-warning text-dark' : 'bg-secondary')}"
+									th:text="${adopcion.estado == 'DISPONIBLE' ? 'En espera' : (adopcion.estado == 'EN_PROCESO' ? 'En Proceso' : 'Adoptado')}">
+									Estado
+								</span>
+								<img th:src="@{'/uploads/' + ${adopcion.imagen}}" th:alt="${adopcion.nombreMascota}"
+									onerror="this.src='/uploads/default.jpg'">
+							</div>
+
+							<!-- Información de la mascota -->
+							<div class="mascota-info">
+								<h3 class="mascota-nombre" th:text="${adopcion.nombreMascota}">Nombre</h3>
+
+								<!-- Detalles con etiquetas pasteles -->
+								<div class="mascota-detalles">
+									<span th:text="${adopcion.tipoMascota}">Tipo</span>
+									<span th:if="${adopcion.tamano != null and !#strings.isEmpty(adopcion.tamano)}"
+										th:text="${adopcion.tamano}">
+										Tamaño
+									</span>
+									<span th:if="${adopcion.edad != null}"
+										th:text="${adopcion.edad} + ' Año' + (${adopcion.edad} > 1 ? 's' : '')">
+										Edad
+									</span>
+								</div>
+
+								<!-- Raza -->
+								<h6 class="mascota-raza" th:text="'Raza: ' + ${adopcion.raza ?: 'Mestizo'}">Raza</h6>
+
+								<!-- Descripción -->
+								<p class="mascota-descripcion"
+									th:text="${#strings.abbreviate(adopcion.descripcion, 100)}">
+									Descripción breve de la mascota...
+								</p>
+
+								<!-- Acciones -->
+								<div class="mascota-acciones">
+									<!-- Botón Ver Detalles -->
+									<a th:href="@{/adopciones}" class="btn-ver-detalles"
+										title="Ver en la página de adopciones">
+										<i class="fas fa-eye"></i> Ver en Adopciones
+									</a>
 								</div>
 							</div>
 						</div>
@@ -491,168 +542,192 @@
 								</div>
 								<div class="card-body">
 									<form id="profile-form" th:object="${usuarioLogueado}"
-										th:action="@{/usuarios/perfilusuario/actualizarInfoPersonal}"
-										method="post" enctype="multipart/form-data">
+										th:action="@{/usuarios/perfilusuario/actualizarInfoPersonal}" method="post"
+										enctype="multipart/form-data">
 										<input type="hidden" th:field="*{id}" />
 										<input type="hidden" id="profile-picture-data" name="fotoPerfil">
 
 										<div class="row g-2">
-										<!-- Foto de Perfil - Columna Izquierda -->
-										<div class="col-md-1 text-center d-flex flex-column">
-											<!-- Foto Principal -->
-											<div class="profile-picture-container">
-												<img th:src="${usuarioLogueado.imagen} ?: @{/assets/IMG/humano.jpg}"
-													alt="Foto de perfil" class="rounded-circle img-fluid mb-1"
-													style="width: 90px; height: 90px; object-fit: cover; border: 2px solid var(--pastel-blue);"
-													id="current-profile-picture">
-												<p class="text-muted" style="font-size: 0.65rem; margin: 0.2rem 0;">JPG, PNG</p>
-												<input type="file" class="d-none" id="profile-picture-input"
-													accept="image/*" onchange="previewProfilePicture(this)">
-												<button type="button" class="btn btn-outline-primary btn-sm w-100 mb-1"
-													style="font-size: 0.65rem; padding: 0.2rem;"
-													onclick="document.getElementById('profile-picture-input').click()">
-													<i class="fas fa-upload"></i> Cambiar
-												</button>
-												<button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2"
-													style="font-size: 0.65rem; padding: 0.2rem;"
-													onclick="removeProfilePicture()">
-													<i class="fas fa-trash"></i> Eliminar
-												</button>
+											<!-- Foto de Perfil - Columna Izquierda -->
+											<div class="col-md-1 text-center d-flex flex-column">
+												<!-- Foto Principal -->
+												<div class="profile-picture-container">
+													<img th:src="${usuarioLogueado.imagen} ?: @{/assets/IMG/humano.jpg}"
+														alt="Foto de perfil" class="rounded-circle img-fluid mb-1"
+														style="width: 90px; height: 90px; object-fit: cover; border: 2px solid var(--pastel-blue);"
+														id="current-profile-picture">
+													<p class="text-muted" style="font-size: 0.65rem; margin: 0.2rem 0;">
+														JPG, PNG</p>
+													<input type="file" class="d-none" id="profile-picture-input"
+														accept="image/*" onchange="previewProfilePicture(this)">
+													<button type="button"
+														class="btn btn-outline-primary btn-sm w-100 mb-1"
+														style="font-size: 0.65rem; padding: 0.2rem;"
+														onclick="document.getElementById('profile-picture-input').click()">
+														<i class="fas fa-upload"></i> Cambiar
+													</button>
+													<button type="button"
+														class="btn btn-outline-secondary btn-sm w-100 mb-2"
+														style="font-size: 0.65rem; padding: 0.2rem;"
+														onclick="removeProfilePicture()">
+														<i class="fas fa-trash"></i> Eliminar
+													</button>
+												</div>
+
+												<!-- Preview (aparece debajo cuando se selecciona una imagen) -->
+												<div id="new-picture-preview" class="preview-container"
+													style="display: none;">
+													<hr style="margin: 0.5rem 0; border-color: var(--border-color);">
+													<p class="text-muted mb-2" style="font-size: 0.75rem;">Preview:</p>
+													<img id="picture-preview" class="rounded-circle mb-2"
+														style="width: 90px; height: 90px; object-fit: cover; border: 2px solid var(--secondary-color);">
+													<div class="d-flex flex-column gap-1">
+														<button type="button" class="btn btn-success btn-sm w-100"
+															style="font-size: 0.7rem; padding: 0.3rem;"
+															onclick="saveProfilePicture()">
+															<i class="fas fa-check me-1"></i>Guardar
+														</button>
+														<button type="button" class="btn btn-secondary btn-sm w-100"
+															style="font-size: 0.7rem; padding: 0.3rem;"
+															onclick="cancelProfilePicture()">
+															<i class="fas fa-times me-1"></i>Cancelar
+														</button>
+													</div>
+												</div>
 											</div>
-											
-											<!-- Preview (aparece debajo cuando se selecciona una imagen) -->
-											<div id="new-picture-preview" class="preview-container" style="display: none;">
-												<hr style="margin: 0.5rem 0; border-color: var(--border-color);">
-												<p class="text-muted mb-2" style="font-size: 0.75rem;">Preview:</p>
-												<img id="picture-preview" class="rounded-circle mb-2"
-													style="width: 90px; height: 90px; object-fit: cover; border: 2px solid var(--secondary-color);">
-												<div class="d-flex flex-column gap-1">
-													<button type="button" class="btn btn-success btn-sm w-100"
-														style="font-size: 0.7rem; padding: 0.3rem;"
-														onclick="saveProfilePicture()">
-														<i class="fas fa-check me-1"></i>Guardar
-													</button>
-													<button type="button" class="btn btn-secondary btn-sm w-100"
-														style="font-size: 0.7rem; padding: 0.3rem;"
-														onclick="cancelProfilePicture()">
-														<i class="fas fa-times me-1"></i>Cancelar
-													</button>
+
+											<!-- Información del formulario - 2 Columnas -->
+											<div class="col-md-11">
+												<div class="row g-2">
+													<!-- COLUMNA 1 -->
+													<div class="col-md-6">
+														<div class="row g-2">
+															<div class="col-12">
+																<label for="profile-name"
+																	class="form-label fw-bold">Nombres</label>
+																<input type="text" class="form-control"
+																	id="profile-name" th:field="*{nombres}" required
+																	placeholder="Ingresa tus nombres">
+															</div>
+															<div class="col-12">
+																<label for="profile-apellidos"
+																	class="form-label fw-bold">Apellidos</label>
+																<input type="text" class="form-control"
+																	id="profile-apellidos" th:field="*{apellidos}"
+																	required placeholder="Ingresa tus apellidos">
+															</div>
+															<div class="col-12">
+																<label for="profile-email"
+																	class="form-label fw-bold">Correo
+																	Electrónico</label>
+																<input type="email" class="form-control"
+																	id="profile-email" th:field="*{correo}" required
+																	placeholder="correo@ejemplo.com">
+															</div>
+															<div class="col-12">
+																<label for="profile-phone"
+																	class="form-label fw-bold">Teléfono</label>
+																<input type="tel" class="form-control"
+																	id="profile-phone" th:field="*{telefono}"
+																	placeholder="+57 123 456 7890">
+															</div>
+														</div>
+													</div>
+
+													<!-- COLUMNA 2 -->
+													<div class="col-md-6">
+														<div class="row g-2">
+															<div class="col-12">
+																<label for="profile-edad"
+																	class="form-label fw-bold">Edad</label>
+																<input type="number" class="form-control"
+																	id="profile-edad" th:field="*{edad}"
+																	placeholder="Tu edad">
+															</div>
+															<div class="col-12">
+																<label for="profile-address"
+																	class="form-label fw-bold">Dirección</label>
+																<input type="text" class="form-control"
+																	id="profile-address" th:field="*{direccion}"
+																	placeholder="Ingresa tu dirección completa">
+															</div>
+															<div class="col-12">
+																<label for="profile-tipoDocumento"
+																	class="form-label fw-bold">Tipo
+																	Documento</label>
+																<input type="text" class="form-control"
+																	id="profile-tipoDocumento"
+																	th:value="${usuarioLogueado.tipoDocumento}" readonly
+																	style="background-color: #f8f9fa; cursor: not-allowed;"
+																	placeholder="Tipo de documento">
+															</div>
+															<div class="col-12">
+																<label for="profile-numDocumento"
+																	class="form-label fw-bold">Número
+																	Documento</label>
+																<input type="text" class="form-control"
+																	id="profile-numDocumento" th:field="*{numDocumento}"
+																	placeholder="Número de documento">
+															</div>
+														</div>
+													</div>
+
+													<!-- Botón Guardar -->
+													<div class="col-12 text-center mt-2">
+														<button type="submit" class="btn btn-primary btn-sm px-4">
+															<i class="fas fa-save me-1"></i>Guardar Cambios
+														</button>
+													</div>
 												</div>
 											</div>
 										</div>
-										
-										<!-- Información del formulario - 2 Columnas -->
-										<div class="col-md-11">
-											<div class="row g-2">
-												<!-- COLUMNA 1 -->
-												<div class="col-md-6">
-													<div class="row g-2">
-														<div class="col-12">
-															<label for="profile-name" class="form-label fw-bold">Nombres</label>
-															<input type="text" class="form-control" id="profile-name"
-																th:field="*{nombres}" required
-																placeholder="Ingresa tus nombres">
-														</div>
-														<div class="col-12">
-															<label for="profile-apellidos" class="form-label fw-bold">Apellidos</label>
-															<input type="text" class="form-control" id="profile-apellidos"
-																th:field="*{apellidos}" required
-																placeholder="Ingresa tus apellidos">
-														</div>
-														<div class="col-12">
-															<label for="profile-email" class="form-label fw-bold">Correo Electrónico</label>
-															<input type="email" class="form-control" id="profile-email"
-																th:field="*{correo}" required
-																placeholder="correo@ejemplo.com">
-														</div>
-														<div class="col-12">
-															<label for="profile-phone" class="form-label fw-bold">Teléfono</label>
-															<input type="tel" class="form-control" id="profile-phone"
-																th:field="*{telefono}" placeholder="+57 123 456 7890">
-														</div>
-													</div>
-												</div>
-												
-												<!-- COLUMNA 2 -->
-												<div class="col-md-6">
-													<div class="row g-2">
-														<div class="col-12">
-															<label for="profile-edad" class="form-label fw-bold">Edad</label>
-															<input type="number" class="form-control" id="profile-edad"
-																th:field="*{edad}" placeholder="Tu edad">
-														</div>
-														<div class="col-12">
-															<label for="profile-address" class="form-label fw-bold">Dirección</label>
-															<input type="text" class="form-control" id="profile-address"
-																th:field="*{direccion}"
-																placeholder="Ingresa tu dirección completa">
-														</div>
-														<div class="col-12">
-															<label for="profile-tipoDocumento" class="form-label fw-bold">Tipo Documento</label>
-															<input type="text" class="form-control"
-																id="profile-tipoDocumento"
-																th:value="${usuarioLogueado.tipoDocumento}" readonly
-																style="background-color: #f8f9fa; cursor: not-allowed;"
-																placeholder="Tipo de documento">
-														</div>
-														<div class="col-12">
-															<label for="profile-numDocumento" class="form-label fw-bold">Número Documento</label>
-															<input type="text" class="form-control"
-																id="profile-numDocumento" th:field="*{numDocumento}"
-																placeholder="Número de documento">
-														</div>
-													</div>
-												</div>
-												
-												<!-- Botón Guardar -->
-												<div class="col-12 text-center mt-2">
-													<button type="submit" class="btn btn-primary btn-sm px-4">
-														<i class="fas fa-save me-1"></i>Guardar Cambios
-													</button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</form>
+									</form>
 								</div>
 							</div>
 						</div>
 
-					<!-- Botones de Seguridad y Eliminar Cuenta -->
-					<div class="col-12">
-						<div class="row g-2">
-							<!-- Seguridad -->
-							<div class="col-md-6">
-								<div class="card border-warning">
-									<div class="card-header bg-warning text-dark" style="padding: 0.4rem 0.6rem;">
-										<h6 class="mb-0" style="font-size: 0.9rem;"><i class="fas fa-key me-2"></i>Seguridad</h6>
-									</div>
-									<div class="card-body text-center" style="padding: 0.6rem;">
-										<p class="text-muted mb-2" style="font-size: 0.8rem;">Cambia tu contraseña regularmente</p>
-										<a th:href="@{/usuarios/recovery}" class="btn btn-warning btn-sm">
-											<i class="fas fa-lock me-1"></i>Cambiar Contraseña
-										</a>
+						<!-- Botones de Seguridad y Eliminar Cuenta -->
+						<div class="col-12">
+							<div class="row g-2">
+								<!-- Seguridad -->
+								<div class="col-md-6">
+									<div class="card border-warning">
+										<div class="card-header bg-warning text-dark" style="padding: 0.4rem 0.6rem;">
+											<h6 class="mb-0" style="font-size: 0.9rem;"><i
+													class="fas fa-key me-2"></i>Seguridad
+											</h6>
+										</div>
+										<div class="card-body text-center" style="padding: 0.6rem;">
+											<p class="text-muted mb-2" style="font-size: 0.8rem;">Cambia tu contraseña
+												regularmente
+											</p>
+											<a th:href="@{/usuarios/recovery}" class="btn btn-warning btn-sm">
+												<i class="fas fa-lock me-1"></i>Cambiar Contraseña
+											</a>
+										</div>
 									</div>
 								</div>
-							</div>
-							<!-- Eliminar Cuenta -->
-							<div class="col-md-6">
-								<div class="card border-danger">
-									<div class="card-header bg-danger text-white" style="padding: 0.4rem 0.6rem;">
-										<h6 class="mb-0" style="font-size: 0.9rem;"><i class="fas fa-exclamation-triangle me-2"></i>Zona de Peligro</h6>
-									</div>
-									<div class="card-body text-center" style="padding: 0.6rem;">
-										<p class="text-muted mb-2" style="font-size: 0.8rem;">Eliminación permanente de cuenta</p>
-										<button class="btn btn-outline-danger btn-sm" id="delete-account-btn">
-											<i class="fas fa-trash me-1"></i>Eliminar Cuenta
-										</button>
+								<!-- Eliminar Cuenta -->
+								<div class="col-md-6">
+									<div class="card border-danger">
+										<div class="card-header bg-danger text-white" style="padding: 0.4rem 0.6rem;">
+											<h6 class="mb-0" style="font-size: 0.9rem;"><i
+													class="fas fa-exclamation-triangle me-2"></i>Zona de Peligro</h6>
+										</div>
+										<div class="card-body text-center" style="padding: 0.6rem;">
+											<p class="text-muted mb-2" style="font-size: 0.8rem;">Eliminación permanente
+												de cuenta
+											</p>
+											<button class="btn btn-outline-danger btn-sm" id="delete-account-btn">
+												<i class="fas fa-trash me-1"></i>Eliminar Cuenta
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 
-				</div> <!-- .row g-2 config-main-layout -->
+					</div> <!-- .row g-2 config-main-layout -->
 				</section>
 
 			</main>

@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.clinicpet.demo.dto.ProductoDTO;
 import com.clinicpet.demo.dto.VentaDTO;
 import com.clinicpet.demo.dto.VeterinariaDTO;
+import com.clinicpet.demo.model.Adopcion;
 import com.clinicpet.demo.model.DetalleVenta;
 import com.clinicpet.demo.model.Inventario;
 import com.clinicpet.demo.model.Mascota;
@@ -48,6 +49,7 @@ import com.clinicpet.demo.repository.IProductoRepository;
 import com.clinicpet.demo.repository.IUsuarioRepository;
 import com.clinicpet.demo.repository.IVentaRepository;
 import com.clinicpet.demo.repository.IVeterinariaRepository;
+import com.clinicpet.demo.service.IAdopcionService;
 import com.clinicpet.demo.service.IMascotaService;
 import com.clinicpet.demo.service.IUsuarioService;
 import com.clinicpet.demo.service.PasswordResetService;
@@ -87,6 +89,9 @@ public class UsuarioController {
 	
 	@Autowired
 	private IEventoRepository eventoRepository;
+	
+	@Autowired
+	private IAdopcionService adopcionService;
 
 	@Autowired
 	private PasswordResetService passwordResetService;
@@ -276,6 +281,13 @@ public class UsuarioController {
 		List<Mascota> mascotas = mascotaService.buscarPorUsuario(usuarioLogueado.getId());
 		model.addAttribute("mascotas", mascotas);
 		model.addAttribute("tieneMascotas", !mascotas.isEmpty());
+		
+		
+		// ✅ NUEVO: Cargar las adopciones publicadas por el usuario
+		List<Adopcion> misAdopciones = adopcionService.buscarAdopcionesByUsuarioId(usuarioLogueado.getId());
+		model.addAttribute("misAdopciones", misAdopciones);
+		model.addAttribute("tieneAdopciones", !misAdopciones.isEmpty());
+		
 
 		// Para HTML (saludo, foto usuario, etc.)
 		model.addAttribute("usuarioLogueado", usuarioLogueado);
