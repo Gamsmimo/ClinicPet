@@ -382,3 +382,235 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	});
 });
+// ==================
+// FUNCIONALIDAD DE FILTRADO DE MASCOTAS
+// ==================
+
+document.addEventListener('DOMContentLoaded', function() {
+	const btnFiltrar = document.getElementById('filtrar');
+
+	if (btnFiltrar) {
+		btnFiltrar.addEventListener('click', function() {
+			filtrarMascotas();
+		});
+
+		// Agregar botón de limpiar filtros
+		const filtrosGrid = document.querySelector('.filtros-grid');
+		if (filtrosGrid && !document.getElementById('limpiar-filtros')) {
+			const limpiarBtn = document.createElement('div');
+			limpiarBtn.className = 'filtro-group';
+			limpiarBtn.innerHTML = `
+				<button id="limpiar-filtros" class="btn-filtrar" style="background: #6c757d;">
+					<i class="fas fa-redo"></i> Limpiar Filtros
+				</button>
+			`;
+			filtrosGrid.appendChild(limpiarBtn);
+
+			// Event listener para limpiar
+			document.getElementById('limpiar-filtros').addEventListener('click', function() {
+				document.getElementById('tipo-mascota').value = 'todos';
+				document.getElementById('tamanio-mascota').value = 'todos';
+				location.reload(); // Recargar la página para mostrar todas las mascotas
+			});
+		}
+	}
+});
+
+function filtrarMascotas() {
+	const tipoSelect = document.getElementById('tipo-mascota');
+	const tamanoSelect = document.getElementById('tamanio-mascota');
+
+	const tipo = tipoSelect.value;
+	const tamano = tamanoSelect.value;
+
+	// Mostrar loading
+	Swal.fire({
+		title: 'Buscando mascotas...',
+		text: 'Aplicando filtros',
+		allowOutsideClick: false,
+		showConfirmButton: false,
+		didOpen: () => {
+			Swal.showLoading();
+		}
+	});
+
+	// Construir URL con parámetros
+	let url = '/adopciones/filtrar?';
+	if (tipo) url += `tipo=${encodeURIComponent(tipo)}&`;
+	if (tamano) url += `tamano=${encodeURIComponent(tamano)}`;
+
+	fetch(url)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Error al filtrar mascotas');
+			}
+			return response.json();
+		})
+		.then(data => {
+			Swal.close();
+
+			if (data.error) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: data.error,
+					confirmButtonColor: '#667eea'
+				});
+				return;
+			}
+
+			// Actualizar la sección de mascotas disponibles
+			actualizarListaMascotas(data.adopciones, data.total);
+
+			// Mostrar mensaje de resultados
+			const tipoTexto = tipo === 'todos' ? 'todas las mascotas' : tipo + 's';
+			const tamanoTexto = tamano === 'todos' ? 'todos los tamaños' : 'tamaño ' + tamano;
+
+			Swal.fire({
+				icon: 'success',
+				title: 'Búsqueda completada',
+				text: `Se encontraron ${data.total} mascota(s) - ${tipoTexto}, ${tamanoTexto}`,
+				timer: 3000,
+				timerProgressBar: true,
+				showConfirmButton: false,
+				toast: true,
+				position: 'top-end'
+			});
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'No se pudo realizar la búsqueda. Por favor, intenta nuevamente.',
+				confirmButtonColor: '#667eea'
+			});
+		});
+}
+
+function actualizarListaMascotas(adopciones, total) {
+	console.log('Actualizando lista con', total, 'mascotas');
+
+	// Buscar todos los elementos necesarios
+	const seccionesMascotas = document.querySelectorAll('.mascotas-section');
+	let seccionMascotasDisponibles = null;
+
+	// Encontrar la sección correcta (la última o la que tiene el título correcto)
+	seccionesMascotas.forEach(seccion => {
+		const titulo = seccion.querySelector('.titulo-seccion');
+		if (titulo && titulo.textContent.includes('Mascotas Disponibles')) {
+			seccionMascotasDisponibles = seccion;
+		}
+	});
+
+	// Si no se encuentra por título, usar la última sección
+	if (!seccionMascotasDisponibles) {
+		seccionMascotasDisponibles = seccionesMascotas[seccionesMascotas.length - 1];
+	}
+
+	const mascotasContainer = seccionMascotasDisponibles.querySelector('.mascotas-container');
+	let listaMascotas = seccionMascotasDisponibles.querySelector('.lista-mascotas');
+	let noMascotas = seccionMascotasDisponibles.querySelector('.no-mascotas');
+
+	if (adopciones.length === 0) {
+		// No hay resultados
+		console.log('No hay resultados para mostrar');
+		if (listaMascotas) {
+			listaMascotas.style.display = 'none';
+		}
+
+		if (noMascotas) {
+			noMascotas.style.display = 'flex';
+			noMascotas.innerHTML = `
+				<i class="fas fa-search fa-3x"></i>
+				<p>No se encontraron mascotas con los filtros seleccionados</p>
+			`;
+		} else {
+			// Crear el mensaje si no existe
+			const nuevoNoMascotas = document.createElement('div');
+			nuevoNoMascotas.className = 'no-mascotas';
+			nuevoNoMascotas.innerHTML = `
+				<i class="fas fa-search fa-3x"></i>
+				<p>No se encontraron mascotas con los filtros seleccionados</p>
+			`;
+			mascotasContainer.appendChild(nuevoNoMascotas);
+		}
+		return;
+	}
+
+	// Hay resultados - MOSTRAR LAS MASCOTAS
+	console.log('Mostrando', adopciones.length, 'mascotas');
+
+	// Ocultar mensaje de "no mascotas" si existe
+	if (noMascotas) {
+		noMascotas.style.display = 'none';
+	}
+
+	// Asegurarse de que existe el contenedor de lista
+	if (!listaMascotas) {
+		listaMascotas = document.createElement('div');
+		listaMascotas.className = 'lista-mascotas';
+		mascotasContainer.appendChild(listaMascotas);
+	}
+
+	// Mostrar y limpiar la lista
+	listaMascotas.style.display = 'grid';
+	listaMascotas.innerHTML = '';
+
+	// Agregar las tarjetas de mascotas filtradas
+	adopciones.forEach(adopcion => {
+		console.log('Creando tarjeta para:', adopcion.nombreMascota);
+		const card = crearTarjetaMascota(adopcion);
+		listaMascotas.appendChild(card);
+	});
+
+	// Ocultar paginación si existe
+	const paginacion = seccionMascotasDisponibles.querySelector('.pagination-nav');
+	if (paginacion) {
+		paginacion.style.display = 'none';
+	}
+
+	// Scroll suave hacia los resultados
+	setTimeout(() => {
+		seccionMascotasDisponibles.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}, 100);
+}
+
+function crearTarjetaMascota(adopcion) {
+	const card = document.createElement('div');
+	card.className = 'card-mascota';
+
+	const imagenUrl = adopcion.imagen && adopcion.imagen !== 'default.jpg'
+		? `/uploads/${adopcion.imagen}`
+		: '/uploads/default.jpg';
+
+	const edad = adopcion.edad ? `${adopcion.edad} Año${adopcion.edad > 1 ? 's' : ''}` : '';
+	const tamano = adopcion.tamano || '';
+	const raza = adopcion.raza || 'Mestizo / No especificada';
+	const descripcion = adopcion.descripcion || 'Sin descripción disponible.';
+	const descripcionCorta = descripcion.length > 150 ? descripcion.substring(0, 150) + '...' : descripcion;
+
+	card.innerHTML = `
+		<div class="mascota-imagen-container">
+			<span class="badge-estado bg-success">En espera</span>
+			<img src="${imagenUrl}" alt="${adopcion.nombreMascota}" onerror="this.src='/uploads/default.jpg'">
+		</div>
+		<div class="mascota-info">
+			<h3 class="mascota-nombre">${adopcion.nombreMascota}</h3>
+			<div class="mascota-detalles">
+				<span>${adopcion.tipoMascota}</span>
+				${tamano ? `<span>${tamano}</span>` : ''}
+				${edad ? `<span>${edad}</span>` : ''}
+			</div>
+			<h6 class="mascota-raza">Raza: ${raza}</h6>
+			<p class="mascota-descripcion">${descripcionCorta}</p>
+			<div class="mascota-acciones">
+				<button class="btn-ver-detalles" onclick="verDetalles(${adopcion.id})">
+					<i class="fas fa-eye"></i> Ver Detalles
+				</button>
+			</div>
+		</div>
+	`;
+
+	return card;
+}

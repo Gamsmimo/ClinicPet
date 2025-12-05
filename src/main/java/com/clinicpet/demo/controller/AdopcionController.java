@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -350,8 +351,68 @@ public class AdopcionController {
 		map.put("esperando", adopcionService.contarPorEstado(Adopcion.ESTADO_DISPONIBLE));
 		return map;
 	}
-	
-	
-	//PARA FILTRAR MASCOTAS
+
+	// PARA FILTRAR MASCOTAS
+	@GetMapping("/filtrar")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> filtrarMascotas(@RequestParam(required = false) String tipo,
+			@RequestParam(required = false) String tamano,
+			@SessionAttribute(value = "usuarioLogueado", required = false) Usuario usuarioLogueado) {
+
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			if (usuarioLogueado == null) {
+				response.put("error", "Usuario no autenticado");
+				return ResponseEntity.status(401).body(response);
+			}
+
+			// Obtener todas las adopciones disponibles
+			List<Adopcion> todasLasAdopciones = adopcionService.buscarDisponibles(null).getContent();
+
+			// Filtrar por usuario (excluir las del usuario actual)
+			List<Adopcion> adopcionesFiltradas = todasLasAdopciones.stream()
+					.filter(a -> !a.getUsuario().getId().equals(usuarioLogueado.getId()))
+					.collect(java.util.stream.Collectors.toList());
+
+			// Aplicar filtro de tipo si no es "todos"
+			if (tipo != null && !tipo.equalsIgnoreCase("todos")) {
+				adopcionesFiltradas = adopcionesFiltradas.stream()
+						.filter(a -> a.getTipoMascota() != null && a.getTipoMascota().equalsIgnoreCase(tipo))
+						.collect(java.util.stream.Collectors.toList());
+			}
+
+			// Aplicar filtro de tamaño si no es "todos"
+			if (tamano != null && !tamano.equalsIgnoreCase("todos")) {
+				adopcionesFiltradas = adopcionesFiltradas.stream()
+						.filter(a -> a.getTamano() != null && a.getTamano().equalsIgnoreCase(tamano))
+						.collect(java.util.stream.Collectors.toList());
+			}
+
+			// Convertir a formato JSON
+			List<Map<String, Object>> adopcionesJson = new ArrayList<>();
+			for (Adopcion adopcion : adopcionesFiltradas) {
+				Map<String, Object> adopcionMap = new HashMap<>();
+				adopcionMap.put("id", adopcion.getId());
+				adopcionMap.put("nombreMascota", adopcion.getNombreMascota());
+				adopcionMap.put("tipoMascota", adopcion.getTipoMascota());
+				adopcionMap.put("raza", adopcion.getRaza());
+				adopcionMap.put("edad", adopcion.getEdad());
+				adopcionMap.put("tamano", adopcion.getTamano());
+				adopcionMap.put("descripcion", adopcion.getDescripcion());
+				adopcionMap.put("imagen", adopcion.getImagen());
+				adopcionMap.put("estado", adopcion.getEstado());
+				adopcionesJson.add(adopcionMap);
+			}
+
+			response.put("adopciones", adopcionesJson);
+			response.put("total", adopcionesFiltradas.size());
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			response.put("error", "Error al filtrar mascotas: " + e.getMessage());
+			return ResponseEntity.status(500).body(response);
+		}
+	}
 
 }
