@@ -34,9 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.clinicpet.demo.dto.ProductoDTO;
 import com.clinicpet.demo.dto.VentaDTO;
 import com.clinicpet.demo.dto.VeterinariaDTO;
+import com.clinicpet.demo.model.Adopcion;
 import com.clinicpet.demo.model.DetalleVenta;
 import com.clinicpet.demo.model.Inventario;
-import com.clinicpet.demo.model.Evento;
 import com.clinicpet.demo.model.Mascota;
 import com.clinicpet.demo.model.Pago;
 import com.clinicpet.demo.model.Producto;
@@ -46,10 +46,14 @@ import com.clinicpet.demo.model.Veterinaria;
 import com.clinicpet.demo.repository.IEventoRepository;
 import com.clinicpet.demo.repository.IInventarioRepository;
 import com.clinicpet.demo.repository.IProductoRepository;
+import com.clinicpet.demo.repository.IUsuarioRepository;
 import com.clinicpet.demo.repository.IVentaRepository;
 import com.clinicpet.demo.repository.IVeterinariaRepository;
+import com.clinicpet.demo.service.IAdopcionService;
 import com.clinicpet.demo.service.IMascotaService;
 import com.clinicpet.demo.service.IUsuarioService;
+import com.clinicpet.demo.service.PasswordResetService;
+import jakarta.mail.MessagingException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -64,6 +68,9 @@ public class UsuarioController {
 
 	@Autowired
 	private IUsuarioService usuarioService;
+
+	@Autowired
+	private IUsuarioRepository usuarioRepository;
 
 	@Autowired
 	private IMascotaService mascotaService;
@@ -82,6 +89,18 @@ public class UsuarioController {
 	
 	@Autowired
 	private IEventoRepository eventoRepository;
+	
+	@Autowired
+	private IAdopcionService adopcionService;
+
+	@Autowired
+	private PasswordResetService passwordResetService;
+
+	@Autowired
+	private org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder passwordEncoder;
+
+	@Autowired
+	private com.clinicpet.demo.service.EmailService emailService;
 
 	// Mostrar formulario de login (unificado a vista "iniciarsesion")
 	@GetMapping("/iniciarsesion")
@@ -98,7 +117,26 @@ public class UsuarioController {
 			Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorCorreo(usuarioLogin.getCorreo());
 			if (usuarioOpt.isPresent()) {
 				Usuario usuario = usuarioOpt.get();
-				if (usuario.getPassword().equals(usuarioLogin.getPassword()) && usuario.isActivo()) {
+				// 🔧 LOGIN HÍBRIDO: Detecta formato y migra automáticamente
+				boolean passwordValid = false;
+				
+				if (usuario.getPassword().startsWith("$2a$") || usuario.getPassword().startsWith("$2b$")) {
+					// Contraseña en formato BCrypt
+					passwordValid = passwordEncoder.matches(usuarioLogin.getPassword(), usuario.getPassword());
+				} else {
+					// Contraseña en texto plano (migración automática)
+					passwordValid = usuario.getPassword().equals(usuarioLogin.getPassword());
+					
+					if (passwordValid) {
+						// Migrar automáticamente a BCrypt
+						String contrasenaEncriptada = passwordEncoder.encode(usuarioLogin.getPassword());
+						usuario.setPassword(contrasenaEncriptada);
+						usuarioRepository.save(usuario);
+						LOGGER.info("🔄 Contraseña migrada a BCrypt para usuario: {}", usuario.getCorreo());
+					}
+				}
+				
+				if (passwordValid && usuario.isActivo()) {
 					session.setAttribute("usuarioLogueado", usuario);
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
 
@@ -126,6 +164,42 @@ public class UsuarioController {
 																										// datos
 																										// ingresados
 			return "IniciarSesion/iniciarsesion"; // Corregido: unificado a "iniciarsesion"
+		}
+	}
+
+	// ==================== DIAGNÓSTICO DE CORREO ====================
+	
+	@GetMapping("/test-email")
+	@ResponseBody
+	public ResponseEntity<?> testEmailDirecto() {
+		try {
+			LOGGER.info("🔧 INICIANDO PRUEBA DIRECTA DE CORREO");
+			
+			// Enviar correo de prueba directo
+			String resultado = emailService.enviarCorreoRecuperacion(
+				"helpyourpet79@gmail.com", 
+				"token-de-prueba-123", 
+				"Usuario Prueba"
+			);
+			
+			LOGGER.info("✅ PRUEBA DE CORREO COMPLETADA: {}", resultado);
+			
+			return ResponseEntity.ok(java.util.Map.of(
+				"status", "success",
+				"message", "Correo de prueba enviado exitosamente",
+				"resultado", resultado != null ? resultado : "Correo enviado"
+			));
+			
+		} catch (Exception e) {
+			LOGGER.error("❌ ERROR EN PRUEBA DE CORREO: {}", e.getMessage(), e);
+			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(java.util.Map.of(
+					"status", "error",
+					"message", "Error al enviar correo de prueba",
+					"error", e.getMessage(),
+					"fullError", e.toString()
+				));
 		}
 	}
 
@@ -195,7 +269,7 @@ public class UsuarioController {
 	public String perfilusuario(Model model, HttpSession session) {
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
-			return "redirect:/usuarios/iniciarsesion";
+			return "redirect:/iniciarsesion";
 		}
 
 		// âœ… AGREGAR ESTA LÃNEA - Pasar el ID al modelo
@@ -207,6 +281,13 @@ public class UsuarioController {
 		List<Mascota> mascotas = mascotaService.buscarPorUsuario(usuarioLogueado.getId());
 		model.addAttribute("mascotas", mascotas);
 		model.addAttribute("tieneMascotas", !mascotas.isEmpty());
+		
+		
+		// ✅ NUEVO: Cargar las adopciones publicadas por el usuario
+		List<Adopcion> misAdopciones = adopcionService.buscarAdopcionesByUsuarioId(usuarioLogueado.getId());
+		model.addAttribute("misAdopciones", misAdopciones);
+		model.addAttribute("tieneAdopciones", !misAdopciones.isEmpty());
+		
 
 		// Para HTML (saludo, foto usuario, etc.)
 		model.addAttribute("usuarioLogueado", usuarioLogueado);
@@ -799,6 +880,91 @@ public class UsuarioController {
 		if (value instanceof Double) return ((Double) value).intValue();
 		if (value instanceof String) return Integer.parseInt((String) value);
 		return Integer.parseInt(value.toString());
+	}
+	
+	@PostMapping("/api/password-reset/request")
+	@ResponseBody
+	public ResponseEntity<?> solicitarRecuperacion(@RequestBody Map<String, String> request) {
+		try {
+			String email = request.get("email");
+			if (email == null || email.trim().isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("error", "El correo electrónico es requerido"));
+			}
+			
+			LOGGER.info("🔐 Solicitud de recuperación para correo: {}", email);
+			
+			passwordResetService.solicitarRecuperacion(email.trim());
+			
+			// Siempre retornamos éxito para no revelar si el correo existe o no
+			return ResponseEntity.ok(Map.of(
+				"mensaje", "Si el correo está registrado, recibirás un enlace de recuperación",
+				"success", true
+			));
+			
+		} catch (MessagingException e) {
+			LOGGER.error("❌ Error al enviar correo de recuperación: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(Map.of("error", "Error al enviar el correo de recuperación. Por favor intenta más tarde."));
+		} catch (Exception e) {
+			LOGGER.error("❌ Error en solicitud de recuperación: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(Map.of("error", "Error al procesar la solicitud. Por favor intenta más tarde."));
+		}
+	}
+	
+	@PostMapping("/api/password-reset/confirm")
+	@ResponseBody
+	public ResponseEntity<?> restablecerContrasena(@RequestBody Map<String, String> request) {
+		try {
+			String token = request.get("token");
+			String nuevaContrasena = request.get("nuevaContrasena");
+			
+			if (token == null || token.trim().isEmpty()) {
+				return ResponseEntity.badRequest().body(Map.of("error", "El token de recuperación es requerido"));
+			}
+			
+			if (nuevaContrasena == null || nuevaContrasena.length() < 6) {
+				return ResponseEntity.badRequest().body(Map.of("error", "La contraseña debe tener al menos 6 caracteres"));
+			}
+			
+			LOGGER.info("🔐 Intento de restablecer contraseña con token: {}", token.substring(0, 8) + "...");
+			
+			String resultado = passwordResetService.restablecerContrasena(token.trim(), nuevaContrasena);
+			
+			if (resultado.contains("expirado") || resultado.contains("inválido")) {
+				return ResponseEntity.badRequest().body(Map.of("error", resultado));
+			}
+			
+			return ResponseEntity.ok(Map.of(
+				"mensaje", resultado,
+				"success", true
+			));
+			
+		} catch (Exception e) {
+			LOGGER.error("❌ Error al restablecer contraseña: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(Map.of("error", "Error al restablecer la contraseña. Por favor solicita un nuevo enlace."));
+		}
+	}
+	
+	@GetMapping("/recovery-contra")
+	public String mostrarRestablecerContrasena(@RequestParam(required = false) String token, Model model) {
+		if (token == null || token.trim().isEmpty()) {
+			model.addAttribute("error", "Token de recuperación no proporcionado");
+			return "RestablecerContraseña/recovery-contra";
+		}
+		
+		// Validar token antes de mostrar el formulario
+		String validacion = passwordResetService.validarToken(token);
+		if (validacion.contains("inválido") || validacion.contains("expirado")) {
+			model.addAttribute("error", validacion);
+			model.addAttribute("tokenInvalido", true);
+		} else {
+			model.addAttribute("token", token);
+			model.addAttribute("tokenValido", true);
+		}
+		
+		return "RestablecerContraseña/recovery-contra";
 	}
 
 }

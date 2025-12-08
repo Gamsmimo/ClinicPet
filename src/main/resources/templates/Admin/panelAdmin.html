@@ -21,13 +21,13 @@
 			</div>
 		</div>
 		<div class="user-controls">
-			<!-- Botón de notificaciones -->
+			<!-- Botón de notificaciones 
 			<button id="notificationBell" class="theme-toggle-btn notification-bell" aria-label="Notificaciones"
 				title="Notificaciones">
 				<i class="bi bi-bell-fill"></i>
 				<span th:if="${reportesPendientes > 0}" class="notification-badge"
 					th:text="${reportesPendientes}">0</span>
-			</button>
+			</button>-->
 			<!-- Botón de cambio de tema -->
 			<button id="themeToggle" class="theme-toggle-btn" aria-label="Cambiar tema">
 				<i class="bi bi-moon-fill theme-icon"></i>
@@ -44,12 +44,12 @@
 		<!-- Sidebar -->
 		<nav class="sidebar">
 			<ul class="nav-menu">
-				<li><a href="#" class="nav-link active" data-section="dashboard">Dashboard</a></li>
+				<li><a href="#" class="nav-link active" data-section="dashboard">Inicio</a></li>
 				<li><a href="#" class="nav-link" data-section="users">Gestión de Usuarios</a></li>
 				<li><a href="#" class="nav-link" data-section="pets">Gestión de Mascotas</a></li>
 				<li><a href="#" class="nav-link" data-section="vets">Gestión Veterinaria</a></li>
-				<li><a href="#" class="nav-link" data-section="settings">Configuración General</a></li>
-				<li><a href="#" class="nav-link" data-section="security">Control y Seguridad</a></li>
+				<!--<li><a href="#" class="nav-link" data-section="settings">Configuración General</a></li>
+				<li><a href="#" class="nav-link" data-section="security">Control y Seguridad</a></li>-->
 				<li><a href="#" class="nav-link" data-section="profile">Perfil Administrador</a></li>
 				<li><a href="#" class="nav-link logout-nav-btn" onclick="cerrarSesion(event)"><i class="bi bi-box-arrow-right"></i>Cerrar Sesión</a>
 				</li>
@@ -68,7 +68,7 @@
 
 			<!-- Dashboard -->
 			<section id="dashboard" class="content-section active">
-				<h2>Dashboard</h2>
+				<h2>Inicio</h2>
 				<div class="dashboard-cards">
 					<div class="card">
 						<h3>Usuarios Activos</h3>
@@ -82,10 +82,10 @@
 						<h3>Veterinarias Activas</h3>
 						<p class="stat-number" th:text="${totalVeterinarias}">0</p>
 					</div>
-					<div class="card">
+					<!--<div class="card">
 						<h3>Reportes Pendientes</h3>
 						<p class="stat-number" th:text="${totalReportes}">0</p>
-					</div>
+					</div>-->
 				</div>
 			</section>
 
@@ -141,7 +141,7 @@
 				<h2>Gestión de Mascotas</h2>
 				<div class="tabs">
 					<button class="tab-btn active" data-tab="pets-tab">Mascotas Registradas</button>
-					<button class="tab-btn" data-tab="abuse-tab">Reportes de Maltrato</button>
+					<!--<button class="tab-btn" data-tab="abuse-tab">Reportes de Maltrato</button>-->
 				</div>
 
 				<div class="tab-content active" id="pets-tab">
@@ -236,8 +236,8 @@
 				<h2>Gestión Veterinaria</h2>
 
 				<div class="tabs">
-					<button class="tab-btn active" data-tab="clinics-vet-tab">Clínicas y Veterinarios</button>
-					<button class="tab-btn" data-tab="reviews-tab">Calificaciones y Comentarios</button>
+					<button class="tab-btn active" data-tab="clinics-vet-tab">Clínicas</button>
+					<!--<button class="tab-btn" data-tab="reviews-tab">Calificaciones y Comentarios</button>-->
 				</div>
 
 				<div class="tab-content active" id="clinics-vet-tab">
@@ -457,7 +457,7 @@
 
 	<!-- Modal Editar Perfil -->
 	<div id="profileModal" class="modal">
-		<div class="modal-content">
+		<div class="modal-contenido">
 			<span class="close" onclick="cerrarModal('profileModal')">&times;</span>
 			<h2>Editar Perfil</h2>
 			<form id="profileForm" th:action="@{/admin/perfil/editar}" method="post">
@@ -479,7 +479,7 @@
 	</div>
 
 	<!-- Modal Registrar Veterinario -->
-	<div id="vetModal" class="modal">
+	<div id="vetModal" class="modale">
 		<div class="modal-content">
 			<span class="close" onclick="cerrarModal('vetModal')">&times;</span>
 			<h2>Registrar Nuevo Veterinario</h2>
@@ -602,7 +602,7 @@
 	<!-- Modal Detalle Usuario -->
 	<div id="detalleUsuarioModal" class="modal"
 		th:style="${mostrarModal == 'usuario'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleUsuario != null}">
+		<div class="modal-contenido" th:if="${detalleUsuario != null}">
 			<a th:href="@{/admin(seccion='users')}" class="close">&times;</a>
 			<h2>Detalles de Usuario</h2>
 			<div style="display: grid; gap: 1rem;">
@@ -635,7 +635,7 @@
 	<!-- Modal Detalle Mascota -->
 	<div id="detalleMascotaModal" class="modal"
 		th:style="${mostrarModal == 'mascota'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleMascota != null}">
+		<div class="modal-contenido" th:if="${detalleMascota != null}">
 			<a th:href="@{/admin#pets}" class="close">&times;</a>
 			<h2>Detalles de Mascota</h2>
 			<div style="display: grid; gap: 1rem;">
@@ -669,7 +669,7 @@
 	<!-- Modal Detalle Veterinario -->
 	<div id="detalleVeterinarioModal" class="modal"
 		th:style="${mostrarModal == 'veterinario'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleVeterinario != null}">
+		<div class="modal-contenido" th:if="${detalleVeterinario != null}">
 			<a th:href="@{/admin#vets}" class="close">&times;</a>
 			<h2>Detalles de Veterinario</h2>
 			<div style="display: grid; gap: 1rem;">
@@ -712,7 +712,7 @@
 	<!-- Modal Detalle Veterinaria -->
 	<div id="detalleVeterinariaModal" class="modal"
 		th:style="${mostrarModal == 'veterinaria'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleVeterinaria != null}">
+		<div class="modal-contenido" th:if="${detalleVeterinaria != null}">
 			<a th:href="@{/admin#vets}" class="close">&times;</a>
 			<h2>Detalles de Veterinaria</h2>
 			<div style="display: grid; gap: 1rem;">
@@ -720,7 +720,7 @@
 					style="color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
 					Información General</h3>
 				<p><strong>Nombre:</strong> <span th:text="${detalleVeterinaria.nombre}">N/A</span></p>
-				<p><strong>RUT:</strong> <span th:text="${detalleVeterinaria.rut}">N/A</span></p>
+				<p><strong>NIT:</strong> <span th:text="${detalleVeterinaria.rut}">N/A</span></p>
 				<p><strong>Estado:</strong>
 					<span th:if="${detalleVeterinaria.estado == 'Activa'}" class="status active">Activa</span>
 					<span th:unless="${detalleVeterinaria.estado == 'Activa'}" class="status inactive">Inactiva</span>
@@ -747,7 +747,7 @@
 	<!-- Modal Detalle Reporte -->
 	<div id="detalleReporteModal" class="modal"
 		th:style="${mostrarModal == 'reporte'} ? 'display: flex;' : 'display: none;'">
-		<div class="modal-content" th:if="${detalleReporte != null}">
+		<div class="modal-contenido" th:if="${detalleReporte != null}">
 			<a th:href="@{/admin#pets}" class="close">&times;</a>
 			<h2>Detalles del Reporte de Maltrato</h2>
 			<div class="modal-reporte-content" style="display: grid; gap: 1rem;">
