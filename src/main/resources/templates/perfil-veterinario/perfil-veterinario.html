@@ -485,7 +485,7 @@
 								</div>
 							</div> -->
 
-							<!-- Botones y Paginación 
+			<!-- Botones y Paginación 
 							<div class="hc-section hc-section-last">
 								<div class="hc-buttons">
 									<button class="hc-btn hc-btn-edit" id="hcEditBtn"><i
@@ -564,6 +564,9 @@
 			<section id="eventos" class="content-section">
 				<div class="section-header">
 					<h2><i class="fa-solid fa-calendar-week"></i> Eventos y Campañas</h2>
+					<button class="btn btn-primary" onclick="openModal('new-event')">
+						<i class="fas fa-plus"></i> Agregar Evento
+					</button>
 				</div>
 
 				<div class="cards-container" id="cardsContainer">
@@ -736,7 +739,7 @@
 									<input type="file" name="foto" id="inputFoto" accept="image/*"
 										style="display: none;" onchange="previewImage(event)">
 									<small class="config-photo-hint">
-										<i class="fas fa-info-circle"></i> Cualquier imagen (Máx. 10MB)
+										<i class="fas fa-info-circle"></i> Imagen JPG o PNG (Máx. 10MB)
 									</small>
 								</div>
 
@@ -752,7 +755,7 @@
 								</div>
 							</div>
 
-							<!-- Columna derecha: Información en dos columnas -->
+								<!-- Columna derecha: Información en dos columnas -->
 							<div class="config-info-section">
 								<!-- Información Personal -->
 								<div class="config-info-group">
