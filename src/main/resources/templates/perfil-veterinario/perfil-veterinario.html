@@ -169,7 +169,12 @@
 				<button class="hamburger-menu-btn" id="hamburgerBtn" aria-label="Abrir menú">
 					<i class="fas fa-bars"></i>
 				</button>
-
+			</div>
+			<div class="search-bar">
+				<input type="text" placeholder="Buscar...">
+				<i class="fas fa-search"></i>
+			</div>
+			<div class="user-actions">
 				<!-- Toggle Modo Oscuro/Claro -->
 				<div class="theme-toggle-container">
 					<input type="checkbox" id="themeToggle" class="theme-toggle-checkbox">
@@ -178,12 +183,6 @@
 						<i class="bi bi-sun-fill toggle-icon sun-icon"></i>
 					</label>
 				</div>
-			</div>
-			<div class="search-bar">
-				<input type="text" placeholder="Buscar...">
-				<i class="fas fa-search"></i>
-			</div>
-			<div class="user-actions">
 			</div>
 		</header>
 
@@ -203,12 +202,12 @@
 							<i class="fas fa-paw"></i>
 							<h3>0</h3>
 							<p>Mascotas atendidas hasta la fecha</p>
-						</div>
-						<div class="card card-summary bg-warning">
-							<i class="fas fa-heart"></i>
-							<h3>0</h3>
-							<p>Adopciones</p>
 						</div> -->
+						<div class="card card-summary bg-warning">
+							<i class="fa-solid fa-calendar-week"></i>
+							<h3 th:text="${#lists.size(eventosVet)}">0</h3>
+							<p>Eventos</p>
+						</div>
 						<div class="card card-summary bg-info">
 							<i class="fas fa-shopping-bag"></i>
 							<h3>0</h3>
@@ -514,7 +513,7 @@
 
 
 
-			<!-- Sección Adopciones -->
+			<!-- Sección Adopciones 
 			<section id="adopciones" class="content-section">
 				<div class="section-header">
 					<h2><i class="fas fa-heart"></i>Adopciones Realizadas</h2>
@@ -556,18 +555,18 @@
 							</div>
 						</div>
 					</div>
-					<!-- Más adopciones... -->
 				</div>
-			</section>
+			</section> -->
 
 			<!-- Eventos y Campañas -->
 			<section id="eventos" class="content-section">
 				<div class="section-header">
 					<h2><i class="fa-solid fa-calendar-week"></i> Eventos y Campañas</h2>
 					<button class="btn btn-primary" onclick="openModal('new-event')">
-						<i class="fas fa-plus"></i> Agregar Evento
+						<i class="fas fa-plus"></i> Crear evento
 					</button>
 				</div>
+				
 
 				<div class="cards-container" id="cardsContainer">
 					<div class="event-card" th:each="evento : ${eventosVet}" th:data-id="${evento.id}">
@@ -728,9 +727,7 @@
 			                                               @{${session.usuarioLogueado.imagen}} : 
 			                                               @{'/uploads/default.jpg'}" alt="Foto de perfil"
 											class="config-profile-img">
-										<div class="config-photo-badge">
-											<i class="fas fa-camera"></i>
-										</div>
+
 									</div>
 									<button type="button" class="config-change-photo-btn"
 										onclick="document.getElementById('inputFoto').click()">
@@ -739,7 +736,7 @@
 									<input type="file" name="foto" id="inputFoto" accept="image/*"
 										style="display: none;" onchange="previewImage(event)">
 									<small class="config-photo-hint">
-										<i class="fas fa-info-circle"></i> Imagen JPG o PNG (Máx. 10MB)
+										<i class="fas fa-info-circle"></i> Cualquier imagen (Máx. 10MB)
 									</small>
 								</div>
 
@@ -755,7 +752,7 @@
 								</div>
 							</div>
 
-								<!-- Columna derecha: Información en dos columnas -->
+							<!-- Columna derecha: Información en dos columnas -->
 							<div class="config-info-section">
 								<!-- Información Personal -->
 								<div class="config-info-group">

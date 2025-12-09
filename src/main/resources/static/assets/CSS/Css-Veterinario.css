@@ -206,18 +206,13 @@ a {
 	z-index: 100;
 }
 
-.top-bar-left {
-	display: flex;
-	align-items: center;
-	gap: 15px;
-}
-
 .btn-menu {
 	background: none;
 	border: none;
 	font-size: 1.2rem;
 	color: var(--gray);
 	cursor: pointer;
+	margin-right: 15px;
 }
 
 .search-bar {
@@ -1870,7 +1865,7 @@ textarea.hc-editable {
 
 /* Sección Configuración */
 .config-container {
-	background: white;
+	background: var(--bg-card);
 	border-radius: 15px;
 	padding: 30px;
 	margin-top: 20px;
@@ -1977,7 +1972,7 @@ textarea.hc-editable {
 /* Vista previa de nueva foto */
 .new-photo-preview {
 	margin-top: 20px;
-	background: white;
+	background: var(--bg-card);
 	border-radius: 15px;
 	padding: 15px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -2364,8 +2359,10 @@ textarea.hc-editable {
 /* ===== VARIABLES PARA MODO OSCURO ===== */
 /* ===== TOGGLE SWITCH PARA MODO OSCURO ===== */
 .theme-toggle-container {
-	position: relative;
-	z-index: 1100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 15px;
 }
 
 .theme-toggle-checkbox {
@@ -2376,14 +2373,14 @@ textarea.hc-editable {
 	background-color: #f1f1f1;
 	border: none;
 	border-radius: 50%;
-	width: 40px;
-	height: 40px;
+	width: 50px;
+	height: 50px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
 	transition: all 0.3s ease;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .theme-toggle-label:hover {
@@ -2392,7 +2389,7 @@ textarea.hc-editable {
 }
 
 .toggle-icon {
-	font-size: 18px;
+	font-size: 22px;
 }
 
 .moon-icon {
@@ -2766,4 +2763,190 @@ body {
 .section.eventos .row .col-md-4 {
 	max-width: 33.333333%;
 	flex: 0 0 33.333333%;
+}
+
+/* Eventos y Configuración - Modo Oscuro */
+[data-theme="dark"] .event-card {
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .card-title {
+	color: var(--text-primary);
+}
+
+[data-theme="dark"] .card-date {
+	color: var(--text-secondary);
+}
+
+[data-theme="dark"] .card-date i {
+	color: var(--info);
+}
+
+[data-theme="dark"] .card-description {
+	color: var(--text-primary);
+}
+
+[data-theme="dark"] .settings-card {
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .settings-card h3,
+[data-theme="dark"] .settings-card h4,
+[data-theme="dark"] .settings-card h5,
+[data-theme="dark"] .settings-card h6 {
+	color: var(--text-primary);
+}
+
+[data-theme="dark"] .settings-card p,
+[data-theme="dark"] .settings-card label,
+[data-theme="dark"] .settings-card span {
+	color: var(--text-secondary);
+}
+
+[data-theme="dark"] .settings-card .form-control,
+[data-theme="dark"] .settings-card .form-select {
+	background-color: var(--input-bg);
+	border-color: var(--input-border);
+	color: var(--text-primary);
+}
+
+[data-theme="dark"] .settings-card .form-control:focus,
+[data-theme="dark"] .settings-card .form-select:focus {
+	background-color: var(--input-bg);
+	border-color: var(--primary);
+	color: var(--text-primary);
+	box-shadow: 0 0 0 0.2rem rgba(74, 111, 165, 0.25);
+}
+
+[data-theme="dark"] .settings-card .form-control::placeholder {
+	color: var(--text-secondary);
+}
+
+[data-theme="dark"] .settings-card .form-text {
+	color: var(--text-secondary);
+}
+
+/* Paginación - Modo Oscuro */
+[data-theme="dark"] .pagination-btn {
+	background-color: var(--bg-card);
+	color: var(--text-primary);
+	border-color: var(--border-color);
+}
+
+[data-theme="dark"] .pagination-btn:hover:not(:disabled) {
+	background-color: var(--primary);
+	color: var(--white);
+}
+
+[data-theme="dark"] .pagination-btn:disabled {
+	opacity: 0.3;
+	border-color: var(--border-color);
+	color: var(--text-secondary);
+}
+
+[data-theme="dark"] .pagination-info {
+	background-color: var(--bg-card);
+	color: var(--text-primary);
+	border: 1px solid var(--border-color);
+}
+
+/* Configuración - Elementos adicionales */
+[data-theme="dark"] .settings-section {
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .settings-group {
+	border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .settings-item {
+	color: var(--text-primary);
+}
+
+[data-theme="dark"] .settings-item label {
+	color: var(--text-secondary);
+}
+
+[data-theme="dark"] .settings-item .form-check-input {
+	background-color: var(--input-bg);
+	border-color: var(--input-border);
+}
+
+[data-theme="dark"] .settings-item .form-check-input:checked {
+	background-color: var(--primary);
+	border-color: var(--primary);
+}
+
+[data-theme="dark"] .settings-item .form-check-label {
+	color: var(--text-secondary);
+}
+
+[data-theme="dark"] .settings-item .switch {
+	background-color: var(--input-bg);
+}
+
+[data-theme="dark"] .settings-item .switch input:checked + .slider {
+	background-color: var(--primary);
+}
+
+[data-theme="dark"] .settings-item .slider {
+	background-color: var(--input-bg);
+}
+
+[data-theme="dark"] .settings-item .slider:before {
+	background-color: var(--text-secondary);
+}
+
+[data-theme="dark"] .settings-item .switch input:checked + .slider:before {
+	background-color: var(--white);
+}
+
+[data-theme="dark"] .settings-card .alert {
+	background-color: var(--input-bg);
+	border-color: var(--border-color);
+	color: var(--text-primary);
+}
+
+[data-theme="dark"] .settings-card .btn-outline-primary {
+	color: var(--text-primary);
+	border-color: var(--border-color);
+}
+
+[data-theme="dark"] .settings-card .btn-outline-primary:hover {
+	background-color: var(--primary);
+	color: var(--white);
+	border-color: var(--primary);
+}
+
+[data-theme="dark"] .settings-card .btn-danger {
+	background-color: var(--danger);
+	border-color: var(--danger);
+}
+
+[data-theme="dark"] .settings-card .btn-danger:hover {
+	background-color: var(--danger-dark);
+	border-color: var(--danger-dark);
+}
+
+[data-theme="dark"] .settings-card .nav-tabs {
+	border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .settings-card .nav-tabs .nav-link {
+	color: var(--text-secondary);
+	border-color: transparent;
+}
+
+[data-theme="dark"] .settings-card .nav-tabs .nav-link:hover {
+	color: var(--text-primary);
+	border-color: var(--border-color);
+}
+
+[data-theme="dark"] .settings-card .nav-tabs .nav-link.active {
+	color: var(--primary);
+	background-color: var(--bg-card);
+	border-color: var(--border-color);
 }

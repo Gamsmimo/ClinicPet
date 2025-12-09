@@ -94,6 +94,12 @@ public class UsuarioController {
 	private IAdopcionService adopcionService;
 
 	@Autowired
+	private com.clinicpet.demo.service.IInventarioService inventarioService;
+
+	@Autowired
+	private com.clinicpet.demo.service.IPerfilVeterinarioService perfilVeterinarioService;
+
+	@Autowired
 	private PasswordResetService passwordResetService;
 
 	@Autowired
@@ -742,6 +748,7 @@ public class UsuarioController {
 	
 	@PostMapping("/api/ventas/registrar")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<?> registrarVenta(@RequestBody Map<String, Object> ventaData, HttpSession session) {
 		try {
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
@@ -751,6 +758,29 @@ public class UsuarioController {
 			}
 			
 			LOGGER.info("🛒 Registrando venta para usuario ID: {}", usuarioLogueado.getId());
+			
+			// Obtener la veterinaria desde el primer producto del carrito (inventario)
+			Integer veterinariaId = null;
+			List<Map<String, Object>> items = (List<Map<String, Object>>) ventaData.get("items");
+			
+			if (items == null || items.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(Map.of("error", "El carrito está vacío"));
+			}
+			
+			// Obtener veterinariaId desde el primer producto del carrito
+			Integer primerProductoId = convertToInteger(items.get(0).get("id"));
+			List<Inventario> inventariosDelProducto = inventarioRepository.findByProducto_Id(primerProductoId);
+			
+			if (!inventariosDelProducto.isEmpty()) {
+				veterinariaId = inventariosDelProducto.get(0).getVeterinaria().getId();
+				LOGGER.info("🏥 Veterinaria encontrada desde inventario del producto: {}", veterinariaId);
+			}
+			
+			if (veterinariaId == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(Map.of("error", "No se encontró veterinaria asociada a los productos"));
+			}
 			
 			// Convertir valores numéricos de forma segura
 			Double subtotal = convertToDouble(ventaData.get("subtotal"));
@@ -772,16 +802,37 @@ public class UsuarioController {
 			pago.setFechaPago(LocalDateTime.now());
 			ventaGuardada.setPago(pago);
 			
-			List<Map<String, Object>> items = (List<Map<String, Object>>) ventaData.get("items");
+			List<Map<String, Object>> items1 = (List<Map<String, Object>>) ventaData.get("items");
 			List<DetalleVenta> detalles = new ArrayList<>();
 			
-			for (Map<String, Object> item : items) {
+			// Procesar cada item y deducir del inventario
+			for (Map<String, Object> item : items1) {
 				Integer productoId = convertToInteger(item.get("id"));
 				Integer cantidad = convertToInteger(item.get("quantity"));
 				Double precio = convertToDouble(item.get("precio"));
 				
 				Optional<Producto> productoOpt = productoRepository.findById(productoId);
 				if (productoOpt.isPresent()) {
+					// Validar y deducir stock del inventario
+					Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(veterinariaId, productoId);
+					if (inventario == null) {
+						throw new RuntimeException("No existe inventario para el producto ID: " + productoId + " en la veterinaria ID: " + veterinariaId);
+					}
+					
+					LOGGER.info("📦 Validando stock - Producto: {}, Stock actual: {}, Solicitado: {}", 
+						productoId, inventario.getCantidadDisponible(), cantidad);
+					
+					if (inventario.getCantidadDisponible() < cantidad) {
+						throw new RuntimeException("Stock insuficiente para el producto " + productoOpt.get().getNombre() + 
+							". Stock disponible: " + inventario.getCantidadDisponible() + ", solicitado: " + cantidad);
+					}
+					
+					// Deducir stock
+					Inventario inventarioActualizado = inventarioService.reducirStock(inventario.getId(), cantidad);
+					LOGGER.info("✅ Stock actualizado - Producto: {}, Nuevo stock: {}", 
+						productoId, inventarioActualizado.getCantidadDisponible());
+					
+					// Crear detalle de venta
 					DetalleVenta detalle = new DetalleVenta();
 					detalle.setVenta(ventaGuardada);
 					detalle.setProducto(productoOpt.get());

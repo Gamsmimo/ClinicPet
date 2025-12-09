@@ -709,55 +709,69 @@ function goToHCPage(idx) {
     loadHCRecord(idx);
 }
 
-// Event Listeners
-hcEditBtn.addEventListener('click', function() {
-    hcIsEditing = true;
-    document.querySelectorAll('.hc-editable').forEach(el => el.disabled = false);
-    hcEditBtn.style.display = 'none';
-    hcSaveBtn.style.display = 'flex';
-    swal("Modo Edición", "Puede modificar la historia clínica", "info");
-});
+// Event Listeners - Solo si los elementos existen
+if (hcEditBtn) {
+    hcEditBtn.addEventListener('click', function() {
+        hcIsEditing = true;
+        document.querySelectorAll('.hc-editable').forEach(el => el.disabled = false);
+        hcEditBtn.style.display = 'none';
+        hcSaveBtn.style.display = 'flex';
+        swal("Modo Edición", "Puede modificar la historia clínica", "info");
+    });
+}
 
-hcSaveBtn.addEventListener('click', function() {
-    hcIsEditing = false;
-    document.querySelectorAll('.hc-editable').forEach(el => el.disabled = true);
-    hcSaveBtn.style.display = 'none';
-    hcEditBtn.style.display = 'flex';
-    saveCurrentHCRecord();
-    swal("¡Guardado!", "Historia clínica guardada correctamente", "success");
-});
+if (hcSaveBtn) {
+    hcSaveBtn.addEventListener('click', function() {
+        hcIsEditing = false;
+        document.querySelectorAll('.hc-editable').forEach(el => el.disabled = true);
+        hcSaveBtn.style.display = 'none';
+        hcEditBtn.style.display = 'flex';
+        saveCurrentHCRecord();
+        swal("¡Guardado!", "Historia clínica guardada correctamente", "success");
+    });
+}
 
-hcNewBtn.addEventListener('click', function() {
-    if (hcIsEditing) {
-        swal("Atención", "Guarde los cambios primero", "warning");
-        return;
-    }
-    saveCurrentHCRecord();
-    hcRecords.push(createEmptyHCRecord());
-    hcCurrentIdx = hcRecords.length - 1;
-    loadHCRecord(hcCurrentIdx);
-    swal("Nueva Historia", "Se ha creado una nueva historia clínica", "success");
-});
+if (hcNewBtn) {
+    hcNewBtn.addEventListener('click', function() {
+        if (hcIsEditing) {
+            swal("Atención", "Guarde los cambios primero", "warning");
+            return;
+        }
+        saveCurrentHCRecord();
+        hcRecords.push(createEmptyHCRecord());
+        hcCurrentIdx = hcRecords.length - 1;
+        loadHCRecord(hcCurrentIdx);
+        swal("Nueva Historia", "Se ha creado una nueva historia clínica", "success");
+    });
+}
 
-hcPrintBtn.addEventListener('click', function() {
-    window.print();
-});
+if (hcPrintBtn) {
+    hcPrintBtn.addEventListener('click', function() {
+        window.print();
+    });
+}
 
-hcPrevBtn.addEventListener('click', function() {
-    goToHCPage(hcCurrentIdx - 1);
-});
+if (hcPrevBtn) {
+    hcPrevBtn.addEventListener('click', function() {
+        goToHCPage(hcCurrentIdx - 1);
+    });
+}
 
-hcNextBtn.addEventListener('click', function() {
-    goToHCPage(hcCurrentIdx + 1);
-});
+if (hcNextBtn) {
+    hcNextBtn.addEventListener('click', function() {
+        goToHCPage(hcCurrentIdx + 1);
+    });
+}
 
 // Foto de mascota
-hcPhotoContainer.addEventListener('click', function() {
-    const photoInput = document.getElementById('hcPhotoInput');
-    if (photoInput && hcIsEditing) {
-        photoInput.click();
-    }
-});
+if (hcPhotoContainer) {
+    hcPhotoContainer.addEventListener('click', function() {
+        const photoInput = document.getElementById('hcPhotoInput');
+        if (photoInput && hcIsEditing) {
+            photoInput.click();
+        }
+    });
+}
 
 document.addEventListener('change', function(e) {
     if (e.target.id === 'hcPhotoInput' && e.target.files[0]) {
@@ -773,32 +787,36 @@ document.addEventListener('change', function(e) {
     }
 });
 
-// Drag and drop para anexos
-hcDropZone.addEventListener('click', function() {
-    hcFileInput.click();
-});
+// Drag and drop para anexos - Solo si los elementos existen
+if (hcDropZone) {
+    hcDropZone.addEventListener('click', function() {
+        if (hcFileInput) hcFileInput.click();
+    });
 
-hcDropZone.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    hcDropZone.style.borderColor = 'var(--hc-teal)';
-    hcDropZone.style.background = 'var(--hc-mint)';
-});
+    hcDropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        hcDropZone.style.borderColor = 'var(--hc-teal)';
+        hcDropZone.style.background = 'var(--hc-mint)';
+    });
 
-hcDropZone.addEventListener('dragleave', function() {
-    hcDropZone.style.borderColor = 'var(--hc-mint-light)';
-    hcDropZone.style.background = '#f8fcfb';
-});
+    hcDropZone.addEventListener('dragleave', function() {
+        hcDropZone.style.borderColor = 'var(--hc-mint-light)';
+        hcDropZone.style.background = '#f8fcfb';
+    });
 
-hcDropZone.addEventListener('drop', function(e) {
-    e.preventDefault();
-    hcDropZone.style.borderColor = 'var(--hc-mint-light)';
-    hcDropZone.style.background = '#f8fcfb';
-    handleHCFiles(e.dataTransfer.files);
-});
+    hcDropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        hcDropZone.style.borderColor = 'var(--hc-mint-light)';
+        hcDropZone.style.background = '#f8fcfb';
+        handleHCFiles(e.dataTransfer.files);
+    });
+}
 
-hcFileInput.addEventListener('change', function(e) {
-    handleHCFiles(e.target.files);
-});
+if (hcFileInput) {
+    hcFileInput.addEventListener('change', function(e) {
+        handleHCFiles(e.target.files);
+    });
+}
 
 // Manejar archivos
 function handleHCFiles(files) {
@@ -818,25 +836,43 @@ function handleHCFiles(files) {
     }
 }
 
-// Eliminar anexos
-hcAttachmentPreview.addEventListener('click', function(e) {
-    const removeBtn = e.target.closest('.hc-remove');
-    if (removeBtn) {
-        const idx = parseInt(removeBtn.dataset.idx);
-        hcRecords[hcCurrentIdx].attachments.splice(idx, 1);
-        loadHCRecord(hcCurrentIdx);
-        swal("Eliminado", "Archivo eliminado correctamente", "info");
+// Eliminar anexos - Solo si el elemento existe
+if (hcAttachmentPreview) {
+    hcAttachmentPreview.addEventListener('click', function(e) {
+        const removeBtn = e.target.closest('.hc-remove');
+        if (removeBtn) {
+            const idx = parseInt(removeBtn.dataset.idx);
+            hcRecords[hcCurrentIdx].attachments.splice(idx, 1);
+            loadHCRecord(hcCurrentIdx);
+            swal("Eliminado", "Archivo eliminado correctamente", "info");
+        }
+    });
+}
+
+// Inicializar Historia Clínica solo si los elementos existen
+function initHistoriaClinica() {
+    // Si no existe el campo de fecha de registro, asumimos que la sección está oculta/comentada
+    if (!document.getElementById('hcRegistrationDate')) {
+        return;
     }
-});
 
-// Inicializar
+    // Inicializar solo una vez
+    if (window.__hcInitialized) {
+        return;
+    }
+    window.__hcInitialized = true;
+
+    loadHCRecord(0);
+}
+
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-    loadHCRecord(0);
+    initHistoriaClinica();
 });
 
-// Si el DOM ya está cargado
+// También inicializar si el DOM ya está cargado
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    loadHCRecord(0);
+    initHistoriaClinica();
 }
 
 // Eventos y Campañas - Paginación
