@@ -69,6 +69,18 @@ function togglePasswordVisibility(fieldId) {
     const field = document.getElementById(fieldId);
     const type = field.type === 'password' ? 'text' : 'password';
     field.type = type;
+
+    // Cambiar icono
+    const icon = field.parentElement.querySelector('.toggle-password');
+    if (icon) {
+        if (type === 'text') {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
 }
 
 // Validación de fortaleza de contraseña en tiempo real
