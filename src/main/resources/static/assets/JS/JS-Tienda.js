@@ -114,11 +114,29 @@ function createProductCard(product) {
 	// Categoría en español
 	const categoriaES = getCategoryNameES(product.categoria);
 
+	// Función para construir ruta de imagen
+	const getImageSrc = (imagen) => {
+		if (!imagen) return '/img/default.png';
+		
+		// Si la imagen ya empieza con /uploads/ o /img/, usarla directamente
+		if (imagen.startsWith('/uploads/') || imagen.startsWith('/img/')) {
+			return imagen;
+		}
+		
+		// Si contiene un punto (extensión de archivo), asumir que es un archivo subido
+		if (imagen.includes('.')) {
+			return `/uploads/${imagen}`;
+		}
+		
+		// Si no, es una imagen estática
+		return `/img/${imagen}.png`;
+	};
+
 	return `
         <div class="product-card" data-category="${product.categoria}">
             ${badge}
             <div class="product-image">
-                <img src="img/${product.imagen}.png" alt="${product.nombre}" onerror="this.src='img/default.png'">
+                <img src="${getImageSrc(product.imagen)}" alt="${product.nombre}" onerror="this.src='/img/default.png'">
             </div>
             <div class="product-info">
                 <div class="product-category">${categoriaES}</div>
@@ -267,6 +285,24 @@ function updateCart() {
 	const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 	badge.textContent = totalItems;
 
+	// Función para construir ruta de imagen (misma que en createProductCard)
+	const getImageSrc = (imagen) => {
+		if (!imagen) return '/img/default.png';
+		
+		// Si la imagen ya empieza con /uploads/ o /img/, usarla directamente
+		if (imagen.startsWith('/uploads/') || imagen.startsWith('/img/')) {
+			return imagen;
+		}
+		
+		// Si contiene un punto (extensión de archivo), asumir que es un archivo subido
+		if (imagen.includes('.')) {
+			return `/uploads/${imagen}`;
+		}
+		
+		// Si no, es una imagen estática
+		return `/img/${imagen}.png`;
+	};
+
 	// Renderizar items
 	if (cart.length === 0) {
 		itemsContainer.innerHTML = `
@@ -284,7 +320,7 @@ function updateCart() {
 				(item) => `
             <div class="cart-item">
                 <div class="cart-item-image">
-                    <img src="img/${item.imagen}.png" alt="${item.nombre}" onerror="this.src='img/default.png'">
+                    <img src="${getImageSrc(item.imagen)}" alt="${item.nombre}" onerror="this.src='/img/default.png'">
                 </div>
                 <div class="cart-item-details">
                     <div class="cart-item-name">${item.nombre}</div>

@@ -328,96 +328,94 @@
 
 	<!-- Modal para Dar en Adopción -->
 	<div class="modal-overlay" id="modalAdopcion">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h2 class="modal-title">Dar una Mascota en Adopción</h2>
-					<button type="button" class="close-modal" id="closeModal">
-						<i class="fas fa-times"></i>
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title">Dar una Mascota en Adopción</h2>
+				<button type="button" class="close-modal" id="closeModal">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form th:action="@{/adopciones/publicar}" method="post" enctype="multipart/form-data"
+					th:object="${nuevaAdopcion}" class="formulario-grid">
+
+					<div class="grupo-formulario">
+						<label for="nombreMascota">Nombre de la mascota *</label>
+						<input type="text" id="nombreMascota" th:field="*{nombreMascota}" required
+							placeholder="Ej: Max, Luna, Copito...">
+					</div>
+
+					<div class="grupo-formulario">
+						<label for="tipoMascota">Tipo de mascota *</label>
+						<select id="tipoMascota" th:field="*{tipoMascota}" required>
+							<option value="">Selecciona un tipo</option>
+							<option value="Perro">Perro</option>
+							<option value="Gato">Gato</option>
+							<option value="Otro">Otro</option>
+						</select>
+					</div>
+
+					<div class="grupo-formulario">
+						<label for="raza">Raza</label>
+						<input type="text" id="raza" th:field="*{raza}"
+							placeholder="Ej: Labrador, Siamés, Mestizo...">
+					</div>
+
+					<div class="grupo-formulario">
+						<label for="edad">Edad (años) *</label>
+						<input type="number" id="edad" th:field="*{edad}" min="0" max="30" required placeholder="0">
+					</div>
+
+					<div class="grupo-formulario">
+						<label for="genero">Género</label>
+						<select id="genero" th:field="*{genero}">
+							<option value="">Seleccione...</option>
+							<option value="Macho">Macho</option>
+							<option value="Hembra">Hembra</option>
+						</select>
+					</div>
+
+					<div class="grupo-formulario">
+						<label for="tamano">Tamaño *</label>
+						<select id="tamano" th:field="*{tamano}" required>
+							<option value="">Seleccione...</option>
+							<option value="Pequeño">Pequeño</option>
+							<option value="Mediano">Mediano</option>
+							<option value="Grande">Grande</option>
+						</select>
+					</div>
+
+					<div class="grupo-formulario" style="grid-column: 1 / -1;">
+						<label for="descripcion">Descripción *</label>
+						<textarea id="descripcion" th:field="*{descripcion}" rows="2" required
+							placeholder="Cuéntanos sobre su personalidad, comportamiento, necesidades especiales..."></textarea>
+					</div>
+
+					<div class="grupo-formulario" style="grid-column: 1 / -1;">
+						<label for="archivoImagen">Foto de la mascota *</label>
+						<div class="file-input-wrapper">
+							<input type="file" id="archivoImagen" name="archivoImagen"
+								accept="image/jpeg,image/jpg,image/png" required class="file-input">
+							<label for="archivoImagen" class="file-input-label">
+								<i class="fas fa-cloud-upload-alt"></i>
+								<span>Seleccionar imagen (JPG, PNG, JPEG) *</span>
+							</label>
+							<div class="file-name" id="fileName">Ningún archivo seleccionado</div>
+						</div>
+						<small class="text-muted">* La imagen es obligatoria. Formato: JPG, PNG. Máx: 5MB</small>
+					</div>
+
+					<div class="grupo-formulario" style="grid-column: 1 / -1;">
+						<label for="contacto">Teléfono de contacto *</label>
+						<input type="tel" id="contacto" th:field="*{contacto}" required placeholder="Ej: 3201234567"
+							pattern="[0-9]{10}">
+						<small class="text-muted">10 dígitos</small>
+					</div>
+
+					<button type="submit" class="boton-publicar" style="grid-column: 1 / -1;">
+						<i class="fas fa-paper-plane"></i> Publicar Mascota
 					</button>
-				</div>
-				<div class="modal-body">
-					<form th:action="@{/adopciones/publicar}" method="post" enctype="multipart/form-data"
-						th:object="${nuevaAdopcion}" class="formulario-grid">
-
-						<div class="grupo-formulario">
-							<label for="nombreMascota">Nombre de la mascota *</label>
-							<input type="text" id="nombreMascota" th:field="*{nombreMascota}" required
-								placeholder="Ej: Max, Luna, Copito...">
-						</div>
-
-						<div class="grupo-formulario">
-							<label for="tipoMascota">Tipo de mascota *</label>
-							<select id="tipoMascota" th:field="*{tipoMascota}" required>
-								<option value="">Selecciona un tipo</option>
-								<option value="Perro">Perro</option>
-								<option value="Gato">Gato</option>
-								<option value="Otro">Otro</option>
-							</select>
-						</div>
-
-						<div class="grupo-formulario">
-							<label for="raza">Raza</label>
-							<input type="text" id="raza" th:field="*{raza}"
-								placeholder="Ej: Labrador, Siamés, Mestizo...">
-						</div>
-
-						<div class="grupo-formulario">
-							<label for="edad">Edad (años) *</label>
-							<input type="number" id="edad" th:field="*{edad}" min="0" max="30" required placeholder="0">
-						</div>
-
-						<div class="grupo-formulario">
-							<label for="genero">Género</label>
-							<select id="genero" th:field="*{genero}">
-								<option value="">Seleccione...</option>
-								<option value="Macho">Macho</option>
-								<option value="Hembra">Hembra</option>
-							</select>
-						</div>
-
-						<div class="grupo-formulario">
-							<label for="tamano">Tamaño *</label>
-							<select id="tamano" th:field="*{tamano}" required>
-								<option value="">Seleccione...</option>
-								<option value="Pequeño">Pequeño</option>
-								<option value="Mediano">Mediano</option>
-								<option value="Grande">Grande</option>
-							</select>
-						</div>
-
-						<div class="grupo-formulario" style="grid-column: 1 / -1;">
-							<label for="descripcion">Descripción *</label>
-							<textarea id="descripcion" th:field="*{descripcion}" rows="4" required
-								placeholder="Cuéntanos sobre su personalidad, comportamiento, necesidades especiales..."></textarea>
-						</div>
-
-						<div class="grupo-formulario" style="grid-column: 1 / -1;">
-							<label for="archivoImagen">Foto de la mascota *</label>
-							<div class="file-input-wrapper">
-								<input type="file" id="archivoImagen" name="archivoImagen"
-									accept="image/jpeg,image/jpg,image/png" required class="file-input">
-								<label for="archivoImagen" class="file-input-label">
-									<i class="fas fa-cloud-upload-alt"></i>
-									<span>Seleccionar imagen (JPG, PNG, JPEG) *</span>
-								</label>
-								<div class="file-name" id="fileName">Ningún archivo seleccionado</div>
-							</div>
-							<small class="text-muted">* La imagen es obligatoria. Formato: JPG, PNG. Máx: 5MB</small>
-						</div>
-
-						<div class="grupo-formulario">
-							<label for="contacto">Teléfono de contacto *</label>
-							<input type="tel" id="contacto" th:field="*{contacto}" required placeholder="Ej: 3201234567"
-								pattern="[0-9]{10}">
-							<small class="text-muted">10 dígitos</small>
-						</div>
-
-						<button type="submit" class="boton-publicar" style="grid-column: 1 / -1;">
-							<i class="fas fa-paper-plane"></i> Publicar Mascota
-						</button>
-					</form>
-				</div>
+				</form>
 			</div>
 		</div>
 	</div>
