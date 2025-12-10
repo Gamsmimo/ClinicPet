@@ -51,7 +51,8 @@
 				<!--<li><a href="#" class="nav-link" data-section="settings">Configuración General</a></li>
 				<li><a href="#" class="nav-link" data-section="security">Control y Seguridad</a></li>-->
 				<li><a href="#" class="nav-link" data-section="profile">Perfil Administrador</a></li>
-				<li><a href="#" class="nav-link logout-nav-btn" onclick="cerrarSesion(event)"><i class="bi bi-box-arrow-right"></i>Cerrar Sesión</a>
+				<li><a href="#" class="nav-link logout-nav-btn" onclick="cerrarSesion(event)"><i
+							class="bi bi-box-arrow-right"></i>Cerrar Sesión</a>
 				</li>
 			</ul>
 		</nav>
@@ -558,8 +559,14 @@
 					<input type="text" id="clinicNombre" name="nombre" required>
 				</div>
 				<div class="form-group">
-					<label for="clinicRUT">RUT:</label>
+					<label for="clinicRUT">NIT:</label>
 					<input type="text" id="clinicRUT" name="rut" required>
+					<small style="display: block; margin-top: 5px; color: #666;">
+						<a href="https://muisca.dian.gov.co/WebRutMuisca/DefConsultaEstadoRUT.faces" target="_blank"
+							style="color: var(--primary-color); text-decoration: none;">
+							<i class="bi bi-link-45deg"></i> Compruebe el NIT de la veterinaria aquí
+						</a>
+					</small>
 				</div>
 				<div class="form-group">
 					<label for="clinicDireccion">Dirección:</label>

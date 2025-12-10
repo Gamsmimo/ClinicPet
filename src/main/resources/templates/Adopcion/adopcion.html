@@ -64,12 +64,10 @@
 							</a>
 						</div>
 						<div class="menu-item">
-							<a href="Tienda.html" style="text-decoration: none;">
-								<i class="fas fa-shopping-cart"></i>
-								<span>Pet Shop</span>
-							</a>
+							<a th:href="@{/usuarios/tienda}" style="text-decoration: none;"> <i class="fas fa-shop"></i>
+								<span>PetShop</span></a>
 						</div>
-						<div class="menu-item">
+						<!--<div class="menu-item">
 							<a href="Reporte.html" style="text-decoration: none;">
 								<i class="fas fa-clinic-medical"></i>
 								<span>Reporte Maltrato</span>
@@ -80,12 +78,13 @@
 								<i class="fas fa-star"></i>
 								<span>Calificaciones</span>
 							</a>
-						</div>
+						</div>-->
+
+
 						<div class="menu-item">
-							<a href="sobrenosotros.html" style="text-decoration: none;">
-								<i class="fas fa-users"></i>
-								<span>Acerca de Nosotros</span>
-							</a>
+							<a th:href="@{/usuarios/sobrenosotros}" style="text-decoration: none;"> <i
+									class="fas fa-users"></i>
+								<span>Acerca de Nosotros</span></a>
 						</div>
 						<div class="menu-item">
 							<a th:href="@{/usuarios/index}" style="text-decoration: none;">
@@ -136,10 +135,6 @@
 			<div class="stat-item">
 				<div class="stat-number" th:text="${estadisticas != null ? estadisticas['esperando'] : '45'}">45</div>
 				<div class="stat-label">Esperando Hogar</div>
-			</div>
-			<div class="stat-item">
-				<div class="stat-number">98%</div>
-				<div class="stat-label">Familias Felices</div>
 			</div>
 			<div class="stat-item">
 				<div class="stat-number">24/7</div>
@@ -357,8 +352,7 @@
 
 					<div class="grupo-formulario">
 						<label for="raza">Raza</label>
-						<input type="text" id="raza" th:field="*{raza}"
-							placeholder="Ej: Labrador, Siamés, Mestizo...">
+						<input type="text" id="raza" th:field="*{raza}" placeholder="Ej: Labrador, Siamés, Mestizo...">
 					</div>
 
 					<div class="grupo-formulario">
@@ -421,8 +415,9 @@
 	</div>
 
 	<!-- Modal para Ver Detalles -->
+
 	<div class="modal-overlay" id="modalDetalles">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2 class="modal-title">
@@ -432,96 +427,96 @@
 						<i class="fas fa-times"></i>
 					</button>
 				</div>
+
 				<div class="modal-body">
-					<div class="detalle-grid">
-						<!-- Columna de Imagen -->
-						<div class="detalle-imagen-col">
+					<!-- Imagen y nombre en la parte superior -->
+					<div class="imagen-superior-container">
+						<div class="imagen-cuadrada-pequena">
 							<img id="detalle-imagen" src="" alt="Foto de la mascota">
 						</div>
 
-						<!-- Columna de Información -->
-						<div class="detalle-info-col">
+						<div class="nombre-al-lado">
 							<h3 id="detalle-nombre"></h3>
+							<span id="detalle-estado-badge" class="estado-mejorado">
+								<i class="fas fa-check-circle"></i>
+								<span id="detalle-estado-text"></span>
+							</span>
+						</div>
+					</div>
 
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-user-circle"></i>
-									Publicado por
-								</strong>
-								<span id="detalle-publicador"></span>
-							</div>
+					<!-- Grid de información compacta -->
+					<div class="info-grid-compacto">
+						<div class="info-item-compacto">
+							<strong>
+								<i class="fas fa-user-circle"></i>
+								Publicado por
+							</strong>
+							<span id="detalle-publicador"></span>
+						</div>
 
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-tag"></i>
-									Tipo de Mascota
-								</strong>
-								<span id="detalle-tipo"></span>
-							</div>
+						<div class="info-item-compacto">
+							<strong>
+								<i class="fas fa-tag"></i>
+								Tipo
+							</strong>
+							<span id="detalle-tipo"></span>
+						</div>
 
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-paw"></i>
-									Raza
-								</strong>
-								<span id="detalle-raza"></span>
-							</div>
+						<div class="info-item-compacto">
+							<strong>
+								<i class="fas fa-paw"></i>
+								Raza
+							</strong>
+							<span id="detalle-raza"></span>
+						</div>
 
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-birthday-cake"></i>
-									Edad
-								</strong>
-								<span id="detalle-edad"></span>
-							</div>
+						<div class="info-item-compacto">
+							<strong>
+								<i class="fas fa-birthday-cake"></i>
+								Edad
+							</strong>
+							<span id="detalle-edad"></span>
+						</div>
 
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-venus-mars"></i>
-									Género
-								</strong>
-								<span id="detalle-genero"></span>
-							</div>
+						<div class="info-item-compacto">
+							<strong>
+								<i class="fas fa-venus-mars"></i>
+								Género
+							</strong>
+							<span id="detalle-genero"></span>
+						</div>
 
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-ruler-vertical"></i>
-									Tamaño
-								</strong>
-								<span id="detalle-tamano"></span>
-							</div>
+						<div class="info-item-compacto">
+							<strong>
+								<i class="fas fa-ruler-vertical"></i>
+								Tamaño
+							</strong>
+							<span id="detalle-tamano"></span>
+						</div>
 
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-phone-alt"></i>
-									Contacto
-								</strong>
-								<span id="detalle-contacto"></span>
-							</div>
+						<div class="info-item-compacto contacto-item">
+							<strong>
+								<i class="fas fa-phone-alt"></i>
+								Contacto
+							</strong>
+							<span id="detalle-contacto"></span>
+						</div>
+					</div>
 
-							<div class="detalle-item descripcion-item">
-								<strong>
-									<i class="fas fa-align-left"></i>
-									Descripción
-								</strong>
-								<p id="detalle-descripcion"></p>
-							</div>
+					<!-- Descripción debajo del grid -->
+					<div class="descripcion-compacta">
+						<strong>
+							<i class="fas fa-align-left"></i>
+							Descripción
+						</strong>
+						<p id="detalle-descripcion"></p>
+					</div>
 
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-calendar-alt"></i>
-									Fecha de Publicación
-								</strong>
-								<span id="detalle-fecha"></span>
-							</div>
-
-							<div class="detalle-item">
-								<strong>
-									<i class="fas fa-info-circle"></i>
-									Estado
-								</strong>
-								<span id="detalle-estado-badge"></span>
-							</div>
+					<!-- Información adicional en la parte inferior -->
+					<div class="info-adicional">
+						<div class="fecha-publicacion">
+							<i class="fas fa-calendar-alt"></i>
+							<span>Publicado el: <span id="detalle-fecha"></span></span>
 						</div>
 					</div>
 				</div>
@@ -548,13 +543,13 @@
 				<div class="footer-about" style="max-width: 400px;">
 					<p style="font-style: italic; opacity: 0.8;">"Simplifica tu trabajo, mejora su salud"</p>
 					<p>Nuestra plataforma digital está diseñada para optimizar la gestión clínica.</p>
-					<div class="social-links" style="margin-top: 20px;">
+					<!--<div class="social-links" style="margin-top: 20px;">
 						<a href="#"><i class="fab fa-facebook-f"></i></a>
 						<a href="#"><i class="fab fa-instagram"></i></a>
 						<a href="#"><i class="fab fa-twitter"></i></a>
 						<a href="#"><i class="fab fa-youtube"></i></a>
 						<a href="#"><i class="fab fa-whatsapp"></i></a>
-					</div>
+					</div>-->
 				</div>
 
 				<div class="footer-contact">
