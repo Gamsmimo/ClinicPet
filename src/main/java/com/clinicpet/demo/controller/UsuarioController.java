@@ -80,16 +80,16 @@ public class UsuarioController {
 
 	@Autowired
 	private IInventarioRepository inventarioRepository;
-	
+
 	@Autowired
 	private IVentaRepository ventaRepository;
-	
+
 	@Autowired
 	private IProductoRepository productoRepository;
-	
+
 	@Autowired
 	private IEventoRepository eventoRepository;
-	
+
 	@Autowired
 	private IAdopcionService adopcionService;
 
@@ -122,12 +122,12 @@ public class UsuarioController {
 			if (usuarioOpt.isPresent()) {
 				Usuario usuario = usuarioOpt.get();
 				boolean passwordValid = false;
-				
+
 				if (usuario.getPassword().startsWith("$2a$") || usuario.getPassword().startsWith("$2b$")) {
 					passwordValid = passwordEncoder.matches(usuarioLogin.getPassword(), usuario.getPassword());
 				} else {
 					passwordValid = usuario.getPassword().equals(usuarioLogin.getPassword());
-					
+
 					if (passwordValid) {
 						String contrasenaEncriptada = passwordEncoder.encode(usuarioLogin.getPassword());
 						usuario.setPassword(contrasenaEncriptada);
@@ -135,7 +135,7 @@ public class UsuarioController {
 						LOGGER.info("Contrasena migrada a BCrypt para usuario: {}", usuario.getCorreo());
 					}
 				}
-				
+
 				if (passwordValid && usuario.isActivo()) {
 					session.setAttribute("usuarioLogueado", usuario);
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
@@ -167,57 +167,46 @@ public class UsuarioController {
 	public ResponseEntity<?> testEmailDirecto() {
 		try {
 			LOGGER.info("INICIANDO PRUEBA DIRECTA DE CORREO");
-			
-			String resultado = emailService.enviarCorreoRecuperacion(
-				"helpyourpet79@gmail.com", 
-				"token-de-prueba-123", 
-				"Usuario Prueba"
-			);
-			
+
+			String resultado = emailService.enviarCorreoRecuperacion("helpyourpet79@gmail.com", "token-de-prueba-123",
+					"Usuario Prueba");
+
 			LOGGER.info("PRUEBA DE CORREO COMPLETADA: {}", resultado);
-			
-			return ResponseEntity.ok(java.util.Map.of(
-				"status", "success",
-				"message", "Correo de prueba enviado exitosamente",
-				"resultado", resultado != null ? resultado : "Correo enviado"
-			));
-			
+
+			return ResponseEntity
+					.ok(java.util.Map.of("status", "success", "message", "Correo de prueba enviado exitosamente",
+							"resultado", resultado != null ? resultado : "Correo enviado"));
+
 		} catch (Exception e) {
 			LOGGER.error("ERROR EN PRUEBA DE CORREO: {}", e.getMessage(), e);
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(java.util.Map.of(
-					"status", "error",
-					"message", "Error al enviar correo de prueba",
-					"error", e.getMessage(),
-					"fullError", e.toString()
-				));
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(java.util.Map.of("status", "error",
+					"message", "Error al enviar correo de prueba", "error", e.getMessage(), "fullError", e.toString()));
 		}
 	}
 
 	@GetMapping("/inicio")
-	public String mostrarInicio(
-			@RequestParam(defaultValue = "0") int page,
-			Model model, 
-			HttpSession session) {
-		
+	public String mostrarInicio(@RequestParam(defaultValue = "0") int page, Model model, HttpSession session) {
+
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
 			return "IniciarSesion/iniciarsesion";
 		}
-		
+
 		int pageSize = 6;
-		org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, pageSize);
-		
-		org.springframework.data.domain.Page<com.clinicpet.demo.model.Evento> eventosPage = eventoRepository.findAll(pageable);
-		
+		org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page,
+				pageSize);
+
+		org.springframework.data.domain.Page<com.clinicpet.demo.model.Evento> eventosPage = eventoRepository
+				.findAll(pageable);
+
 		model.addAttribute("usuario", usuarioLogueado);
 		model.addAttribute("mensaje", "Bienvenido al Dashboard ClinicPet");
 		model.addAttribute("eventos", eventosPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", eventosPage.getTotalPages());
 		model.addAttribute("totalItems", eventosPage.getTotalElements());
-		
+
 		return "Inicio/inicio";
 	}
 
@@ -255,7 +244,7 @@ public class UsuarioController {
 		List<Mascota> mascotas = mascotaService.buscarPorUsuario(usuarioLogueado.getId());
 		model.addAttribute("mascotas", mascotas);
 		model.addAttribute("tieneMascotas", !mascotas.isEmpty());
-		
+
 		List<Adopcion> misAdopciones = adopcionService.buscarAdopcionesByUsuarioId(usuarioLogueado.getId());
 		model.addAttribute("misAdopciones", misAdopciones);
 		model.addAttribute("tieneAdopciones", !misAdopciones.isEmpty());
@@ -567,28 +556,33 @@ public class UsuarioController {
 	}
 
 	@GetMapping("/index")
-	public String index(
-			@RequestParam(defaultValue = "0") int page,
-			Model model) {
-		
+	public String index(@RequestParam(defaultValue = "0") int page, Model model) {
+
 		int pageSize = 6;
-		org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, pageSize);
-		
-		org.springframework.data.domain.Page<com.clinicpet.demo.model.Evento> eventosPage = eventoRepository.findAll(pageable);
-		
+		org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page,
+				pageSize);
+
+		org.springframework.data.domain.Page<com.clinicpet.demo.model.Evento> eventosPage = eventoRepository
+				.findAll(pageable);
+
 		model.addAttribute("eventos", eventosPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", eventosPage.getTotalPages());
 		model.addAttribute("totalItems", eventosPage.getTotalElements());
-		
+
 		return "index";
+	}
+
+	@GetMapping("/sobrenosotros")
+	public String sobreNosotros() {
+		return "SobreNosotros/sobrenosotros";
 	}
 
 	@GetMapping("/tienda")
 	public String tienda() {
 		return "Tienda/tienda";
 	}
-	
+
 	@GetMapping("/pasarela-pagos")
 	public String pasarelaPagos() {
 		return "Tienda/pasarela-pagos";
@@ -599,20 +593,12 @@ public class UsuarioController {
 	public ResponseEntity<List<VeterinariaDTO>> obtenerVeterinarias() {
 		try {
 			List<Veterinaria> veterinarias = veterinariaRepository.findAll();
-			
+
 			List<VeterinariaDTO> veterinariasDTO = veterinarias.stream()
-				.map(v -> new VeterinariaDTO(
-					v.getId(),
-					v.getNombre(),
-					v.getDireccion(),
-					v.getTelefono(),
-					v.getCorreo(),
-					v.getHorario(),
-					v.getDescripcion(),
-					v.getEstado()
-				))
-				.collect(Collectors.toList());
-			
+					.map(v -> new VeterinariaDTO(v.getId(), v.getNombre(), v.getDireccion(), v.getTelefono(),
+							v.getCorreo(), v.getHorario(), v.getDescripcion(), v.getEstado()))
+					.collect(Collectors.toList());
+
 			LOGGER.info("Se encontraron {} veterinarias", veterinariasDTO.size());
 			return ResponseEntity.ok(veterinariasDTO);
 		} catch (Exception e) {
@@ -626,42 +612,36 @@ public class UsuarioController {
 	public ResponseEntity<List<ProductoDTO>> obtenerProductosPorVeterinaria(@PathVariable Integer veterinariaId) {
 		try {
 			LOGGER.info("Buscando productos para veterinaria ID: {}", veterinariaId);
-			
+
 			Optional<Veterinaria> veterinariaOpt = veterinariaRepository.findById(veterinariaId);
 			if (veterinariaOpt.isEmpty()) {
 				LOGGER.warn("Veterinaria no encontrada con ID: {}", veterinariaId);
 				return ResponseEntity.notFound().build();
 			}
-			
+
 			Veterinaria veterinaria = veterinariaOpt.get();
 			List<Inventario> inventarios = inventarioRepository.findByVeterinaria(veterinaria);
-			
+
 			List<ProductoDTO> productosDTO = inventarios.stream()
-				.filter(inv -> inv.getCantidadDisponible() != null && inv.getCantidadDisponible() > 0)
-				.map(inv -> new ProductoDTO(
-					inv.getProducto().getId(),
-					inv.getProducto().getNombre(),
-					inv.getProducto().getDescripcion(),
-					inv.getProducto().getPrecio(),
-					inv.getProducto().getImagen(),
-					inv.getProducto().getCategoria(),
-					inv.getCantidadDisponible(),
-					inv.getEstado()
-				))
-				.collect(Collectors.toList());
-			
-			LOGGER.info("Se encontraron {} productos disponibles para veterinaria '{}'",
-				productosDTO.size(), veterinaria.getNombre());
-			
+					.filter(inv -> inv.getCantidadDisponible() != null && inv.getCantidadDisponible() > 0)
+					.map(inv -> new ProductoDTO(inv.getProducto().getId(), inv.getProducto().getNombre(),
+							inv.getProducto().getDescripcion(), inv.getProducto().getPrecio(),
+							inv.getProducto().getImagen(), inv.getProducto().getCategoria(),
+							inv.getCantidadDisponible(), inv.getEstado()))
+					.collect(Collectors.toList());
+
+			LOGGER.info("Se encontraron {} productos disponibles para veterinaria '{}'", productosDTO.size(),
+					veterinaria.getNombre());
+
 			return ResponseEntity.ok(productosDTO);
-			
+
 		} catch (Exception e) {
 			LOGGER.error("Error al obtener productos de veterinaria {}: {}", veterinariaId, e.getMessage());
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
 	@PostMapping("/api/ventas/registrar")
 	@ResponseBody
 	@Transactional
@@ -669,46 +649,44 @@ public class UsuarioController {
 		try {
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 			if (usuarioLogueado == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(Map.of("error", "Usuario no autenticado"));
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Usuario no autenticado"));
 			}
-			
+
 			LOGGER.info("Registrando venta para usuario ID: {}", usuarioLogueado.getId());
-			
+
 			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> items = (List<Map<String, Object>>) ventaData.get("items");
-			
+
 			if (items == null || items.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(Map.of("error", "El carrito esta vacio"));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "El carrito esta vacio"));
 			}
-			
+
 			// Obtener veterinariaId desde el primer producto del carrito
 			Integer primerProductoId = convertToInteger(items.get(0).get("id"));
 			List<Inventario> inventariosDelProducto = inventarioRepository.findByProducto_Id(primerProductoId);
-			
+
 			Integer veterinariaId = null;
 			if (!inventariosDelProducto.isEmpty()) {
 				veterinariaId = inventariosDelProducto.get(0).getVeterinaria().getId();
 				LOGGER.info("Veterinaria encontrada desde inventario del producto: {}", veterinariaId);
 			}
-			
+
 			if (veterinariaId == null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(Map.of("error", "No se encontro veterinaria asociada a los productos"));
+						.body(Map.of("error", "No se encontro veterinaria asociada a los productos"));
 			}
-			
+
 			Double subtotal = convertToDouble(ventaData.get("subtotal"));
 			Double total = convertToDouble(ventaData.get("total"));
-			
+
 			Venta venta = new Venta();
 			venta.setUsuario(usuarioLogueado);
 			venta.setFecha(new Date());
 			venta.setSubtotal(subtotal);
 			venta.setTotal(total);
-			
+
 			Venta ventaGuardada = ventaRepository.save(venta);
-			
+
 			Pago pago = new Pago();
 			pago.setVenta(ventaGuardada);
 			pago.setMetodo((String) ventaData.get("metodoPago"));
@@ -716,36 +694,39 @@ public class UsuarioController {
 			pago.setReferencia((String) ventaData.get("numeroOrden"));
 			pago.setFechaPago(LocalDateTime.now());
 			ventaGuardada.setPago(pago);
-			
+
 			List<DetalleVenta> detalles = new ArrayList<>();
-			
+
 			// Procesar cada item y deducir del inventario
 			for (Map<String, Object> item : items) {
 				Integer productoId = convertToInteger(item.get("id"));
 				Integer cantidad = convertToInteger(item.get("quantity"));
 				Double precio = convertToDouble(item.get("precio"));
-				
+
 				Optional<Producto> productoOpt = productoRepository.findById(productoId);
 				if (productoOpt.isPresent()) {
 					// Validar y deducir stock del inventario
-					Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(veterinariaId, productoId);
+					Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(veterinariaId,
+							productoId);
 					if (inventario == null) {
-						throw new RuntimeException("No existe inventario para el producto ID: " + productoId + " en la veterinaria ID: " + veterinariaId);
+						throw new RuntimeException("No existe inventario para el producto ID: " + productoId
+								+ " en la veterinaria ID: " + veterinariaId);
 					}
-					
-					LOGGER.info("Validando stock - Producto: {}, Stock actual: {}, Solicitado: {}", 
-						productoId, inventario.getCantidadDisponible(), cantidad);
-					
+
+					LOGGER.info("Validando stock - Producto: {}, Stock actual: {}, Solicitado: {}", productoId,
+							inventario.getCantidadDisponible(), cantidad);
+
 					if (inventario.getCantidadDisponible() < cantidad) {
-						throw new RuntimeException("Stock insuficiente para el producto " + productoOpt.get().getNombre() + 
-							". Stock disponible: " + inventario.getCantidadDisponible() + ", solicitado: " + cantidad);
+						throw new RuntimeException("Stock insuficiente para el producto "
+								+ productoOpt.get().getNombre() + ". Stock disponible: "
+								+ inventario.getCantidadDisponible() + ", solicitado: " + cantidad);
 					}
-					
+
 					// Deducir stock
 					Inventario inventarioActualizado = inventarioService.reducirStock(inventario.getId(), cantidad);
-					LOGGER.info("Stock actualizado - Producto: {}, Nuevo stock: {}", 
-						productoId, inventarioActualizado.getCantidadDisponible());
-					
+					LOGGER.info("Stock actualizado - Producto: {}, Nuevo stock: {}", productoId,
+							inventarioActualizado.getCantidadDisponible());
+
 					// Crear detalle de venta
 					DetalleVenta detalle = new DetalleVenta();
 					detalle.setVenta(ventaGuardada);
@@ -755,25 +736,23 @@ public class UsuarioController {
 					detalles.add(detalle);
 				}
 			}
-			
+
 			ventaGuardada.setDetallesVenta(detalles);
 			ventaRepository.save(ventaGuardada);
-			
+
 			LOGGER.info("Venta registrada exitosamente. ID: {}", ventaGuardada.getId());
-			
-			return ResponseEntity.ok(Map.of(
-				"mensaje", "Venta registrada exitosamente",
-				"ventaId", ventaGuardada.getId()
-			));
-			
+
+			return ResponseEntity
+					.ok(Map.of("mensaje", "Venta registrada exitosamente", "ventaId", ventaGuardada.getId()));
+
 		} catch (Exception e) {
 			LOGGER.error("Error al registrar venta: {}", e.getMessage());
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al registrar la venta: " + e.getMessage()));
+					.body(Map.of("error", "Error al registrar la venta: " + e.getMessage()));
 		}
 	}
-	
+
 	@GetMapping("/api/ventas/mis-compras")
 	@ResponseBody
 	@Transactional(readOnly = true)
@@ -783,68 +762,70 @@ public class UsuarioController {
 			if (usuarioLogueado == null) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
-			
+
 			LOGGER.info("Obteniendo compras del usuario ID: {}", usuarioLogueado.getId());
-			
+
 			List<Venta> ventas = ventaRepository.findByUsuarioId(usuarioLogueado.getId());
-			
-			List<VentaDTO> ventasDTO = ventas.stream()
-				.map(venta -> {
-					VentaDTO dto = new VentaDTO();
-					dto.setId(venta.getId());
-					dto.setFecha(venta.getFecha());
-					dto.setSubtotal(venta.getSubtotal());
-					dto.setTotal(venta.getTotal());
-					
-					if (venta.getPago() != null) {
-						dto.setMetodoPago(venta.getPago().getMetodo());
-						dto.setEstadoPago(venta.getPago().getEstado());
-						dto.setReferencia(venta.getPago().getReferencia());
-					}
-					
-					if (venta.getDetallesVenta() != null) {
-						List<VentaDTO.DetalleVentaDTO> detallesDTO = venta.getDetallesVenta().stream()
-							.map(detalle -> new VentaDTO.DetalleVentaDTO(
-								detalle.getProducto().getId(),
-								detalle.getProducto().getNombre(),
-								detalle.getCantidad(),
-								detalle.getPrecioUnitario(),
-								detalle.getCantidad() * detalle.getPrecioUnitario()
-							))
+
+			List<VentaDTO> ventasDTO = ventas.stream().map(venta -> {
+				VentaDTO dto = new VentaDTO();
+				dto.setId(venta.getId());
+				dto.setFecha(venta.getFecha());
+				dto.setSubtotal(venta.getSubtotal());
+				dto.setTotal(venta.getTotal());
+
+				if (venta.getPago() != null) {
+					dto.setMetodoPago(venta.getPago().getMetodo());
+					dto.setEstadoPago(venta.getPago().getEstado());
+					dto.setReferencia(venta.getPago().getReferencia());
+				}
+
+				if (venta.getDetallesVenta() != null) {
+					List<VentaDTO.DetalleVentaDTO> detallesDTO = venta.getDetallesVenta().stream()
+							.map(detalle -> new VentaDTO.DetalleVentaDTO(detalle.getProducto().getId(),
+									detalle.getProducto().getNombre(), detalle.getCantidad(),
+									detalle.getPrecioUnitario(), detalle.getCantidad() * detalle.getPrecioUnitario()))
 							.collect(Collectors.toList());
-						dto.setDetalles(detallesDTO);
-					}
-					
-					return dto;
-				})
-				.collect(Collectors.toList());
-			
+					dto.setDetalles(detallesDTO);
+				}
+
+				return dto;
+			}).collect(Collectors.toList());
+
 			LOGGER.info("Se encontraron {} compras", ventasDTO.size());
 			return ResponseEntity.ok(ventasDTO);
-			
+
 		} catch (Exception e) {
 			LOGGER.error("Error al obtener compras: {}", e.getMessage());
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
 	private Double convertToDouble(Object value) {
-		if (value == null) return 0.0;
-		if (value instanceof Double) return (Double) value;
-		if (value instanceof Integer) return ((Integer) value).doubleValue();
-		if (value instanceof String) return Double.parseDouble((String) value);
+		if (value == null)
+			return 0.0;
+		if (value instanceof Double)
+			return (Double) value;
+		if (value instanceof Integer)
+			return ((Integer) value).doubleValue();
+		if (value instanceof String)
+			return Double.parseDouble((String) value);
 		return Double.parseDouble(value.toString());
 	}
-	
+
 	private Integer convertToInteger(Object value) {
-		if (value == null) return 0;
-		if (value instanceof Integer) return (Integer) value;
-		if (value instanceof Double) return ((Double) value).intValue();
-		if (value instanceof String) return Integer.parseInt((String) value);
+		if (value == null)
+			return 0;
+		if (value instanceof Integer)
+			return (Integer) value;
+		if (value instanceof Double)
+			return ((Double) value).intValue();
+		if (value instanceof String)
+			return Integer.parseInt((String) value);
 		return Integer.parseInt(value.toString());
 	}
-	
+
 	@PostMapping("/api/password-reset/request")
 	@ResponseBody
 	public ResponseEntity<?> solicitarRecuperacion(@RequestBody Map<String, String> request) {
@@ -853,69 +834,65 @@ public class UsuarioController {
 			if (email == null || email.trim().isEmpty()) {
 				return ResponseEntity.badRequest().body(Map.of("error", "El correo electronico es requerido"));
 			}
-			
+
 			LOGGER.info("Solicitud de recuperacion para correo: {}", email);
-			
+
 			passwordResetService.solicitarRecuperacion(email.trim());
-			
-			return ResponseEntity.ok(Map.of(
-				"mensaje", "Si el correo esta registrado, recibiras un enlace de recuperacion",
-				"success", true
-			));
-			
+
+			return ResponseEntity.ok(Map.of("mensaje",
+					"Si el correo esta registrado, recibiras un enlace de recuperacion", "success", true));
+
 		} catch (MessagingException e) {
 			LOGGER.error("Error al enviar correo de recuperacion: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al enviar el correo de recuperacion. Por favor intenta mas tarde."));
+					.body(Map.of("error", "Error al enviar el correo de recuperacion. Por favor intenta mas tarde."));
 		} catch (Exception e) {
 			LOGGER.error("Error en solicitud de recuperacion: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al procesar la solicitud. Por favor intenta mas tarde."));
+					.body(Map.of("error", "Error al procesar la solicitud. Por favor intenta mas tarde."));
 		}
 	}
-	
+
 	@PostMapping("/api/password-reset/confirm")
 	@ResponseBody
 	public ResponseEntity<?> restablecerContrasena(@RequestBody Map<String, String> request) {
 		try {
 			String token = request.get("token");
 			String nuevaContrasena = request.get("nuevaContrasena");
-			
+
 			if (token == null || token.trim().isEmpty()) {
 				return ResponseEntity.badRequest().body(Map.of("error", "El token de recuperacion es requerido"));
 			}
-			
+
 			if (nuevaContrasena == null || nuevaContrasena.length() < 6) {
-				return ResponseEntity.badRequest().body(Map.of("error", "La contrasena debe tener al menos 6 caracteres"));
+				return ResponseEntity.badRequest()
+						.body(Map.of("error", "La contrasena debe tener al menos 6 caracteres"));
 			}
-			
+
 			LOGGER.info("Intento de restablecer contrasena con token: {}", token.substring(0, 8) + "...");
-			
+
 			String resultado = passwordResetService.restablecerContrasena(token.trim(), nuevaContrasena);
-			
+
 			if (resultado.contains("expirado") || resultado.contains("invalido")) {
 				return ResponseEntity.badRequest().body(Map.of("error", resultado));
 			}
-			
-			return ResponseEntity.ok(Map.of(
-				"mensaje", resultado,
-				"success", true
-			));
-			
+
+			return ResponseEntity.ok(Map.of("mensaje", resultado, "success", true));
+
 		} catch (Exception e) {
 			LOGGER.error("Error al restablecer contrasena: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al restablecer la contrasena. Por favor solicita un nuevo enlace."));
+					.body(Map.of("error", "Error al restablecer la contrasena. Por favor solicita un nuevo enlace."));
 		}
 	}
-	
+
 	@GetMapping("/recovery-contra")
 	public String mostrarRestablecerContrasena(@RequestParam(required = false) String token, Model model) {
 		if (token == null || token.trim().isEmpty()) {
 			model.addAttribute("error", "Token de recuperacion no proporcionado");
 			return "RestablecerContrasena/recovery-contra";
 		}
-		
+
 		String validacion = passwordResetService.validarToken(token);
 		if (validacion.contains("invalido") || validacion.contains("expirado")) {
 			model.addAttribute("error", validacion);
@@ -924,7 +901,7 @@ public class UsuarioController {
 			model.addAttribute("token", token);
 			model.addAttribute("tokenValido", true);
 		}
-		
+
 		return "RestablecerContrasena/recovery-contra";
 	}
 

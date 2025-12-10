@@ -47,7 +47,8 @@
 				<div class="botones-finales">
 					<div class="nav-buttons">
 						<button class="nav-buttone">
-							<a href="Adopciones.html" class="nav-buttone"> <i class="fas fa-dog"></i> Adopciones</a>
+							<a th:href="@{/adopciones}" style="text-decoration: none;"> <i class="fas fa-dog"></i>
+								<span>Adopciones</span></a>
 						</button>
 
 
@@ -123,12 +124,12 @@
 					</button>
 					<div class="menu-content">
 						<div class="menu-item">
-							<a href="Usuario.html" style="text-decoration: none;">
+							<a th:href="@{/usuarios/perfilusuario}" style="text-decoration: none;">
 								<i class="fas fa-user-plus"></i>
 								<span>Perfil</span>
 							</a>
 						</div>
-						<div class="menu-item">
+						<!--<div class="menu-item">
 							<a href="Reporte.html" style="text-decoration: none;">
 								<i class="fas fa-clinic-medical"></i>
 								<span>Reporte Maltrato</span>
@@ -139,18 +140,16 @@
 								<i class="fas fa-star"></i>
 								<span>Calificaciones</span>
 							</a>
+						</div>-->
+						<div class="menu-item">
+							<a th:href="@{/usuarios/sobrenosotros}" style="text-decoration: none;"> <i
+									class="fas fa-users"></i>
+								<span>Acerca de Nosotros</span></a>
 						</div>
 						<div class="menu-item">
-							<a href="sobrenosotros.html" style="text-decoration: none;">
-								<i class="fas fa-users"></i>
-								<span>Acerca de Nosotros</span>
-							</a>
-						</div>
-						<div class="menu-item">
-							<a href="Home.html" style="text-decoration: none;">
-								<i class="fas fa-arrow-right"></i>
-								<span>Cerrar Sesión</span>
-							</a>
+							<a th:href="@{/usuarios/index}" style="text-decoration: none;"> <i
+									class="fas fa-arrow-right"></i>
+								<span>Cerrar Sesión</span></a>
 						</div>
 					</div>
 				</div>

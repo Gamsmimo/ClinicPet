@@ -64,12 +64,10 @@
 							</a>
 						</div>
 						<div class="menu-item">
-							<a href="Tienda.html" style="text-decoration: none;">
-								<i class="fas fa-shopping-cart"></i>
-								<span>Pet Shop</span>
-							</a>
+							<a th:href="@{/usuarios/tienda}" style="text-decoration: none;"> <i class="fas fa-shop"></i>
+								<span>PetShop</span></a>
 						</div>
-						<div class="menu-item">
+						<!--<div class="menu-item">
 							<a href="Reporte.html" style="text-decoration: none;">
 								<i class="fas fa-clinic-medical"></i>
 								<span>Reporte Maltrato</span>
@@ -80,12 +78,13 @@
 								<i class="fas fa-star"></i>
 								<span>Calificaciones</span>
 							</a>
-						</div>
+						</div>-->
+
+
 						<div class="menu-item">
-							<a href="sobrenosotros.html" style="text-decoration: none;">
-								<i class="fas fa-users"></i>
-								<span>Acerca de Nosotros</span>
-							</a>
+							<a th:href="@{/usuarios/sobrenosotros}" style="text-decoration: none;"> <i
+									class="fas fa-users"></i>
+								<span>Acerca de Nosotros</span></a>
 						</div>
 						<div class="menu-item">
 							<a th:href="@{/usuarios/index}" style="text-decoration: none;">
@@ -353,8 +352,7 @@
 
 					<div class="grupo-formulario">
 						<label for="raza">Raza</label>
-						<input type="text" id="raza" th:field="*{raza}"
-							placeholder="Ej: Labrador, Siamés, Mestizo...">
+						<input type="text" id="raza" th:field="*{raza}" placeholder="Ej: Labrador, Siamés, Mestizo...">
 					</div>
 
 					<div class="grupo-formulario">
