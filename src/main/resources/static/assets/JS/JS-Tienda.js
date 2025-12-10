@@ -98,6 +98,16 @@ function resumeCarousel() {
 let allProducts = []; // Se cargarán desde la base de datos
 
 let cart = [];
+
+// Función para formatear precios en pesos colombianos (COP)
+function formatearPrecioCOP(precio) {
+	return new Intl.NumberFormat('es-CO', {
+		style: 'currency',
+		currency: 'COP',
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0
+	}).format(precio);
+}
 let currentFilter = { category: "all", pet: "all", sort: "featured" };
 
 // Funciones de renderizado
@@ -144,7 +154,7 @@ function createProductCard(product) {
                 <div class="product-rating">${stars}</div>
                 <p class="product-description">${product.descripcion}</p>
                 <div class="product-bottom">
-                    <div class="product-price">$${product.precio.toFixed(2)}</div>
+                    <div class="product-price">${formatearPrecioCOP(product.precio)}</div>
                     <button class="add-to-cart" onclick="addToCart(${product.id})" ${product.cantidadDisponible <= 0 ? 'disabled' : ''}>
                         <i class="fas fa-cart-plus"></i> ${product.cantidadDisponible > 0 ? 'Añadir' : 'Agotado'}
                     </button>
@@ -403,7 +413,7 @@ function updateCart() {
                 </div>
                 <div class="cart-item-details">
                     <div class="cart-item-name">${item.nombre}</div>
-                    <div class="cart-item-price">$${item.precio.toFixed(2)}</div>
+                    <div class="cart-item-price">${formatearPrecioCOP(item.precio)}</div>
                     <div class="cart-item-stock-info">
                         <small style="color: #666;">Stock disponible: ${maxStock} unidades</small>
 						${isAtLimit ? '<small style="color: #ffc107; font-weight: bold;"> (¡Límite alcanzado!)</small>' : ''}
@@ -429,8 +439,8 @@ function updateCart() {
 		(sum, item) => sum + item.precio * item.quantity,
 		0
 	);
-	subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-	totalEl.textContent = `$${subtotal.toFixed(2)}`;
+	subtotalEl.textContent = formatearPrecioCOP(subtotal);
+	totalEl.textContent = formatearPrecioCOP(subtotal);
 }
 
 // ===== NOTIFICACIONES - Usando sistema compartido desde notifications.js =====

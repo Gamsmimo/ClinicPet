@@ -1,3 +1,282 @@
+// ===== FUNCIONALIDAD DE BÚSQUEDA DE CONTENIDO =====
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+// Función para resaltar texto encontrado
+function highlightText(text, query) {
+	if (!query) return text;
+	const regex = new RegExp(`(${query})`, 'gi');
+	return text.replace(regex, '<mark style="background-color: #ffc107; padding: 0 2px; border-radius: 2px;">$1</mark>');
+}
+
+// Función para buscar contenido en la página
+function searchContent(query) {
+	const results = [];
+	
+	// ===== BUSCAR EN INICIO =====
+	// Buscar en tarjetas de resumen
+	const summaryCards = document.querySelectorAll('#inicio .card-summary');
+	summaryCards.forEach(card => {
+		const titulo = card.querySelector('p');
+		const valor = card.querySelector('h3');
+		if (titulo && titulo.textContent.toLowerCase().includes(query)) {
+			results.push({
+				title: titulo.textContent.trim(),
+				description: valor ? 'Valor: ' + valor.textContent.trim() : '',
+				icon: 'fas fa-home',
+				category: 'Inicio - Resumen',
+				section: 'inicio',
+				element: card
+			});
+		}
+	});
+	
+	// Buscar en acciones rápidas
+	const quickActions = document.querySelectorAll('#inicio .btn-action');
+	quickActions.forEach(btn => {
+		const texto = btn.querySelector('span');
+		if (texto && texto.textContent.toLowerCase().includes(query)) {
+			results.push({
+				title: texto.textContent.trim(),
+				description: 'Acción rápida disponible',
+				icon: 'fas fa-bolt',
+				category: 'Inicio - Acción',
+				section: 'inicio',
+				element: btn
+			});
+		}
+	});
+	
+	// ===== BUSCAR EN EVENTOS =====
+	const eventCards = document.querySelectorAll('#eventos .event-card');
+	eventCards.forEach((card, index) => {
+		const titulo = card.querySelector('.card-title');
+		const descripcion = card.querySelector('.card-description');
+		const fechas = card.querySelectorAll('.card-date span');
+		const eventId = card.dataset.id;
+		
+		const tituloText = titulo ? titulo.textContent : '';
+		const descripcionText = descripcion ? descripcion.textContent : '';
+		const fechasText = Array.from(fechas).map(f => f.textContent).join(' ');
+		
+		// Buscar en título, descripción o fechas
+		if (tituloText.toLowerCase().includes(query) || 
+			descripcionText.toLowerCase().includes(query) ||
+			fechasText.toLowerCase().includes(query)) {
+			
+			// Calcular en qué página está este evento
+			const cardsPerPage = typeof CARDS_PER_PAGE !== 'undefined' ? CARDS_PER_PAGE : 4;
+			const pageNumber = Math.floor(index / cardsPerPage) + 1;
+			
+			results.push({
+				title: tituloText.trim(),
+				description: descripcionText.substring(0, 80) + (descripcionText.length > 80 ? '...' : ''),
+				icon: 'fa-solid fa-calendar-week',
+				category: 'Evento',
+				section: 'eventos',
+				element: card,
+				eventId: eventId,
+				pageNumber: pageNumber
+			});
+		}
+	});
+	
+	// ===== BUSCAR EN PET SHOP (PRODUCTOS) =====
+	const productCards = document.querySelectorAll('#petshop .product-card');
+	productCards.forEach(card => {
+		const nombre = card.querySelector('.product-info h5');
+		const descripcion = card.querySelector('.product-description');
+		const precio = card.querySelector('.price');
+		const stock = card.querySelector('.stock');
+		
+		const nombreText = nombre ? nombre.textContent : '';
+		const descripcionText = descripcion ? descripcion.textContent : '';
+		const precioText = precio ? precio.textContent : '';
+		
+		// Buscar en nombre, descripción o precio
+		if (nombreText.toLowerCase().includes(query) || 
+			descripcionText.toLowerCase().includes(query) ||
+			precioText.toLowerCase().includes(query)) {
+			results.push({
+				title: nombreText.trim(),
+				description: descripcionText.substring(0, 80) + (descripcionText.length > 80 ? '...' : ''),
+				icon: 'fas fa-box',
+				category: 'Producto',
+				section: 'petshop',
+				element: card,
+				extra: precioText ? `Precio: ${precioText}` : ''
+			});
+		}
+	});
+	
+	// ===== BUSCAR EN CONFIGURACIÓN =====
+	// Buscar en títulos de sección
+	const configTitles = document.querySelectorAll('#configuracion .config-section-title');
+	configTitles.forEach(title => {
+		if (title.textContent.toLowerCase().includes(query)) {
+			results.push({
+				title: title.textContent.trim(),
+				description: 'Sección de configuración',
+				icon: 'fas fa-cog',
+				category: 'Configuración',
+				section: 'configuracion',
+				element: title.closest('.config-info-group') || title
+			});
+		}
+	});
+	
+	// Buscar en labels de campos
+	const configLabels = document.querySelectorAll('#configuracion .config-label');
+	configLabels.forEach(label => {
+		if (label.textContent.toLowerCase().includes(query)) {
+			const field = label.closest('.config-field');
+			const input = field ? field.querySelector('input') : null;
+			results.push({
+				title: label.textContent.trim(),
+				description: input && input.value ? 'Valor actual: ' + input.value.substring(0, 30) : 'Campo de configuración',
+				icon: 'fas fa-sliders-h',
+				category: 'Configuración - Campo',
+				section: 'configuracion',
+				element: field || label
+			});
+		}
+	});
+	
+	// Buscar en valores de inputs de configuración
+	const configInputs = document.querySelectorAll('#configuracion .config-input');
+	configInputs.forEach(input => {
+		if (input.value && input.value.toLowerCase().includes(query)) {
+			const field = input.closest('.config-field');
+			const label = field ? field.querySelector('.config-label') : null;
+			results.push({
+				title: label ? label.textContent.trim() : 'Campo',
+				description: 'Valor: ' + input.value.substring(0, 50),
+				icon: 'fas fa-edit',
+				category: 'Configuración - Valor',
+				section: 'configuracion',
+				element: field || input
+			});
+		}
+	});
+	
+	return results;
+}
+
+// Función para navegar a una página específica de eventos
+function goToEventPage(pageNumber) {
+	if (typeof currentPage !== 'undefined' && typeof showPage === 'function') {
+		currentPage = pageNumber;
+		showPage(currentPage);
+	}
+}
+
+if (searchInput && searchResults) {
+	searchInput.addEventListener('input', function() {
+		const query = this.value.toLowerCase().trim();
+		
+		if (query.length < 2) {
+			searchResults.classList.remove('active');
+			return;
+		}
+		
+		const results = searchContent(query);
+		
+		// Eliminar duplicados por título
+		const uniqueResults = results.filter((item, index, self) =>
+			index === self.findIndex(t => t.title === item.title && t.category === item.category)
+		);
+		
+		if (uniqueResults.length > 0) {
+			searchResults.innerHTML = uniqueResults.slice(0, 10).map((item, idx) => `
+				<div class="search-result-item" data-section="${item.section}" data-index="${idx}">
+					<i class="${item.icon}"></i>
+					<div class="result-text">
+						<div class="result-title">${highlightText(item.title, query)}</div>
+						<div class="result-category">${item.category} (${countMatches(item.title + ' ' + (item.description || ''), query)} coincidencia${countMatches(item.title + ' ' + (item.description || ''), query) > 1 ? 's' : ''})</div>
+						${item.description ? `<div class="result-description">${highlightText(item.description, query)}</div>` : ''}
+						${item.extra ? `<div class="result-extra" style="font-size: 0.75rem; color: var(--primary); margin-top: 2px;">${item.extra}</div>` : ''}
+					</div>
+				</div>
+			`).join('');
+			
+			// Agregar eventos de clic
+			const resultItems = searchResults.querySelectorAll('.search-result-item');
+			resultItems.forEach((resultItem) => {
+				resultItem.addEventListener('click', function() {
+					const section = this.dataset.section;
+					const idx = parseInt(this.dataset.index);
+					const resultData = uniqueResults[idx];
+					const targetElement = resultData?.element;
+					
+					// Navegar a la sección usando el menú
+					const menuLink = document.querySelector(`a[href="#${section}"]`);
+					if (menuLink) {
+						menuLink.click();
+					}
+					
+					// Si es un evento con paginación, ir a la página correcta
+					if (section === 'eventos' && resultData?.pageNumber) {
+						setTimeout(() => {
+							goToEventPage(resultData.pageNumber);
+						}, 100);
+					}
+					
+					// Resaltar el elemento encontrado
+					if (targetElement) {
+						setTimeout(() => {
+							// Asegurar que el elemento sea visible
+							targetElement.style.display = '';
+							targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+							targetElement.style.transition = 'all 0.3s ease';
+							targetElement.style.boxShadow = '0 0 20px 8px rgba(255, 193, 7, 0.7)';
+							targetElement.style.transform = 'scale(1.02)';
+							targetElement.style.zIndex = '100';
+							
+							setTimeout(() => {
+								targetElement.style.boxShadow = '';
+								targetElement.style.transform = '';
+								targetElement.style.zIndex = '';
+							}, 2500);
+						}, 350);
+					}
+					
+					searchInput.value = '';
+					searchResults.classList.remove('active');
+				});
+			});
+			
+			searchResults.classList.add('active');
+		} else {
+			searchResults.innerHTML = `
+				<div class="search-no-results">
+					<i class="fas fa-search"></i>
+					<p>No se encontraron resultados para "${query}"</p>
+				</div>
+			`;
+			searchResults.classList.add('active');
+		}
+	});
+	
+	document.addEventListener('click', function(e) {
+		if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+			searchResults.classList.remove('active');
+		}
+	});
+	
+	searchInput.addEventListener('keydown', function(e) {
+		if (e.key === 'Escape') {
+			searchResults.classList.remove('active');
+			this.blur();
+		}
+	});
+}
+
+// Función auxiliar para contar coincidencias
+function countMatches(text, query) {
+	if (!text || !query) return 0;
+	const regex = new RegExp(query, 'gi');
+	return (text.match(regex) || []).length;
+}
 
 // Navegación entre secciones
 const menuItems = document.querySelectorAll('.menu-items a');

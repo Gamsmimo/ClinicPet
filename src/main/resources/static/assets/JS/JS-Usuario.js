@@ -1,6 +1,16 @@
 const currentUserId = document.getElementById('current-user-id') ? document.getElementById('current-user-id').value : null;
 let currentPhotoFile = null;
 
+// Función para formatear precios en pesos colombianos (COP)
+function formatearPrecioCOP(precio) {
+	return new Intl.NumberFormat('es-CO', {
+		style: 'currency',
+		currency: 'COP',
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0
+	}).format(precio);
+}
+
 $(document).ready(function() {
 
 	// Función para inicializar la aplicación
@@ -170,7 +180,7 @@ $(document).ready(function() {
 						<span class="badge bg-info">${venta.metodoPago || 'N/A'}</span>
 						${venta.referencia ? `<br><small class="text-muted">Ref: ${venta.referencia}</small>` : ''}
 					</td>
-					<td><strong>$${venta.total.toFixed(2)}</strong></td>
+					<td><strong>${formatearPrecioCOP(venta.total)}</strong></td>
 					<td>
 						<button class="btn btn-sm btn-primary" onclick="verDetalleCompra(${venta.id})">
 							<i class="fas fa-eye"></i> Ver

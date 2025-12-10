@@ -2,8 +2,42 @@
 let currentPaymentMethod = 'card';
 let cartItems = [];
 let subtotal = 0;
-let shippingCost = 5.00;
+let shippingCost = 5000;
 let discount = 0;
+
+// Función para formatear precios en pesos colombianos (COP)
+function formatearPrecioCOP(precio) {
+	return new Intl.NumberFormat('es-CO', {
+		style: 'currency',
+		currency: 'COP',
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0
+	}).format(precio);
+}
+
+// ===== FUNCIONALIDAD DE MODO OSCURO/CLARO =====
+const themeToggle = document.getElementById("themeToggle");
+const htmlElement = document.documentElement;
+
+// Verificar si hay un tema guardado
+const savedTheme = localStorage.getItem("theme") || "light";
+htmlElement.setAttribute("data-theme", savedTheme);
+if (themeToggle) {
+    themeToggle.checked = savedTheme === "dark";
+}
+
+// Event listener para cambiar el tema
+if (themeToggle) {
+    themeToggle.addEventListener("change", function() {
+        if (this.checked) {
+            htmlElement.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+        } else {
+            htmlElement.setAttribute("data-theme", "light");
+            localStorage.setItem("theme", "light");
+        }
+    });
+}
 
 // ===== CARGAR DATOS DEL CARRITO =====
 document.addEventListener('DOMContentLoaded', () => {
@@ -61,7 +95,7 @@ function renderOrderItems() {
                 <div class="item-name">${item.nombre}</div>
                 <div class="item-quantity">Cantidad: ${item.quantity}</div>
             </div>
-            <div class="item-price">$${(item.precio * item.quantity).toFixed(2)}</div>
+            <div class="item-price">${formatearPrecioCOP(item.precio * item.quantity)}</div>
         </div>
     `).join('');
 }
@@ -70,8 +104,8 @@ function calculateTotals() {
     subtotal = cartItems.reduce((sum, item) => sum + (item.precio * item.quantity), 0);
     const total = subtotal + shippingCost - discount;
     
-    document.getElementById('summarySubtotal').textContent = `$${subtotal.toFixed(2)}`;
-    document.getElementById('finalTotal').textContent = `$${total.toFixed(2)}`;
+    document.getElementById('summarySubtotal').textContent = formatearPrecioCOP(subtotal);
+    document.getElementById('finalTotal').textContent = formatearPrecioCOP(total);
 }
 
 // ===== MÉTODOS DE PAGO =====
@@ -107,7 +141,7 @@ function applyPromoCode() {
         
         // Mostrar descuento
         document.getElementById('discountRow').style.display = 'flex';
-        document.getElementById('discountAmount').textContent = `-$${discount.toFixed(2)}`;
+        document.getElementById('discountAmount').textContent = `-${formatearPrecioCOP(discount)}`;
         
         // Recalcular total
         calculateTotals();
