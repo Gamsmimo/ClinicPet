@@ -1,4 +1,4 @@
-﻿package com.clinicpet.demo.controller;
+package com.clinicpet.demo.controller;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
-import java.util.List; // *** AGREGADO: Para List<Mascota> en perfil ***
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -94,6 +94,12 @@ public class UsuarioController {
 	private IAdopcionService adopcionService;
 
 	@Autowired
+	private com.clinicpet.demo.service.IInventarioService inventarioService;
+
+	@Autowired
+	private com.clinicpet.demo.service.IPerfilVeterinarioService perfilVeterinarioService;
+
+	@Autowired
 	private PasswordResetService passwordResetService;
 
 	@Autowired
@@ -102,14 +108,12 @@ public class UsuarioController {
 	@Autowired
 	private com.clinicpet.demo.service.EmailService emailService;
 
-	// Mostrar formulario de login (unificado a vista "iniciarsesion")
 	@GetMapping("/iniciarsesion")
 	public String mostrarLogin(Model model) {
-		model.addAttribute("usuarioLogin", new Usuario()); // Para binding en form
-		return "IniciarSesion/iniciarsesion"; // Unificado: templates/iniciarsesion.html (ajusta si usas subcarpeta)
+		model.addAttribute("usuarioLogin", new Usuario());
+		return "IniciarSesion/iniciarsesion";
 	}
 
-	// Procesar login
 	@PostMapping("/iniciarsesion")
 	public String procesarLogin(@ModelAttribute Usuario usuarioLogin, Model model, HttpSession session,
 			RedirectAttributes redirectAttributes) {
@@ -117,22 +121,18 @@ public class UsuarioController {
 			Optional<Usuario> usuarioOpt = usuarioService.buscarUsuarioPorCorreo(usuarioLogin.getCorreo());
 			if (usuarioOpt.isPresent()) {
 				Usuario usuario = usuarioOpt.get();
-				// 🔧 LOGIN HÍBRIDO: Detecta formato y migra automáticamente
 				boolean passwordValid = false;
 				
 				if (usuario.getPassword().startsWith("$2a$") || usuario.getPassword().startsWith("$2b$")) {
-					// Contraseña en formato BCrypt
 					passwordValid = passwordEncoder.matches(usuarioLogin.getPassword(), usuario.getPassword());
 				} else {
-					// Contraseña en texto plano (migración automática)
 					passwordValid = usuario.getPassword().equals(usuarioLogin.getPassword());
 					
 					if (passwordValid) {
-						// Migrar automáticamente a BCrypt
 						String contrasenaEncriptada = passwordEncoder.encode(usuarioLogin.getPassword());
 						usuario.setPassword(contrasenaEncriptada);
 						usuarioRepository.save(usuario);
-						LOGGER.info("🔄 Contraseña migrada a BCrypt para usuario: {}", usuario.getCorreo());
+						LOGGER.info("Contrasena migrada a BCrypt para usuario: {}", usuario.getCorreo());
 					}
 				}
 				
@@ -140,49 +140,41 @@ public class UsuarioController {
 					session.setAttribute("usuarioLogueado", usuario);
 					redirectAttributes.addFlashAttribute("mensaje", "Bienvenido, " + usuario.getNombres());
 
-					// âœ… REDIRIGIR SEGÃšN ROL
 					Integer rolId = usuario.getRol().getId();
 
-					if (rolId == 3) { // Administrador
+					if (rolId == 3) {
 						return "redirect:/admin";
-					} else if (rolId == 2) { // Veterinario
+					} else if (rolId == 2) {
 						return "redirect:/perfil-veterinario";
-					} else { // Usuario normal (rol 1)
+					} else {
 						return "redirect:/usuarios/inicio";
 					}
 				}
 			}
-			// Bloque unificado para errores (evita duplicaciÃ³n)
-			model.addAttribute("error", "Correo o contraseÃ±a incorrectos, o usuario inactivo");
-			model.addAttribute("usuarioLogin", usuarioLogin); // Rellena campos en error
-			return "IniciarSesion/iniciarsesion"; // Corregido: unificado a "iniciarsesion"
+			model.addAttribute("error", "Correo o contrasena incorrectos, o usuario inactivo");
+			model.addAttribute("usuarioLogin", usuarioLogin);
+			return "IniciarSesion/iniciarsesion";
 
 		} catch (Exception e) {
-			model.addAttribute("error", "Error al iniciar sesiÃ³n: " + e.getMessage());
-			model.addAttribute("usuarioLogin", usuarioLogin != null ? usuarioLogin : new Usuario()); // Consistente:
-																										// prefiere
-																										// datos
-																										// ingresados
-			return "IniciarSesion/iniciarsesion"; // Corregido: unificado a "iniciarsesion"
+			model.addAttribute("error", "Error al iniciar sesion: " + e.getMessage());
+			model.addAttribute("usuarioLogin", usuarioLogin != null ? usuarioLogin : new Usuario());
+			return "IniciarSesion/iniciarsesion";
 		}
 	}
 
-	// ==================== DIAGNÓSTICO DE CORREO ====================
-	
 	@GetMapping("/test-email")
 	@ResponseBody
 	public ResponseEntity<?> testEmailDirecto() {
 		try {
-			LOGGER.info("🔧 INICIANDO PRUEBA DIRECTA DE CORREO");
+			LOGGER.info("INICIANDO PRUEBA DIRECTA DE CORREO");
 			
-			// Enviar correo de prueba directo
 			String resultado = emailService.enviarCorreoRecuperacion(
 				"helpyourpet79@gmail.com", 
 				"token-de-prueba-123", 
 				"Usuario Prueba"
 			);
 			
-			LOGGER.info("✅ PRUEBA DE CORREO COMPLETADA: {}", resultado);
+			LOGGER.info("PRUEBA DE CORREO COMPLETADA: {}", resultado);
 			
 			return ResponseEntity.ok(java.util.Map.of(
 				"status", "success",
@@ -191,7 +183,7 @@ public class UsuarioController {
 			));
 			
 		} catch (Exception e) {
-			LOGGER.error("❌ ERROR EN PRUEBA DE CORREO: {}", e.getMessage(), e);
+			LOGGER.error("ERROR EN PRUEBA DE CORREO: {}", e.getMessage(), e);
 			
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(java.util.Map.of(
@@ -203,7 +195,6 @@ public class UsuarioController {
 		}
 	}
 
-	// Mostrar inicio (dashboard) con paginación de eventos
 	@GetMapping("/inicio")
 	public String mostrarInicio(
 			@RequestParam(defaultValue = "0") int page,
@@ -215,14 +206,11 @@ public class UsuarioController {
 			return "IniciarSesion/iniciarsesion";
 		}
 		
-		// Configurar paginación: 6 eventos por página
 		int pageSize = 6;
 		org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, pageSize);
 		
-		// Obtener página de eventos
 		org.springframework.data.domain.Page<com.clinicpet.demo.model.Evento> eventosPage = eventoRepository.findAll(pageable);
 		
-		// Agregar atributos al modelo
 		model.addAttribute("usuario", usuarioLogueado);
 		model.addAttribute("mensaje", "Bienvenido al Dashboard ClinicPet");
 		model.addAttribute("eventos", eventosPage.getContent());
@@ -233,38 +221,27 @@ public class UsuarioController {
 		return "Inicio/inicio";
 	}
 
-	// Mostrar formulario de registro
 	@GetMapping("/registro")
 	public String mostrarFormularioRegistro(Model model) {
 		model.addAttribute("usuario", new Usuario());
-		// *** CORRECCIÃ“N BÃSICA: Usar subcarpeta para coincidir con tu estructura ***
-		return "Registro/registro"; // Busca templates/Registro/registro.html
+		return "Registro/registro";
 	}
 
-	// Procesar formulario de registro
 	@PostMapping("/registro")
 	public String procesarRegistro(@ModelAttribute Usuario usuario, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
-			// *** CORRECCIÃ“N BÃSICA: Llamar al service corregido (maneja rol y
-			// validaciones) ***
 			Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
-			redirectAttributes.addFlashAttribute("mensaje", "Â¡Registro exitoso! Bienvenido a HelpYourPet");
-
-			// *** CORRECCIÃ“N: Redirigir al INICIO (pÃ¡gina principal) ***
-			return "redirect:/"; // Redirige a la pÃ¡gina de inicio
+			redirectAttributes.addFlashAttribute("mensaje", "Registro exitoso! Bienvenido a HelpYourPet");
+			return "redirect:/";
 
 		} catch (RuntimeException e) {
-			// *** CORRECCIÃ“N BÃSICA: Usar la misma ruta con subcarpeta para consistencia
-			// ***
 			model.addAttribute("error", e.getMessage());
-			model.addAttribute("usuario", usuario); // Preserva los datos del form
-			return "Registro/registro"; // Coincide con el GET: templates/Registro/registro.html
+			model.addAttribute("usuario", usuario);
+			return "Registro/registro";
 		}
 	}
 
-	// Mostrar perfil de usuario (corregido: agregado log debug y usuarioLogueado a
-	// model)
 	@GetMapping("/perfilusuario")
 	public String perfilusuario(Model model, HttpSession session) {
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
@@ -272,24 +249,17 @@ public class UsuarioController {
 			return "redirect:/iniciarsesion";
 		}
 
-		// âœ… AGREGAR ESTA LÃNEA - Pasar el ID al modelo
 		model.addAttribute("idUsuarioActual", usuarioLogueado.getId());
-
 		model.addAttribute("mascota", new Mascota());
 
-		// Carga lista de mascotas del usuario logueado
 		List<Mascota> mascotas = mascotaService.buscarPorUsuario(usuarioLogueado.getId());
 		model.addAttribute("mascotas", mascotas);
 		model.addAttribute("tieneMascotas", !mascotas.isEmpty());
 		
-		
-		// ✅ NUEVO: Cargar las adopciones publicadas por el usuario
 		List<Adopcion> misAdopciones = adopcionService.buscarAdopcionesByUsuarioId(usuarioLogueado.getId());
 		model.addAttribute("misAdopciones", misAdopciones);
 		model.addAttribute("tieneAdopciones", !misAdopciones.isEmpty());
-		
 
-		// Para HTML (saludo, foto usuario, etc.)
 		model.addAttribute("usuarioLogueado", usuarioLogueado);
 
 		return "Usuario/perfilusuario";
@@ -298,33 +268,31 @@ public class UsuarioController {
 	@GetMapping("/perfilusuario/mascota/{id}")
 	@ResponseBody
 	public ResponseEntity<Mascota> obtenerMascotaPorId(@PathVariable Integer id, HttpSession session) {
-		LOGGER.info("ðŸ” Buscando mascota con ID: {}", id);
+		LOGGER.info("Buscando mascota con ID: {}", id);
 
 		Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 		if (usuarioLogueado == null) {
-			LOGGER.warn("âŒ Usuario no logueado");
+			LOGGER.warn("Usuario no logueado");
 			return ResponseEntity.status(401).build();
 		}
 
 		Optional<Mascota> mascotaOpt = mascotaService.buscarMascotaPorId(id);
 		if (mascotaOpt.isEmpty()) {
-			LOGGER.warn("âŒ Mascota no encontrada con ID: {}", id);
+			LOGGER.warn("Mascota no encontrada con ID: {}", id);
 			return ResponseEntity.notFound().build();
 		}
 
 		Mascota mascota = mascotaOpt.get();
 
-		// âœ… Verificar que la mascota pertenece al usuario
 		if (!mascota.getUsuario().getId().equals(usuarioLogueado.getId())) {
-			LOGGER.warn("âŒ Usuario {} intentÃ³ acceder a mascota {} que no le pertenece", usuarioLogueado.getId(), id);
+			LOGGER.warn("Usuario {} intento acceder a mascota {} que no le pertenece", usuarioLogueado.getId(), id);
 			return ResponseEntity.status(403).build();
 		}
 
-		LOGGER.info("âœ… Mascota encontrada: {} - Unidad Edad: {}", mascota.getNombre(), mascota.getUnidadEdad());
+		LOGGER.info("Mascota encontrada: {} - Unidad Edad: {}", mascota.getNombre(), mascota.getUnidadEdad());
 		return ResponseEntity.ok(mascota);
 	}
 
-	// Agregar mascota (corregido: agregado check null y logs debug bÃ¡sicos)
 	@PostMapping("/perfilusuario/agregarMascota")
 	public String agregarMascota(@ModelAttribute Mascota mascota, @RequestParam("idUsuario") Integer idUsuario,
 			@RequestParam(value = "fotoFile", required = false) MultipartFile fotoFile,
@@ -332,7 +300,7 @@ public class UsuarioController {
 
 		try {
 			if (idUsuario == null) {
-				redirectAttributes.addFlashAttribute("error", "ID de usuario invÃ¡lido");
+				redirectAttributes.addFlashAttribute("error", "ID de usuario invalido");
 				return "redirect:/usuarios/perfilusuario";
 			}
 
@@ -359,7 +327,7 @@ public class UsuarioController {
 
 				mascota.setFoto("/uploads/" + fileName);
 			} else {
-				mascota.setFoto("/uploads/default_pet.png"); // AsegÃºrate que exista esta imagen por defecto
+				mascota.setFoto("/uploads/default_pet.png");
 			}
 
 			mascotaService.guardarMascota(mascota);
@@ -384,7 +352,7 @@ public class UsuarioController {
 
 		try {
 			if (mascota.getId() == null) {
-				redirectAttributes.addFlashAttribute("error", "ID de mascota requerido para actualizaciÃ³n.");
+				redirectAttributes.addFlashAttribute("error", "ID de mascota requerido para actualizacion.");
 				return "redirect:/usuarios/perfilusuario";
 			}
 
@@ -420,11 +388,10 @@ public class UsuarioController {
 
 				mascota.setFoto("/uploads/" + fileName);
 			} else {
-				// Mantener la foto actual si no se sube una nueva
 				mascota.setFoto(mascotaExistente.getFoto());
 			}
 
-			mascota.setUsuario(usuarioLogueado); // Asegura que la mascota mantenga el usuario
+			mascota.setUsuario(usuarioLogueado);
 			mascotaService.actualizarMascota(mascota);
 
 			redirectAttributes.addFlashAttribute("success",
@@ -455,7 +422,6 @@ public class UsuarioController {
 		}
 	}
 
-	// Endpoint para actualizar foto de perfil
 	@PostMapping("/perfilusuario/actualizarFotoPerfil")
 	@ResponseBody
 	public ResponseEntity<?> actualizarFotoPerfil(@RequestBody Map<String, String> request) {
@@ -463,18 +429,13 @@ public class UsuarioController {
 			String fotoBase64 = request.get("fotoPerfil");
 			Long usuarioId = Long.parseLong(request.get("usuarioId"));
 
-			// Validar y procesar la imagen
 			if (fotoBase64 != null && !fotoBase64.isEmpty()) {
-				// Decodificar Base64 y guardar la imagen
 				String rutaFoto = guardarImagenDesdeBase64(fotoBase64, usuarioId);
-
-				// Actualizar en la base de datos
 				usuarioService.actualizarFotoPerfil(usuarioId, rutaFoto);
-
 				return ResponseEntity.ok().body(Map.of("mensaje", "Foto actualizada correctamente"));
 			}
 
-			return ResponseEntity.badRequest().body(Map.of("error", "Datos de imagen invÃ¡lidos"));
+			return ResponseEntity.badRequest().body(Map.of("error", "Datos de imagen invalidos"));
 
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError()
@@ -482,16 +443,12 @@ public class UsuarioController {
 		}
 	}
 
-	// Endpoint para eliminar foto de perfil
 	@PostMapping("/perfilusuario/eliminarFotoPerfil")
 	@ResponseBody
 	public ResponseEntity<?> eliminarFotoPerfil(@RequestBody Map<String, String> request) {
 		try {
 			Long usuarioId = Long.parseLong(request.get("usuarioId"));
-
-			// Eliminar foto y establecer por defecto
 			usuarioService.eliminarFotoPerfil(usuarioId);
-
 			return ResponseEntity.ok().body(Map.of("mensaje", "Foto eliminada correctamente"));
 
 		} catch (Exception e) {
@@ -500,31 +457,24 @@ public class UsuarioController {
 		}
 	}
 
-	// MÃ©todo auxiliar para guardar imÃ¡genes
 	private String guardarImagenDesdeBase64(String base64Image, Long usuarioId) {
 		try {
-			// Eliminar el prefijo data:image/...;base64,
 			String[] parts = base64Image.split(",");
 			String imageString = parts[1];
 
-			// Decodificar Base64
 			byte[] imageBytes = Base64.getDecoder().decode(imageString);
 
-			// Sin restricciÃ³n de tamaÃ±o - permitir cualquier peso de imagen
-			System.out.println(" Procesando imagen de " + (imageBytes.length / (1024 * 1024)) + "MB");
+			System.out.println("Procesando imagen de " + (imageBytes.length / (1024 * 1024)) + "MB");
 
-			// Crear directorio si no existe
 			String uploadDir = "uploads/profiles/";
 			Path uploadPath = Paths.get(uploadDir);
 			if (!Files.exists(uploadPath)) {
 				Files.createDirectories(uploadPath);
 			}
 
-			// Generar nombre Ãºnico
 			String fileName = "profile_" + usuarioId + "_" + System.currentTimeMillis() + ".webp";
 			Path filePath = uploadPath.resolve(fileName);
 
-			// Guardar archivo
 			Files.write(filePath, imageBytes);
 
 			return "/" + uploadDir + fileName;
@@ -565,12 +515,12 @@ public class UsuarioController {
 
 			if (actualizado != null) {
 				session.setAttribute("usuarioLogueado", actualizado);
-				redirectAttributes.addFlashAttribute("success", "InformaciÃ³n de perfil actualizada correctamente");
+				redirectAttributes.addFlashAttribute("success", "Informacion de perfil actualizada correctamente");
 			} else {
-				redirectAttributes.addFlashAttribute("error", "No se encontrÃ³ el usuario para actualizar");
+				redirectAttributes.addFlashAttribute("error", "No se encontro el usuario para actualizar");
 			}
 		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Error al actualizar la informaciÃ³n: " + e.getMessage());
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar la informacion: " + e.getMessage());
 		}
 
 		return "redirect:/usuarios/perfilusuario";
@@ -588,16 +538,14 @@ public class UsuarioController {
 	public ResponseEntity<?> actualizarPassword(@PathVariable Integer id, @RequestBody String nuevaPassword) {
 
 		usuarioService.actualizarPassword(id, nuevaPassword);
-		return ResponseEntity.ok("ContraseÃ±a actualizada");
+		return ResponseEntity.ok("Contrasena actualizada");
 	}
 
-	// redireccion cambiar contraseÃ±a
 	@GetMapping("/recovery")
 	public String recovery() {
 		return "RecuperarContrasena/recovery";
 	}
 
-	// Endpoint para eliminar cuenta de usuario
 	@DeleteMapping("/perfilusuario/eliminarCuenta")
 	@ResponseBody
 	public ResponseEntity<?> eliminarCuenta(HttpSession session) {
@@ -607,10 +555,7 @@ public class UsuarioController {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "No hay usuario logueado"));
 			}
 
-			// Eliminar el usuario de la base de datos
 			usuarioService.eliminarUsuario(usuarioLogueado.getId());
-
-			// Invalidar la sesiÃ³n
 			session.invalidate();
 
 			return ResponseEntity.ok().body(Map.of("mensaje", "Cuenta eliminada exitosamente"));
@@ -621,33 +566,16 @@ public class UsuarioController {
 		}
 	}
 
-	// REDIRECCION PARA LA VISTA ADOPCIONES
-	//@GetMapping("/adopcion")
-	///public String mostrarAdopcion(HttpSession session, Model model) {
-
-		//Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
-		//if (usuarioLogueado == null) {
-			//return "redirect:/usuarios/iniciarsesion";
-		//}
-		//model.addAttribute("usuarioLogueado", usuarioLogueado);
-
-		//return "Adopcion/adopcion";
-    //	}
-
-	// redireccion al cerrar sesion
 	@GetMapping("/index")
 	public String index(
 			@RequestParam(defaultValue = "0") int page,
 			Model model) {
 		
-		// Configurar paginación: 6 eventos por página
 		int pageSize = 6;
 		org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, pageSize);
 		
-		// Obtener página de eventos
 		org.springframework.data.domain.Page<com.clinicpet.demo.model.Evento> eventosPage = eventoRepository.findAll(pageable);
 		
-		// Agregar atributos al modelo
 		model.addAttribute("eventos", eventosPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", eventosPage.getTotalPages());
@@ -656,19 +584,16 @@ public class UsuarioController {
 		return "index";
 	}
 
-	//redireccion a tienda
 	@GetMapping("/tienda")
 	public String tienda() {
 		return "Tienda/tienda";
 	}
 	
-		//redireccion a pasarela de pagos
 	@GetMapping("/pasarela-pagos")
 	public String pasarelaPagos() {
 		return "Tienda/pasarela-pagos";
 	}
 
-	// API para obtener todas las veterinarias/tiendas
 	@GetMapping("/api/veterinarias")
 	@ResponseBody
 	public ResponseEntity<List<VeterinariaDTO>> obtenerVeterinarias() {
@@ -688,24 +613,23 @@ public class UsuarioController {
 				))
 				.collect(Collectors.toList());
 			
-			LOGGER.info("✅ Se encontraron {} veterinarias", veterinariasDTO.size());
+			LOGGER.info("Se encontraron {} veterinarias", veterinariasDTO.size());
 			return ResponseEntity.ok(veterinariasDTO);
 		} catch (Exception e) {
-			LOGGER.error("❌ Error al obtener veterinarias: {}", e.getMessage());
+			LOGGER.error("Error al obtener veterinarias: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
-	// API para obtener productos de una veterinaria específica
 	@GetMapping("/api/veterinarias/{veterinariaId}/productos")
 	@ResponseBody
 	public ResponseEntity<List<ProductoDTO>> obtenerProductosPorVeterinaria(@PathVariable Integer veterinariaId) {
 		try {
-			LOGGER.info("🔍 Buscando productos para veterinaria ID: {}", veterinariaId);
+			LOGGER.info("Buscando productos para veterinaria ID: {}", veterinariaId);
 			
 			Optional<Veterinaria> veterinariaOpt = veterinariaRepository.findById(veterinariaId);
 			if (veterinariaOpt.isEmpty()) {
-				LOGGER.warn("❌ Veterinaria no encontrada con ID: {}", veterinariaId);
+				LOGGER.warn("Veterinaria no encontrada con ID: {}", veterinariaId);
 				return ResponseEntity.notFound().build();
 			}
 			
@@ -726,22 +650,21 @@ public class UsuarioController {
 				))
 				.collect(Collectors.toList());
 			
-			LOGGER.info("✅ Se encontraron {} productos disponibles para veterinaria '{}'",
+			LOGGER.info("Se encontraron {} productos disponibles para veterinaria '{}'",
 				productosDTO.size(), veterinaria.getNombre());
 			
 			return ResponseEntity.ok(productosDTO);
 			
 		} catch (Exception e) {
-			LOGGER.error("❌ Error al obtener productos de veterinaria {}: {}", veterinariaId, e.getMessage());
+			LOGGER.error("Error al obtener productos de veterinaria {}: {}", veterinariaId, e.getMessage());
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 	
-	// ===== ENDPOINTS PARA SISTEMA DE VENTAS =====
-	
 	@PostMapping("/api/ventas/registrar")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<?> registrarVenta(@RequestBody Map<String, Object> ventaData, HttpSession session) {
 		try {
 			Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
@@ -750,9 +673,31 @@ public class UsuarioController {
 					.body(Map.of("error", "Usuario no autenticado"));
 			}
 			
-			LOGGER.info("🛒 Registrando venta para usuario ID: {}", usuarioLogueado.getId());
+			LOGGER.info("Registrando venta para usuario ID: {}", usuarioLogueado.getId());
 			
-			// Convertir valores numéricos de forma segura
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> items = (List<Map<String, Object>>) ventaData.get("items");
+			
+			if (items == null || items.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(Map.of("error", "El carrito esta vacio"));
+			}
+			
+			// Obtener veterinariaId desde el primer producto del carrito
+			Integer primerProductoId = convertToInteger(items.get(0).get("id"));
+			List<Inventario> inventariosDelProducto = inventarioRepository.findByProducto_Id(primerProductoId);
+			
+			Integer veterinariaId = null;
+			if (!inventariosDelProducto.isEmpty()) {
+				veterinariaId = inventariosDelProducto.get(0).getVeterinaria().getId();
+				LOGGER.info("Veterinaria encontrada desde inventario del producto: {}", veterinariaId);
+			}
+			
+			if (veterinariaId == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(Map.of("error", "No se encontro veterinaria asociada a los productos"));
+			}
+			
 			Double subtotal = convertToDouble(ventaData.get("subtotal"));
 			Double total = convertToDouble(ventaData.get("total"));
 			
@@ -772,9 +717,9 @@ public class UsuarioController {
 			pago.setFechaPago(LocalDateTime.now());
 			ventaGuardada.setPago(pago);
 			
-			List<Map<String, Object>> items = (List<Map<String, Object>>) ventaData.get("items");
 			List<DetalleVenta> detalles = new ArrayList<>();
 			
+			// Procesar cada item y deducir del inventario
 			for (Map<String, Object> item : items) {
 				Integer productoId = convertToInteger(item.get("id"));
 				Integer cantidad = convertToInteger(item.get("quantity"));
@@ -782,6 +727,26 @@ public class UsuarioController {
 				
 				Optional<Producto> productoOpt = productoRepository.findById(productoId);
 				if (productoOpt.isPresent()) {
+					// Validar y deducir stock del inventario
+					Inventario inventario = inventarioService.obtenerInventarioPorVeterinariaYProducto(veterinariaId, productoId);
+					if (inventario == null) {
+						throw new RuntimeException("No existe inventario para el producto ID: " + productoId + " en la veterinaria ID: " + veterinariaId);
+					}
+					
+					LOGGER.info("Validando stock - Producto: {}, Stock actual: {}, Solicitado: {}", 
+						productoId, inventario.getCantidadDisponible(), cantidad);
+					
+					if (inventario.getCantidadDisponible() < cantidad) {
+						throw new RuntimeException("Stock insuficiente para el producto " + productoOpt.get().getNombre() + 
+							". Stock disponible: " + inventario.getCantidadDisponible() + ", solicitado: " + cantidad);
+					}
+					
+					// Deducir stock
+					Inventario inventarioActualizado = inventarioService.reducirStock(inventario.getId(), cantidad);
+					LOGGER.info("Stock actualizado - Producto: {}, Nuevo stock: {}", 
+						productoId, inventarioActualizado.getCantidadDisponible());
+					
+					// Crear detalle de venta
 					DetalleVenta detalle = new DetalleVenta();
 					detalle.setVenta(ventaGuardada);
 					detalle.setProducto(productoOpt.get());
@@ -794,7 +759,7 @@ public class UsuarioController {
 			ventaGuardada.setDetallesVenta(detalles);
 			ventaRepository.save(ventaGuardada);
 			
-			LOGGER.info("✅ Venta registrada exitosamente. ID: {}", ventaGuardada.getId());
+			LOGGER.info("Venta registrada exitosamente. ID: {}", ventaGuardada.getId());
 			
 			return ResponseEntity.ok(Map.of(
 				"mensaje", "Venta registrada exitosamente",
@@ -802,7 +767,7 @@ public class UsuarioController {
 			));
 			
 		} catch (Exception e) {
-			LOGGER.error("❌ Error al registrar venta: {}", e.getMessage());
+			LOGGER.error("Error al registrar venta: {}", e.getMessage());
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(Map.of("error", "Error al registrar la venta: " + e.getMessage()));
@@ -819,7 +784,7 @@ public class UsuarioController {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
 			
-			LOGGER.info("📋 Obteniendo compras del usuario ID: {}", usuarioLogueado.getId());
+			LOGGER.info("Obteniendo compras del usuario ID: {}", usuarioLogueado.getId());
 			
 			List<Venta> ventas = ventaRepository.findByUsuarioId(usuarioLogueado.getId());
 			
@@ -854,17 +819,15 @@ public class UsuarioController {
 				})
 				.collect(Collectors.toList());
 			
-			LOGGER.info("✅ Se encontraron {} compras", ventasDTO.size());
+			LOGGER.info("Se encontraron {} compras", ventasDTO.size());
 			return ResponseEntity.ok(ventasDTO);
 			
 		} catch (Exception e) {
-			LOGGER.error("❌ Error al obtener compras: {}", e.getMessage());
+			LOGGER.error("Error al obtener compras: {}", e.getMessage());
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
-	// ===== MÉTODOS AUXILIARES PARA CONVERSIÓN DE TIPOS =====
 	
 	private Double convertToDouble(Object value) {
 		if (value == null) return 0.0;
@@ -888,27 +851,26 @@ public class UsuarioController {
 		try {
 			String email = request.get("email");
 			if (email == null || email.trim().isEmpty()) {
-				return ResponseEntity.badRequest().body(Map.of("error", "El correo electrónico es requerido"));
+				return ResponseEntity.badRequest().body(Map.of("error", "El correo electronico es requerido"));
 			}
 			
-			LOGGER.info("🔐 Solicitud de recuperación para correo: {}", email);
+			LOGGER.info("Solicitud de recuperacion para correo: {}", email);
 			
 			passwordResetService.solicitarRecuperacion(email.trim());
 			
-			// Siempre retornamos éxito para no revelar si el correo existe o no
 			return ResponseEntity.ok(Map.of(
-				"mensaje", "Si el correo está registrado, recibirás un enlace de recuperación",
+				"mensaje", "Si el correo esta registrado, recibiras un enlace de recuperacion",
 				"success", true
 			));
 			
 		} catch (MessagingException e) {
-			LOGGER.error("❌ Error al enviar correo de recuperación: {}", e.getMessage());
+			LOGGER.error("Error al enviar correo de recuperacion: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al enviar el correo de recuperación. Por favor intenta más tarde."));
+				.body(Map.of("error", "Error al enviar el correo de recuperacion. Por favor intenta mas tarde."));
 		} catch (Exception e) {
-			LOGGER.error("❌ Error en solicitud de recuperación: {}", e.getMessage());
+			LOGGER.error("Error en solicitud de recuperacion: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al procesar la solicitud. Por favor intenta más tarde."));
+				.body(Map.of("error", "Error al procesar la solicitud. Por favor intenta mas tarde."));
 		}
 	}
 	
@@ -920,18 +882,18 @@ public class UsuarioController {
 			String nuevaContrasena = request.get("nuevaContrasena");
 			
 			if (token == null || token.trim().isEmpty()) {
-				return ResponseEntity.badRequest().body(Map.of("error", "El token de recuperación es requerido"));
+				return ResponseEntity.badRequest().body(Map.of("error", "El token de recuperacion es requerido"));
 			}
 			
 			if (nuevaContrasena == null || nuevaContrasena.length() < 6) {
-				return ResponseEntity.badRequest().body(Map.of("error", "La contraseña debe tener al menos 6 caracteres"));
+				return ResponseEntity.badRequest().body(Map.of("error", "La contrasena debe tener al menos 6 caracteres"));
 			}
 			
-			LOGGER.info("🔐 Intento de restablecer contraseña con token: {}", token.substring(0, 8) + "...");
+			LOGGER.info("Intento de restablecer contrasena con token: {}", token.substring(0, 8) + "...");
 			
 			String resultado = passwordResetService.restablecerContrasena(token.trim(), nuevaContrasena);
 			
-			if (resultado.contains("expirado") || resultado.contains("inválido")) {
+			if (resultado.contains("expirado") || resultado.contains("invalido")) {
 				return ResponseEntity.badRequest().body(Map.of("error", resultado));
 			}
 			
@@ -941,22 +903,21 @@ public class UsuarioController {
 			));
 			
 		} catch (Exception e) {
-			LOGGER.error("❌ Error al restablecer contraseña: {}", e.getMessage());
+			LOGGER.error("Error al restablecer contrasena: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("error", "Error al restablecer la contraseña. Por favor solicita un nuevo enlace."));
+				.body(Map.of("error", "Error al restablecer la contrasena. Por favor solicita un nuevo enlace."));
 		}
 	}
 	
 	@GetMapping("/recovery-contra")
 	public String mostrarRestablecerContrasena(@RequestParam(required = false) String token, Model model) {
 		if (token == null || token.trim().isEmpty()) {
-			model.addAttribute("error", "Token de recuperación no proporcionado");
-			return "RestablecerContraseña/recovery-contra";
+			model.addAttribute("error", "Token de recuperacion no proporcionado");
+			return "RestablecerContrasena/recovery-contra";
 		}
 		
-		// Validar token antes de mostrar el formulario
 		String validacion = passwordResetService.validarToken(token);
-		if (validacion.contains("inválido") || validacion.contains("expirado")) {
+		if (validacion.contains("invalido") || validacion.contains("expirado")) {
 			model.addAttribute("error", validacion);
 			model.addAttribute("tokenInvalido", true);
 		} else {
@@ -964,7 +925,7 @@ public class UsuarioController {
 			model.addAttribute("tokenValido", true);
 		}
 		
-		return "RestablecerContraseña/recovery-contra";
+		return "RestablecerContrasena/recovery-contra";
 	}
 
 }

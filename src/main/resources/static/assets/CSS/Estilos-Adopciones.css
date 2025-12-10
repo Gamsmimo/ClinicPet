@@ -626,8 +626,8 @@ body {
 .modal-content {
 	background: var(--modal-bg);
 	border-radius: 20px;
-	max-width: 1000px;
-	max-height: 90vh;
+	max-width: 1400px;
+	max-height: 95vh;
 	overflow-y: auto;
 	animation: slideUp 0.3s ease;
 	position: relative;
@@ -636,14 +636,14 @@ body {
 
 .modal-header {
 	background: #1881d6;
-	padding: 25px;
+	padding: 20px;
 	border-radius: 20px 20px 0 0;
 	position: relative;
 }
 
 .modal-header h2 {
 	color: white;
-	font-size: 2.2rem;
+	font-size: 2rem;
 	margin: 0;
 	font-weight: 700;
 }
@@ -669,13 +669,14 @@ body {
 }
 
 .modal-body {
-	padding: 30px;
+	padding: 15px;
 }
 
 .formulario-grid {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	gap: 20px;
+	gap: 12px;
+	align-items: start;
 }
 
 .grupo-formulario {
@@ -686,10 +687,10 @@ body {
 
 .grupo-formulario label {
 	display: block;
-	margin-bottom: 8px;
+	margin-bottom: 6px;
 	font-weight: 600;
 	color: var(--text-color);
-	font-size: 1.3rem;
+	font-size: 1rem;
 }
 
 .grupo-formulario input,

@@ -33,12 +33,30 @@ function loadCartData() {
     }
 }
 
+// Función para construir ruta de imagen
+const getImageSrc = (imagen) => {
+    if (!imagen) return '/img/default.png';
+    
+    // Si la imagen ya empieza con /uploads/ o /img/, usarla directamente
+    if (imagen.startsWith('/uploads/') || imagen.startsWith('/img/')) {
+        return imagen;
+    }
+    
+    // Si contiene un punto (extensión de archivo), asumir que es un archivo subido
+    if (imagen.includes('.')) {
+        return `/uploads/${imagen}`;
+    }
+    
+    // Si no, es una imagen estática
+    return `/img/${imagen}.png`;
+};
+
 function renderOrderItems() {
     const container = document.getElementById('orderItems');
     
     container.innerHTML = cartItems.map(item => `
         <div class="order-item">
-            <img src="../img/${item.imagen}.png" alt="${item.nombre}" class="item-image" onerror="this.src='../img/default.png'">
+            <img src="${getImageSrc(item.imagen)}" alt="${item.nombre}" class="item-image" onerror="this.src='/img/default.png'">
             <div class="item-details">
                 <div class="item-name">${item.nombre}</div>
                 <div class="item-quantity">Cantidad: ${item.quantity}</div>
