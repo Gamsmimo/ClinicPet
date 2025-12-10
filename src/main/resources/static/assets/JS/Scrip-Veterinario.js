@@ -1163,7 +1163,8 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 
 // Eventos y Campañas - Paginación
 let currentPage = 1;
-const itemsPerPage = 3;
+const itemsPerPage = 6;
+const CARDS_PER_PAGE = 6; // Para el buscador
 let totalPages;
 
 function renderCards() {

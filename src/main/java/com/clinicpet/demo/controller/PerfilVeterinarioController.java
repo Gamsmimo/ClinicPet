@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,6 +136,8 @@ public class PerfilVeterinarioController {
 					eventosVet.add(ev);
 				}
 			}
+			// Ordenar eventos por ID descendente (los más recientes primero)
+			eventosVet.sort(Comparator.comparing(Evento::getId).reversed());
 		}
 		System.out.println(" Eventos encontrados para veterinaria " + veterinariaId + ": " + eventosVet.size());
 		model.addAttribute("eventosVet", eventosVet);
