@@ -247,15 +247,25 @@ function addToCart(productId) {
 	const product = getAllProducts().find((p) => p.id === productId);
 	if (!product) return;
 
+	// Verificar si hay stock disponible
+	if (product.cantidadDisponible <= 0) {
+		showToast('❌ Producto agotado', 'error');
+		return;
+	}
+
 	const existing = cart.find((item) => item.id === productId);
 	if (existing) {
+		// Verificar si al añadir una unidad más se excede el stock
+		if (existing.quantity + 1 > product.cantidadDisponible) {
+			showToast(`⚠️ No puedes añadir más de ${product.cantidadDisponible} unidades`, 'warning');
+			return;
+		}
 		existing.quantity++;
 	} else {
 		cart.push({ ...product, quantity: 1 });
 	}
 
 	updateCart();
-	// Sin alerta, solo actualiza el carrito visualmente
 }
 
 function removeFromCart(productId) {
@@ -267,12 +277,76 @@ function updateQuantity(productId, change) {
 	const item = cart.find((i) => i.id === productId);
 	if (!item) return;
 
-	item.quantity += change;
+	// Obtener el producto actual para verificar stock
+	const product = getAllProducts().find((p) => p.id === productId);
+	if (!product) return;
+
+	// Calcular nueva cantidad
+	const newQuantity = item.quantity + change;
+
+	// Validar que no exceda el stock disponible
+	if (newQuantity > product.cantidadDisponible) {
+		showToast(`⚠️ No puedes superar el límite de ${product.cantidadDisponible} unidades`, 'warning');
+		return;
+	}
+
+	item.quantity = newQuantity;
 	if (item.quantity <= 0) {
 		removeFromCart(productId);
 	} else {
 		updateCart();
 	}
+}
+
+// Función para mostrar notificaciones toast
+function showToast(message, type = 'info') {
+	// Crear el toast si no existe
+	let toast = document.getElementById('toast');
+	if (!toast) {
+		toast = document.createElement('div');
+		toast.id = 'toast';
+		toast.style.cssText = `
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			padding: 15px 20px;
+			border-radius: 8px;
+			color: white;
+			font-weight: 500;
+			z-index: 10000;
+			transition: all 0.3s ease;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+		`;
+		document.body.appendChild(toast);
+	}
+
+	// Establecer mensaje y estilo según tipo
+	toast.textContent = message;
+	
+	switch(type) {
+		case 'success':
+			toast.style.background = '#28a745';
+			break;
+		case 'error':
+			toast.style.background = '#dc3545';
+			break;
+		case 'warning':
+			toast.style.background = '#ffc107';
+			toast.style.color = '#212529';
+			break;
+		default:
+			toast.style.background = '#17a2b8';
+	}
+
+	// Mostrar toast
+	toast.style.opacity = '1';
+	toast.style.transform = 'translateX(0)';
+
+	// Ocultar después de 3 segundos
+	setTimeout(() => {
+		toast.style.opacity = '0';
+		toast.style.transform = 'translateX(100%)';
+	}, 3000);
 }
 
 function updateCart() {
@@ -317,7 +391,12 @@ function updateCart() {
 	} else {
 		itemsContainer.innerHTML = cart
 			.map(
-				(item) => `
+				(item) => {
+					const product = getAllProducts().find((p) => p.id === item.id);
+					const maxStock = product ? product.cantidadDisponible : item.quantity;
+					const isAtLimit = item.quantity >= maxStock;
+					
+					return `
             <div class="cart-item">
                 <div class="cart-item-image">
                     <img src="${getImageSrc(item.imagen)}" alt="${item.nombre}" onerror="this.src='/img/default.png'">
@@ -325,20 +404,22 @@ function updateCart() {
                 <div class="cart-item-details">
                     <div class="cart-item-name">${item.nombre}</div>
                     <div class="cart-item-price">$${item.precio.toFixed(2)}</div>
+                    <div class="cart-item-stock-info">
+                        <small style="color: #666;">Stock disponible: ${maxStock} unidades</small>
+						${isAtLimit ? '<small style="color: #ffc107; font-weight: bold;"> (¡Límite alcanzado!)</small>' : ''}
+                    </div>
                     <div class="cart-item-controls">
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id
-					}, -1)">-</button>
+                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
                         <span class="quantity-display">${item.quantity}</span>
-                        <button class="quantity-btn" onclick="updateQuantity(${item.id
-					}, 1)">+</button>
-                        <button class="remove-item" onclick="removeFromCart(${item.id
-					})">
+                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)" ${isAtLimit ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>+</button>
+                        <button class="remove-item" onclick="removeFromCart(${item.id})">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
                 </div>
             </div>
-        `
+        `;
+				}
 			)
 			.join("");
 	}
